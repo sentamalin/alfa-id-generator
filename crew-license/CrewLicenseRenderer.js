@@ -1,5 +1,5 @@
-import { CrewCertificate  } from "./CrewCertificate.js";
-import { QRCodeData } from "./QRCodeData.js";
+import { CrewLicense  } from "/modules/CrewLicense.js";
+import { QRCodeData } from "/modules/QRCodeData.js";
 
 class CrewLicenseRenderer {
   #qrCode = new QRCodeData({

@@ -1,4 +1,4 @@
-import { CrewLicenseViewModel } from "/modules/CrewLicenseViewModel.js";
+import { CrewLicenseViewModel } from "./CrewLicenseViewModel.js";
 
 window.addEventListener("load", initViewModel, false);
 

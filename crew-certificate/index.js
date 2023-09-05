@@ -1,4 +1,4 @@
-import { CrewCertificateViewModel } from "/modules/CrewCertificateViewModel.js";
+import { CrewCertificateViewModel } from "./CrewCertificateViewModel.js";
 
 window.addEventListener("load", initViewModel, false);
 

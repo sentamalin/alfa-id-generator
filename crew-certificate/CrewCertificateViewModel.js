@@ -1,9 +1,9 @@
-import { CrewLicense } from "./CrewLicense.js";
-import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
+import { CrewCertificate } from "/modules/CrewCertificate.js";
+import { CrewCertificateRenderer } from "./CrewCertificateRenderer.js";
 
-class CrewLicenseViewModel {
-  #model = new CrewLicense({
-    typeCode: "AL",
+class CrewCertificateViewModel {
+  #model = new CrewCertificate({
+    typeCode: "AC",
     authorityCode: "XAF",
     number: "362142069",
     dateOfBirth: "1998-04-17",
@@ -12,17 +12,18 @@ class CrewLicenseViewModel {
     nationalityCode: "UTO",
     fullName: "Millefeuille, Alfalfa",
     optionalData: "",
-    authority: "Air Line Furries Association, International",
-    privilege: "Airline Transport Pilot",
-    ratings: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    limitations: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    employer: "Lambda Air Ways, Inc",
+    occupation: "Airline Transport Pilot",
+    declaration: "The holder may at all times re-enter\nupon production of this certificate\nwithin the period of validity",
+    dateOfIssue: "2023-08-23",
+    placeOfIssue: "Utopiopolis, Utopia",
     picture: "/photos/fox.jpg",
     signature: "/signatures/alfalfa.png",
     url: "https://airlinefurries.com/"
   });
 
-  #renderer = new CrewLicenseRenderer({
-    headerColor: "#4090ba",
+  #renderer = new CrewCertificateRenderer({
+    headerColor: "#000033",
     textColor: "#000000",
     mrzColor: "#000000",
     frontBackgroundColor: "#efefef",
@@ -33,14 +34,14 @@ class CrewLicenseViewModel {
     mrzBackgroundImage: null,
     numberUnderlayColor: "#ffffff",
     numberUnderlayAlpha: 255,
-    logoUnderlayColor: "#4090ba",
+    logoUnderlayColor: "#000033",
     logoUnderlayAlpha: 255,
-    logo: "/logos/alfa.png",
+    logo: "/logos/lambda.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
     mrzInQRCode: true,
     showGuides: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INT'L",
-    fullDocumentName: "CREWMEMBER LICENSE",
+    fullDocumentName: "CREWMEMBER CERTIFICATE",
     nameHeader: [
       "NAME",
       "NOM",
@@ -61,15 +62,15 @@ class CrewLicenseViewModel {
       "DATE DE NAISSANCE",
       "FECHA DE NACIMIENTO"
     ],
-    authorityHeader: [
-      "AUTHORITY",
-      "AUTORITÉ",
-      "AUTORIDAD"
+    employerHeader: [
+      "EMPLOYER",
+      "EMPLOYEUR",
+      "EMPLEADOR"
     ],
-    privilegeHeader: [
-      "PRIVILEGE",
-      "PRIVILÈGE",
-      "PRIVILEGIO"
+    occupationHeader: [
+      "OCCUPATION",
+      "OCCUPATION",
+      "OCUPACIÓN"
     ],
     numberHeader: [
       "CERTIFICATE NO",
@@ -81,15 +82,15 @@ class CrewLicenseViewModel {
       "EXPIRATION",
       "EXPIRACIÓN"
     ],
-    ratingsHeader: [
-      "RATINGS",
-      "QUALIFICATIONS",
-      "CLASIFICACIONES"
+    declarationHeader: [
+      "RE-ENTRY DECLARATION",
+      "DÉCLARATION DE RENTRÉE",
+      "DECLARACIÓN DE REINGRESO"
     ],
-    limitationsHeader: [
-      "LIMITATIONS",
-      "LIMITATIONS",
-      "LIMITACIONES"
+    issueHeader: [
+      "DATE OF ISSUE—PLACE OF ISSUE",
+      "DATE DE DÉLIVERANCE—LIEU DE DÉLIVERANCE",
+      "FECHA DE EXPEDICIÓN—LUGAR DE EXPEDICIÓN"
     ]
   });
 
@@ -255,72 +256,81 @@ class CrewLicenseViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityInput;
+  /** @type { HTMLInputElement } */ #employerInput;
   /** @param { HTMLInputElement } input */
-  set authorityInput(input) {
-    this.#authorityInput = input;
-    this.#authorityInput.value = this.#model.authority;
-    this.#authorityInput.setAttribute("placeholder", this.#model.authority);
-    this.#authorityInput.addEventListener("input", this, false);
-    this.#authorityInput.addEventListener("change", this, false);
+  set employerInput(input) {
+    this.#employerInput = input;
+    this.#employerInput.value = this.#model.employer;
+    this.#employerInput.setAttribute("placeholder", this.#model.employer);
+    this.#employerInput.addEventListener("input", this, false);
+    this.#employerInput.addEventListener("change", this, false);
   }
-  onAuthorityInputChange() {
-    if (this.#model.authority !== this.#authorityInput.value) {
-      this.#model.authority = this.#authorityInput.value;
+  onEmployerInputChange() {
+    if (this.#model.employer !== this.#employerInput.value) {
+      this.#model.employer = this.#employerInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #privilegeInput;
+  /** @type { HTMLInputElement } */ #occupationInput;
   /** @param { HTMLInputElement } input */
-  set privilegeInput(input) {
-    this.#privilegeInput = input;
-    this.#privilegeInput.value = this.#model.privilege;
-    this.#privilegeInput.setAttribute("placeholder", this.#model.privilege);
-    this.#privilegeInput.addEventListener("input", this, false);
-    this.#privilegeInput.addEventListener("change", this, false);
+  set occupationInput(input) {
+    this.#occupationInput = input;
+    this.#occupationInput.value = this.#model.occupation;
+    this.#occupationInput.setAttribute("placeholder", this.#model.occupation);
+    this.#occupationInput.addEventListener("input", this, false);
+    this.#occupationInput.addEventListener("change", this, false);
   }
-  onPrivilegeInputChange() {
-    if (this.#model.privilege !== this.#privilegeInput.value) {
-      this.#model.privilege = this.#privilegeInput.value;
+  onOccupationInputChange() {
+    if (this.#model.occupation !== this.#occupationInput.value) {
+      this.#model.occupation = this.#occupationInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #ratingsInput;
+  /** @type { HTMLInputElement } */ #declarationInput;
   /** @param { HTMLInputElement } input */
-  set ratingsInput(input) {
-    this.#ratingsInput = input;
-    this.#ratingsInput.setAttribute("cols", 37);
-    this.#ratingsInput.setAttribute("rows", 4);
-    this.#ratingsInput.setAttribute("wrap", "off");
-    this.#ratingsInput.value = this.#model.ratings;
-    this.#ratingsInput.setAttribute("placeholder", this.#model.ratings);
-    this.#ratingsInput.addEventListener("input", this, false);
-    this.#ratingsInput.addEventListener("change", this, false);
+  set declarationInput(input) {
+    this.#declarationInput = input;
+    this.#declarationInput.setAttribute("cols", 36);
+    this.#declarationInput.setAttribute("rows", 3);
+    this.#declarationInput.setAttribute("wrap", "off");
+    this.#declarationInput.value = this.#model.declaration;
+    this.#declarationInput.setAttribute("placeholder", this.#model.declaration);
+    this.#declarationInput.addEventListener("input", this, false);
+    this.#declarationInput.addEventListener("change", this, false);
   }
-  onRatingsInputChange() {
-    if (this.#model.ratings !== this.#ratingsInput.value) {
-      this.#model.ratings = this.#ratingsInput.value;
+  onDeclarationInputChange() {
+    if (this.#model.declaration !== this.#declarationInput.value) {
+      this.#model.declaration = this.#declarationInput.value;
       this.#generateCardBack();
     }
   }
-
-  /** @type { HTMLInputElement } */ #limitationsInput;
+  
+  /** @type { HTMLInputElement } */ #dateOfIssueInput;
   /** @param { HTMLInputElement } input */
-  set limitationsInput(input) {
-    this.#limitationsInput = input;
-    this.#limitationsInput.setAttribute("cols", 37);
-    this.#limitationsInput.setAttribute("rows", 4);
-    this.#limitationsInput.setAttribute("wrap", "off");
-    this.#limitationsInput.value = this.#model.limitations;
-    this.#limitationsInput.setAttribute("placeholder", this.#model.limitations);
-    this.#limitationsInput.addEventListener("input", this, false);
-    this.#limitationsInput.addEventListener("change", this, false);
+  set dateOfIssueInput(input) {
+    this.#dateOfIssueInput = input;
+    this.#dateOfIssueInput.value = this.#model.dateOfIssue;
+    this.#dateOfIssueInput.addEventListener("change", this, false);
   }
-  onLimitationsInputChange() {
-    if (this.#model.limitations !== this.#limitationsInput.value) {
-      this.#model.limitations = this.#limitationsInput.value;
+  onDateOfIssueInputChange() {
+    this.#model.dateOfIssue = this.#dateOfIssueInput.value;
+    this.#generateCardBack();
+  }
+
+  /** @type { HTMLInputElement } */ #placeOfIssueInput;
+  /** @param { HTMLInputElement } input */
+  set placeOfIssueInput(input) {
+    this.#placeOfIssueInput = input;
+    this.#placeOfIssueInput.value = this.#model.placeOfIssue;
+    this.#placeOfIssueInput.setAttribute("placeholder", this.#model.placeOfIssue);
+    this.#placeOfIssueInput.addEventListener("input", this, false);
+    this.#placeOfIssueInput.addEventListener("change", this, false);
+  }
+  onPlaceOfIssueInputChange() {
+    if (this.#model.placeOfIssue !== this.#placeOfIssueInput.value) {
+      this.#model.placeOfIssue = this.#placeOfIssueInput.value;
       this.#generateCardBack();
     }
   }
@@ -385,7 +395,7 @@ class CrewLicenseViewModel {
     this.#signatureTextInput.addEventListener("change", this, false);
   }
   async onSignatureTextInputChange() {
-    const blob = await CrewLicenseRenderer.generateSignatureFromText(this.#signatureTextInput.value);
+    const blob = await CrewCertificateRenderer.generateSignatureFromText(this.#signatureTextInput.value);
     const dataURL = await this.constructor.#getFileData(blob);
     if (this.#model.signature !== dataURL) {
       this.#model.signature = dataURL;
@@ -735,7 +745,7 @@ class CrewLicenseViewModel {
   async onSmallLogoFileInputChange() {
     if (this.#smallLogoFileInput.files[0]) {
       this.#renderer.smallLogo = await this.constructor.#getFileData(this.#smallLogoFileInput.files[0]);
-    this.#generateCardBack();
+      this.#generateCardBack();
     }
   }
 
@@ -963,98 +973,98 @@ class CrewLicenseViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityHeaderInput;
+  /** @type { HTMLInputElement } */ #employerHeaderInput;
   /** @param { HTMLInputElement } input */
-  set authorityHeaderInput(input) {
-    this.#authorityHeaderInput = input;
-    this.#authorityHeaderInput.value = this.#renderer.authorityHeader[0];
-    this.#authorityHeaderInput.setAttribute("placeholder", this.#renderer.authorityHeader[0]);
-    this.#authorityHeaderInput.addEventListener("input", this, false);
-    this.#authorityHeaderInput.addEventListener("change", this, false);
+  set employerHeaderInput(input) {
+    this.#employerHeaderInput = input;
+    this.#employerHeaderInput.value = this.#renderer.employerHeader[0];
+    this.#employerHeaderInput.setAttribute("placeholder", this.#renderer.employerHeader[0]);
+    this.#employerHeaderInput.addEventListener("input", this, false);
+    this.#employerHeaderInput.addEventListener("change", this, false);
   }
-  onAuthorityHeaderInputChange() {
-    if (this.#renderer.authorityHeader[0] !== this.#authorityHeaderInput.value) {
-      this.#renderer.authorityHeader[0] = this.#authorityHeaderInput.value;
+  onEmployerHeaderInputChange() {
+    if (this.#renderer.employerHeader[0] !== this.#employerHeaderInput.value) {
+      this.#renderer.employerHeader[0] = this.#employerHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityHeaderI18n1Input;
+  /** @type { HTMLInputElement } */ #employerHeaderI18n1Input;
   /** @param { HTMLInputElement } input */
-  set authorityHeaderI18n1Input(input) {
-    this.#authorityHeaderI18n1Input = input;
-    this.#authorityHeaderI18n1Input.value = this.#renderer.authorityHeader[1];
-    this.#authorityHeaderI18n1Input.setAttribute("placeholder", this.#renderer.authorityHeader[1]);
-    this.#authorityHeaderI18n1Input.addEventListener("input", this, false);
-    this.#authorityHeaderI18n1Input.addEventListener("change", this, false);
+  set employerHeaderI18n1Input(input) {
+    this.#employerHeaderI18n1Input = input;
+    this.#employerHeaderI18n1Input.value = this.#renderer.employerHeader[1];
+    this.#employerHeaderI18n1Input.setAttribute("placeholder", this.#renderer.employerHeader[1]);
+    this.#employerHeaderI18n1Input.addEventListener("input", this, false);
+    this.#employerHeaderI18n1Input.addEventListener("change", this, false);
   }
-  onAuthorityHeaderI18n1InputChange() {
-    if (this.#renderer.authorityHeader[1] !== this.#authorityHeaderI18n1Input.value) {
-      this.#renderer.authorityHeader[1] = this.#authorityHeaderI18n1Input.value;
+  onEmployerHeaderI18n1InputChange() {
+    if (this.#renderer.employerHeader[1] !== this.#employerHeaderI18n1Input.value) {
+      this.#renderer.employerHeader[1] = this.#employerHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityHeaderI18n2Input;
+  /** @type { HTMLInputElement } */ #employerHeaderI18n2Input;
   /** @param { HTMLInputElement } input */
-  set authorityHeaderI18n2Input(input) {
-    this.#authorityHeaderI18n2Input = input;
-    this.#authorityHeaderI18n2Input.value = this.#renderer.authorityHeader[2];
-    this.#authorityHeaderI18n2Input.setAttribute("placeholder", this.#renderer.authorityHeader[2]);
-    this.#authorityHeaderI18n2Input.addEventListener("input", this, false);
-    this.#authorityHeaderI18n2Input.addEventListener("change", this, false);
+  set employerHeaderI18n2Input(input) {
+    this.#employerHeaderI18n2Input = input;
+    this.#employerHeaderI18n2Input.value = this.#renderer.employerHeader[2];
+    this.#employerHeaderI18n2Input.setAttribute("placeholder", this.#renderer.employerHeader[2]);
+    this.#employerHeaderI18n2Input.addEventListener("input", this, false);
+    this.#employerHeaderI18n2Input.addEventListener("change", this, false);
   }
-  onAuthorityHeaderI18n2InputChange() {
-    if (this.#renderer.authorityHeader[2] !== this.#authorityHeaderI18n2Input.value) {
-      this.#renderer.authorityHeader[2] = this.#authorityHeaderI18n2Input.value;
+  onEmployerHeaderI18n2InputChange() {
+    if (this.#renderer.employerHeader[2] !== this.#employerHeaderI18n2Input.value) {
+      this.#renderer.employerHeader[2] = this.#employerHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #privilegeHeaderInput;
+  /** @type { HTMLInputElement } */ #occupationHeaderInput;
   /** @param { HTMLInputElement } input */
-  set privilegeHeaderInput(input) {
-    this.#privilegeHeaderInput = input;
-    this.#privilegeHeaderInput.value = this.#renderer.privilegeHeader[0];
-    this.#privilegeHeaderInput.setAttribute("placeholder", this.#renderer.privilegeHeader[0]);
-    this.#privilegeHeaderInput.addEventListener("input", this, false);
-    this.#privilegeHeaderInput.addEventListener("change", this, false);
+  set occupationHeaderInput(input) {
+    this.#occupationHeaderInput = input;
+    this.#occupationHeaderInput.value = this.#renderer.occupationHeader[0];
+    this.#occupationHeaderInput.setAttribute("placeholder", this.#renderer.occupationHeader[0]);
+    this.#occupationHeaderInput.addEventListener("input", this, false);
+    this.#occupationHeaderInput.addEventListener("change", this, false);
   }
-  onPrivilegeHeaderInputChange() {
-    if (this.#renderer.privilegeHeader[0] !== this.#privilegeHeaderInput.value) {
-      this.#renderer.privilegeHeader[0] = this.#privilegeHeaderInput.value;
+  onOccupationHeaderInputChange() {
+    if (this.#renderer.occupationHeader[0] !== this.#occupationHeaderInput.value) {
+      this.#renderer.occupationHeader[0] = this.#occupationHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #privilegeHeaderI18n1Input;
+  /** @type { HTMLInputElement } */ #occupationHeaderI18n1Input;
   /** @param { HTMLInputElement } input */
-  set privilegeHeaderI18n1Input(input) {
-    this.#privilegeHeaderI18n1Input = input;
-    this.#privilegeHeaderI18n1Input.value = this.#renderer.privilegeHeader[1];
-    this.#privilegeHeaderI18n1Input.setAttribute("placeholder", this.#renderer.privilegeHeader[1]);
-    this.#privilegeHeaderI18n1Input.addEventListener("input", this, false);
-    this.#privilegeHeaderI18n1Input.addEventListener("change", this, false);
+  set occupationHeaderI18n1Input(input) {
+    this.#occupationHeaderI18n1Input = input;
+    this.#occupationHeaderI18n1Input.value = this.#renderer.occupationHeader[1];
+    this.#occupationHeaderI18n1Input.setAttribute("placeholder", this.#renderer.occupationHeader[1]);
+    this.#occupationHeaderI18n1Input.addEventListener("input", this, false);
+    this.#occupationHeaderI18n1Input.addEventListener("change", this, false);
   }
-  onPrivilegeHeaderI18n1InputChange() {
-    if (this.#renderer.privilegeHeader[1] !== this.#privilegeHeaderI18n1Input.value) {
-      this.#renderer.privilegeHeader[1] = this.#privilegeHeaderI18n1Input.value;
+  onOccupationHeaderI18n1InputChange() {
+    if (this.#renderer.occupationHeader[1] !== this.#occupationHeaderI18n1Input.value) {
+      this.#renderer.occupationHeader[1] = this.#occupationHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #privilegeHeaderI18n2Input;
+  /** @type { HTMLInputElement } */ #occupationHeaderI18n2Input;
   /** @param { HTMLInputElement } input */
-  set privilegeHeaderI18n2Input(input) {
-    this.#privilegeHeaderI18n2Input = input;
-    this.#privilegeHeaderI18n2Input.value = this.#renderer.privilegeHeader[2];
-    this.#privilegeHeaderI18n2Input.setAttribute("placeholder", this.#renderer.privilegeHeader[2]);
-    this.#privilegeHeaderI18n2Input.addEventListener("input", this, false);
-    this.#privilegeHeaderI18n2Input.addEventListener("change", this, false);
+  set occupationHeaderI18n2Input(input) {
+    this.#occupationHeaderI18n2Input = input;
+    this.#occupationHeaderI18n2Input.value = this.#renderer.occupationHeader[2];
+    this.#occupationHeaderI18n2Input.setAttribute("placeholder", this.#renderer.occupationHeader[2]);
+    this.#occupationHeaderI18n2Input.addEventListener("input", this, false);
+    this.#occupationHeaderI18n2Input.addEventListener("change", this, false);
   }
-  onPrivilegeHeaderI18n2InputChange() {
-    if (this.#renderer.privilegeHeader[2] !== this.#privilegeHeaderI18n2Input.value) {
-      this.#renderer.privilegeHeader[2] = this.#privilegeHeaderI18n2Input.value;
+  onOccupationHeaderI18n2InputChange() {
+    if (this.#renderer.occupationHeader[2] !== this.#occupationHeaderI18n2Input.value) {
+      this.#renderer.occupationHeader[2] = this.#occupationHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
@@ -1155,98 +1165,98 @@ class CrewLicenseViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #ratingsHeaderInput;
+  /** @type { HTMLInputElement } */ #declarationHeaderInput;
   /** @param { HTMLInputElement } input */
-  set ratingsHeaderInput(input) {
-    this.#ratingsHeaderInput = input;
-    this.#ratingsHeaderInput.value = this.#renderer.ratingsHeader[0];
-    this.#ratingsHeaderInput.setAttribute("placeholder", this.#renderer.ratingsHeader[0]);
-    this.#ratingsHeaderInput.addEventListener("input", this, false);
-    this.#ratingsHeaderInput.addEventListener("change", this, false);
+  set declarationHeaderInput(input) {
+    this.#declarationHeaderInput = input;
+    this.#declarationHeaderInput.value = this.#renderer.declarationHeader[0];
+    this.#declarationHeaderInput.setAttribute("placeholder", this.#renderer.declarationHeader[0]);
+    this.#declarationHeaderInput.addEventListener("input", this, false);
+    this.#declarationHeaderInput.addEventListener("change", this, false);
   }
-  onRatingsHeaderInputChange() {
-    if (this.#renderer.ratingsHeader[0] !== this.#ratingsHeaderInput.value) {
-      this.#renderer.ratingsHeader[0] = this.#ratingsHeaderInput.value;
+  onDeclarationHeaderInputChange() {
+    if (this.#renderer.declarationHeader[0] !== this.#declarationHeaderInput.value) {
+      this.#renderer.declarationHeader[0] = this.#declarationHeaderInput.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #ratingsHeaderI18n1Input;
+  /** @type { HTMLInputElement } */ #declarationHeaderI18n1Input;
   /** @param { HTMLInputElement } input */
-  set ratingsHeaderI18n1Input(input) {
-    this.#ratingsHeaderI18n1Input = input;
-    this.#ratingsHeaderI18n1Input.value = this.#renderer.ratingsHeader[1];
-    this.#ratingsHeaderI18n1Input.setAttribute("placeholder", this.#renderer.ratingsHeader[1]);
-    this.#ratingsHeaderI18n1Input.addEventListener("input", this, false);
-    this.#ratingsHeaderI18n1Input.addEventListener("change", this, false);
+  set declarationHeaderI18n1Input(input) {
+    this.#declarationHeaderI18n1Input = input;
+    this.#declarationHeaderI18n1Input.value = this.#renderer.declarationHeader[1];
+    this.#declarationHeaderI18n1Input.setAttribute("placeholder", this.#renderer.declarationHeader[1]);
+    this.#declarationHeaderI18n1Input.addEventListener("input", this, false);
+    this.#declarationHeaderI18n1Input.addEventListener("change", this, false);
   }
-  onRatingsHeaderI18n1InputChange() {
-    if (this.#renderer.ratingsHeader[1] !== this.#ratingsHeaderI18n1Input.value) {
-      this.#renderer.ratingsHeader[1] = this.#ratingsHeaderI18n1Input.value;
+  onDeclarationHeaderI18n1InputChange() {
+    if (this.#renderer.declarationHeader[1] !== this.#declarationHeaderI18n1Input.value) {
+      this.#renderer.declarationHeader[1] = this.#declarationHeaderI18n1Input.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #ratingsHeaderI18n2Input;
+  /** @type { HTMLInputElement } */ #declarationHeaderI18n2Input;
   /** @param { HTMLInputElement } input */
-  set ratingsHeaderI18n2Input(input) {
-    this.#ratingsHeaderI18n2Input = input;
-    this.#ratingsHeaderI18n2Input.value = this.#renderer.ratingsHeader[2];
-    this.#ratingsHeaderI18n2Input.setAttribute("placeholder", this.#renderer.ratingsHeader[2]);
-    this.#ratingsHeaderI18n2Input.addEventListener("input", this, false);
-    this.#ratingsHeaderI18n2Input.addEventListener("change", this, false);
+  set declarationHeaderI18n2Input(input) {
+    this.#declarationHeaderI18n2Input = input;
+    this.#declarationHeaderI18n2Input.value = this.#renderer.declarationHeader[2];
+    this.#declarationHeaderI18n2Input.setAttribute("placeholder", this.#renderer.declarationHeader[2]);
+    this.#declarationHeaderI18n2Input.addEventListener("input", this, false);
+    this.#declarationHeaderI18n2Input.addEventListener("change", this, false);
   }
-  onRatingsHeaderI18n2InputChange() {
-    if (this.#renderer.ratingsHeader[2] !== this.#ratingsHeaderI18n2Input.value) {
-      this.#renderer.ratingsHeader[2] = this.#ratingsHeaderI18n2Input.value;
+  onDeclarationHeaderI18n2InputChange() {
+    if (this.#renderer.declarationHeader[2] !== this.#declarationHeaderI18n2Input.value) {
+      this.#renderer.declarationHeader[2] = this.#declarationHeaderI18n2Input.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #limitationsHeaderInput;
+  /** @type { HTMLInputElement } */ #issueHeaderInput;
   /** @param { HTMLInputElement } input */
-  set limitationsHeaderInput(input) {
-    this.#limitationsHeaderInput = input;
-    this.#limitationsHeaderInput.value = this.#renderer.limitationsHeader[0];
-    this.#limitationsHeaderInput.setAttribute("placeholder", this.#renderer.limitationsHeader[0]);
-    this.#limitationsHeaderInput.addEventListener("input", this, false);
-    this.#limitationsHeaderInput.addEventListener("change", this, false);
+  set issueHeaderInput(input) {
+    this.#issueHeaderInput = input;
+    this.#issueHeaderInput.value = this.#renderer.issueHeader[0];
+    this.#issueHeaderInput.setAttribute("placeholder", this.#renderer.issueHeader[0]);
+    this.#issueHeaderInput.addEventListener("input", this, false);
+    this.#issueHeaderInput.addEventListener("change", this, false);
   }
-  onLimitationsHeaderInputChange() {
-    if (this.#renderer.limitationsHeader[0] !== this.#limitationsHeaderInput.value) {
-      this.#renderer.limitationsHeader[0] = this.#limitationsHeaderInput.value;
+  onIssueHeaderInputChange() {
+    if (this.#renderer.issueHeader[0] !== this.#issueHeaderInput.value) {
+      this.#renderer.issueHeader[0] = this.#issueHeaderInput.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #limitationsHeaderI18n1Input;
+  /** @type { HTMLInputElement } */ #issueHeaderI18n1Input;
   /** @param { HTMLInputElement } input */
-  set limitationsHeaderI18n1Input(input) {
-    this.#limitationsHeaderI18n1Input = input;
-    this.#limitationsHeaderI18n1Input.value = this.#renderer.limitationsHeader[1];
-    this.#limitationsHeaderI18n1Input.setAttribute("placeholder", this.#renderer.limitationsHeader[1]);
-    this.#limitationsHeaderI18n1Input.addEventListener("input", this, false);
-    this.#limitationsHeaderI18n1Input.addEventListener("change", this, false);
+  set issueHeaderI18n1Input(input) {
+    this.#issueHeaderI18n1Input = input;
+    this.#issueHeaderI18n1Input.value = this.#renderer.issueHeader[1];
+    this.#issueHeaderI18n1Input.setAttribute("placeholder", this.#renderer.issueHeader[1]);
+    this.#issueHeaderI18n1Input.addEventListener("input", this, false);
+    this.#issueHeaderI18n1Input.addEventListener("change", this, false);
   }
-  onLimitationsHeaderI18n1InputChange() {
-    if (this.#renderer.limitationsHeader[1] !== this.#limitationsHeaderI18n1Input.value) {
-      this.#renderer.limitationsHeader[1] = this.#limitationsHeaderI18n1Input.value;
+  onIssueHeaderI18n1InputChange() {
+    if (this.#renderer.issueHeader[1] !== this.#issueHeaderI18n1Input.value) {
+      this.#renderer.issueHeader[1] = this.#issueHeaderI18n1Input.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #limitationsHeaderI18n2Input;
+  /** @type { HTMLInputElement } */ #issueHeaderI18n2Input;
   /** @param { HTMLInputElement } input */
-  set limitationsHeaderI18n2Input(input) {
-    this.#limitationsHeaderI18n2Input = input;
-    this.#limitationsHeaderI18n2Input.value = this.#renderer.limitationsHeader[2];
-    this.#limitationsHeaderI18n2Input.setAttribute("placeholder", this.#renderer.limitationsHeader[2]);
-    this.#limitationsHeaderI18n2Input.addEventListener("input", this, false);
-    this.#limitationsHeaderI18n2Input.addEventListener("change", this, false);
+  set issueHeaderI18n2Input(input) {
+    this.#issueHeaderI18n2Input = input;
+    this.#issueHeaderI18n2Input.value = this.#renderer.issueHeader[2];
+    this.#issueHeaderI18n2Input.setAttribute("placeholder", this.#renderer.issueHeader[2]);
+    this.#issueHeaderI18n2Input.addEventListener("input", this, false);
+    this.#issueHeaderI18n2Input.addEventListener("change", this, false);
   }
-  onLimitationsHeaderI18n2InputChange() {
-    if (this.#renderer.limitationsHeader[2] !== this.#limitationsHeaderI18n2Input.value) {
-      this.#renderer.limitationsHeader[2] = this.#limitationsHeaderI18n2Input.value;
+  onIssueHeaderI18n2InputChange() {
+    if (this.#renderer.issueHeader[2] !== this.#issueHeaderI18n2Input.value) {
+      this.#renderer.issueHeader[2] = this.#issueHeaderI18n2Input.value;
       this.#generateCardBack();
     }
   }
@@ -1293,10 +1303,11 @@ class CrewLicenseViewModel {
       "dateOfExpiration",
       "nationalityCode",
       "fullName",
-      "authority",
-      "privilege",
-      "ratings",
-      "limitations",
+      "employer",
+      "occupation",
+      "declaration",
+      "dateOfIssue",
+      "placeOfIssue",
       "url",
       "mrzInQRCode",
       "optionalData",
@@ -1338,24 +1349,24 @@ class CrewLicenseViewModel {
       "dateOfBirthHeader",
       "dateOfBirthHeaderI18n1",
       "dateOfBirthHeaderI18n2",
-      "authorityHeader",
-      "authorityHeaderI18n1",
-      "authorityHeaderI18n2",
-      "privilegeHeader",
-      "privilegeHeaderI18n1",
-      "privilegeHeaderI18n2",
+      "employerHeader",
+      "employerHeaderI18n1",
+      "employerHeaderI18n2",
+      "occupationHeader",
+      "occupationHeaderI18n1",
+      "occupationHeaderI18n2",
       "numberHeader",
       "numberHeaderI18n1",
       "numberHeaderI18n2",
       "dateOfExpirationHeader",
       "dateOfExpirationHeaderI18n1",
       "dateOfExpirationHeaderI18n2",
-      "ratingsHeader",
-      "ratingsHeaderI18n1",
-      "ratingsHeaderI18n2",
-      "limitationsHeader",
-      "limitationsHeaderI18n1",
-      "limitationsHeaderI18n2",
+      "declarationHeader",
+      "declarationHeaderI18n1",
+      "declarationHeaderI18n2",
+      "issueHeader",
+      "issueHeaderI18n1",
+      "issueHeaderI18n2",
       "showGuides"
     ];
     for (const elementID of inputFields) {
@@ -1417,4 +1428,4 @@ class CrewLicenseViewModel {
   }
 }
 
-export { CrewLicenseViewModel }
+export { CrewCertificateViewModel }
