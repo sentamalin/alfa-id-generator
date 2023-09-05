@@ -344,7 +344,7 @@ class CrewCertificateViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture = await CrewCertificateViewModel.#getFileData(this.#pictureInput.files[0]);
+      this.#model.picture = await this.constructor.#getFileData(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -381,7 +381,7 @@ class CrewCertificateViewModel {
   }
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
-      this.#model.signature = await CrewCertificateViewModel.#getFileData(this.#signatureFileInput.files[0]);
+      this.#model.signature = await this.constructor.#getFileData(this.#signatureFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -396,7 +396,7 @@ class CrewCertificateViewModel {
   }
   async onSignatureTextInputChange() {
     const blob = await CrewCertificateRenderer.generateSignatureFromText(this.#signatureTextInput.value);
-    const dataURL = await CrewCertificateViewModel.#getFileData(blob);
+    const dataURL = await this.constructor.#getFileData(blob);
     if (this.#model.signature !== dataURL) {
       this.#model.signature = dataURL;
       this.#generateCardFront();
@@ -516,7 +516,7 @@ class CrewCertificateViewModel {
   }
   async onFrontBackgroundImageFileInputChange() {
     if (this.#frontBackgroundImageFileInput.files[0]) {
-      this.#renderer.frontBackgroundImage = await CrewCertificateViewModel.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
+      this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -569,7 +569,7 @@ class CrewCertificateViewModel {
   }
   async onBackBackgroundImageFileInputChange() {
     if (this.#backBackgroundImageFileInput.files[0]) {
-      this.#renderer.backBackgroundImage = await CrewCertificateViewModel.#getFileData(this.#backBackgroundImageFileInput.files[0]);
+      this.#renderer.backBackgroundImage = await this.constructor.#getFileData(this.#backBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -622,7 +622,7 @@ class CrewCertificateViewModel {
   }
   async onMrzBackgroundImageFileInputChange() {
     if (this.#mrzBackgroundImageFileInput.files[0]) {
-      this.#renderer.mrzBackgroundImage = await CrewCertificateViewModel.#getFileData(this.#mrzBackgroundImageFileInput.files[0]);
+      this.#renderer.mrzBackgroundImage = await this.constructor.#getFileData(this.#mrzBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -709,7 +709,7 @@ class CrewCertificateViewModel {
   }
   async onLogoFileInputChange() {
     if (this.#logoFileInput.files[0]) {
-      this.#renderer.logo = await CrewCertificateViewModel.#getFileData(this.#logoFileInput.files[0]);
+      this.#renderer.logo = await this.constructor.#getFileData(this.#logoFileInput.files[0]);
       this.#generateCard();
     }
   }
@@ -744,7 +744,7 @@ class CrewCertificateViewModel {
   }
   async onSmallLogoFileInputChange() {
     if (this.#smallLogoFileInput.files[0]) {
-      this.#renderer.smallLogo = await CrewCertificateViewModel.#getFileData(this.#smallLogoFileInput.files[0]);
+      this.#renderer.smallLogo = await this.constructor.#getFileData(this.#smallLogoFileInput.files[0]);
       this.#generateCardBack();
     }
   }

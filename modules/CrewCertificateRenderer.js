@@ -4,8 +4,8 @@ import { QRCodeData } from "./QRCodeData.js";
 class CrewCertificateRenderer {
   #qrCode = new QRCodeData({
     generatorOpt: {
-      width: CrewCertificateRenderer.#qrCodeArea[0],
-      height: CrewCertificateRenderer.#qrCodeArea[1],
+      width: this.constructor.#qrCodeArea[0],
+      height: this.constructor.#qrCodeArea[1],
       colorDark: "#000000ff",
       colorLight: "#00000000",
       correctLevel: QRCode.CorrectLevel.H
@@ -54,463 +54,463 @@ class CrewCertificateRenderer {
   /** @param { CrewCertificate } model */
   /** @param { HTMLCanvasElement } canvas */
   async generateCardFront(model, canvas) {
-    canvas.setAttribute("width", CrewCertificateRenderer.#cardArea[0]);
-    canvas.setAttribute("height", CrewCertificateRenderer.#cardArea[1]);
+    canvas.setAttribute("width", this.constructor.#cardArea[0]);
+    canvas.setAttribute("height", this.constructor.#cardArea[1]);
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
 
     ctx.fillStyle = this.frontBackgroundColor;
     ctx.fillRect(
       0, 0,
-      CrewCertificateRenderer.#cardArea[0],
-      CrewCertificateRenderer.#cardArea[1]
+      this.constructor.#cardArea[0],
+      this.constructor.#cardArea[1]
     );
     if (this.frontBackgroundImage) {
-      const cardBackground = await CrewCertificateRenderer.#generateCanvasImg(
+      const cardBackground = await this.constructor.#generateCanvasImg(
         this.frontBackgroundImage
       );
       ctx.drawImage(
         cardBackground,
         0, 0,
-        CrewCertificateRenderer.#cardArea[0],
-        CrewCertificateRenderer.#cardArea[1]
+        this.constructor.#cardArea[0],
+        this.constructor.#cardArea[1]
       );
     }
     ctx.fillStyle = "#00003300";
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
     ctx.fillRect(
-      CrewCertificateRenderer.#photoUnderlayXY[0],
-      CrewCertificateRenderer.#photoUnderlayXY[1],
-      CrewCertificateRenderer.#photoUnderlayArea[0],
-      CrewCertificateRenderer.#photoUnderlayArea[1]
+      this.constructor.#photoUnderlayXY[0],
+      this.constructor.#photoUnderlayXY[1],
+      this.constructor.#photoUnderlayArea[0],
+      this.constructor.#photoUnderlayArea[1]
     );
     const images = await Promise.all([
-      CrewCertificateRenderer.#generateCanvasImg(model.picture),
-      CrewCertificateRenderer.#generateCanvasImg(this.logo),
-      CrewCertificateRenderer.#generateCanvasImg(model.signature)
+      this.constructor.#generateCanvasImg(model.picture),
+      this.constructor.#generateCanvasImg(this.logo),
+      this.constructor.#generateCanvasImg(model.signature)
     ]);
-    CrewCertificateRenderer.#fillAreaWithImg(
+    this.constructor.#fillAreaWithImg(
       images[0], ctx,
-      CrewCertificateRenderer.#photoXY[0],
-      CrewCertificateRenderer.#photoXY[1],
-      CrewCertificateRenderer.#photoArea[0],
-      CrewCertificateRenderer.#photoArea[1]
+      this.constructor.#photoXY[0],
+      this.constructor.#photoXY[1],
+      this.constructor.#photoArea[0],
+      this.constructor.#photoArea[1]
     );
-    CrewCertificateRenderer.#fitImgInArea(
+    this.constructor.#fitImgInArea(
       images[1], ctx,
-      CrewCertificateRenderer.#logoFrontXY[0],
-      CrewCertificateRenderer.#logoFrontXY[1],
-      CrewCertificateRenderer.#logoArea[0],
-      CrewCertificateRenderer.#logoArea[1]
+      this.constructor.#logoFrontXY[0],
+      this.constructor.#logoFrontXY[1],
+      this.constructor.#logoArea[0],
+      this.constructor.#logoArea[1]
     );
-    CrewCertificateRenderer.#fitImgInArea(
+    this.constructor.#fitImgInArea(
       images[2], ctx,
-      CrewCertificateRenderer.#signatureXY[0],
-      CrewCertificateRenderer.#signatureXY[1],
-      CrewCertificateRenderer.#signatureArea[0],
-      CrewCertificateRenderer.#signatureArea[1],
+      this.constructor.#signatureXY[0],
+      this.constructor.#signatureXY[1],
+      this.constructor.#signatureArea[0],
+      this.constructor.#signatureArea[1],
     );
 
     ctx.fillStyle = this.headerColor;
-    ctx.font = CrewCertificateRenderer.#mainHeaderFont;
+    ctx.font = this.constructor.#mainHeaderFont;
     ctx.fillText(
       this.fullAuthority,
       Math.max(
-        CrewCertificateRenderer.#mainHeaderX -
+        this.constructor.#mainHeaderX -
           ctx.measureText(this.fullAuthority).width,
-        CrewCertificateRenderer.#frontColumns
+        this.constructor.#frontColumns
       ),
-      CrewCertificateRenderer.#mainHeaderY[0],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      this.constructor.#mainHeaderY[0],
+      this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
-    ctx.font = CrewCertificateRenderer.#documentHeaderFont;
+    ctx.font = this.constructor.#documentHeaderFont;
     let documentHeaderWidth = ctx.measureText(this.fullDocumentName).width;
     ctx.fillText(
       this.fullDocumentName,
-      CrewCertificateRenderer.#mainHeaderX - documentHeaderWidth,
-      CrewCertificateRenderer.#mainHeaderY[1]
+      this.constructor.#mainHeaderX - documentHeaderWidth,
+      this.constructor.#mainHeaderY[1]
     );
-    ctx.font = CrewCertificateRenderer.#separatorHeaderFont;
-    documentHeaderWidth += ctx.measureText(CrewCertificateRenderer.#headerSeparator).width;
+    ctx.font = this.constructor.#separatorHeaderFont;
+    documentHeaderWidth += ctx.measureText(this.constructor.#headerSeparator).width;
     ctx.fillText(
-      CrewCertificateRenderer.#headerSeparator,
-      CrewCertificateRenderer.#mainHeaderX - documentHeaderWidth,
-      CrewCertificateRenderer.#mainHeaderY[1]
+      this.constructor.#headerSeparator,
+      this.constructor.#mainHeaderX - documentHeaderWidth,
+      this.constructor.#mainHeaderY[1]
     );
-    ctx.font = CrewCertificateRenderer.#documentHeaderFont;
+    ctx.font = this.constructor.#documentHeaderFont;
     documentHeaderWidth += ctx.measureText(`${model.typeCodeVIZ}-${model.authorityCodeVIZ}`).width;
     ctx.fillText(
       `${model.typeCodeVIZ}-${model.authorityCodeVIZ}`,
-      CrewCertificateRenderer.#mainHeaderX - documentHeaderWidth,
-      CrewCertificateRenderer.#mainHeaderY[1]
+      this.constructor.#mainHeaderX - documentHeaderWidth,
+      this.constructor.#mainHeaderY[1]
     );
 
     ctx.fillStyle = this.headerColor;
-    ctx.font = CrewCertificateRenderer.#headerFont;
+    ctx.font = this.constructor.#headerFont;
     ctx.fillText(
       this.nameHeader[0],
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[0]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[0]
     );
     ctx.fillText(
       this.genderHeader[0],
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[2]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[2]
     );
     ctx.fillText(
       this.nationalityHeader[0],
-      CrewCertificateRenderer.#frontRow2Columns[0],
-      CrewCertificateRenderer.#frontRows[2]
+      this.constructor.#frontRow2Columns[0],
+      this.constructor.#frontRows[2]
     );
     ctx.fillText(
       this.dateOfBirthHeader[0],
-      CrewCertificateRenderer.#frontRow2Columns[1],
-      CrewCertificateRenderer.#frontRows[2]
+      this.constructor.#frontRow2Columns[1],
+      this.constructor.#frontRows[2]
     );
     ctx.fillText(
       this.employerHeader[0],
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[6]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[6]
     );
     ctx.fillText(
       this.occupationHeader[0],
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[8]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[8]
     );
     ctx.fillText(
       this.numberHeader[0],
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[10]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[10]
     );
     ctx.fillText(
       this.dateOfExpirationHeader[0],
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[12]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[12]
     );
-    const nameWidth = CrewCertificateRenderer.#frontColumns +
+    const nameWidth = this.constructor.#frontColumns +
       ctx.measureText(this.nameHeader[0]).width;
-    const genderWidth = CrewCertificateRenderer.#frontColumns +
+    const genderWidth = this.constructor.#frontColumns +
       ctx.measureText(this.genderHeader[0]).width;
-    const nationalityWidth = CrewCertificateRenderer.#frontRow2Columns[0] +
+    const nationalityWidth = this.constructor.#frontRow2Columns[0] +
       ctx.measureText(this.nationalityHeader[0]).width;
-    const dateOfBirthWidth = CrewCertificateRenderer.#frontRow2Columns[1] +
+    const dateOfBirthWidth = this.constructor.#frontRow2Columns[1] +
       ctx.measureText(this.dateOfBirthHeader[0]).width;
-    const employerWidth = CrewCertificateRenderer.#frontColumns +
+    const employerWidth = this.constructor.#frontColumns +
       ctx.measureText(this.employerHeader[0]).width;
-    const occupationWidth = CrewCertificateRenderer.#frontColumns +
+    const occupationWidth = this.constructor.#frontColumns +
       ctx.measureText(this.occupationHeader[0]).width;
-    const numberWidth = CrewCertificateRenderer.#frontColumns +
+    const numberWidth = this.constructor.#frontColumns +
       ctx.measureText(this.numberHeader[0]).width;
-    const dateOfExpirationWidth = CrewCertificateRenderer.#frontColumns +
+    const dateOfExpirationWidth = this.constructor.#frontColumns +
       ctx.measureText(this.dateOfExpirationHeader[0]).width;
     
-    ctx.font = CrewCertificateRenderer.#intlFont;
+    ctx.font = this.constructor.#intlFont;
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
       nameWidth,
-      CrewCertificateRenderer.#frontRows[0]
+      this.constructor.#frontRows[0]
     );
-    ctx.fillText("/", genderWidth, CrewCertificateRenderer.#frontRows[2]);
+    ctx.fillText("/", genderWidth, this.constructor.#frontRows[2]);
     ctx.fillText(
       `${this.genderHeader[1]}/`,
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[3]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[3]
     );
     ctx.fillText(
       this.genderHeader[2],
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[4]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[4]
     );
-    ctx.fillText("/", nationalityWidth, CrewCertificateRenderer.#frontRows[2]);
+    ctx.fillText("/", nationalityWidth, this.constructor.#frontRows[2]);
     ctx.fillText(
       `${this.nationalityHeader[1]}/`,
-      CrewCertificateRenderer.#frontRow2Columns[0],
-      CrewCertificateRenderer.#frontRows[3]
+      this.constructor.#frontRow2Columns[0],
+      this.constructor.#frontRows[3]
     );
     ctx.fillText(
       this.nationalityHeader[2],
-      CrewCertificateRenderer.#frontRow2Columns[0],
-      CrewCertificateRenderer.#frontRows[4]
+      this.constructor.#frontRow2Columns[0],
+      this.constructor.#frontRows[4]
     );
-    ctx.fillText("/", dateOfBirthWidth, CrewCertificateRenderer.#frontRows[2]);
+    ctx.fillText("/", dateOfBirthWidth, this.constructor.#frontRows[2]);
     ctx.fillText(
       `${this.dateOfBirthHeader[1]}/`,
-      CrewCertificateRenderer.#frontRow2Columns[1],
-      CrewCertificateRenderer.#frontRows[3]
+      this.constructor.#frontRow2Columns[1],
+      this.constructor.#frontRows[3]
     );
     ctx.fillText(
       this.dateOfBirthHeader[2],
-      CrewCertificateRenderer.#frontRow2Columns[1],
-      CrewCertificateRenderer.#frontRows[4]
+      this.constructor.#frontRow2Columns[1],
+      this.constructor.#frontRows[4]
     );
     ctx.fillText(
       `/ ${this.employerHeader[1]}/ ${this.employerHeader[2]}`,
       employerWidth,
-      CrewCertificateRenderer.#frontRows[6]
+      this.constructor.#frontRows[6]
     );
     ctx.fillText(
       `/ ${this.occupationHeader[1]}/ ${this.occupationHeader[2]}`,
       occupationWidth,
-      CrewCertificateRenderer.#frontRows[8]
+      this.constructor.#frontRows[8]
     );
     ctx.fillText(
       `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
       numberWidth,
-      CrewCertificateRenderer.#frontRows[10]
+      this.constructor.#frontRows[10]
     );
     ctx.fillText(
       `/ ${this.dateOfExpirationHeader[1]}/ ${this.dateOfExpirationHeader[2]}`,
       dateOfExpirationWidth,
-      CrewCertificateRenderer.#frontRows[12]
+      this.constructor.#frontRows[12]
     );
 
     ctx.fillStyle = this.textColor;
-    ctx.font = CrewCertificateRenderer.#dataFont;
+    ctx.font = this.constructor.#dataFont;
     ctx.fillText(
       model.fullNameVIZ,
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[1],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[1],
+      this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
       model.genderMarkerVIZ,
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[5]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[5]
     );
     ctx.fillText(
       model.nationalityCodeVIZ,
-      CrewCertificateRenderer.#frontRow2Columns[0],
-      CrewCertificateRenderer.#frontRows[5]
+      this.constructor.#frontRow2Columns[0],
+      this.constructor.#frontRows[5]
     );
     ctx.fillText(
       model.dateOfBirthVIZ,
-      CrewCertificateRenderer.#frontRow2Columns[1],
-      CrewCertificateRenderer.#frontRows[5]
+      this.constructor.#frontRow2Columns[1],
+      this.constructor.#frontRows[5]
     );
     ctx.fillText(
       model.employerVIZ,
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[7],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[7],
+      this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
       model.occupationVIZ,
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[9],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[9],
+      this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
       model.numberVIZ,
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[11]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[11]
     );
     ctx.fillText(
       model.dateOfExpirationVIZ,
-      CrewCertificateRenderer.#frontColumns,
-      CrewCertificateRenderer.#frontRows[13]
+      this.constructor.#frontColumns,
+      this.constructor.#frontRows[13]
     );
 
     if (this.showGuides) {
-      CrewCertificateRenderer.#drawBleedAndSafeLines(ctx);
+      this.constructor.#drawBleedAndSafeLines(ctx);
     }
   }
 
   /** @param { CrewCertificate } model */
   /** @param { HTMLCanvasElement } canvas */
   async generateCardBack(model, canvas) {
-    canvas.setAttribute("width", CrewCertificateRenderer.#cardArea[0]);
-    canvas.setAttribute("height", CrewCertificateRenderer.#cardArea[1]);
+    canvas.setAttribute("width", this.constructor.#cardArea[0]);
+    canvas.setAttribute("height", this.constructor.#cardArea[1]);
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
 
     ctx.fillStyle = this.backBackgroundColor;
     ctx.fillRect(
       0, 0,
-      CrewCertificateRenderer.#cardArea[0],
-      CrewCertificateRenderer.#cardArea[1]
+      this.constructor.#cardArea[0],
+      this.constructor.#cardArea[1]
     );
     if (this.backBackgroundImage) {
-      const cardBackground = await CrewCertificateRenderer.#generateCanvasImg(
+      const cardBackground = await this.constructor.#generateCanvasImg(
         this.backBackgroundImage
       );
       ctx.drawImage(
         cardBackground,
         0, 0,
-        CrewCertificateRenderer.#cardArea[0],
-        CrewCertificateRenderer.#cardArea[1]
+        this.constructor.#cardArea[0],
+        this.constructor.#cardArea[1]
       );
     }
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
     ctx.fillRect(
-      CrewCertificateRenderer.#logoUnderlayXY[0],
-      CrewCertificateRenderer.#logoUnderlayXY[1],
-      CrewCertificateRenderer.#logoUnderlayArea[0],
-      CrewCertificateRenderer.#logoUnderlayArea[1]
+      this.constructor.#logoUnderlayXY[0],
+      this.constructor.#logoUnderlayXY[1],
+      this.constructor.#logoUnderlayArea[0],
+      this.constructor.#logoUnderlayArea[1]
     );
     ctx.fillStyle = this.mrzBackgroundColor;
     ctx.fillRect(
-      CrewCertificateRenderer.#mrzUnderlayXY[0],
-      CrewCertificateRenderer.#mrzUnderlayXY[1],
-      CrewCertificateRenderer.#mrzUnderlayArea[0],
-      CrewCertificateRenderer.#mrzUnderlayArea[1]
+      this.constructor.#mrzUnderlayXY[0],
+      this.constructor.#mrzUnderlayXY[1],
+      this.constructor.#mrzUnderlayArea[0],
+      this.constructor.#mrzUnderlayArea[1]
     );
     if (this.mrzBackgroundImage) {
-      const mrzBackground = await CrewCertificateRenderer.#generateCanvasImg(
+      const mrzBackground = await this.constructor.#generateCanvasImg(
         this.mrzBackgroundImage
       );
       ctx.drawImage(
         mrzBackground,
-        CrewCertificateRenderer.#mrzUnderlayXY[0],
-        CrewCertificateRenderer.#mrzUnderlayXY[1],
-        CrewCertificateRenderer.#mrzUnderlayArea[0],
-        CrewCertificateRenderer.#mrzUnderlayArea[1]
+        this.constructor.#mrzUnderlayXY[0],
+        this.constructor.#mrzUnderlayXY[1],
+        this.constructor.#mrzUnderlayArea[0],
+        this.constructor.#mrzUnderlayArea[1]
       );
     }
     ctx.fillStyle = this.#numberUnderlayColorWithAlpha;
     ctx.fillRect(
-      CrewCertificateRenderer.#numberUnderlayXY[0],
-      CrewCertificateRenderer.#numberUnderlayXY[1],
-      CrewCertificateRenderer.#numberUnderlayArea[0],
-      CrewCertificateRenderer.#numberUnderlayArea[1]
+      this.constructor.#numberUnderlayXY[0],
+      this.constructor.#numberUnderlayXY[1],
+      this.constructor.#numberUnderlayArea[0],
+      this.constructor.#numberUnderlayArea[1]
     );
     if (this.mrzInQRCode) {
       this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
     }
     else { this.#qrCode.qrCode = model.url; }
     const images = await Promise.all([
-      CrewCertificateRenderer.#generateCanvasImg(this.#qrCode.qrCode),
-      CrewCertificateRenderer.#generateCanvasImg(this.logo),
-      CrewCertificateRenderer.#generateCanvasImg(this.smallLogo)
+      this.constructor.#generateCanvasImg(this.#qrCode.qrCode),
+      this.constructor.#generateCanvasImg(this.logo),
+      this.constructor.#generateCanvasImg(this.smallLogo)
     ]);
     ctx.drawImage(
       images[0],
-      CrewCertificateRenderer.#qrCodeXY[0],
-      CrewCertificateRenderer.#qrCodeXY[1],
-      CrewCertificateRenderer.#qrCodeArea[0],
-      CrewCertificateRenderer.#qrCodeArea[1]
+      this.constructor.#qrCodeXY[0],
+      this.constructor.#qrCodeXY[1],
+      this.constructor.#qrCodeArea[0],
+      this.constructor.#qrCodeArea[1]
     );
-    CrewCertificateRenderer.#fitImgInArea(
+    this.constructor.#fitImgInArea(
       images[1], ctx,
-      CrewCertificateRenderer.#logoBackXY[0],
-      CrewCertificateRenderer.#logoBackXY[1],
-      CrewCertificateRenderer.#logoArea[0],
-      CrewCertificateRenderer.#logoArea[1]
+      this.constructor.#logoBackXY[0],
+      this.constructor.#logoBackXY[1],
+      this.constructor.#logoArea[0],
+      this.constructor.#logoArea[1]
     );
     ctx.drawImage(
       images[2],
-      CrewCertificateRenderer.#smallLogoXY[0],
-      CrewCertificateRenderer.#smallLogoXY[1],
-      CrewCertificateRenderer.#smallLogoArea[0],
-      CrewCertificateRenderer.#smallLogoArea[1]
+      this.constructor.#smallLogoXY[0],
+      this.constructor.#smallLogoXY[1],
+      this.constructor.#smallLogoArea[0],
+      this.constructor.#smallLogoArea[1]
     );
     ctx.fillStyle = this.textColor;
-    ctx.font = CrewCertificateRenderer.#headerFont;
+    ctx.font = this.constructor.#headerFont;
     ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}${CrewCertificateRenderer.#headerSeparator}${CrewCertificateRenderer.#documentSize}`,
-      CrewCertificateRenderer.#shortHeaderXY[0],
-      CrewCertificateRenderer.#shortHeaderXY[1],
-      CrewCertificateRenderer.#smallLogoArea[0]
+      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
+      this.constructor.#shortHeaderXY[0],
+      this.constructor.#shortHeaderXY[1],
+      this.constructor.#smallLogoArea[0]
     );
 
     ctx.fillStyle = this.headerColor;
-    ctx.font = CrewCertificateRenderer.#headerFont;
+    ctx.font = this.constructor.#headerFont;
     ctx.fillText(
       this.declarationHeader[0],
-      CrewCertificateRenderer.#backColumns,
-      CrewCertificateRenderer.#backRows[0]
+      this.constructor.#backColumns,
+      this.constructor.#backRows[0]
     );
     ctx.fillText(
       this.issueHeader[0],
-      CrewCertificateRenderer.#backColumns,
-      CrewCertificateRenderer.#backRows[3]
+      this.constructor.#backColumns,
+      this.constructor.#backRows[3]
     );
-    const declarationWidth = CrewCertificateRenderer.#backColumns +
+    const declarationWidth = this.constructor.#backColumns +
       ctx.measureText(this.declarationHeader[0]).width;
-    const issueWidth = CrewCertificateRenderer.#backColumns +
+    const issueWidth = this.constructor.#backColumns +
       ctx.measureText(this.issueHeader[0]).width;
 
-    ctx.font = CrewCertificateRenderer.#intlFont;
+    ctx.font = this.constructor.#intlFont;
     ctx.fillText(
       `/ ${this.declarationHeader[1]}/`,
       declarationWidth,
-      CrewCertificateRenderer.#backRows[0]
+      this.constructor.#backRows[0]
     );
     ctx.fillText(
       this.declarationHeader[2],
-      CrewCertificateRenderer.#backColumns,
-      CrewCertificateRenderer.#backRows[1]
+      this.constructor.#backColumns,
+      this.constructor.#backRows[1]
     );
-    ctx.fillText("/", issueWidth, CrewCertificateRenderer.#backRows[3]);
+    ctx.fillText("/", issueWidth, this.constructor.#backRows[3]);
     ctx.fillText(
       `${this.issueHeader[1]}/`,
-      CrewCertificateRenderer.#backColumns,
-      CrewCertificateRenderer.#backRows[4]
+      this.constructor.#backColumns,
+      this.constructor.#backRows[4]
     );
     ctx.fillText(
       this.issueHeader[2],
-      CrewCertificateRenderer.#backColumns,
-      CrewCertificateRenderer.#backRows[5]
+      this.constructor.#backColumns,
+      this.constructor.#backRows[5]
     );
 
     ctx.fillStyle = this.textColor;
-    ctx.font = CrewCertificateRenderer.#dataFont;
+    ctx.font = this.constructor.#dataFont;
     const splitString = model.declarationVIZ.split(/\r?\n/);
     for (let i = 0; i < splitString.length; i += 1) {
       ctx.fillText(
         splitString[i],
-        CrewCertificateRenderer.#backColumns,
-        CrewCertificateRenderer.#backRows[2] + (i * 33)
+        this.constructor.#backColumns,
+        this.constructor.#backRows[2] + (i * 33)
       );
     }
     ctx.fillText(
       `${model.dateOfIssueVIZ}—${model.placeOfIssueVIZ}`,
-      CrewCertificateRenderer.#backColumns,
-      CrewCertificateRenderer.#backRows[6]
+      this.constructor.#backColumns,
+      this.constructor.#backRows[6]
     );
     ctx.fillText(
       model.numberVIZ,
-      CrewCertificateRenderer.#backNumberXY[0],
-      CrewCertificateRenderer.#backNumberXY[1],
-      1004 - CrewCertificateRenderer.#backNumberXY[0]
+      this.constructor.#backNumberXY[0],
+      this.constructor.#backNumberXY[1],
+      1004 - this.constructor.#backNumberXY[0]
     );
 
     ctx.fillStyle = this.mrzColor;
-    ctx.font = CrewCertificateRenderer.#mrzFont;
+    ctx.font = this.constructor.#mrzFont;
     for (let i = 0; i < model.mrzLine1.length; i += 1) {
       ctx.fillText(
         model.mrzLine1[i],
-        CrewCertificateRenderer.#mrzX + (i * CrewCertificateRenderer.#mrzSpacing),
-        CrewCertificateRenderer.#mrzY[0]
+        this.constructor.#mrzX + (i * this.constructor.#mrzSpacing),
+        this.constructor.#mrzY[0]
       );
       ctx.fillText(
         model.mrzLine2[i],
-        CrewCertificateRenderer.#mrzX + (i * CrewCertificateRenderer.#mrzSpacing),
-        CrewCertificateRenderer.#mrzY[1]
+        this.constructor.#mrzX + (i * this.constructor.#mrzSpacing),
+        this.constructor.#mrzY[1]
       );
       ctx.fillText(
         model.mrzLine3[i],
-        CrewCertificateRenderer.#mrzX + (i * CrewCertificateRenderer.#mrzSpacing),
-        CrewCertificateRenderer.#mrzY[2]
+        this.constructor.#mrzX + (i * this.constructor.#mrzSpacing),
+        this.constructor.#mrzY[2]
       );
     }
 
     if (this.showGuides) {
-      CrewCertificateRenderer.#drawBleedAndSafeLines(ctx);
+      this.constructor.#drawBleedAndSafeLines(ctx);
     }
   }
 
   async loadCanvasFonts() {
-    this.fonts.add(CrewCertificateRenderer.#mrzFontFace);
-    this.fonts.add(CrewCertificateRenderer.#vizFontFace);
-    this.fonts.add(CrewCertificateRenderer.#vizBoldFontFace);
-    this.fonts.add(CrewCertificateRenderer.#vizItalicFontFace);
-    this.fonts.add(CrewCertificateRenderer.#signatureFontFace);
+    this.fonts.add(this.constructor.#mrzFontFace);
+    this.fonts.add(this.constructor.#vizFontFace);
+    this.fonts.add(this.constructor.#vizBoldFontFace);
+    this.fonts.add(this.constructor.#vizItalicFontFace);
+    this.fonts.add(this.constructor.#signatureFontFace);
     await Promise.all([
-      CrewCertificateRenderer.#mrzFontFace.load(),
-      CrewCertificateRenderer.#vizFontFace.load(),
-      CrewCertificateRenderer.#vizBoldFontFace.load(),
-      CrewCertificateRenderer.#vizItalicFontFace.load(),
-      CrewCertificateRenderer.#signatureFontFace.load()
+      this.constructor.#mrzFontFace.load(),
+      this.constructor.#vizFontFace.load(),
+      this.constructor.#vizBoldFontFace.load(),
+      this.constructor.#vizItalicFontFace.load(),
+      this.constructor.#signatureFontFace.load()
     ]);
   }
 
@@ -543,28 +543,28 @@ class CrewCertificateRenderer {
     "url('/fonts/Yellowtail-Regular.woff') format('woff')"
   );
   static get #mainHeaderFont() {
-    return `bold 24px ${CrewCertificateRenderer.#vizFontFace.family}`;
+    return `bold 24px ${this.#vizFontFace.family}`;
   }
   static get #documentHeaderFont() {
-    return `18px ${CrewCertificateRenderer.#vizFontFace.family}`;
+    return `18px ${this.#vizFontFace.family}`;
   }
   static get #separatorHeaderFont() {
-    return `bold 18px ${CrewCertificateRenderer.#vizFontFace.family}`;
+    return `bold 18px ${this.#vizFontFace.family}`;
   }
   static get #headerFont() {
-    return `bold 18px ${CrewCertificateRenderer.#vizFontFace.family}`;
+    return `bold 18px ${this.#vizFontFace.family}`;
   }
   static get #intlFont() {
-    return `italic 18px ${CrewCertificateRenderer.#vizFontFace.family}`;
+    return `italic 18px ${this.#vizFontFace.family}`;
   }
   static get #dataFont() {
-    return `24px ${CrewCertificateRenderer.#vizFontFace.family}`;
+    return `24px ${this.#vizFontFace.family}`;
   }
   static get #mrzFont() {
-    return `44px ${CrewCertificateRenderer.#mrzFontFace.family}`;
+    return `44px ${this.#mrzFontFace.family}`;
   }
   static get #signatureFont() {
-    return `61px ${CrewCertificateRenderer.#signatureFontFace.family}`;
+    return `61px ${this.#signatureFontFace.family}`;
   }
 
   // Coordinates used in card generation (static)
@@ -679,53 +679,53 @@ class CrewCertificateRenderer {
     const bleed = 16;
     ctx.beginPath();
     ctx.moveTo(0, bleed);
-    ctx.lineTo(CrewCertificateRenderer.#cardArea[0], bleed);
+    ctx.lineTo(this.#cardArea[0], bleed);
     ctx.closePath(); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(0, CrewCertificateRenderer.#cardArea[1] - bleed);
-    ctx.lineTo(CrewCertificateRenderer.#cardArea[0], CrewCertificateRenderer.#cardArea[1] - bleed);
+    ctx.moveTo(0, this.#cardArea[1] - bleed);
+    ctx.lineTo(this.#cardArea[0], this.#cardArea[1] - bleed);
     ctx.closePath(); ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(bleed, 0);
-    ctx.lineTo(bleed, CrewCertificateRenderer.#cardArea[1]);
+    ctx.lineTo(bleed, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(CrewCertificateRenderer.#cardArea[0] - bleed, 0);
-    ctx.lineTo(CrewCertificateRenderer.#cardArea[0] - bleed, CrewCertificateRenderer.#cardArea[1]);
+    ctx.moveTo(this.#cardArea[0] - bleed, 0);
+    ctx.lineTo(this.#cardArea[0] - bleed, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
 
     ctx.fillStyle = "#0000ff";
     const safe = 48;
     ctx.beginPath();
     ctx.moveTo(0, safe);
-    ctx.lineTo(CrewCertificateRenderer.#cardArea[0], safe);
+    ctx.lineTo(this.#cardArea[0], safe);
     ctx.closePath(); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(0, CrewCertificateRenderer.#cardArea[1] - safe);
-    ctx.lineTo(CrewCertificateRenderer.#cardArea[0], CrewCertificateRenderer.#cardArea[1] - safe);
+    ctx.moveTo(0, this.#cardArea[1] - safe);
+    ctx.lineTo(this.#cardArea[0], this.#cardArea[1] - safe);
     ctx.closePath(); ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(safe, 0);
-    ctx.lineTo(safe, CrewCertificateRenderer.#cardArea[1]);
+    ctx.lineTo(safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(CrewCertificateRenderer.#cardArea[0] - safe, 0);
-    ctx.lineTo(CrewCertificateRenderer.#cardArea[0] - safe, CrewCertificateRenderer.#cardArea[1]);
+    ctx.moveTo(this.#cardArea[0] - safe, 0);
+    ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
   }
   static async generateSignatureFromText(signature) {
     const canvas = new OffscreenCanvas(
-      CrewCertificateRenderer.#signatureArea[0],
-      CrewCertificateRenderer.#signatureArea[1]
+      this.#signatureArea[0],
+      this.#signatureArea[1]
     );
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = this.textColor;
-    ctx.font = CrewCertificateRenderer.#signatureFont;
+    ctx.font = this.#signatureFont;
     ctx.textBaseline = "top";
     const centerShift = (canvas.width - ctx.measureText(signature).width) / 2;
     ctx.fillText(
       signature, Math.max(centerShift, 0), 8,
-      CrewCertificateRenderer.#signatureArea[0] - 6
+      this.#signatureArea[0] - 6
     );
     return await canvas.convertToBlob();
   }
