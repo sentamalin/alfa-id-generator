@@ -386,7 +386,7 @@ class CrewLicenseViewModel {
   }
   async onSignatureTextInputChange() {
     const blob = await CrewLicenseRenderer.generateSignatureFromText(this.#signatureTextInput.value);
-    const dataURL = await CrewLicenseRenderer.#getFileData(blob);
+    const dataURL = await CrewLicenseViewModel.#getFileData(blob);
     if (this.#model.signature !== dataURL) {
       this.#model.signature = dataURL;
       this.#generateCardFront();
