@@ -59,7 +59,7 @@ class CrewID {
       this.optionalDataMRZ.slice(15);
     return uncheckedLine +
       TravelDocument.generateMRZCheckDigit(
-        this.mrzLineOne.slice(5) +
+        this.mrzLine1.slice(5) +
         uncheckedLine.slice(0,7) +
         uncheckedLine.slice(8,15) +
         uncheckedLine.slice(18)
