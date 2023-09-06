@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 class TravelDocument {
   /* This defines common fields, properties, and methods available to all
      ICAO 9303-compliant travel documents with machine-readable zones (MRZs). */

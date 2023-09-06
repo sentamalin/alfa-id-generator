@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 class QRCodeData {
   #generator;
 
@@ -12,7 +17,6 @@ class QRCodeData {
   // Constructor
   constructor(opt) {
     if (opt) {
-      if (opt.qrCode) { this.qrCode = opt.qrCode; }
       if (opt.generatorOpt) {
         this.#generator = new QRCode(document.createElement("div"), {
           width: opt.generatorOpt.width,
@@ -31,6 +35,7 @@ class QRCodeData {
           correctLevel: QRCode.CorrectLevel.H
         });
       }
+      if (opt.qrCode) { this.qrCode = opt.qrCode; }
     }
   }
 }

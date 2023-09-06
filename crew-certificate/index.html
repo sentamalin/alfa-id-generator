@@ -1,8 +1,12 @@
+<!--
+  SPDX-FileCopyrightText: Don Geronimo <https://sentamal.in/>
+  SPDX-License-Identifier: CC0-1.0
+-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" type="text/css" href="./index.css" />
     <script src="/modules/qrcode.js/qrcode.min.js"></script>
     <script type="module" src="./index.js"></script>
@@ -11,11 +15,11 @@
   <body>
     <main>
       <h1>Crew Certificate Generator</h1>
-      <section class="generated-card">
+      <div class="generated-card">
         <p><canvas id="cardFront"></canvas></p>
         <p><canvas id="cardBack"></canvas></p>
         <p><a id="downloadFront">Download Front</a> <a id="downloadBack">Download Back</a></p>
-      </section>
+      </div>
       <section class="customizationForm">
         <h2>Personalized Textual Data</h2>
         <label for="typeCode">Document Type</label>

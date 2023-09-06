@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 import { CrewLicense } from "/modules/CrewLicense.js";
 import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
 
