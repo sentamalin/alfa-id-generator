@@ -41,18 +41,14 @@ class IDBadgeRenderer {
   smallLogo; // Defines the small authority logo
   mrzInQRCode;
   showGuides;
-  fullAuthority;
-  fullDocumentName;
+  additionalElements;
+  badgeType;
+  badgeSubtype;
   nameHeader;
-  genderHeader;
-  nationalityHeader;
-  dateOfBirthHeader;
   employerHeader;
-  occupationHeader;
   numberHeader;
   dateOfExpirationHeader;
-  declarationHeader;
-  issueHeader;
+  additionalElementsHeader;
   fonts;
 
   // Public Methods
@@ -811,18 +807,14 @@ class IDBadgeRenderer {
       if (opt.smallLogo) { this.smallLogo = opt.smallLogo; }
       if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
-      if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
-      if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }
+      if (opt.additionalElements !== undefined) { this.additionalElements = opt.additionalElements; }
+      if (opt.badgeType) { this.badgeType = opt.badgeType; }
+      if (opt.badgeSubtype) { this.badgeSubtype = opt.badgeSubtype; }
       if (opt.nameHeader) { this.nameHeader = opt.nameHeader; }
-      if (opt.genderHeader) { this.genderHeader = opt.genderHeader; }
-      if (opt.nationalityHeader) { this.nationalityHeader = opt.nationalityHeader; }
-      if (opt.dateOfBirthHeader) { this.dateOfBirthHeader = opt.dateOfBirthHeader; }
       if (opt.employerHeader) { this.employerHeader = opt.employerHeader; }
-      if (opt.occupationHeader) { this.occupationHeader = opt.occupationHeader; }
       if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
       if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
-      if (opt.declarationHeader) { this.declarationHeader = opt.declarationHeader; }
-      if (opt.issueHeader) { this.issueHeader = opt.issueHeader; }
+      if (opt.additionalElementsHeader) { this.additionalElementsHeader = opt.additionalElementsHeader; }
     }
   }
 }
