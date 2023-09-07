@@ -55,7 +55,7 @@ class CrewID {
     let uncheckedLine = "<<<<<<0<" +
       this.dateOfExpirationMRZ +
       TravelDocument.generateMRZCheckDigit(this.dateOfExpirationMRZ) +
-      "<<<" +
+      "XXX" +
       this.optionalDataMRZ.slice(15);
     return uncheckedLine +
       TravelDocument.generateMRZCheckDigit(
