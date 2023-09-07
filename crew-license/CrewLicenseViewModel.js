@@ -5,6 +5,7 @@
 
 import { CrewLicense } from "/modules/CrewLicense.js";
 import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
+import { CrewCertificateRenderer } from "../crew-certificate/CrewCertificateRenderer.js";
 
 class CrewLicenseViewModel {
   #model = new CrewLicense({
@@ -1386,42 +1387,60 @@ class CrewLicenseViewModel {
 
   // Private methods
   async #generateCardFront() {
-    await this.#renderer.generateCardFront(this.#model, this.#cardFrontElement);
-    this.#generateDownloadFrontLink();
-  }
-
-  async #generateCardBack() {
-    await this.#renderer.generateCardBack(this.#model, this.#cardBackElement);
-    this.#generateDownloadBackLink();
-  }
-
-  async #generateCard() {
-    await Promise.all([
-      this.#renderer.generateCardFront(this.#model, this.#cardFrontElement),
-      this.#renderer.generateCardBack(this.#model, this.#cardBackElement)
-    ]);
-    this.#generateDownloadFrontLink();
-    this.#generateDownloadBackLink();
-  }
-
-  #generateDownloadFrontLink() {
+    const canvas = await this.#renderer.generateCardFront(this.#model, this.frontFallback);
+    this.#cardFrontElement.width = CrewLicenseRenderer.cutCardArea[0];
+    this.#cardFrontElement.height = CrewLicenseRenderer.cutCardArea[1];
+    const ctx = this.#cardFrontElement.getContext("2d");
+    ctx.drawImage(
+      canvas, 16, 16, this.#cardFrontElement.width, this.#cardFrontElement.height,
+      0, 0, this.#cardFrontElement.width, this.#cardFrontElement.height
+    );
     const downloadFront = this.#document.getElementById("downloadFront");
+    let blob;
+    if (typeof OffscreenCanvas === "undefined") {
+      blob = await new Promise(resolve => canvas.toBlob(resolve));
+    }
+    else { blob = await canvas.convertToBlob(); }
+    if (this.#frontBlobURL !== null) { URL.revokeObjectURL(this.#frontBlobURL); }
+    this.#frontBlobURL = URL.createObjectURL(blob);
     downloadFront.setAttribute(
       "download",
       `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
       `${this.#model.numberVIZ}-front.png`
     );
-    downloadFront.setAttribute("href", this.#cardFrontElement.toDataURL("image/png"));
+    downloadFront.setAttribute("href", this.#frontBlobURL);
   }
 
-  #generateDownloadBackLink() {
+  async #generateCardBack() {
+    const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
+    this.#cardBackElement.width = CrewCertificateRenderer.cutCardArea[0];
+    this.#cardBackElement.height = CrewCertificateRenderer.cutCardArea[1];
+    const ctx = this.#cardBackElement.getContext("2d");
+    ctx.drawImage(
+      canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,
+      0, 0, this.#cardBackElement.width, this.#cardBackElement.height
+    );
     const downloadBack = this.#document.getElementById("downloadBack");
+    let blob;
+    if (typeof OffscreenCanvas === "undefined") {
+      blob = await new Promise(resolve => canvas.toBlob(resolve));
+    }
+    else { blob = await canvas.convertToBlob(); }
+    if (this.#backBlobURL !== null) { URL.revokeObjectURL(this.#backBlobURL); }
+    this.#backBlobURL = URL.createObjectURL(blob);
     downloadBack.setAttribute(
       "download",
       `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
       `${this.#model.numberVIZ}-back.png`
     );
-    downloadBack.setAttribute("href", this.#cardBackElement.toDataURL("image/png"));
+    downloadBack.setAttribute("href", this.#backBlobURL);
+  }
+
+  async #generateCard() {
+    await Promise.all([
+      this.#generateCardFront(),
+      this.#generateCardBack()
+    ]);
   }
 
   // Static private methods
