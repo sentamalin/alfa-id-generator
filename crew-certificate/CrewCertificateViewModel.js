@@ -1405,29 +1405,6 @@ class CrewCertificateViewModel {
       canvas, 16, 16, this.#cardFrontElement.width, this.#cardFrontElement.height,
       0, 0, this.#cardFrontElement.width, this.#cardFrontElement.height
     );
-    await this.#generateDownloadFrontLink(canvas);
-  }
-
-  async #generateCardBack() {
-    const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
-    this.#cardBackElement.width = CrewCertificateRenderer.cutCardArea[0];
-    this.#cardBackElement.height = CrewCertificateRenderer.cutCardArea[1];
-    const ctx = this.#cardBackElement.getContext("2d");
-    ctx.drawImage(
-      canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,
-      0, 0, this.#cardBackElement.width, this.#cardBackElement.height
-    );
-    await this.#generateDownloadBackLink(canvas);
-  }
-
-  async #generateCard() {
-    await Promise.all([
-      this.#generateCardFront(),
-      this.#generateCardBack()
-    ]);
-  }
-
-  async #generateDownloadFrontLink(canvas) {
     const downloadFront = this.#document.getElementById("downloadFront");
     let blob;
     if (typeof OffscreenCanvas === "undefined") {
@@ -1444,7 +1421,15 @@ class CrewCertificateViewModel {
     downloadFront.setAttribute("href", this.#frontBlobURL);
   }
 
-  async #generateDownloadBackLink(canvas) {
+  async #generateCardBack() {
+    const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
+    this.#cardBackElement.width = CrewCertificateRenderer.cutCardArea[0];
+    this.#cardBackElement.height = CrewCertificateRenderer.cutCardArea[1];
+    const ctx = this.#cardBackElement.getContext("2d");
+    ctx.drawImage(
+      canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,
+      0, 0, this.#cardBackElement.width, this.#cardBackElement.height
+    );
     const downloadBack = this.#document.getElementById("downloadBack");
     let blob;
     if (typeof OffscreenCanvas === "undefined") {
@@ -1459,6 +1444,13 @@ class CrewCertificateViewModel {
       `${this.#model.numberVIZ}-back.png`
     );
     downloadBack.setAttribute("href", this.#backBlobURL);
+  }
+
+  async #generateCard() {
+    await Promise.all([
+      this.#generateCardFront(),
+      this.#generateCardBack()
+    ]);
   }
 
   // Static private methods
