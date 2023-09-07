@@ -1,0 +1,162 @@
+<!--
+  SPDX-FileCopyrightText: Don Geronimo <https://sentamal.in/>
+  SPDX-License-Identifier: CC0-1.0
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./index.css" />
+    <script src="/modules/qrcode.js/qrcode.min.js"></script>
+    <script type="module" src="./index.js"></script>
+    <title>Identification Badge Generator</title>
+  </head>
+  <body>
+    <main>
+      <h1>Identification Badge Generator</h1>
+      <div class="generated-card">
+        <p><canvas id="cardFront"></canvas></p>
+        <p><canvas id="cardBack"></canvas></p>
+        <p><a id="downloadFront">Download Front</a> <a id="downloadBack">Download Back</a></p>
+      </div>
+      <section class="customizationForm">
+        <h2>Personalized Textual Data</h2>
+        <label for="authorityCode">Issuing Authority</label>
+        <input id="authorityCode" name="authorityCode" type="text" />
+        <label for="number">Document Number</label>
+        <input id="number" name="number" type="text" />
+        <label for="dateOfExpiration">Date of Expiration</label>
+        <input id="dateOfExpiration" name="dateOfExpiration" type="date" />
+        <label for="fullName">Full Name</label>
+        <input id="fullName" name="fullName" type="text" />
+        <label for="employer">Employer</label>
+        <input id="employer" name="employer" type="text" />
+        <label for="url">QR Code URL</label>
+        <input id="url" name="url" type="url" />
+        <label for="mrzInQRCode">MRZ in QR Code</label>
+        <input id="mrzInQRCode" name="mrzInQRCode" type="checkbox" checked="checked" />
+        <label for="optionalData">Optional Data</label>
+        <input id="optionalData" name="optionalData" type="text" />
+        <h2>Personalized Graphical Data</h2>
+        <label for="picture">Photo</label>
+        <input id="picture" name="picture" type="file" />
+        <h2>Presentation Color Data</h2>
+        <label for="headerColor">Header Color</label>
+        <input id="headerColor" name="headerColor" type="color" />
+        <label for="textColor">Text Color</label>
+        <input id="textColor" name="textColor" type="color" />
+        <label for="mrzColor">MRZ Color</label>
+        <input id="mrzColor" name="mrzColor" type="color" />
+        <label for="frontBackgroundColor">Front Background Color</label>
+        <input id="frontBackgroundColor" name="frontBackgroundColor" type="color" />
+        <label for="backBackgroundColor">Back Background Color</label>
+        <input id="backBackgroundColor" name="backBackgroundColor" type="color" />
+        <label for="mrzBackgroundColor">MRZ Background Color</label>
+        <input id="mrzBackgroundColor" name="mrzBackgroundColor" type="color" />
+        <label for="numberUnderlayColor">Number Underlay Color</label>
+        <input id="numberUnderlayColor" name="numberUnderlayColor" type="color" />
+        <label for="numberUnderlayAlpha">Number Underlay Opacity</label>
+        <input id="numberUnderlayAlpha" name="numberUnderlayAlpha" type="range" />
+        <label for="logoUnderlayColor">Logo Underlay Color</label>
+        <input id="logoUnderlayColor" name="logoUnderlayColor" type="color" />
+        <label for="logoUnderlayAlpha">Logo Underlay Opacity</label>
+        <input id="logoUnderlayAlpha" name="logoUnderlayAlpha" type="range" />
+        <h2>Presentation Graphical Data</h2>
+        <label for="frontBackgroundImage">Front Background Image</label>
+        <select id="frontBackgroundImage" name="frontBackgroundImage">
+          <option value="none">None</option>
+          <option value="upload">Upload File</option>
+          <option value="/cardBackgrounds/lofiGrey.png">Lo-Fi Grey</option>
+        </select>
+        <label for="frontBackgroundImageFile">Front Background Image File</label>
+        <input id="frontBackgroundImageFile" name="frontBackgroundImageFile" type="file" />
+        <label for="backBackgroundImage">Back Background Image</label>
+        <select id="backBackgroundImage" name="backBackgroundImage">
+          <option value="none">None</option>
+          <option value="upload">Upload File</option>
+          <option value="/cardBackgrounds/lofiGrey.png">Lo-Fi Grey</option>
+        </select>
+        <label for="backBackgroundImageFile">Back Background Image File</label>
+        <input id="backBackgroundImageFile" name="backBackgroundImageFile" type="file" />
+        <label for="mrzBackgroundImage">MRZ Background Image</label>
+        <select id="mrzBackgroundImage" name="mrzBackgroundImage">
+          <option value="none">None</option>
+          <option value="upload">Upload File</option>
+        </select>
+        <label for="mrzBackgroundImageFile">MRZ Background Image File</label>
+        <input id="mrzBackgroundImageFile" name="mrzBackgroundImageFile" type="file" />
+        <label for="logo">Authority Logo</label>
+        <select id="logo" name="logo">
+          <option value="upload">Upload File</option>
+          <option value="/logos/aka.svg">All-Kemono Airways</option>
+          <option value="/logos/alfa.png">ALFA</option>
+          <option value="/logos/avian.svg">Avian</option>
+          <option value="/logos/dook.svg">Dook</option>
+          <option value="/logos/gowojet.svg">GowoJet</option>
+          <option value="/logos/gsdss.svg">GSD Sky Sheps</option>
+          <option value="/logos/lambda.svg">Lambda Air Ways</option>
+          <option value="/logos/peets.svg">Peets</option>
+          <option value="/logos/raven.svg">Raven Aviation</option>
+          <option value="/logos/sweetfluff.svg">SweetFluff Airways</option>
+          <option value="/logos/uwunifi.svg">Uwunify</option>
+        </select>
+        <label for="logoFile">Authority Logo Image File</label>
+        <input id="logoFile" name="logoFile" type="file" />
+        <label for="smallLogo">Small Authority Logo</label>
+        <select id="smallLogo" name="smallLogo">
+          <option value="upload">Upload File</option>
+          <option value="/smallLogos/alfa-bw.svg">ALFA (Black &amp; White)</option>
+        </select>
+        <label for="smallLogoFile">Small Authority Logo Image File</label>
+        <input id="smallLogoFile" name="smallLogoFile" type="file" />
+        <h2>Presentation Textual Data</h2>
+        <label for="extra">Additional Elements</label>
+        <textarea id="extra" name="extra"></textarea>
+        <h2>Presentation Header Data</h2>
+        <label for="badgeType">Type</label>
+        <input id="badgeType" name="badgeType" type="text" />
+        <label for="badgeSubtype">Subtype</label>
+        <input id="badgeSubtype" name="badgeSubtype" type="text" />
+        <label for="nameHeader">Field 1</label>
+        <input id="nameHeader" name="nameHeader" type="text" />
+        <label for="nameHeaderI18n1">Field 1 (<abbr title="Internationalization">I18n</abbr> 1)</label>
+        <input id="nameHeaderI18n1" name="nameHeaderI18n1" type="text" />
+        <label for="nameHeaderI18n2">Field 1 (I18n 2)</label>
+        <input id="nameHeaderI18n2" name="nameHeaderI18n2" type="text" />
+        <label for="employerHeader">Field 2</label>
+        <input id="employerHeader" name="employerHeader" type="text" />
+        <label for="employerHeaderI18n1">Field 2 (I18n 1)</label>
+        <input id="employerHeaderI18n1" name="employerHeaderI18n1" type="text" />
+        <label for="employerHeaderI18n2">Field 2 (I18n 2)</label>
+        <input id="employerHeaderI18n2" name="employerHeaderI18n2" type="text" />
+        <label for="numberHeader">Field 3</label>
+        <input id="numberHeader" name="numberHeader" type="text" />
+        <label for="numberHeaderI18n1">Field 3 (I18n 1)</label>
+        <input id="numberHeaderI18n1" name="numberHeaderI18n1" type="text" />
+        <label for="numberHeaderI18n2">Field 3 (I18n 2)</label>
+        <input id="numberHeaderI18n2" name="numberHeaderI18n2" type="text" />
+        <label for="dateOfExpirationHeader">Field 4</label>
+        <input id="dateOfExpirationHeader" name="dateOfExpirationHeader" type="text" />
+        <label for="dateOfExpirationHeaderI18n1">Field 4 (I18n1)</label>
+        <input id="dateOfExpirationHeaderI18n1" name="dateOfExpirationHeaderI18n1" type="text" />
+        <label for="dateOfExpirationHeaderI18n2">Field 4 (I18n2)</label>
+        <input id="dateOfExpirationHeaderI18n2" name="dateOfExpirationHeaderI18n2" type="text" />
+        <label for="extraHeader">Field 5</label>
+        <input id="extraHeader" name="declarationHeader" type="text" />
+        <label for="extraHeaderI18n1">Field 5 (I18n 1)</label>
+        <input id="extraHeaderI18n1" name="declarationHeaderI18n1" type="text" />
+        <label for="extraHeaderI18n2">Field 5 (I18n 2)</label>
+        <input id="extraHeaderI18n2" name="declarationHeaderI18n2" type="text" />
+        <h2>Debugging Options</h2>
+        <label for="showGuides">Show Bleed/Safe Lines</label>
+        <input id="showGuides" name="showGuides" type="checkbox" />
+      </section>
+    </main>
+    <div id="offscreenCanvases">
+      <canvas id="offscreen-front"></canvas>
+      <canvas id="offscreen-back"></canvas>
+      <canvas id="offscreen-signature"></canvas>
+    </div>
+  </body>
+</html>
