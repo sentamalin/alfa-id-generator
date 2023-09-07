@@ -99,6 +99,11 @@ class CrewLicenseViewModel {
   });
 
   #inputTimeout = null;
+  #frontFallback;
+  #backFallback;
+  #signatureFallback;
+  #frontBlobURL = null;
+  #backBlobURL = null;
 
   /** @type { Document } */ #document;
   /** @param { Document } document */
