@@ -756,12 +756,18 @@ class CrewLicenseRenderer {
       }
     }
   }
-  static async generateSignatureFromText(signature) {
-    const canvas = new OffscreenCanvas(
-      this.#signatureArea[0],
-      this.#signatureArea[1]
-    );
-    const ctx = canvas.getContext("2d");
+  static async generateSignatureFromText(signature, canvasFallback) {
+    let canvas;
+    let ctx;
+    if (typeof OffscreenCanvas === "undefined") {
+      canvas = canvasFallback;
+      canvas.width = this.#signatureArea[0];
+      canvas.height = this.#signatureArea[1];
+    }
+    else {
+      canvas = new OffscreenCanvas(this.#signatureArea[0], this.#signatureArea[1]);
+    }
+    ctx = canvas.getContext("2d");
     ctx.fillStyle = this.textColor;
     ctx.font = this.#signatureFont;
     ctx.textBaseline = "top";
@@ -770,7 +776,7 @@ class CrewLicenseRenderer {
       signature, Math.max(centerShift, 0), 8,
       this.#signatureArea[0] - 6
     );
-    return await canvas.convertToBlob();
+    return canvas;
   }
 
   // Constructor
