@@ -8,22 +8,13 @@ import { IDBadgeRenderer } from "./IDBadgeRenderer.js";
 
 class IDBadgeViewModel {
   #model = new CrewID({
-    typeCode: "AC",
     authorityCode: "XAF",
     number: "362142069",
-    dateOfBirth: "1998-04-17",
-    genderMarker: "F",
     dateOfExpiration: "2033-08-23",
-    nationalityCode: "UTO",
     fullName: "Millefeuille, Alfalfa",
     optionalData: "",
     employer: "Lambda Air Ways, Inc",
-    occupation: "Airline Transport Pilot",
-    declaration: "The holder may at all times re-enter\nupon production of this certificate\nwithin the period of validity",
-    dateOfIssue: "2023-08-23",
-    placeOfIssue: "Utopiopolis, Utopia",
     picture: "/photos/fox.jpg",
-    signature: "/signatures/alfalfa.png",
     url: "https://airlinefurries.com/"
   });
 
@@ -45,37 +36,18 @@ class IDBadgeViewModel {
     smallLogo: "/smallLogos/alfa-bw.svg",
     mrzInQRCode: true,
     showGuides: false,
-    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INT'L",
-    fullDocumentName: "CREWMEMBER CERTIFICATE",
+    additionalElements: "",
+    badgeType: "CREW",
+    badgeSubtype: "FURRY",
     nameHeader: [
       "NAME",
       "NOM",
       "APELLIDOS"
     ],
-    genderHeader: [
-      "GENDER",
-      "GENRE",
-      "GENÉRO"
-    ],
-    nationalityHeader: [
-      "NATIONALITY",
-      "NATIONALITÉ",
-      "NACIONALIDAD"
-    ],
-    dateOfBirthHeader: [
-      "DATE OF BIRTH",
-      "DATE DE NAISSANCE",
-      "FECHA DE NACIMIENTO"
-    ],
     employerHeader: [
       "EMPLOYER",
       "EMPLOYEUR",
       "EMPLEADOR"
-    ],
-    occupationHeader: [
-      "OCCUPATION",
-      "OCCUPATION",
-      "OCUPACIÓN"
     ],
     numberHeader: [
       "CERTIFICATE NO",
@@ -87,16 +59,11 @@ class IDBadgeViewModel {
       "EXPIRATION",
       "EXPIRACIÓN"
     ],
-    declarationHeader: [
-      "RE-ENTRY DECLARATION",
-      "DÉCLARATION DE RENTRÉE",
-      "DECLARACIÓN DE REINGRESO"
+    additionalElementsHeader: [
+      "OPTIONAL ADDITIONAL ELEMENTS",
+      "ÉLÉMENTS SUPPLÉMENTAIRES FACULTATIFS",
+      "ELEMENTOS ADICIONALES OPCIONALES"
     ],
-    issueHeader: [
-      "DATE OF ISSUE—PLACE OF ISSUE",
-      "DATE DE DÉLIVERANCE—LIEU DE DÉLIVERANCE",
-      "FECHA DE EXPEDICIÓN—LUGAR DE EXPEDICIÓN"
-    ]
   });
 
   #inputTimeout = null;
