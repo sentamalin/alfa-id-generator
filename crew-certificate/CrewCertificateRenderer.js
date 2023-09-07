@@ -732,7 +732,25 @@ class CrewCertificateRenderer {
     ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
   }
-  
+  static async* generateNewSignatureFromText(canvasFallback) {
+    let oldSignature = "";
+    let signature = "";
+    let canvas;
+
+    while (true) {
+      signature = yield;
+      console.log(`Old Signature: ${oldSignature}`);
+      console.log(`New Signature: ${signature}`);
+      if (oldSignature === signature) {
+        yield { newSignature: false, signature: canvas };
+      }
+      else {
+        oldSignature = signature;
+        canvas = await this.generateSignatureFromText(signature, canvasFallback);
+        yield { newSignature: true, signature: canvas };
+      }
+    }
+  }
   static async generateSignatureFromText(signature, canvasFallback) {
     let canvas;
     let ctx;
