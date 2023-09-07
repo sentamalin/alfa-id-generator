@@ -57,10 +57,17 @@ class CrewCertificateRenderer {
 
   // Public Methods
   /** @param { CrewCertificate } model */
-  /** @param { HTMLCanvasElement } canvas */
-  async generateCardFront(model, canvas) {
-    canvas.setAttribute("width", this.constructor.#cardArea[0]);
-    canvas.setAttribute("height", this.constructor.#cardArea[1]);
+  /** @param { HTMLCanvasElement } fallback */
+  async generateCardFront(model, fallback) {
+    let canvas;
+    if (typeof OffscreenCanvas === "undefined") {
+      canvas = fallback;
+      canvas.setAttribute("width", this.constructor.#cardArea[0]);
+      canvas.setAttribute("height", this.constructor.#cardArea[1]);
+    }
+    else {
+      canvas = new OffscreenCanvas( this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
+    }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
 
@@ -332,13 +339,22 @@ class CrewCertificateRenderer {
     if (this.showGuides) {
       this.constructor.#drawBleedAndSafeLines(ctx);
     }
+
+    return canvas;
   }
 
   /** @param { CrewCertificate } model */
   /** @param { HTMLCanvasElement } canvas */
-  async generateCardBack(model, canvas) {
-    canvas.setAttribute("width", this.constructor.#cardArea[0]);
-    canvas.setAttribute("height", this.constructor.#cardArea[1]);
+  async generateCardBack(model, fallback) {
+    let canvas;
+    if (typeof OffscreenCanvas === "undefined") {
+      canvas = fallback;
+      canvas.setAttribute("width", this.constructor.#cardArea[0]);
+      canvas.setAttribute("height", this.constructor.#cardArea[1]);
+    }
+    else {
+      canvas = new OffscreenCanvas( this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
+    }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
 
@@ -516,6 +532,8 @@ class CrewCertificateRenderer {
     if (this.showGuides) {
       this.constructor.#drawBleedAndSafeLines(ctx);
     }
+
+    return canvas;
   }
 
   async loadCanvasFonts() {
@@ -752,7 +770,7 @@ class CrewCertificateRenderer {
   static async generateSignatureFromText(signature, canvasFallback) {
     let canvas;
     let ctx;
-    if (typeof OffscreenCanvas === 'undefined') {
+    if (typeof OffscreenCanvas === "undefined") {
       canvas = canvasFallback;
       canvas.setAttribute("width", this.#signatureArea[0]);
       canvas.setAttribute("height", this.#signatureArea[1]);
