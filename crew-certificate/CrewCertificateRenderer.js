@@ -739,8 +739,6 @@ class CrewCertificateRenderer {
 
     while (true) {
       signature = yield;
-      console.log(`Old Signature: ${oldSignature}`);
-      console.log(`New Signature: ${signature}`);
       if (oldSignature === signature) {
         yield { newSignature: false, signature: canvas };
       }
