@@ -1401,7 +1401,7 @@ class CrewCertificateViewModel {
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
     this.#cardFrontElement.width = CrewCertificateRenderer.cutCardArea[0];
     this.#cardFrontElement.height = CrewCertificateRenderer.cutCardArea[1];
-    ctx = this.#cardFrontElement.getContext("2d");
+    const ctx = this.#cardFrontElement.getContext("2d");
     ctx.drawImage(
       canvas, 16, 16, this.#cardFrontElement.width, this.#cardFrontElement.height,
       0, 0, this.#cardFrontElement.width, this.#cardFrontElement.height
@@ -1413,7 +1413,7 @@ class CrewCertificateViewModel {
     const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
     this.#cardBackElement.width = CrewCertificateRenderer.cutCardArea[0];
     this.#cardBackElement.height = CrewCertificateRenderer.cutCardArea[1];
-    ctx = this.#cardBackElement.getContext("2d");
+    const ctx = this.#cardBackElement.getContext("2d");
     ctx.drawImage(
       canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,
       0, 0, this.#cardBackElement.width, this.#cardBackElement.height
