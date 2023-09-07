@@ -7,10 +7,20 @@ import { CrewID } from "/modules/CrewID.js";
 import { QRCodeData } from "/modules/QRCodeData.js";
 
 class IDBadgeRenderer {
-  #qrCode = new QRCodeData({
+  #frontQRCode = new QRCodeData({
     generatorOpt: {
-      width: this.constructor.#qrCodeArea[0],
-      height: this.constructor.#qrCodeArea[1],
+      width: this.constructor.#frontQRCodeArea[0],
+      height: this.constructor.#frontQRCodeArea[1],
+      colorDark: "#000000ff",
+      colorLight: "#00000000",
+      correctLevel: QRCode.CorrectLevel.H
+    }
+  });
+
+  #backQRCode = new QRCodeData({
+    generatorOpt: {
+      width: this.constructor.#backQRCodeArea[0],
+      height: this.constructor.#backQRCodeArea[1],
       colorDark: "#000000ff",
       colorLight: "#00000000",
       correctLevel: QRCode.CorrectLevel.H
@@ -601,67 +611,55 @@ class IDBadgeRenderer {
   }
 
   // Coordinates used in card generation (static)
-  static #mainHeaderX = 1004;
-  static #mainHeaderY = [48, 85];
+  static #badgeTypeHeaderY = [48, 85];
   static #photoUnderlayXY = [32, 0];
-  static #photoXY = [48, 141];
   static #logoUnderlayXY = [618, 274];
   static #numberUnderlayXY = [871, 193];
   static #mrzUnderlayXY = [0, 379];
   static #shortHeaderXY = [886, 167];
-  static #qrCodeXY = [618, 48];
-  static #logoFrontXY = [48, 48];
+  static #backQRCodeXY = [618, 48];
   static #logoBackXY = [634, 290];
   static #smallLogoXY = [886, 48];
-  static #signatureXY = [48, 543];
   static #backNumberXY = [888, 216];
   static #mrzX = 71;
   static #mrzY = [451, 501, 551];
   static #mrzSpacing = 30.35;
-  static #frontColumns = 467;
+  static #frontColumns = [48, 466];
   static #backColumns = 48;
   static #frontRows = [
-    141, // name Header
-    168, // name Data
-    217, // Row 2 Header (Primary Language)
-    242, // Row 2 Header (Alternate Language 1)
-    267, // Row 2 Header (Alternate Language 2)
-    294, // Row 2 Data
-    343, // Employer Header
-    370, // Employer Data
-    419, // Occupation Header
-    446, // Occupation Data
-    495, // Number Header
-    522, // Number Data
-    571, // Date of Expiration Header
+    175, // Badge Subtype
+    208, // Badge Type
+    263, // Front QR Code
+    113, // Photo
+    523, // Logo
+    663, // Name Header
+    690, // Name Data
+    746, // Employer Header
+    773, // Employer Data
+    829, // Number Header
+    856, // Number Data
+    939, // Date of Expiration Header
     598  // Date of Expiration Data
   ];
-  static #frontRow2Columns = [
-    607, // Nationality Column
-    802  // Date of Birth Column
-  ];
   static #backRows = [
-    48,  // Re-Entry Declaration Header
-    73,  // Re-Entry Declaration Header (Alternate Language 2)
-    100, // Re-Entry Declaration Data
-    229, // Date/Place of Issue Header
-    254, // Date/Place of Issue Header (Alternate Language 1)
-    279, // Date/Place of Issue Header (Alternate Language 2)
-    306  // Date/Place of Issue Data
+    48,  // Additional Elements Header
+    73,  // Additional Elements Header (Alternate Language 1)
+    98,  // Additional Elements Header (Alternate Language 2)
+    125  // Additional Elements Data
   ];
 
   // Areas used in card generation (static)
   static #cardArea = [1052, 672];
   static cutCardArea = [1020, 640];
-  static #photoUnderlayArea = [402, 527];
+  static #photoUnderlayArea = [402, 624];
   static #photoArea = [370, 370];
   static #logoUnderlayArea = [434, 93];
   static #numberUnderlayArea = [181, 65];
   static #mrzUnderlayArea = [1052, 293];
-  static #qrCodeArea = [212, 212];
+  static #frontQRCodeArea = [158, 158];
+  static #backQRCodeArea = [212, 212];
   static #logoArea = [370, 61];
   static #smallLogoArea = [103, 103];
-  static #signatureArea = [370, 81];
 
   // Methods used in card generation (static)
   static #generateCanvasImg(img) {
@@ -746,45 +744,6 @@ class IDBadgeRenderer {
     ctx.moveTo(this.#cardArea[0] - safe, 0);
     ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
-  }
-  static * generateNewSignatureFromText(canvasFallback) {
-    let oldSignature = "";
-    let signature = "";
-    let canvas;
-
-    while (true) {
-      signature = yield;
-      if (oldSignature === signature) {
-        yield { newSignature: false, signature: canvas };
-      }
-      else {
-        oldSignature = signature;
-        canvas = this.#generateSignatureFromText(signature, canvasFallback);
-        yield { newSignature: true, signature: canvas };
-      }
-    }
-  }
-  static #generateSignatureFromText(signature, canvasFallback) {
-    let canvas;
-    let ctx;
-    if (typeof OffscreenCanvas === "undefined") {
-      canvas = canvasFallback;
-      canvas.setAttribute("width", this.#signatureArea[0]);
-      canvas.setAttribute("height", this.#signatureArea[1]);
-    }
-    else {
-      canvas = new OffscreenCanvas(this.#signatureArea[0], this.#signatureArea[1]);
-    }
-    ctx = canvas.getContext("2d");
-    ctx.fillStyle = this.textColor;
-    ctx.font = this.#signatureFont;
-    ctx.textBaseline = "top";
-    const centerShift = (canvas.width - ctx.measureText(signature).width) / 2;
-    ctx.fillText(
-      signature, Math.max(centerShift, 0), 8,
-      this.#signatureArea[0] - 6
-    );
-    return canvas;
   }
 
   // Constructor
