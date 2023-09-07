@@ -59,7 +59,7 @@ class CrewID {
       this.optionalDataMRZ.slice(15);
     return uncheckedLine +
       TravelDocument.generateMRZCheckDigit(
-        this.mrzLineOne.slice(5) +
+        this.mrzLine1.slice(5) +
         uncheckedLine.slice(0,7) +
         uncheckedLine.slice(8,15) +
         uncheckedLine.slice(18)
@@ -83,7 +83,6 @@ class CrewID {
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
-      if (opt.qrCode) { this.qrCode = opt.qrCode; }
       if (opt.url) { this.url = opt.url; }
       if (opt.employer) { this.employer = opt.employer; }
     }
