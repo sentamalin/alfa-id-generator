@@ -644,6 +644,7 @@ class CrewLicenseRenderer {
 
   // Areas used in card generation (static)
   static #cardArea = [1052, 672];
+  static cutCardArea = [1020, 640];
   static #photoUnderlayArea = [402, 527];
   static #photoArea = [370, 370];
   static #logoUnderlayArea = [434, 93];
