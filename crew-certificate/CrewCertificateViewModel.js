@@ -104,6 +104,8 @@ class CrewCertificateViewModel {
   #backFallback;
   #signatureFallback;
   #signatureGenerator = null;
+  #frontBlobURL = null;
+  #backBlobURL = null;
 
   /** @type { Document } */ #document;
   /** @param { Document } document */
