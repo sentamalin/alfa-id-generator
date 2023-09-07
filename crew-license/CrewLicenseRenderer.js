@@ -57,10 +57,17 @@ class CrewLicenseRenderer {
 
   // Public Methods
   /** @param { CrewLicense } model */
-  /** @param { HTMLCanvasElement } canvas */
-  async generateCardFront(model, canvas) {
-    canvas.setAttribute("width", this.constructor.#cardArea[0]);
-    canvas.setAttribute("height", this.constructor.#cardArea[1]);
+  /** @param { HTMLCanvasElement } fallback */
+  async generateCardFront(model, fallback) {
+    let canvas;
+    if (typeof OffscreenCanvas === "undefined") {
+      canvas = fallback;
+      canvas.setAttribute("width", this.constructor.#cardArea[0]);
+      canvas.setAttribute("height", this.constructor.#cardArea[1]);
+    }
+    else {
+      canvas = new OffscreenCanvas(this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
+    }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
 
@@ -89,11 +96,14 @@ class CrewLicenseRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
-    const images = await Promise.all([
+    const imagePromises = [
       this.constructor.#generateCanvasImg(model.picture),
-      this.constructor.#generateCanvasImg(this.logo),
-      this.constructor.#generateCanvasImg(model.signature)
-    ]);
+      this.constructor.#generateCanvasImg(this.logo)
+    ];
+    if (typeof model.signature !== typeof canvas) {
+      imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
+    }
+    const images = await Promise.all(imagePromises);
     this.constructor.#fillAreaWithImg(
       images[0], ctx,
       this.constructor.#photoXY[0],
@@ -108,13 +118,24 @@ class CrewLicenseRenderer {
       this.constructor.#logoArea[0],
       this.constructor.#logoArea[1]
     );
-    this.constructor.#fitImgInArea(
-      images[2], ctx,
-      this.constructor.#signatureXY[0],
-      this.constructor.#signatureXY[1],
-      this.constructor.#signatureArea[0],
-      this.constructor.#signatureArea[1],
-    );
+    if (typeof model.signature !== typeof canvas) {
+      this.constructor.#fitImgInArea(
+        images[2], ctx,
+        this.constructor.#signatureXY[0],
+        this.constructor.#signatureXY[1],
+        this.constructor.#signatureArea[0],
+        this.constructor.#signatureArea[1],
+      );
+    }
+    else {
+      ctx.drawImage(
+        model.signature,
+        this.constructor.#signatureXY[0],
+        this.constructor.#signatureXY[1],
+        this.constructor.#signatureArea[0],
+        this.constructor.#signatureArea[1]
+      );
+    }
 
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#mainHeaderFont;
@@ -318,13 +339,22 @@ class CrewLicenseRenderer {
     if (this.showGuides) {
       this.constructor.#drawBleedAndSafeLines(ctx);
     }
+
+    return canvas;
   }
 
   /** @param { CrewLicense } model */
-  /** @param { HTMLCanvasElement } canvas */
-  async generateCardBack(model, canvas) {
-    canvas.setAttribute("width", this.constructor.#cardArea[0]);
-    canvas.setAttribute("height", this.constructor.#cardArea[1]);
+  /** @param { HTMLCanvasElement } fallback */
+  async generateCardBack(model, fallback) {
+    let canvas;
+    if (typeof OffscreenCanvas === "undefined") {
+      canvas = fallback;
+      canvas.setAttribute("width", this.constructor.#cardArea[0]);
+      canvas.setAttribute("height", this.constructor.#cardArea[1]);
+    }
+    else {
+      canvas = new OffscreenCanvas(this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
+    }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
 
@@ -493,6 +523,8 @@ class CrewLicenseRenderer {
     if (this.showGuides) {
       this.constructor.#drawBleedAndSafeLines(ctx);
     }
+
+    return canvas;
   }
 
   async loadCanvasFonts() {
