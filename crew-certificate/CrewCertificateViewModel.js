@@ -415,7 +415,6 @@ class CrewCertificateViewModel {
     const signature = await this.#signatureGenerator.next(
       this.#signatureTextInput.value
     );
-    console.log(signature.value);
     if (signature.value.newSignature) {
       this.#model.signature = signature.value.signature;
       this.#generateCardFront();
