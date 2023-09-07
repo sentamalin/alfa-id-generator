@@ -1406,7 +1406,7 @@ class CrewCertificateViewModel {
       canvas, 16, 16, this.#cardFrontElement.width, this.#cardFrontElement.height,
       0, 0, this.#cardFrontElement.width, this.#cardFrontElement.height
     );
-    this.#generateDownloadFrontLink();
+    await this.#generateDownloadFrontLink(canvas);
   }
 
   async #generateCardBack() {
@@ -1418,7 +1418,7 @@ class CrewCertificateViewModel {
       canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,
       0, 0, this.#cardBackElement.width, this.#cardBackElement.height
     );
-    this.#generateDownloadBackLink();
+    await this.#generateDownloadBackLink(canvas);
   }
 
   async #generateCard() {
@@ -1428,24 +1428,38 @@ class CrewCertificateViewModel {
     ]);
   }
 
-  #generateDownloadFrontLink() {
+  async #generateDownloadFrontLink(canvas) {
     const downloadFront = this.#document.getElementById("downloadFront");
+    let blob;
+    if (typeof OffscreenCanvas === "undefined") {
+      blob = await new Promise(resolve => canvas.toBlob(resolve));
+    }
+    else { blob = await canvas.convertToBlob(); }
+    if (this.#frontBlobURL !== null) { URL.revokeObjectURL(this.#frontBlobURL); }
+    this.#frontBlobURL = URL.createObjectURL(blob);
     downloadFront.setAttribute(
       "download",
       `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
       `${this.#model.numberVIZ}-front.png`
     );
-    downloadFront.setAttribute("href", this.#cardFrontElement.toDataURL("image/png"));
+    downloadFront.setAttribute("href", this.#frontBlobURL);
   }
 
-  #generateDownloadBackLink() {
+  async #generateDownloadBackLink(canvas) {
     const downloadBack = this.#document.getElementById("downloadBack");
+    let blob;
+    if (typeof OffscreenCanvas === "undefined") {
+      blob = await new Promise(resolve => canvas.toBlob(resolve));
+    }
+    else { blob = await canvas.convertToBlob(); }
+    if (this.#backBlobURL !== null) { URL.revokeObjectURL(this.#backBlobURL); }
+    this.#backBlobURL = URL.createObjectURL(blob);
     downloadBack.setAttribute(
       "download",
       `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
       `${this.#model.numberVIZ}-back.png`
     );
-    downloadBack.setAttribute("href", this.#cardBackElement.toDataURL("image/png"));
+    downloadBack.setAttribute("href", this.#backBlobURL);
   }
 
   // Static private methods
