@@ -102,6 +102,7 @@ class CrewLicenseViewModel {
   #frontFallback;
   #backFallback;
   #signatureFallback;
+  #signatureGenerator = null;
   #frontBlobURL = null;
   #backBlobURL = null;
 
@@ -395,10 +396,17 @@ class CrewLicenseViewModel {
     this.#signatureTextInput.addEventListener("change", this, false);
   }
   async onSignatureTextInputChange() {
-    const blob = await CrewLicenseRenderer.generateSignatureFromText(this.#signatureTextInput.value);
-    const dataURL = await this.constructor.#getFileData(blob);
-    if (this.#model.signature !== dataURL) {
-      this.#model.signature = dataURL;
+    if (this.#signatureGenerator === null) {
+      this.#signatureGenerator = CrewLicenseRenderer.generateNewSignatureFromText(
+        this.#signatureFallback
+      );
+    }
+    await this.#signatureGenerator.next();
+    const signature = await this.#signatureGenerator.next(
+      this.#signatureTextInput.value
+    );
+    if (signature.value.newSignature) {
+      this.#model.signature = signature.value.signature;
       this.#generateCardFront();
     }
   }
