@@ -89,11 +89,14 @@ class CrewCertificateRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
-    const images = await Promise.all([
+    const imagePromises = [
       this.constructor.#generateCanvasImg(model.picture),
-      this.constructor.#generateCanvasImg(this.logo),
-      this.constructor.#generateCanvasImg(model.signature)
-    ]);
+      this.constructor.#generateCanvasImg(this.logo)
+    ];
+    if (typeof model.signature !== typeof canvas) {
+      imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
+    }
+    const images = await Promise.all(imagePromises);
     this.constructor.#fillAreaWithImg(
       images[0], ctx,
       this.constructor.#photoXY[0],
@@ -108,13 +111,24 @@ class CrewCertificateRenderer {
       this.constructor.#logoArea[0],
       this.constructor.#logoArea[1]
     );
-    this.constructor.#fitImgInArea(
-      images[2], ctx,
-      this.constructor.#signatureXY[0],
-      this.constructor.#signatureXY[1],
-      this.constructor.#signatureArea[0],
-      this.constructor.#signatureArea[1],
-    );
+    if (typeof model.signature !== typeof canvas) {
+      this.constructor.#fitImgInArea(
+        images[2], ctx,
+        this.constructor.#signatureXY[0],
+        this.constructor.#signatureXY[1],
+        this.constructor.#signatureArea[0],
+        this.constructor.#signatureArea[1],
+      );
+    }
+    else {
+      ctx.drawImage(
+        model.signature,
+        this.constructor.#signatureXY[0],
+        this.constructor.#signatureXY[1],
+        this.constructor.#signatureArea[0],
+        this.constructor.#signatureArea[1]
+      );
+    }
 
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#mainHeaderFont;
@@ -718,12 +732,20 @@ class CrewCertificateRenderer {
     ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
   }
-  static async generateSignatureFromText(signature) {
-    const canvas = new OffscreenCanvas(
-      this.#signatureArea[0],
-      this.#signatureArea[1]
-    );
-    const ctx = canvas.getContext("2d");
+  
+  static async generateSignatureFromText(signature, canvasFallback) {
+    let canvas;
+    let ctx;
+    if (typeof OffscreenCanvas === 'undefined') {
+      canvas = canvasFallback;
+      canvas.setAttribute("width", this.#signatureArea[0]);
+      canvas.setAttribute("height", this.#signatureArea[1]);
+      ctx = canvas.getContext("2d");
+    }
+    else {
+      canvas = new OffscreenCanvas( this.#signatureArea[0], this.#signatureArea[1]);
+      ctx = canvas.getContext("2d");
+    }
     ctx.fillStyle = this.textColor;
     ctx.font = this.#signatureFont;
     ctx.textBaseline = "top";
@@ -732,7 +754,7 @@ class CrewCertificateRenderer {
       signature, Math.max(centerShift, 0), 8,
       this.#signatureArea[0] - 6
     );
-    return await canvas.convertToBlob();
+    return canvas;
   }
 
   // Constructor
