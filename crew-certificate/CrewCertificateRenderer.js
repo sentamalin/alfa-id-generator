@@ -66,7 +66,7 @@ class CrewCertificateRenderer {
       canvas.setAttribute("height", this.constructor.#cardArea[1]);
     }
     else {
-      canvas = new OffscreenCanvas( this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
+      canvas = new OffscreenCanvas(this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
     }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
@@ -344,7 +344,7 @@ class CrewCertificateRenderer {
   }
 
   /** @param { CrewCertificate } model */
-  /** @param { HTMLCanvasElement } canvas */
+  /** @param { HTMLCanvasElement } fallback */
   async generateCardBack(model, fallback) {
     let canvas;
     if (typeof OffscreenCanvas === "undefined") {
@@ -353,7 +353,7 @@ class CrewCertificateRenderer {
       canvas.setAttribute("height", this.constructor.#cardArea[1]);
     }
     else {
-      canvas = new OffscreenCanvas( this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
+      canvas = new OffscreenCanvas(this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
     }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
@@ -775,12 +775,11 @@ class CrewCertificateRenderer {
       canvas = canvasFallback;
       canvas.setAttribute("width", this.#signatureArea[0]);
       canvas.setAttribute("height", this.#signatureArea[1]);
-      ctx = canvas.getContext("2d");
     }
     else {
-      canvas = new OffscreenCanvas( this.#signatureArea[0], this.#signatureArea[1]);
-      ctx = canvas.getContext("2d");
+      canvas = new OffscreenCanvas(this.#signatureArea[0], this.#signatureArea[1]);
     }
+    ctx = canvas.getContext("2d");
     ctx.fillStyle = this.textColor;
     ctx.font = this.#signatureFont;
     ctx.textBaseline = "top";
