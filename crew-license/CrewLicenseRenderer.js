@@ -56,7 +56,7 @@ class CrewLicenseRenderer {
   fonts;
 
   // Public Methods
-  /** @param { CrewCertificate } model */
+  /** @param { CrewLicense } model */
   /** @param { HTMLCanvasElement } canvas */
   async generateCardFront(model, canvas) {
     canvas.setAttribute("width", this.constructor.#cardArea[0]);
@@ -320,7 +320,7 @@ class CrewLicenseRenderer {
     }
   }
 
-  /** @param { CrewCertificate } model */
+  /** @param { CrewLicense } model */
   /** @param { HTMLCanvasElement } canvas */
   async generateCardBack(model, canvas) {
     canvas.setAttribute("width", this.constructor.#cardArea[0]);
