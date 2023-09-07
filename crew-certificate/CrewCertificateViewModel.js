@@ -405,14 +405,14 @@ class CrewCertificateViewModel {
     this.#signatureTextInput.addEventListener("input", this, false);
     this.#signatureTextInput.addEventListener("change", this, false);
   }
-  async onSignatureTextInputChange() {
+  onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
       this.#signatureGenerator = CrewCertificateRenderer.generateNewSignatureFromText(
         this.#signatureFallback
       );
     }
-    await this.#signatureGenerator.next();
-    const signature = await this.#signatureGenerator.next(
+    this.#signatureGenerator.next();
+    const signature = this.#signatureGenerator.next(
       this.#signatureTextInput.value
     );
     if (signature.value.newSignature) {

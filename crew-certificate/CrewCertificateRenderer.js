@@ -751,7 +751,7 @@ class CrewCertificateRenderer {
     ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
   }
-  static async* generateNewSignatureFromText(canvasFallback) {
+  static * generateNewSignatureFromText(canvasFallback) {
     let oldSignature = "";
     let signature = "";
     let canvas;
@@ -763,12 +763,12 @@ class CrewCertificateRenderer {
       }
       else {
         oldSignature = signature;
-        canvas = await this.generateSignatureFromText(signature, canvasFallback);
+        canvas = this.#generateSignatureFromText(signature, canvasFallback);
         yield { newSignature: true, signature: canvas };
       }
     }
   }
-  static async generateSignatureFromText(signature, canvasFallback) {
+  static #generateSignatureFromText(signature, canvasFallback) {
     let canvas;
     let ctx;
     if (typeof OffscreenCanvas === "undefined") {
