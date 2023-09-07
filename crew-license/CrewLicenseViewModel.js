@@ -1387,7 +1387,7 @@ class CrewLicenseViewModel {
 
   // Private methods
   async #generateCardFront() {
-    const canvas = await this.#renderer.generateCardFront(this.#model, this.frontFallback);
+    const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
     this.#cardFrontElement.width = CrewLicenseRenderer.cutCardArea[0];
     this.#cardFrontElement.height = CrewLicenseRenderer.cutCardArea[1];
     const ctx = this.#cardFrontElement.getContext("2d");
