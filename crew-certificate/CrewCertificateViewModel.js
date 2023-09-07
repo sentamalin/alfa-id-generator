@@ -100,6 +100,10 @@ class CrewCertificateViewModel {
   });
 
   #inputTimeout = null;
+  #frontFallback;
+  #backFallback;
+  #signatureFallback;
+  #signatureGenerator = null;
 
   /** @type { Document } */ #document;
   /** @param { Document } document */
@@ -1306,9 +1310,6 @@ class CrewCertificateViewModel {
     await this.#renderer.loadCanvasFonts();
     this.cardFrontElement = this.#document.getElementById("cardFront");
     this.cardBackElement = this.#document.getElementById("cardBack");
-    this.#frontFallback = this.#document.getElementById("offscreen-front");
-    this.#backFallback = this.#document.getElementById("offscreen-back");
-    this.#signatureFallback = this.#document.getElementById("offscreen-signature");
     await this.#generateCard();
     const inputFields = [
       "typeCode",
