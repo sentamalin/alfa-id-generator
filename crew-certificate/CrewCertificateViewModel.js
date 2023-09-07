@@ -1423,11 +1423,9 @@ class CrewCertificateViewModel {
 
   async #generateCard() {
     await Promise.all([
-      this.#renderer.generateCardFront(this.#model, this.#cardFrontElement),
-      this.#renderer.generateCardBack(this.#model, this.#cardBackElement)
+      this.#generateCardFront(),
+      this.#generateCardBack()
     ]);
-    this.#generateDownloadFrontLink();
-    this.#generateDownloadBackLink();
   }
 
   #generateDownloadFrontLink() {
