@@ -400,10 +400,18 @@ class CrewCertificateViewModel {
     this.#signatureTextInput.addEventListener("change", this, false);
   }
   async onSignatureTextInputChange() {
-    const blob = await CrewCertificateRenderer.generateSignatureFromText(this.#signatureTextInput.value);
-    const dataURL = await this.constructor.#getFileData(blob);
-    if (this.#model.signature !== dataURL) {
-      this.#model.signature = dataURL;
+    if (this.#signatureGenerator === null) {
+      this.#signatureGenerator = CrewCertificateRenderer.generateNewSignatureFromText(
+        this.#signatureFallback
+      );
+    }
+    await this.#signatureGenerator.next();
+    const signature = await this.#signatureGenerator.next(
+      this.#signatureTextInput.value
+    );
+    console.log(signature.value);
+    if (signature.value.newSignature) {
+      this.#model.signature = signature.value.signature;
       this.#generateCardFront();
     }
   }
@@ -1298,6 +1306,9 @@ class CrewCertificateViewModel {
     await this.#renderer.loadCanvasFonts();
     this.cardFrontElement = this.#document.getElementById("cardFront");
     this.cardBackElement = this.#document.getElementById("cardBack");
+    this.#frontFallback = this.#document.getElementById("offscreen-front");
+    this.#backFallback = this.#document.getElementById("offscreen-back");
+    this.#signatureFallback = this.#document.getElementById("offscreen-signature");
     await this.#generateCard();
     const inputFields = [
       "typeCode",
