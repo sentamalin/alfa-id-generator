@@ -102,244 +102,131 @@ class IDBadgeRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
-    const imagePromises = [
+    if (this.mrzInQRCode) {
+      this.#frontQRCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
+    }
+    else { this.#frontQRCode.qrCode = model.url; }
+    const images = await Promise.all([
+      this.constructor.#generateCanvasImg(this.#frontQRCode.qrCode),
       this.constructor.#generateCanvasImg(model.picture),
       this.constructor.#generateCanvasImg(this.logo)
-    ];
-    if (typeof model.signature !== typeof canvas) {
-      imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
-    }
-    const images = await Promise.all(imagePromises);
+    ]);
+    ctx.drawImage(
+      images[0],
+      this.constructor.#frontColumns[1],
+      this.constructor.#frontRows[2],
+      this.constructor.#frontQRCodeArea[0],
+      this.constructor.#frontQRCodeArea[1]
+    );
     this.constructor.#fillAreaWithImg(
-      images[0], ctx,
-      this.constructor.#photoXY[0],
-      this.constructor.#photoXY[1],
+      images[1], ctx,
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[3],
       this.constructor.#photoArea[0],
       this.constructor.#photoArea[1]
     );
     this.constructor.#fitImgInArea(
-      images[1], ctx,
-      this.constructor.#logoFrontXY[0],
-      this.constructor.#logoFrontXY[1],
+      images[2], ctx,
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[4],
       this.constructor.#logoArea[0],
       this.constructor.#logoArea[1]
     );
-    if (typeof model.signature !== typeof canvas) {
-      this.constructor.#fitImgInArea(
-        images[2], ctx,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1],
-      );
-    }
-    else {
-      ctx.drawImage(
-        model.signature,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1]
-      );
-    }
 
     ctx.fillStyle = this.headerColor;
-    ctx.font = this.constructor.#mainHeaderFont;
+    ctx.font = this.constructor.#badgeSubtypeFont;
     ctx.fillText(
-      this.fullAuthority,
-      Math.max(
-        this.constructor.#mainHeaderX -
-          ctx.measureText(this.fullAuthority).width,
-        this.constructor.#frontColumns
-      ),
-      this.constructor.#mainHeaderY[0],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
+      this.badgeSubtype,
+      this.constructor.#frontColumns[1],
+      this.constructor.#frontRows[0],
+      this.constructor.#cardArea[0] - this.constructor.#frontColumns[1] - 48
     );
-    ctx.font = this.constructor.#documentHeaderFont;
-    let documentHeaderWidth = ctx.measureText(this.fullDocumentName).width;
+
+    ctx.fillStyle = this.headerColor;
+    ctx.font = this.constructor.#badgeTypeFont;
     ctx.fillText(
-      this.fullDocumentName,
-      this.constructor.#mainHeaderX - documentHeaderWidth,
-      this.constructor.#mainHeaderY[1]
-    );
-    ctx.font = this.constructor.#separatorHeaderFont;
-    documentHeaderWidth += ctx.measureText(this.constructor.#headerSeparator).width;
-    ctx.fillText(
-      this.constructor.#headerSeparator,
-      this.constructor.#mainHeaderX - documentHeaderWidth,
-      this.constructor.#mainHeaderY[1]
-    );
-    ctx.font = this.constructor.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCodeVIZ}-${model.authorityCodeVIZ}`).width;
-    ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}`,
-      this.constructor.#mainHeaderX - documentHeaderWidth,
-      this.constructor.#mainHeaderY[1]
+      this.badgeType,
+      this.constructor.#frontColumns[1],
+      this.constructor.#frontRows[1],
+      this.constructor.#cardArea[0] - this.constructor.#frontColumns[1] - 48
     );
 
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#headerFont;
     ctx.fillText(
       this.nameHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[0]
-    );
-    ctx.fillText(
-      this.genderHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[2]
-    );
-    ctx.fillText(
-      this.nationalityHeader[0],
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[2]
-    );
-    ctx.fillText(
-      this.dateOfBirthHeader[0],
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[2]
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[5]
     );
     ctx.fillText(
       this.employerHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[6]
-    );
-    ctx.fillText(
-      this.occupationHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[8]
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[7]
     );
     ctx.fillText(
       this.numberHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[10]
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[9]
     );
     ctx.fillText(
       this.dateOfExpirationHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[12]
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[11]
     );
-    const nameWidth = this.constructor.#frontColumns +
+    const nameWidth = this.constructor.#frontColumns[0] +
       ctx.measureText(this.nameHeader[0]).width;
-    const genderWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.genderHeader[0]).width;
-    const nationalityWidth = this.constructor.#frontRow2Columns[0] +
-      ctx.measureText(this.nationalityHeader[0]).width;
-    const dateOfBirthWidth = this.constructor.#frontRow2Columns[1] +
-      ctx.measureText(this.dateOfBirthHeader[0]).width;
-    const employerWidth = this.constructor.#frontColumns +
+    const employerWidth = this.constructor.#frontColumns[0] +
       ctx.measureText(this.employerHeader[0]).width;
-    const occupationWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.occupationHeader[0]).width;
-    const numberWidth = this.constructor.#frontColumns +
+    const numberWidth = this.constructor.#frontColumns[0] +
       ctx.measureText(this.numberHeader[0]).width;
-    const dateOfExpirationWidth = this.constructor.#frontColumns +
+    const dateOfExpirationWidth = this.constructor.#frontColumns[0] +
       ctx.measureText(this.dateOfExpirationHeader[0]).width;
     
     ctx.font = this.constructor.#intlFont;
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
       nameWidth,
-      this.constructor.#frontRows[0]
-    );
-    ctx.fillText("/", genderWidth, this.constructor.#frontRows[2]);
-    ctx.fillText(
-      `${this.genderHeader[1]}/`,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[3]
-    );
-    ctx.fillText(
-      this.genderHeader[2],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[4]
-    );
-    ctx.fillText("/", nationalityWidth, this.constructor.#frontRows[2]);
-    ctx.fillText(
-      `${this.nationalityHeader[1]}/`,
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[3]
-    );
-    ctx.fillText(
-      this.nationalityHeader[2],
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[4]
-    );
-    ctx.fillText("/", dateOfBirthWidth, this.constructor.#frontRows[2]);
-    ctx.fillText(
-      `${this.dateOfBirthHeader[1]}/`,
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[3]
-    );
-    ctx.fillText(
-      this.dateOfBirthHeader[2],
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[4]
+      this.constructor.#frontRows[5]
     );
     ctx.fillText(
       `/ ${this.employerHeader[1]}/ ${this.employerHeader[2]}`,
       employerWidth,
-      this.constructor.#frontRows[6]
-    );
-    ctx.fillText(
-      `/ ${this.occupationHeader[1]}/ ${this.occupationHeader[2]}`,
-      occupationWidth,
-      this.constructor.#frontRows[8]
+      this.constructor.#frontRows[7]
     );
     ctx.fillText(
       `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
       numberWidth,
-      this.constructor.#frontRows[10]
+      this.constructor.#frontRows[9]
     );
     ctx.fillText(
       `/ ${this.dateOfExpirationHeader[1]}/ ${this.dateOfExpirationHeader[2]}`,
       dateOfExpirationWidth,
-      this.constructor.#frontRows[12]
+      this.constructor.#frontRows[11]
     );
 
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
     ctx.fillText(
       model.fullNameVIZ,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[1],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
-    );
-    ctx.fillText(
-      model.genderMarkerVIZ,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[5]
-    );
-    ctx.fillText(
-      model.nationalityCodeVIZ,
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[5]
-    );
-    ctx.fillText(
-      model.dateOfBirthVIZ,
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[5]
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[6],
+      this.constructor.#cardArea[0] - this.constructor.#frontColumns[0] - 48
     );
     ctx.fillText(
       model.employerVIZ,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[7],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
-    );
-    ctx.fillText(
-      model.occupationVIZ,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[9],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[8],
+      this.constructor.#cardArea[0] - this.constructor.#frontColumns[0] - 48
     );
     ctx.fillText(
       model.numberVIZ,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[11]
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[10]
     );
     ctx.fillText(
       model.dateOfExpirationVIZ,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[13]
+      this.constructor.#frontColumns[0],
+      this.constructor.#frontRows[12]
     );
 
     if (this.showGuides) {
@@ -363,6 +250,8 @@ class IDBadgeRenderer {
     }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
+    ctx.translate(this.constructor.#cardArea[0], 0);
+    ctx.rotate(90 * Math.PI / 180);
 
     ctx.fillStyle = this.backBackgroundColor;
     ctx.fillRect(
@@ -415,20 +304,20 @@ class IDBadgeRenderer {
       this.constructor.#numberUnderlayArea[1]
     );
     if (this.mrzInQRCode) {
-      this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
+      this.#backQRCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
     }
-    else { this.#qrCode.qrCode = model.url; }
+    else { this.#backQRCode.qrCode = model.url; }
     const images = await Promise.all([
-      this.constructor.#generateCanvasImg(this.#qrCode.qrCode),
+      this.constructor.#generateCanvasImg(this.#backQRCode.qrCode),
       this.constructor.#generateCanvasImg(this.logo),
       this.constructor.#generateCanvasImg(this.smallLogo)
     ]);
     ctx.drawImage(
       images[0],
-      this.constructor.#qrCodeXY[0],
-      this.constructor.#qrCodeXY[1],
-      this.constructor.#qrCodeArea[0],
-      this.constructor.#qrCodeArea[1]
+      this.constructor.#backQRCodeXY[0],
+      this.constructor.#backQRCodeXY[1],
+      this.constructor.#backQRCodeArea[0],
+      this.constructor.#backQRCodeArea[1]
     );
     this.constructor.#fitImgInArea(
       images[1], ctx,
@@ -456,58 +345,40 @@ class IDBadgeRenderer {
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#headerFont;
     ctx.fillText(
-      this.declarationHeader[0],
+      this.additionalElementsHeader[0],
       this.constructor.#backColumns,
       this.constructor.#backRows[0]
     );
-    ctx.fillText(
-      this.issueHeader[0],
-      this.constructor.#backColumns,
-      this.constructor.#backRows[3]
-    );
-    const declarationWidth = this.constructor.#backColumns +
-      ctx.measureText(this.declarationHeader[0]).width;
-    const issueWidth = this.constructor.#backColumns +
-      ctx.measureText(this.issueHeader[0]).width;
+    const additionalElementsWidth = this.constructor.#backColumns +
+      ctx.measureText(this.additionalElementsHeader[0]).width;
 
     ctx.font = this.constructor.#intlFont;
     ctx.fillText(
-      `/ ${this.declarationHeader[1]}/`,
-      declarationWidth,
+      "/",
+      additionalElementsWidth,
       this.constructor.#backRows[0]
     );
     ctx.fillText(
-      this.declarationHeader[2],
+      `${this.additionalElementsHeader[1]}/`,
       this.constructor.#backColumns,
       this.constructor.#backRows[1]
     );
-    ctx.fillText("/", issueWidth, this.constructor.#backRows[3]);
     ctx.fillText(
-      `${this.issueHeader[1]}/`,
+      `${this.additionalElementsHeader[2]}`,
       this.constructor.#backColumns,
-      this.constructor.#backRows[4]
-    );
-    ctx.fillText(
-      this.issueHeader[2],
-      this.constructor.#backColumns,
-      this.constructor.#backRows[5]
+      this.constructor.#backRows[2]
     );
 
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
-    const splitString = model.declarationVIZ.split(/\r?\n/);
+    const splitString = this.additionalElements.split(/\r?\n/);
     for (let i = 0; i < splitString.length; i += 1) {
       ctx.fillText(
         splitString[i],
         this.constructor.#backColumns,
-        this.constructor.#backRows[2] + (i * 33)
+        this.constructor.#backRows[3] + (i * 33)
       );
     }
-    ctx.fillText(
-      `${model.dateOfIssueVIZ}—${model.placeOfIssueVIZ}`,
-      this.constructor.#backColumns,
-      this.constructor.#backRows[6]
-    );
     ctx.fillText(
       model.numberVIZ,
       this.constructor.#backNumberXY[0],
@@ -547,13 +418,11 @@ class IDBadgeRenderer {
     this.fonts.add(this.constructor.#vizFontFace);
     this.fonts.add(this.constructor.#vizBoldFontFace);
     this.fonts.add(this.constructor.#vizItalicFontFace);
-    this.fonts.add(this.constructor.#signatureFontFace);
     await Promise.all([
       this.constructor.#mrzFontFace.load(),
       this.constructor.#vizFontFace.load(),
       this.constructor.#vizBoldFontFace.load(),
-      this.constructor.#vizItalicFontFace.load(),
-      this.constructor.#signatureFontFace.load()
+      this.constructor.#vizItalicFontFace.load()
     ]);
   }
 
@@ -581,10 +450,6 @@ class IDBadgeRenderer {
     "url('/fonts/OpenSans-Italic.woff') format('woff')",
     { style: "italic" }
   );
-  static #signatureFontFace = new FontFace(
-    "Yellowtail",
-    "url('/fonts/Yellowtail-Regular.woff') format('woff')"
-  );
   static get #mainHeaderFont() {
     return `bold 24px ${this.#vizFontFace.family}`;
   }
@@ -593,6 +458,12 @@ class IDBadgeRenderer {
   }
   static get #separatorHeaderFont() {
     return `bold 18px ${this.#vizFontFace.family}`;
+  }
+  static get #badgeTypeFont() {
+    return `bold 52px ${this.#vizFontFace.family}`;
+  }
+  static get #badgeSubtypeFont() {
+    return `bold 28px ${this.#vizFontFace.family}`;
   }
   static get #headerFont() {
     return `bold 18px ${this.#vizFontFace.family}`;
@@ -605,9 +476,6 @@ class IDBadgeRenderer {
   }
   static get #mrzFont() {
     return `44px ${this.#mrzFontFace.family}`;
-  }
-  static get #signatureFont() {
-    return `61px ${this.#signatureFontFace.family}`;
   }
 
   // Coordinates used in card generation (static)
@@ -625,7 +493,7 @@ class IDBadgeRenderer {
   static #mrzY = [451, 501, 551];
   static #mrzSpacing = 30.35;
   static #frontColumns = [48, 466];
-  static #backColumns = 48;
+  static #backColumns = 113;
   static #frontRows = [
     175, // Badge Subtype
     208, // Badge Type
@@ -638,8 +506,8 @@ class IDBadgeRenderer {
     773, // Employer Data
     829, // Number Header
     856, // Number Data
-    939, // Date of Expiration Header
-    598  // Date of Expiration Data
+    912, // Date of Expiration Header
+    939  // Date of Expiration Data
   ];
   static #backRows = [
     48,  // Additional Elements Header
@@ -649,8 +517,8 @@ class IDBadgeRenderer {
   ];
 
   // Areas used in card generation (static)
-  static #cardArea = [1052, 672];
-  static cutCardArea = [1020, 640];
+  static #cardArea = [672, 1052];
+  static cutCardArea = [640, 1020];
   static #photoUnderlayArea = [402, 624];
   static #photoArea = [370, 370];
   static #logoUnderlayArea = [434, 93];
@@ -707,6 +575,7 @@ class IDBadgeRenderer {
     ctx.restore();
   }
   static #drawBleedAndSafeLines(ctx) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "#ff0000";
     const bleed = 16;
     ctx.beginPath();
