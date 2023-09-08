@@ -260,8 +260,8 @@ class IDBadgeRenderer {
     ctx.fillStyle = this.backBackgroundColor;
     ctx.fillRect(
       0, 0,
-      this.constructor.#cardArea[0],
-      this.constructor.#cardArea[1]
+      this.constructor.#cardArea[1],
+      this.constructor.#cardArea[0]
     );
     if (this.backBackgroundImage) {
       const cardBackground = await this.constructor.#generateCanvasImg(
@@ -270,8 +270,8 @@ class IDBadgeRenderer {
       ctx.drawImage(
         cardBackground,
         0, 0,
-        this.constructor.#cardArea[0],
-        this.constructor.#cardArea[1]
+        this.constructor.#cardArea[1],
+        this.constructor.#cardArea[0]
       );
     }
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
