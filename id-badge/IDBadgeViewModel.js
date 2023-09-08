@@ -33,7 +33,7 @@ class IDBadgeViewModel {
     numberUnderlayAlpha: 255,
     logoUnderlayColor: "#000033",
     logoUnderlayAlpha: 255,
-    logo: "/logos/lambda.svg",
+    logo: "/logos/peets.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
     showPunchSlot: true,
     mrzInQRCode: true,
