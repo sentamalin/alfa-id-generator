@@ -8,6 +8,7 @@ import { IDBadgeRenderer } from "./IDBadgeRenderer.js";
 
 class IDBadgeViewModel {
   #model = new CrewID({
+    typeCode: "IC",
     authorityCode: "XAF",
     number: "362142069",
     dateOfExpiration: "2033-08-23",
@@ -83,6 +84,25 @@ class IDBadgeViewModel {
   /** @type { HTMLCanvasElement } */ #cardBackElement;
   /** @param { HTMLCanvasElement } canvas */
   set cardBackElement(canvas) { this.#cardBackElement = canvas; }
+
+  /** @type { HTMLInputElement } */ #typeCodeInput;
+  /** @param { HTMLInputElement } input */
+  set typeCodeInput(input) {
+    this.#typeCodeInput = input;
+    this.#typeCodeInput.setAttribute("minlength", 1);
+    this.#typeCodeInput.setAttribute("maxlength", 2);
+    this.#typeCodeInput.value = this.#model.typeCode;
+    this.#typeCodeInput.setAttribute("placeholder", this.#model.typeCode);
+    this.#typeCodeInput.addEventListener("input", this, false);
+    this.#typeCodeInput.addEventListener("change", this, false);
+  }
+  onTypeCodeInputChange() {
+    if (this.#typeCodeInput.checkValidity() &&
+    this.#model.typeCode !== this.#typeCodeInput.value) {
+      this.#model.typeCode = this.#typeCodeInput.value;
+      this.#generateCard();
+    }
+  }
 
   /** @type { HTMLInputElement } */ #authorityCodeInput;
   /** @param { HTMLInputElement } input */
@@ -873,6 +893,7 @@ class IDBadgeViewModel {
     this.#backFallback = this.#document.getElementById("offscreen-back");
     await this.#generateCard();
     const inputFields = [
+      "typeCode",
       "authorityCode",
       "number",
       "dateOfExpiration",
