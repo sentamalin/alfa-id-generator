@@ -233,7 +233,7 @@ class IDBadgeViewModel {
     if (this.#urlInput.checkValidity() &&
     this.#model.url !== this.#urlInput.value) {
       this.#model.url = this.#urlInput.value;
-      this.#generateCardBack();
+      this.#generateCard();
     }
   }
 
@@ -246,7 +246,7 @@ class IDBadgeViewModel {
   onMrzInQRCodeInputChange() {
     if (this.#renderer.mrzInQRCode) { this.#renderer.mrzInQRCode = false; }
     else { this.#renderer.mrzInQRCode = true; }
-    this.#generateCardBack();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #headerColorInput;
