@@ -24,7 +24,7 @@ class IDBadgeViewModel {
     textColor: "#000000",
     mrzColor: "#000000",
     frontBackgroundColor: "#efefef",
-    frontBackgroundImage: "/cardBackgrounds/lofiGrey.png",
+    frontBackgroundImage: "/cardBackgrounds/idbadge-lofiGrey-front.png",
     backBackgroundColor: "#efefef",
     backBackgroundImage: "/cardBackgrounds/lofiGrey.png",
     mrzBackgroundColor: "#ffffff",
