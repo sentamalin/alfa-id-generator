@@ -12,7 +12,12 @@ class CrewID {
   #document = new TD1Document();
 
   // General Text and Graphical Data (Forwards/Calls TD1Document)
+  get typeCode() { return this.#document.typeCode; }
+  get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
+  get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
+  set typeCode(value) { this.#document.typeCode = value; }
   get authorityCode() { return this.#document.authorityCode; }
+  get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
   get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
   set authorityCode(value) { this.#document.authorityCode = value; }
   get number() { return this.#document.number; }
