@@ -35,6 +35,7 @@ class IDBadgeViewModel {
     logoUnderlayAlpha: 255,
     logo: "/logos/lambda.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
+    showPunchSlot: true,
     mrzInQRCode: true,
     showGuides: false,
     additionalElements: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n",
@@ -566,6 +567,18 @@ class IDBadgeViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #showPunchSlotInput;
+  /** @param { HTMLInputElement } input */
+  set showPunchSlotInput(input) {
+    this.#showPunchSlotInput = input;
+    this.#showPunchSlotInput.addEventListener("change", this, false);
+  }
+  onShowPunchSlotInputChange() {
+    if (this.#renderer.showPunchSlot) { this.#renderer.showPunchSlot = false; }
+    else { this.#renderer.showPunchSlot = true; }
+    this.#generateCard();
+  }
+
   /** @type { HTMLInputElement } */ #additionalElementsInput;
   /** @param {HTMLInputElement } input */
   set additionalElementsInput(input) {
@@ -923,6 +936,7 @@ class IDBadgeViewModel {
       "logoFile",
       "smallLogo",
       "smallLogoFile",
+      "showPunchSlot",
       "additionalElements",
       "badgeType",
       "badgeSubtype",

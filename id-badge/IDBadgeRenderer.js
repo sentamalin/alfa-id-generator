@@ -51,6 +51,7 @@ class IDBadgeRenderer {
   smallLogo; // Defines the small authority logo
   mrzInQRCode;
   showGuides;
+  showPunchSlot;
   additionalElements;
   badgeType;
   badgeSubtype;
@@ -232,6 +233,9 @@ class IDBadgeRenderer {
     if (this.showGuides) {
       this.constructor.#drawBleedAndSafeLines(ctx);
     }
+    if (this.showPunchSlot) {
+      this.constructor.#drawPunchSlot(ctx);
+    }
 
     return canvas;
   }
@@ -409,6 +413,9 @@ class IDBadgeRenderer {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (this.showGuides) {
       this.constructor.#drawBleedAndSafeLines(ctx);
+    }
+    if (this.showPunchSlot) {
+      this.constructor.#drawPunchSlot(ctx);
     }
 
     return canvas;
@@ -614,6 +621,21 @@ class IDBadgeRenderer {
     ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
   }
+  static #drawPunchSlot(ctx) {
+    ctx.fillStyle = "#999999";
+    ctx.fillRect(
+      (this.#cardArea[0] - 160) / 2,
+      65,
+      160,
+      27
+    )
+    ctx.clearRect(
+      (this.#cardArea[0] - 158) / 2,
+      66,
+      158,
+      25
+    )
+  }
 
   // Constructor
   constructor(opt) {
@@ -633,6 +655,7 @@ class IDBadgeRenderer {
       if (opt.logoUnderlayAlpha) { this.logoUnderlayAlpha = opt.logoUnderlayAlpha; }
       if (opt.logo) { this.logo = opt.logo; }
       if (opt.smallLogo) { this.smallLogo = opt.smallLogo; }
+      if (opt.showPunchSlot) { this.showPunchSlot = opt.showPunchSlot; }
       if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
       if (opt.additionalElements !== undefined) { this.additionalElements = opt.additionalElements; }
