@@ -49,13 +49,7 @@ class CrewID {
   set employer(value) { this.#employer = value; }
 
   // CrewID MRZ Getters
-  get mrzLine1() {
-    return "IC" +
-      this.authorityCodeMRZ +
-      this.numberMRZ +
-      TravelDocument.generateMRZCheckDigit(this.numberMRZ) +
-      this.optionalDataMRZ.slice(0,15);
-  }
+  get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() {
     let uncheckedLine = "<<<<<<0<" +
       this.dateOfExpirationMRZ +
@@ -82,6 +76,7 @@ class CrewID {
   // Constructor
   constructor(opt) {
     if (opt) {
+      if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
       if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
