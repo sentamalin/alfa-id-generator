@@ -14,7 +14,7 @@ class IDBadgeViewModel {
     dateOfExpiration: "2033-08-23",
     fullName: "Millefeuille, Alfalfa",
     optionalData: "",
-    employer: "Lambda Air Ways, Inc",
+    employer: "Peets Aviation Limited",
     picture: "/photos/fox.jpg",
     url: "https://airlinefurries.com/"
   });
@@ -31,7 +31,7 @@ class IDBadgeViewModel {
     mrzBackgroundImage: null,
     numberUnderlayColor: "#ffffff",
     numberUnderlayAlpha: 255,
-    logoUnderlayColor: "#000033",
+    logoUnderlayColor: "#dddddd",
     logoUnderlayAlpha: 255,
     logo: "/logos/peets.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
