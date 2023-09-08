@@ -406,6 +406,7 @@ class IDBadgeRenderer {
       );
     }
 
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (this.showGuides) {
       this.constructor.#drawBleedAndSafeLines(ctx);
     }
@@ -575,7 +576,6 @@ class IDBadgeRenderer {
     ctx.restore();
   }
   static #drawBleedAndSafeLines(ctx) {
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "#ff0000";
     const bleed = 16;
     ctx.beginPath();
