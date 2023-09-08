@@ -20,7 +20,7 @@ class IDBadgeViewModel {
   });
 
   #renderer = new IDBadgeRenderer({
-    headerColor: "#000033",
+    headerColor: "#770077",
     textColor: "#000000",
     mrzColor: "#000000",
     frontBackgroundColor: "#efefef",
