@@ -36,7 +36,7 @@ class IDBadgeViewModel {
     smallLogo: "/smallLogos/alfa-bw.svg",
     mrzInQRCode: true,
     showGuides: false,
-    additionalElements: "",
+    additionalElements: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n",
     badgeType: "CREW",
     badgeSubtype: "FURRY",
     nameHeader: [
@@ -50,9 +50,9 @@ class IDBadgeViewModel {
       "EMPLEADOR"
     ],
     numberHeader: [
-      "CERTIFICATE NO",
-      "NO DU CERTIFICAT",
-      "NO DEL CERTIFICADO"
+      "ID NO",
+      "NO DU ID",
+      "NO DEL ID"
     ],
     dateOfExpirationHeader: [
       "EXPIRY",
