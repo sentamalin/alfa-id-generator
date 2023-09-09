@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { CrewCertificate } from "/modules/CrewCertificate.js";
-import { CrewCertificateRenderer } from "./CrewCertificateRenderer.js";
+import { EventsPassport } from "/modules/EventsPassport.js";
+import { EventsPassportRenderer } from "./EventsPassportRenderer.js";
 
-class CrewCertificateViewModel {
+class EventsPassportViewModel {
   #model = new CrewCertificate({
     typeCode: "AC",
     authorityCode: "XAF",
@@ -1467,4 +1467,4 @@ class CrewCertificateViewModel {
   }
 }
 
-export { CrewCertificateViewModel }
+export { EventsPassportViewModel }

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: CC0-1.0
  */
 
-import { CrewCertificateViewModel } from "./CrewCertificateViewModel.js";
+import { EventsPassportViewModel } from "./EventsPassportViewModel.js";
 
 window.addEventListener("load", initViewModel, false);
 
 let viewModel;
 async function initViewModel() {
-  viewModel = new CrewCertificateViewModel();
+  viewModel = new EventsPassportViewModel();
   await viewModel.initialize(document);
 }

@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { CrewCertificate  } from "/modules/CrewCertificate.js";
+import { EventsPassport } from "/modules/EventsPassport.js";
 import { QRCodeData } from "/modules/QRCodeData.js";
 
-class CrewCertificateRenderer {
+class EventsPassportRenderer {
   #qrCode = new QRCodeData({
     generatorOpt: {
       width: this.constructor.#qrCodeArea[0],
@@ -827,4 +827,4 @@ class CrewCertificateRenderer {
   }
 }
 
-export { CrewCertificateRenderer };
+export { EventsPassportRenderer };
