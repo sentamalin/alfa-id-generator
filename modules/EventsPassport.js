@@ -6,7 +6,7 @@
 import { TD3Document } from "./icao9303/TD3Document.js";
 import { TravelDocument } from "./icao9303/TravelDocument.js";
 
-class CrewCertificate {
+class EventsPassport {
   /* This defines properties for an ICAO 9303 TD3-compliant Events Passport (MRP) */
 
   #document = new TD3Document();
@@ -96,23 +96,21 @@ class CrewCertificate {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
+      if (opt.fullName) { this.fullName = opt.fullName; }
+      if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
+      if (opt.placeOfBirth) { this.placeOfBirth = opt.placeOfBirth; }
+      if (opt.dateOfIssue) { this.dateOfIssue = opt.dateOfIssue; }
+      if (opt.authority) { this.authority = opt.authority; }
       if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
-      if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.fullName) { this.fullName = opt.fullName; }
+      if (opt.endorsements) { this.endorsements = opt.endorsements; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
-      if (opt.qrCode) { this.qrCode = opt.qrCode; }
       if (opt.url) { this.url = opt.url; }
-      if (opt.employer) { this.employer = opt.employer; }
-      if (opt.occupation) { this.occupation = opt.occupation; }
-      if (opt.declaration) { this.declaration = opt.declaration; }
-      if (opt.dateOfIssue) { this.dateOfIssue = opt.dateOfIssue; }
-      if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
     }
   }
 }
 
-export { CrewCertificate };
+export { EventsPassport };
