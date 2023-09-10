@@ -311,8 +311,8 @@ class EventsPassportViewModel {
     this.#endorsementsInput = input;
     this.#endorsementsInput.value = this.#model.endorsements;
     this.#endorsementsInput.setAttribute("placeholder", this.#model.endorsements);
-    this.#employerInput.addEventListener("input", this, false);
-    this.#employerInput.addEventListener("change", this, false);
+    this.#endorsementsInput.addEventListener("input", this, false);
+    this.#endorsementsInput.addEventListener("change", this, false);
   }
   onEndorsementsInputChange() {
     if (this.#model.endorsements !== this.#endorsementsInput.value) {
