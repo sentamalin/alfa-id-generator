@@ -56,7 +56,7 @@ class EventsPassportRenderer {
   fonts;
 
   // Public Methods
-  /** @param { CrewCertificate } model */
+  /** @param { EventsPassport } model */
   /** @param { HTMLCanvasElement } fallback */
   async generateCardFront(model, fallback) {
     let canvas;
@@ -343,7 +343,7 @@ class EventsPassportRenderer {
     return canvas;
   }
 
-  /** @param { CrewCertificate } model */
+  /** @param { EventsPassport } model */
   /** @param { HTMLCanvasElement } fallback */
   async generateCardBack(model, fallback) {
     let canvas;
@@ -553,7 +553,6 @@ class EventsPassportRenderer {
 
   // Text constants used in image generation (static)
   static #headerSeparator = " · ";
-  static #documentSize = "TD1";
 
   // Font information used in card generation (static)
   static #mrzFontFace = new FontFace(
@@ -579,8 +578,11 @@ class EventsPassportRenderer {
     "Yellowtail",
     "url('/fonts/Yellowtail-Regular.woff') format('woff')"
   );
-  static get #mainHeaderFont() {
+  static get #passportHeaderFont() {
     return `bold 24px ${this.#vizFontFace.family}`;
+  }
+  static get #mainHeaderFont() {
+    return `bold 36px ${this.#vizFontFace.family}`;
   }
   static get #documentHeaderFont() {
     return `18px ${this.#vizFontFace.family}`;
@@ -601,71 +603,102 @@ class EventsPassportRenderer {
     return `44px ${this.#mrzFontFace.family}`;
   }
   static get #signatureFont() {
-    return `61px ${this.#signatureFontFace.family}`;
+    return `138px ${this.#signatureFontFace.family}`;
   }
 
   // Coordinates used in card generation (static)
-  static #mainHeaderX = 1004;
-  static #mainHeaderY = [48, 85];
-  static #photoUnderlayXY = [32, 0];
-  static #photoXY = [48, 141];
-  static #logoUnderlayXY = [618, 274];
-  static #numberUnderlayXY = [871, 193];
-  static #mrzUnderlayXY = [0, 379];
-  static #shortHeaderXY = [886, 167];
-  static #qrCodeXY = [618, 48];
-  static #logoFrontXY = [48, 48];
-  static #logoBackXY = [634, 290];
-  static #smallLogoXY = [886, 48];
+  static #photoUnderlayXY = [48, 0];
+  static #photoXY = [72, 256];
+  static #mrzUnderlayXY = [0, 789];
+  static #logoXY = [109, 79];
   static #signatureXY = [48, 543];
-  static #backNumberXY = [888, 216];
-  static #mrzX = 71;
-  static #mrzY = [451, 501, 551];
+  static #passportHeaderX = [261, 102];
+  static #passportHeaderY = [102, 135, 168];
+  static #mrzX = 89;
+  static #mrzY = [862, 937];
   static #mrzSpacing = 30.35;
-  static #frontColumns = 467;
-  static #backColumns = 48;
-  static #frontRows = [
-    141, // name Header
-    168, // name Data
-    217, // Row 2 Header (Primary Language)
-    242, // Row 2 Header (Alternate Language 1)
-    267, // Row 2 Header (Alternate Language 2)
-    294, // Row 2 Data
-    343, // Employer Header
-    370, // Employer Data
-    419, // Occupation Header
-    446, // Occupation Data
-    495, // Number Header
-    522, // Number Data
-    571, // Date of Expiration Header
-    598  // Date of Expiration Data
+  static get #documentX() {
+    return [
+      1072, // Document Header
+      1222, // Authority Header
+      this.#cardArea[0] - this.#safe // Number Header
+    ];
+  }
+  static get #documentY() {
+    return [
+      this.#safe, // Full Authority Header
+      100, // Full Document Header
+      136, // Document Header (primary)
+      161, // Document Header (I18n 1)
+      186, // Document Header (I18n 2)
+      213 // Document Data
+    ];
+  }
+  static #dataX = [
+    485, // Column 1
+    680, // Date of Birth
+    937, // Gender Marker
+    1083 // Place of Birth
   ];
-  static #frontRow2Columns = [
-    607, // Nationality Column
-    802  // Date of Birth Column
+  static #dataY = [
+    256, // Name Header
+    283, // Name Data
+    332, // Row 2 Header (primary)
+    357, // Row 2 Header (I18n 1)
+    382, // Row 2 Header (I18n 2)
+    409, // Row 2 Data
+    458, // Issue Header
+    485, // Issue Data
+    534, // Authority Header
+    561, // Authority Data
+    610, // Date of Expiration Header
+    637, // Date of Expiration Data
+    686, // Endorsement Header
+    713 // Endorsement Data
   ];
-  static #backRows = [
-    48,  // Re-Entry Declaration Header
-    73,  // Re-Entry Declaration Header (Alternate Language 2)
-    100, // Re-Entry Declaration Data
-    229, // Date/Place of Issue Header
-    254, // Date/Place of Issue Header (Alternate Language 1)
-    279, // Date/Place of Issue Header (Alternate Language 2)
-    306  // Date/Place of Issue Data
+  static #signatureX = 112;
+  static #signatureY = [
+    1210, // Signature
+    1334, // Signature Line
+    1358, // Signature Header (primary)
+    1383, // Signature Header (I18n 1)
+    1408 // Signature Header (I18n 2)
   ];
+  static get #qrCodeXY() {
+    return [
+      this.#cardArea[0] - this.#safe - this.#qrCodeArea,
+      this.#cardArea[1] - this.#safe - this.#qrCodeArea
+    ];
+  }
 
   // Areas used in card generation (static)
-  static #cardArea = [1052, 672];
-  static cutCardArea = [1020, 640];
-  static #photoUnderlayArea = [402, 527];
-  static #photoArea = [370, 370];
-  static #logoUnderlayArea = [434, 93];
-  static #numberUnderlayArea = [181, 65];
-  static #mrzUnderlayArea = [1052, 293];
-  static #qrCodeArea = [212, 212];
-  static #logoArea = [370, 61];
-  static #smallLogoArea = [103, 103];
-  static #signatureArea = [370, 81];
+  static #cardArea = [1524, 1087];
+  static get cutCardArea() {
+    return [
+      this.#cardArea[0] - (bleed * 2),
+      this.#cardArea[1] - (bleed * 2)
+    ];
+  }
+  static #bleed = 16;
+  static #safe = 48;
+  static #photoUnderlayArea = [413, 765];
+  static #photoArea = [365, 487];
+  static #logoArea = 128;
+  static get #signatureArea() {
+    return [
+      this.#cardArea[1] - (112 * 2),
+      164
+    ];
+  }
+  static get #qrCodeArea() {
+    return this.#cardArea[1] - this.#safe - this.#dataY[6];
+  }
+  static get #mrzUnderlayArea() {
+    return [
+      this.#cardArea[0],
+      this.#cardArea[1] - this.#mrzUnderlayXY[1]
+    ];
+  }
 
   // Methods used in card generation (static)
   static #generateCanvasImg(img) {
@@ -785,8 +818,8 @@ class EventsPassportRenderer {
     ctx.textBaseline = "top";
     const centerShift = (canvas.width - ctx.measureText(signature).width) / 2;
     ctx.fillText(
-      signature, Math.max(centerShift, 0), 8,
-      this.#signatureArea[0] - 6
+      signature, Math.max(centerShift, 0), 0,
+      this.#signatureArea[0]
     );
     return canvas;
   }
