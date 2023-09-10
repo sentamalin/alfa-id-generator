@@ -27,11 +27,18 @@ main {
 }
 
 #cardFront, #cardBack {
-  max-width: 3.375in;
+  max-width: 125mm;
   width: 100%;
   height: auto;
   border: 1px solid #999;
-  border-radius: 16px;
+}
+
+#cardFront {
+  border-radius: 0 0 3.18mm 3.18mm;
+}
+
+#cardBack {
+  border-radius: 3.18mm 3.18mm 0 0;
 }
 
 .generated-card {
