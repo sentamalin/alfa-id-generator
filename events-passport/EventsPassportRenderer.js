@@ -21,38 +21,36 @@ class EventsPassportRenderer {
   headerColor; // Defines background color around picture and header text color
   textColor; // Defines data text color
   mrzColor;
+  passportHeaderColor;
   frontBackgroundColor; // Defines a solid color when no front image is used
   frontBackgroundImage; // Defines a front image to use for a background
   backBackgroundColor; // Defines a solid color when no back image is used
   backBackgroundImage; // Defines a back image to use for a background
   mrzBackgroundColor; // Defines a solid color when no MRZ underlay is used
   mrzBackgroundImage; // Defines an image to use for the MRZ underlay
-  numberUnderlayColor; // Defines a solid color when no number underlay image is used
-  numberUnderlayAlpha = 255;
-  get #numberUnderlayColorWithAlpha() {
-    return `${this.numberUnderlayColor}${this.numberUnderlayAlpha.toString(16).padStart(2, "0")}`;
-  }
   logoUnderlayColor;
   logoUnderlayAlpha = 255;
   get #logoUnderlayColorWithAlpha() {
     return `${this.logoUnderlayColor}${this.logoUnderlayAlpha.toString(16).padStart(2, "0")}`;
   }
   logo; // Defines the authority logo
-  smallLogo; // Defines the small authority logo
   mrzInQRCode;
   showGuides;
   fullAuthority;
   fullDocumentName;
+  passportHeader;
+  documentHeader;
+  authorityHeader;
+  numberHeader;
   nameHeader;
-  genderHeader;
   nationalityHeader;
   dateOfBirthHeader;
-  employerHeader;
-  occupationHeader;
-  numberHeader;
-  dateOfExpirationHeader;
-  declarationHeader;
+  genderHeader;
+  placeOfBirthHeader;
   issueHeader;
+  dateOfExpirationHeader;
+  endorsementsHeader;
+  signatureHeader;
   fonts;
 
   // Public Methods
@@ -88,7 +86,6 @@ class EventsPassportRenderer {
         this.constructor.#cardArea[1]
       );
     }
-    ctx.fillStyle = "#00003300";
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
     ctx.fillRect(
       this.constructor.#photoUnderlayXY[0],
@@ -96,14 +93,10 @@ class EventsPassportRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
-    const imagePromises = [
+    const images = await Promise.all([
       this.constructor.#generateCanvasImg(model.picture),
       this.constructor.#generateCanvasImg(this.logo)
-    ];
-    if (typeof model.signature !== typeof canvas) {
-      imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
-    }
-    const images = await Promise.all(imagePromises);
+    ]);
     this.constructor.#fillAreaWithImg(
       images[0], ctx,
       this.constructor.#photoXY[0],
@@ -118,24 +111,9 @@ class EventsPassportRenderer {
       this.constructor.#logoArea[0],
       this.constructor.#logoArea[1]
     );
-    if (typeof model.signature !== typeof canvas) {
-      this.constructor.#fitImgInArea(
-        images[2], ctx,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1],
-      );
-    }
-    else {
-      ctx.drawImage(
-        model.signature,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1]
-      );
-    }
+
+    ctx.fillStyle = this.passportHeaderColor;
+    ctx.font = this.constructor.#passportHeaderFont;
 
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#mainHeaderFont;
@@ -830,32 +808,33 @@ class EventsPassportRenderer {
       if (opt.headerColor) { this.headerColor = opt.headerColor; }
       if (opt.textColor) { this.textColor = opt.textColor; }
       if (opt.mrzColor) { this.mrzColor = opt.mrzColor; }
+      if (opt.passportHeaderColor) { this.passportHeaderColor = opt.passportHeaderColor}
       if (opt.frontBackgroundColor) { this.frontBackgroundColor = opt.frontBackgroundColor; }
       if (opt.frontBackgroundImage) { this.frontBackgroundImage = opt.frontBackgroundImage; }
       if (opt.backBackgroundColor) { this.backBackgroundColor = opt.backBackgroundColor; }
       if (opt.backBackgroundImage) { this.backBackgroundImage = opt.backBackgroundImage; }
       if (opt.mrzBackgroundColor) { this.mrzBackgroundColor = opt.mrzBackgroundColor; }
       if (opt.mrzBackgroundImage) { this.mrzBackgroundImage = opt.mrzBackgroundImage; }
-      if (opt.numberUnderlayColor) { this.numberUnderlayColor = opt.numberUnderlayColor; }
-      if (opt.numberUnderlayAlpha) { this.numberUnderlayAlpha = opt.numberUnderlayAlpha; }
       if (opt.logoUnderlayColor) { this.logoUnderlayColor = opt.logoUnderlayColor; }
       if (opt.logoUnderlayAlpha) { this.logoUnderlayAlpha = opt.logoUnderlayAlpha; }
       if (opt.logo) { this.logo = opt.logo; }
-      if (opt.smallLogo) { this.smallLogo = opt.smallLogo; }
       if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
       if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
       if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }
+      if (opt.passportHeader) { this.passportHeader = opt.passportHeader; }
+      if (opt.documentHeader) { this.documentHeader = opt.documentHeader; }
+      if (opt.authorityHeader) { this.authorityHeader = opt.authorityHeader; }
+      if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
       if (opt.nameHeader) { this.nameHeader = opt.nameHeader; }
-      if (opt.genderHeader) { this.genderHeader = opt.genderHeader; }
       if (opt.nationalityHeader) { this.nationalityHeader = opt.nationalityHeader; }
       if (opt.dateOfBirthHeader) { this.dateOfBirthHeader = opt.dateOfBirthHeader; }
-      if (opt.employerHeader) { this.employerHeader = opt.employerHeader; }
-      if (opt.occupationHeader) { this.occupationHeader = opt.occupationHeader; }
-      if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
-      if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
-      if (opt.declarationHeader) { this.declarationHeader = opt.declarationHeader; }
+      if (opt.genderHeader) { this.genderHeader = opt.genderHeader; }
+      if (opt.placeOfBirthHeader) { this.placeOfBirthHeader = opt.placeOfBirthHeader; }
       if (opt.issueHeader) { this.issueHeader = opt.issueHeader; }
+      if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
+      if (opt.endorsementsHeader) { this.endorsementsHeader = opt.endorsementsHeader; }
+      if (opt.signatureHeader) { this.signatureHeader = opt.signatureHeader; }
     }
   }
 }
