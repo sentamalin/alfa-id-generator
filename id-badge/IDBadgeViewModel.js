@@ -35,7 +35,7 @@ class IDBadgeViewModel {
     logoUnderlayAlpha: 255,
     logo: "/logos/peets.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
-    showPunchSlot: true,
+    showPunchSlot: false,
     mrzInQRCode: true,
     showGuides: false,
     additionalElements: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n",
