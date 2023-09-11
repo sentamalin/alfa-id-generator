@@ -702,6 +702,8 @@ class CrewLicenseRenderer {
   }
   static #drawBleedAndSafeLines(ctx) {
     ctx.fillStyle = "#ff0000";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "butt";
     const bleed = 16;
     ctx.beginPath();
     ctx.moveTo(0, bleed);
