@@ -847,8 +847,8 @@ class EventsPassportRenderer {
     let ctx;
     if (typeof OffscreenCanvas === "undefined") {
       canvas = canvasFallback;
-      canvas.setAttribute("width", this.constructor.#signatureArea[0]);
-      canvas.setAttribute("height", this.constructor.#signatureArea[1]);
+      canvas.width = this.constructor.#signatureArea[0];
+      canvas.height = this.constructor.#signatureArea[1];
     }
     else {
       canvas = new OffscreenCanvas(this.constructor.#signatureArea[0], this.constructor.#signatureArea[1]);
