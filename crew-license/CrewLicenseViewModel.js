@@ -398,7 +398,7 @@ class CrewLicenseViewModel {
   }
   onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = CrewLicenseRenderer.generateNewSignatureFromText(
+      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
         this.#signatureFallback
       );
     }

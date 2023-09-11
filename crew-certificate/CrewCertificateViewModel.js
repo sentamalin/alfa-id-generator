@@ -407,7 +407,7 @@ class CrewCertificateViewModel {
   }
   onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = CrewCertificateRenderer.generateNewSignatureFromText(
+      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
         this.#signatureFallback
       );
     }

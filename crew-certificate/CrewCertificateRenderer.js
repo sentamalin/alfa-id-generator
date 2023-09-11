@@ -753,7 +753,7 @@ class CrewCertificateRenderer {
     ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
   }
-  static * generateNewSignatureFromText(canvasFallback) {
+  * generateNewSignatureFromText(canvasFallback) {
     let oldSignature = "";
     let signature = "";
     let canvas;
@@ -770,25 +770,25 @@ class CrewCertificateRenderer {
       }
     }
   }
-  static #generateSignatureFromText(signature, canvasFallback) {
+  #generateSignatureFromText(signature, canvasFallback) {
     let canvas;
     let ctx;
     if (typeof OffscreenCanvas === "undefined") {
       canvas = canvasFallback;
-      canvas.setAttribute("width", this.#signatureArea[0]);
-      canvas.setAttribute("height", this.#signatureArea[1]);
+      canvas.width = this.constructor.#signatureArea[0];
+      canvas.height = this.constructor.#signatureArea[1];
     }
     else {
-      canvas = new OffscreenCanvas(this.#signatureArea[0], this.#signatureArea[1]);
+      canvas = new OffscreenCanvas(this.constructor.#signatureArea[0], this.constructor.#signatureArea[1]);
     }
     ctx = canvas.getContext("2d");
     ctx.fillStyle = this.textColor;
-    ctx.font = this.#signatureFont;
+    ctx.font = this.constructor.#signatureFont;
     ctx.textBaseline = "top";
     const centerShift = (canvas.width - ctx.measureText(signature).width) / 2;
     ctx.fillText(
       signature, Math.max(centerShift, 0), 8,
-      this.#signatureArea[0] - 6
+      this.constructor.#signatureArea[0] - 6
     );
     return canvas;
   }
