@@ -30,6 +30,7 @@ class EventsPassportViewModel {
     headerColor: "#4090ba",
     textColor: "#000000",
     mrzColor: "#000000",
+    passportHeaderColor: "#ffffff",
     frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/passport-mrp-lofiGrey.png",
     backBackgroundColor: "#efefef",
@@ -475,6 +476,18 @@ class EventsPassportViewModel {
   }
   onMrzColorInputChange() {
     this.#renderer.mrzColor = this.#mrzColorInput.value;
+    this.#generateCardFront();
+  }
+
+  /** @type { HTMLInputElement } */ #passportHeaderColorInput;
+  /** @param { HTMLInputElement } input */
+  set passportHeaderColorInput(input) {
+    this.#passportHeaderColorInput = input;
+    this.#passportHeaderColorInput.value = this.#renderer.passportHeaderColor;
+    this.#passportHeaderColorInput.addEventListener("change", this, false);
+  }
+  onMrzColorInputChange() {
+    this.#renderer.passportHeaderColor = this.#passportHeaderColorInput.value;
     this.#generateCardFront();
   }
 
@@ -1365,6 +1378,7 @@ class EventsPassportViewModel {
       "headerColor",
       "textColor",
       "mrzColor",
+      "passportHeaderColor",
       "frontBackgroundColor",
       "backBackgroundColor",
       "mrzBackgroundColor",
