@@ -713,7 +713,7 @@ class CrewCertificateRenderer {
     ctx.restore();
   }
   static #drawBleedAndSafeLines(ctx) {
-    ctx.fillStyle = "#ff0000";
+    ctx.strokeStyle = "#ff0000";
     ctx.lineWidth = 1;
     ctx.lineCap = "butt";
     const bleed = 16;
@@ -734,7 +734,7 @@ class CrewCertificateRenderer {
     ctx.lineTo(this.#cardArea[0] - bleed, this.#cardArea[1]);
     ctx.closePath(); ctx.stroke();
 
-    ctx.fillStyle = "#0000ff";
+    ctx.strokeStyle = "#0000ff";
     const safe = 48;
     ctx.beginPath();
     ctx.moveTo(0, safe);
