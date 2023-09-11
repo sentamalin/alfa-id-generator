@@ -845,8 +845,6 @@ class EventsPassportRenderer {
   #generateSignatureFromText(signature, canvasFallback) {
     let canvas;
     let ctx;
-    console.log(`Signature: ${signature}`);
-    console.log(`Canvas Fallback: ${canvasFallback}`);
     if (typeof OffscreenCanvas === "undefined") {
       canvas = canvasFallback;
       canvas.setAttribute("width", this.constructor.#signatureArea[0]);
@@ -856,7 +854,6 @@ class EventsPassportRenderer {
       canvas = new OffscreenCanvas(this.constructor.#signatureArea[0], this.constructor.#signatureArea[1]);
     }
     ctx = canvas.getContext("2d");
-    console.log(`Text Color: ${this.textColor}`);
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#signatureFont;
     ctx.textBaseline = "top";
