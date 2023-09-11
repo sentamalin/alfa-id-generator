@@ -8,7 +8,7 @@ import { EventsPassportRenderer } from "./EventsPassportRenderer.js";
 
 class EventsPassportViewModel {
   #model = new EventsPassport({
-    typeCode: "AC",
+    typeCode: "P",
     authorityCode: "XAF",
     number: "362142069",
     fullName: "Millefeuille, Alfalfa",
@@ -17,7 +17,7 @@ class EventsPassportViewModel {
     genderMarker: "F",
     placeOfBirth: "UTOPIA",
     dateOfIssue: "2023-08-23",
-    authority: "Air Line Furries Association, International\nUtopiopolis, Utopia",
+    authority: "Committee on Anthropomorphic Statistics and Census",
     dateOfExpiration: "2033-08-23",
     endorsements: "See Page 51",
     optionalData: "",
@@ -400,7 +400,7 @@ class EventsPassportViewModel {
   }
   onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = EventsPassportRenderer.generateNewSignatureFromText(
+      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
         this.#signatureFallback
       );
     }
@@ -486,7 +486,7 @@ class EventsPassportViewModel {
     this.#passportHeaderColorInput.value = this.#renderer.passportHeaderColor;
     this.#passportHeaderColorInput.addEventListener("change", this, false);
   }
-  onMrzColorInputChange() {
+  onPassportHeaderColorInputChange() {
     this.#renderer.passportHeaderColor = this.#passportHeaderColorInput.value;
     this.#generateCardFront();
   }
@@ -1175,6 +1175,54 @@ class EventsPassportViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #issueHeaderInput;
+  /** @param { HTMLInputElement } input */
+  set issueHeaderInput(input) {
+    this.#issueHeaderInput = input;
+    this.#issueHeaderInput.value = this.#renderer.issueHeader[0];
+    this.#issueHeaderInput.setAttribute("placeholder", this.#renderer.issueHeader[0]);
+    this.#issueHeaderInput.addEventListener("input", this, false);
+    this.#issueHeaderInput.addEventListener("change", this, false);
+  }
+  onIssueHeaderInputChange() {
+    if (this.#renderer.issueHeader[0] !== this.#issueHeaderInput.value) {
+      this.#renderer.issueHeader[0] = this.#issueHeaderInput.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #issueHeaderI18n1Input;
+  /** @param { HTMLInputElement } input */
+  set issueHeaderI18n1Input(input) {
+    this.#issueHeaderI18n1Input = input;
+    this.#issueHeaderI18n1Input.value = this.#renderer.issueHeader[1];
+    this.#issueHeaderI18n1Input.setAttribute("placeholder", this.#renderer.issueHeader[1]);
+    this.#issueHeaderI18n1Input.addEventListener("input", this, false);
+    this.#issueHeaderI18n1Input.addEventListener("change", this, false);
+  }
+  onIssueHeaderI18n1InputChange() {
+    if (this.#renderer.issueHeader[1] !== this.#issueHeaderI18n1Input.value) {
+      this.#renderer.issueHeader[1] = this.#issueHeaderI18n1Input.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #issueHeaderI18n2Input;
+  /** @param { HTMLInputElement } input */
+  set issueHeaderI18n2Input(input) {
+    this.#issueHeaderI18n2Input = input;
+    this.#issueHeaderI18n2Input.value = this.#renderer.issueHeader[2];
+    this.#issueHeaderI18n2Input.setAttribute("placeholder", this.#renderer.issueHeader[2]);
+    this.#issueHeaderI18n2Input.addEventListener("input", this, false);
+    this.#issueHeaderI18n2Input.addEventListener("change", this, false);
+  }
+  onIssueHeaderI18n2InputChange() {
+    if (this.#renderer.issueHeader[2] !== this.#issueHeaderI18n2Input.value) {
+      this.#renderer.issueHeader[2] = this.#issueHeaderI18n2Input.value;
+      this.#generateCardFront();
+    }
+  }
+
   /** @type { HTMLInputElement } */ #dateOfExpirationHeaderInput;
   /** @param { HTMLInputElement } input */
   set dateOfExpirationHeaderInput(input) {
@@ -1471,9 +1519,14 @@ class EventsPassportViewModel {
     this.#cardBackElement.width = EventsPassportRenderer.cutCardArea[0];
     this.#cardBackElement.height = EventsPassportRenderer.cutCardArea[1];
     const ctx = this.#cardBackElement.getContext("2d");
+    ctx.translate(
+      EventsPassportRenderer.cutCardArea[0] / 2,
+      EventsPassportRenderer.cutCardArea[1] / 2
+    );
+    ctx.rotate(180 * Math.PI / 180);
     ctx.drawImage(
       canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,
-      0, 0, this.#cardBackElement.width, this.#cardBackElement.height
+      -this.#cardBackElement.width / 2, -this.#cardBackElement.height / 2, this.#cardBackElement.width, this.#cardBackElement.height
     );
     const downloadBack = this.#document.getElementById("downloadBack");
     let blob;
