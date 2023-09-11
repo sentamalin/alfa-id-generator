@@ -464,7 +464,7 @@ class EventsPassportViewModel {
   }
   onTextColorInputChange() {
     this.#renderer.textColor = this.#textColorInput.value;
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #mrzColorInput;
