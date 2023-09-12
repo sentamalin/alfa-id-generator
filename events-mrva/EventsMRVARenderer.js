@@ -21,11 +21,8 @@ class EventsMRVARenderer {
   headerColor; // Defines background color around picture and header text color
   textColor; // Defines data text color
   mrzColor;
-  passportHeaderColor;
   frontBackgroundColor; // Defines a solid color when no front image is used
   frontBackgroundImage; // Defines a front image to use for a background
-  backBackgroundColor; // Defines a solid color when no back image is used
-  backBackgroundImage; // Defines a back image to use for a background
   mrzBackgroundColor; // Defines a solid color when no MRZ underlay is used
   mrzBackgroundImage; // Defines an image to use for the MRZ underlay
   logoUnderlayColor;
@@ -36,21 +33,21 @@ class EventsMRVARenderer {
   logo; // Defines the authority logo
   mrzInQRCode;
   showGuides;
+  usePassportInMRZ;
   fullAuthority;
   fullDocumentName;
-  passportHeader;
-  documentHeader;
-  authorityHeader;
+  placeOfIssueHeader;
+  validFromHeader;
+  validThruHeader;
+  numberOfEntriesHeader;
   numberHeader;
+  typeHeader;
+  additionalInfoHeader;
   nameHeader;
+  passportNumberHeader;
   nationalityHeader;
   dateOfBirthHeader;
   genderHeader;
-  placeOfBirthHeader;
-  issueHeader;
-  dateOfExpirationHeader;
-  endorsementsHeader;
-  signatureHeader;
   fonts;
 
   // Public Methods
@@ -871,11 +868,8 @@ class EventsMRVARenderer {
       if (opt.headerColor) { this.headerColor = opt.headerColor; }
       if (opt.textColor) { this.textColor = opt.textColor; }
       if (opt.mrzColor) { this.mrzColor = opt.mrzColor; }
-      if (opt.passportHeaderColor) { this.passportHeaderColor = opt.passportHeaderColor}
       if (opt.frontBackgroundColor) { this.frontBackgroundColor = opt.frontBackgroundColor; }
       if (opt.frontBackgroundImage) { this.frontBackgroundImage = opt.frontBackgroundImage; }
-      if (opt.backBackgroundColor) { this.backBackgroundColor = opt.backBackgroundColor; }
-      if (opt.backBackgroundImage) { this.backBackgroundImage = opt.backBackgroundImage; }
       if (opt.mrzBackgroundColor) { this.mrzBackgroundColor = opt.mrzBackgroundColor; }
       if (opt.mrzBackgroundImage) { this.mrzBackgroundImage = opt.mrzBackgroundImage; }
       if (opt.logoUnderlayColor) { this.logoUnderlayColor = opt.logoUnderlayColor; }
@@ -883,21 +877,21 @@ class EventsMRVARenderer {
       if (opt.logo) { this.logo = opt.logo; }
       if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
+      if (opt.usePassportInMRZ !== undefined) { this.usePassportInMRZ = opt.usePassportInMRZ; }
       if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
       if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }
-      if (opt.passportHeader) { this.passportHeader = opt.passportHeader; }
-      if (opt.documentHeader) { this.documentHeader = opt.documentHeader; }
-      if (opt.authorityHeader) { this.authorityHeader = opt.authorityHeader; }
+      if (opt.placeOfIssueHeader) { this.placeOfIssueHeader = opt.placeOfIssueHeader; }
+      if (opt.validFromHeader) { this.validFromHeader = opt.validFromHeader; }
+      if (opt.validThruHeader) { this.validThruHeader = opt.validThruHeader; }
+      if (opt.numberOfEntriesHeader) { this.numberOfEntriesHeader = opt.numberOfEntriesHeader; }
       if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
+      if (opt.typeHeader) { this.typeHeader = opt.typeHeader; }
+      if (opt.additionalInfoHeader) { this.additionalInfoHeader = opt.additionalInfoHeader; }
       if (opt.nameHeader) { this.nameHeader = opt.nameHeader; }
+      if (opt.passportNumberHeader) { this.passportNumberHeader = opt.passportNumberHeader; }
       if (opt.nationalityHeader) { this.nationalityHeader = opt.nationalityHeader; }
       if (opt.dateOfBirthHeader) { this.dateOfBirthHeader = opt.dateOfBirthHeader; }
       if (opt.genderHeader) { this.genderHeader = opt.genderHeader; }
-      if (opt.placeOfBirthHeader) { this.placeOfBirthHeader = opt.placeOfBirthHeader; }
-      if (opt.issueHeader) { this.issueHeader = opt.issueHeader; }
-      if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
-      if (opt.endorsementsHeader) { this.endorsementsHeader = opt.endorsementsHeader; }
-      if (opt.signatureHeader) { this.signatureHeader = opt.signatureHeader; }
     }
   }
 }

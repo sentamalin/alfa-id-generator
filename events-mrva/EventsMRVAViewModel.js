@@ -12,7 +12,7 @@ class EventsMRVAViewModel {
     authorityCode: "XAF",
     placeOfIssue: "Utopiopolis, UTO",
     validFrom: "2023-09-12",
-    validThrough: "2024-09-12",
+    validThru: "2024-09-12",
     numberOfEntries: "Multiple",
     number: "960241263",
     type: "Silver Sponsor—Adult",
@@ -32,11 +32,8 @@ class EventsMRVAViewModel {
     headerColor: "#4090ba",
     textColor: "#000000",
     mrzColor: "#000000",
-    passportHeaderColor: "#ffffff",
     frontBackgroundColor: "#efefef",
-    frontBackgroundImage: "/cardBackgrounds/passport-mrp-lofiGrey.png",
-    backBackgroundColor: "#efefef",
-    backBackgroundImage: "/cardBackgrounds/passport-mrp-lofiGrey.png",
+    frontBackgroundImage: "/cardBackgrounds/passport-mrva-lofiGrey.png",
     mrzBackgroundColor: "#ffffff",
     mrzBackgroundImage: null,
     logoUnderlayColor: "#4090ba",
@@ -44,32 +41,53 @@ class EventsMRVAViewModel {
     logo: "/smallLogos/alfa.svg",
     mrzInQRCode: true,
     showGuides: false,
+    usePassportInMRZ: true,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
-    fullDocumentName: "FURRY EVENTS PASSPORT",
-    passportHeader: [
-      "PASSPORT",
-      "PASSEPORT",
-      "PASAPORTE"
+    fullDocumentName: "FURRY EVENTS ENTRY VISA",
+    placeOfIssueHeader: [
+      "PLACE OF ISSUE",
+      "LIEU DE DÉLIVRANCE",
+      "LUGAR DE EMISIÓN"
     ],
-    documentHeader: [
-      "DOCUMENT CODE",
-      "CODE DU DOCUMENT",
-      "CÓDIGO DEL DOCUMENTO"
+    validFromHeader: [
+      "VALID FROM",
+      "VALABLE À PARTIR DU",
+      "VÁLIDO DESDE EL"
     ],
-    authorityHeader: [
-      "AUTHORITY",
-      "AUTORITÉ",
-      "AUTORIDAD"
+    validThruHeader: [
+      "VALID THRU",
+      "VALABLE JUSQU'AU",
+      "VÁLIDO HASTA"
+    ],
+    numberOfEntriesHeader: [
+      "NUMBER OF ENTRIES",
+      "NOMBRE D'ENTRÉES",
+      "NÚMERO DE ENTRADAS"
     ],
     numberHeader: [
-      "PASSPORT NUMBER",
-      "NUMÉRO DE PASSEPORT",
-      "NÚMERO DE PASAPORTE"
+      "DOCUMENT NO",
+      "NO DU DOCUMENT",
+      "NO DEL DOCUMENTO"
+    ],
+    typeHeader: [
+      "TYPE",
+      "TYPE",
+      "TIPO"
+    ],
+    additionalInfoHeader: [
+      "ADDITIONAL INFORMATION",
+      "INFORMATIONS COMPLÉMENTAIRES",
+      "INFORMACIÓN ADICIONAL"
     ],
     nameHeader: [
       "NAME",
       "NOM",
       "APELLIDOS"
+    ],
+    passportNumberHeader: [
+      "PASSPORT NO",
+      "NO DE PASSEPORT",
+      "NO DE PASAPORTE"
     ],
     nationalityHeader: [
       "NATIONALITY",
@@ -86,31 +104,6 @@ class EventsMRVAViewModel {
       "GENRE",
       "GENÉRO"
     ],
-    placeOfBirthHeader: [
-      "PLACE OF BIRTH",
-      "LIEU DE NAISSANCE",
-      "LUGAR DE NACIMIENTO"
-    ],
-    issueHeader: [
-      "DATE OF ISSUE",
-      "DATE DE DÉLIVERANCE",
-      "FECHA DE EXPEDICIÓN"
-    ],
-    dateOfExpirationHeader: [
-      "DATE OF EXPIRATION",
-      "DATE D'EXPIRATION",
-      "FECHA DE CADUCIDAD"
-    ],
-    endorsementsHeader: [
-      "ENDORSEMENTS",
-      "MENTIONS SPÉCIALES",
-      "ANOTACIONES"
-    ],
-    signatureHeader: [
-      "HOLDER'S SIGNATURE OR USUAL MARK",
-      "SIGNATURE DU TITULAIRE OU MARQUE HABITUELLE",
-      "FIRMA DEL TITULAR O MARCA HABITUAL"
-    ]
   });
 
   #inputTimeout = null;
