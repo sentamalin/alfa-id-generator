@@ -7,7 +7,7 @@ import { TD3Document } from "./icao9303/TD3Document.js";
 import { TravelDocument } from "./icao9303/TravelDocument.js";
 
 class EventsMRVA {
-  /* This defines properties for an ICAO 9303 TD3-compliant Events Passport (MRP) */
+  /* This defines properties for an ICAO 9303 TD3-compliant Events Visa (MRVA) */
 
   #document = new TD3Document();
   
@@ -40,10 +40,10 @@ class EventsMRVA {
   get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
   get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
   set genderMarker(value) { this.#document.genderMarker = value; }
-  get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  get dateOfExpirationMRZ() { return this.#document.dateOfExpirationMRZ; }
-  get dateOfExpirationVIZ() { return this.#document.dateOfExpirationVIZ; }
-  set dateOfExpiration(value) { this.#document.dateOfExpiration = value; }
+  get validThrough() { return this.#document.dateOfExpiration; }
+  get validThroughMRZ() { return this.#document.dateOfExpirationMRZ; }
+  get validThroughVIZ() { return this.#document.dateOfExpirationVIZ; }
+  set validThrough(value) { this.#document.dateOfExpiration = value; }
   get optionalData() { return this.#document.optionalData; }
   get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
   set optionalData(value) { this.#document.optionalData = value; }
@@ -52,40 +52,57 @@ class EventsMRVA {
   get signature() { return this.#document.signature; }
   set signature(value) { this.#document.signature = value; }
 
-  // EventsPassport-specific data
+  // EventsMRVA-specific data
   #url;
   get url() { return this.#url; }
   set url(value) { this.#url = value; this.qrCode = value; }
 
-  #placeOfBirth;
-  get placeOfBirth() { return this.#placeOfBirth; }
-  get placeOfBirthVIZ() { return this.#placeOfBirth.toUpperCase(); }
-  set placeOfBirth(value) { this.#placeOfBirth = value; }
+  #placeOfIssue;
+  get placeOfIssue() { return this.#placeOfIssue; }
+  get placeOfIssueVIZ() { return this.#placeOfIssue.toUpperCase(); }
+  set placeOfIssue(value) { this.#placeOfIssue = value; }
   
-  #dateOfIssue;
-  get dateOfIssue() { return this.#dateOfIssue.toISOString().slice(0,10); }
-  get dateOfIssueVIZ() { return TravelDocument.dateToVIZ(this.#dateOfIssue).toUpperCase(); }
-  set dateOfIssue(value) {
+  #validFrom;
+  get validFrom() { return this.#validFrom.toISOString().slice(0,10); }
+  get validFromVIZ() { return TravelDocument.dateToVIZ(this.#validFrom).toUpperCase(); }
+  set validFrom(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Date of issue (dateOfIssue) must be a valid date string."
       );
     }
-    else { this.#dateOfIssue = test; }
+    else { this.#validFrom = test; }
   }
 
-  #authority;
-  get authority() { return this.#authority; }
-  get authorityVIZ() { return this.#authority.toUpperCase(); }
-  set authority(value) { this.#authority = value; }
+  #numberOfEntries;
+  get numberOfEntries() { return this.#numberOfEntries; }
+  get numberOfEntriesVIZ() { return this.#numberOfEntries.toUpperCase(); }
+  set numberOfEntries(value) { this.#numberOfEntries = value; }
 
-  #endorsements;
-  get endorsements() { return this.#endorsements; }
-  get endorsementsVIZ() { return this.#endorsements.toUpperCase(); }
-  set endorsements(value) { this.#endorsements = value; }
+  #type;
+  get type() { return this.#type; }
+  get typeVIZ() { return this.#type.toUpperCase(); }
+  set type(value) { this.#type = value; }
 
-  // CrewCertificate MRZ Getters
+  #additionalInfo;
+  get additionalInfo() { return this.#additionalInfo; }
+  get additionalInfoVIZ() { return this.#additionalInfo.toUpperCase(); }
+
+  #passportNumber = "";
+  get passportNumber() { return this.#passportNumber; }
+  get passportNumberMRZ() { return TravelDocument.padMRZString(this.#passportNumber, 9); }
+  get passportNumberVIZ() { return this.#passportNumber.toUpperCase(); }
+  set passportNumber(value) {
+    if (value.toString().length > 9) {
+      throw new RangeError(
+        "Passport number (passportNumber) must be no more than 9 characters."
+      );
+    }
+    else { this.#passportNumber = value.toString(); }
+  }
+
+  // TD3Document MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() { return this.#document.mrzLine2; }
   get machineReadableZone() { return this.#document.machineReadableZone; }
@@ -95,16 +112,18 @@ class EventsMRVA {
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
+      if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
+      if (opt.validFrom) { this.validFrom = opt.validFrom; }
+      if (opt.validThrough) { this.validThrough = opt.validThrough; }
+      if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
       if (opt.number) { this.number = opt.number; }
+      if (opt.type) { this.type = opt.type; }
+      if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
       if (opt.fullName) { this.fullName = opt.fullName; }
+      if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.placeOfBirth) { this.placeOfBirth = opt.placeOfBirth; }
-      if (opt.dateOfIssue) { this.dateOfIssue = opt.dateOfIssue; }
-      if (opt.authority) { this.authority = opt.authority; }
-      if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
-      if (opt.endorsements) { this.endorsements = opt.endorsements; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
