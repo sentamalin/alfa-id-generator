@@ -21,14 +21,30 @@
       </div>
       <section class="customizationForm">
         <h2>Personalized Textual Data</h2>
-        <label for="typeCode">Document Type</label>
+        <label for="typeCode">Document Code</label>
         <input id="typeCode" name="typeCode" type="text" />
         <label for="authorityCode">Issuing Authority Code</label>
         <input id="authorityCode" name="authorityCode" type="text" />
+        <label for="placeOfIssue">Place of Issue</label>
+        <input id="placeOfIssue" name="placeOfIssue" type="text" />
+        <label for="validFrom">Valid From</label>
+        <input id="validFrom" name="validFrom" type="date" />
+        <label for="validThru">Valid Thru</label>
+        <input id="validThru" name="validThru" type="date" />
+        <label for="numberOfEntries">Number of Entries</label>
+        <input id="numberOfEntries" name="numberOfEntries" type="text" />
         <label for="number">Document Number</label>
         <input id="number" name="number" type="text" />
+        <label for="type">Visa Type</label>
+        <input id="type" name="type" type="text" />
+        <label for="additionalInfo">Additional Information</label>
+        <textarea id="additionalInfo" name="additionalInfo"></textarea>
         <label for="fullName">Full Name</label>
         <input id="fullName" name="fullName" type="text" />
+        <label for="passportNumber">Passport Number</label>
+        <input id="passportNumber" name="passportNumber" type="text" />
+        <label for="usePassportInMRZ">Use Passport in MRZ</label>
+        <input id="usePassportInMRZ" name="usePassportInMRZ" type="checkbox" checked="checked" />
         <label for="nationalityCode">Nationality</label>
         <input id="nationalityCode" name="nationalityCode" type="text" />
         <label for="dateOfBirth">Date of Birth</label>
@@ -39,16 +55,6 @@
           <option value="F">Female</option>
           <option value="M">Male</option>
         </select>
-        <label for="placeOfBirth">Place of Birth</label>
-        <input id="placeOfBirth" name="placeOfBirth" type="text" />
-        <label for="dateOfIssue">Date of Issue</label>
-        <input id="dateOfIssue" name="dateOfIssue" type="date" />
-        <label for="authority">Issuing Authority</label>
-        <input id="authority" name="authority" type="text" />
-        <label for="dateOfExpiration">Date of Expiration</label>
-        <input id="dateOfExpiration" name="dateOfExpiration" type="date" />
-        <label for="endorsements">Endorsements</label>
-        <input id="endorsements" name="endorsements" type="text" />
         <label for="url">QR Code URL</label>
         <input id="url" name="url" type="url" />
         <label for="mrzInQRCode">MRZ in QR Code</label>
@@ -74,12 +80,8 @@
         <input id="textColor" name="textColor" type="color" />
         <label for="mrzColor">MRZ Color</label>
         <input id="mrzColor" name="mrzColor" type="color" />
-        <label for="passportHeaderColor">Passport Header Color</label>
-        <input id="passportHeaderColor" name="passportHeaderColor" type="color" />
         <label for="frontBackgroundColor">Front Background Color</label>
         <input id="frontBackgroundColor" name="frontBackgroundColor" type="color" />
-        <label for="backBackgroundColor">Back Background Color</label>
-        <input id="backBackgroundColor" name="backBackgroundColor" type="color" />
         <label for="mrzBackgroundColor">MRZ Background Color</label>
         <input id="mrzBackgroundColor" name="mrzBackgroundColor" type="color" />
         <label for="logoUnderlayColor">Logo Underlay Color</label>
@@ -91,18 +93,10 @@
         <select id="frontBackgroundImage" name="frontBackgroundImage">
           <option value="none">None</option>
           <option value="upload">Upload File</option>
-          <option value="/cardBackgrounds/passport-mrp-lofiGrey.png">Lo-Fi Grey</option>
+          <option value="/cardBackgrounds/passport-mrva-lofiGrey.png">Lo-Fi Grey</option>
         </select>
         <label for="frontBackgroundImageFile">Front Background Image File</label>
         <input id="frontBackgroundImageFile" name="frontBackgroundImageFile" type="file" />
-        <label for="backBackgroundImage">Back Background Image</label>
-        <select id="backBackgroundImage" name="backBackgroundImage">
-          <option value="none">None</option>
-          <option value="upload">Upload File</option>
-          <option value="/cardBackgrounds/passport-mrp-lofiGrey.png">Lo-Fi Grey</option>
-        </select>
-        <label for="backBackgroundImageFile">Back Background Image File</label>
-        <input id="backBackgroundImageFile" name="backBackgroundImageFile" type="file" />
         <label for="mrzBackgroundImage">MRZ Background Image</label>
         <select id="mrzBackgroundImage" name="mrzBackgroundImage">
           <option value="none">None</option>
@@ -122,84 +116,78 @@
         <input id="fullAuthority" name="fullAuthority" type="text" />
         <label for="fullDocumentName">Sub-Header</label>
         <input id="fullDocumentName" name="fullDocumentName" type="text" />
-        <label for="passportHeader">Field 1</label>
-        <input id="passportHeader" name="passportHeader" type="text" />
-        <label for="passportHeaderI18n1">Field 1 (I18n 1)</label>
-        <input id="passportHeaderI18n1" name="passportHeaderI18n1" type="text" />
-        <label for="passportHeaderI18n2">Field 1 (I18n 2)</label>
-        <input id="passportHeaderI18n2" name="passportHeaderI18n2" type="text" />
-        <label for="documentHeader">Field 2</label>
-        <input id="documentHeader" name="documentHeader" type="text" />
-        <label for="documentHeaderI18n1">Field 2 (I18n 1)</label>
-        <input id="documentHeaderI18n1" name="documentHeaderI18n1" type="text" />
-        <label for="documentHeaderI18n2">Field 2 (I18n 2)</label>
-        <input id="documentHeaderI18n2" name="documentHeaderI18n2" type="text" />
-        <label for="authorityHeader">Field 3</label>
-        <input id="authorityHeader" name="authorityHeader" type="text" />
-        <label for="authorityHeaderI18n1">Field 3 (I18n 1)</label>
-        <input id="authorityHeaderI18n1" name="authorityHeaderI18n1" type="text" />
-        <label for="authorityHeaderI18n2">Field 3 (I18n 2)</label>
-        <input id="authorityHeaderI18n2" name="authorityHeaderI18n2" type="text" />
-        <label for="numberHeader">Field 4</label>
+        <label for="placeOfIssueHeader">Field 1</label>
+        <input id="placeOfIssueHeader" name="placeOfIssueHeader" type="text" />
+        <label for="placeOfIssueHeaderI18n1">Field 1 (I18n 1)</label>
+        <input id="placeOfIssueHeaderI18n1" name="placeOfIssueHeaderI18n1" type="text" />
+        <label for="placeOfIssueHeaderI18n2">Field 1 (I18n 2)</label>
+        <input id="placeOfIssueHeaderI18n2" name="placeOfIssueHeaderI18n2" type="text" />
+        <label for="validFromHeader">Field 2</label>
+        <input id="validFromHeader" name="validFromHeader" type="text" />
+        <label for="validFromHeaderI18n1">Field 2 (I18n 1)</label>
+        <input id="validFromHeaderI18n1" name="validFromHeaderI18n1" type="text" />
+        <label for="validFromHeaderI18n2">Field 2 (I18n 2)</label>
+        <input id="validFromHeaderI18n2" name="validFromHeaderI18n2" type="text" />
+        <label for="validThruHeader">Field 3</label>
+        <input id="validThruHeader" name="validThruHeader" type="text" />
+        <label for="validThruHeaderI18n1">Field 3 (I18n 1)</label>
+        <input id="validThruHeaderI18n1" name="validThruHeaderI18n1" type="text" />
+        <label for="validThruHeaderI18n2">Field 3 (I18n 2)</label>
+        <input id="validThruHeaderI18n2" name="validThruHeaderI18n2" type="text" />
+        <label for="numberOfEntriesHeader">Field 4</label>
+        <input id="numberOfEntriesHeader" name="numberOfEntriesHeader" type="text" />
+        <label for="numberOfEntriesHeaderI18n1">Field 4 (I18n 1)</label>
+        <input id="numberOfEntriesHeaderI18n1" name="numberOfEntriesHeaderI18n1" type="text" />
+        <label for="numberOfEntriesHeaderI18n2">Field 4 (I18n 2)</label>
+        <input id="numberOfEntriesHeaderI18n2" name="numberOfEntriesHeaderI18n2" type="text" />
+        <label for="numberHeader">Field 5</label>
         <input id="numberHeader" name="numberHeader" type="text" />
-        <label for="numberHeaderI18n1">Field 4 (I18n 1)</label>
+        <label for="numberHeaderI18n1">Field 5 (I18n 1)</label>
         <input id="numberHeaderI18n1" name="numberHeaderI18n1" type="text" />
-        <label for="numberHeaderI18n2">Field 4 (I18n 2)</label>
+        <label for="numberHeaderI18n2">Field 5 (I18n 2)</label>
         <input id="numberHeaderI18n2" name="numberHeaderI18n2" type="text" />
-        <label for="nameHeader">Field 5</label>
+        <label for="typeHeader">Field 6</label>
+        <input id="typeHeader" name="typeHeader" type="text" />
+        <label for="typeHeaderI18n1">Field 6 (I18n 1)</label>
+        <input id="typeHeaderI18n1" name="typeHeaderI18n1" type="text" />
+        <label for="typeHeaderI18n2">Field 6 (I18n 2)</label>
+        <input id="typeHeaderI18n2" name="typeHeaderI18n2" type="text" />
+        <label for="additionalInfoHeader">Field 7</label>
+        <input id="additionalInfoHeader" name="additionalInfoHeader" type="text" />
+        <label for="additionalInfoHeaderI18n1">Field 7 (I18n 1)</label>
+        <input id="additionalInfoHeaderI18n1" name="additionalInfoHeaderI18n1" type="text" />
+        <label for="additionalInfoHeaderI18n2">Field 7 (I18n 2)</label>
+        <input id="additionalInfoHeaderI18n2" name="additionalInfoHeaderI18n2" type="text" />
+        <label for="nameHeader">Field 8</label>
         <input id="nameHeader" name="nameHeader" type="text" />
-        <label for="nameHeaderI18n1">Field 5 (<abbr title="Internationalization">I18n</abbr> 1)</label>
+        <label for="nameHeaderI18n1">Field 8 (<abbr title="Internationalization">I18n</abbr> 1)</label>
         <input id="nameHeaderI18n1" name="nameHeaderI18n1" type="text" />
-        <label for="nameHeaderI18n2">Field 5 (I18n 2)</label>
+        <label for="nameHeaderI18n2">Field 8 (I18n 2)</label>
         <input id="nameHeaderI18n2" name="nameHeaderI18n2" type="text" />
-        <label for="nationalityHeader">Field 6</label>
+        <label for="passportNumberHeader">Field 9</label>
+        <input id="passportNumberHeader" name="passportNumberHeader" type="text" />
+        <label for="passportNumberHeaderI18n1">Field 9 (I18n 1)</label>
+        <input id="passportNumberHeaderI18n1" name="passportNumberHeaderI18n1" type="text" />
+        <label for="passportNumberHeaderI18n2">Field 9 (I18n 2)</label>
+        <input id="passportNumberHeaderI18n2" name="passportNumberHeaderI18n2" type="text" />
+        <label for="nationalityHeader">Field 10</label>
         <input id="nationalityHeader" name="nationalityHeader" type="text" />
-        <label for="nationalityHeaderI18n1">Field 6 (I18n 1)</label>
+        <label for="nationalityHeaderI18n1">Field 10 (I18n 1)</label>
         <input id="nationalityHeaderI18n1" name="nationalityHeaderI18n1" type="text" />
-        <label for="nationalityHeaderI18n2">Field 6 (I18n 2)</label>
+        <label for="nationalityHeaderI18n2">Field 10 (I18n 2)</label>
         <input id="nationalityHeaderI18n2" name="nationalityHeaderI18n2" type="text" />
-        <label for="dateOfBirthHeader">Field 7</label>
+        <label for="dateOfBirthHeader">Field 11</label>
         <input id="dateOfBirthHeader" name="dateOfBirthHeader" type="text" />
-        <label for="dateOfBirthHeaderI18n1">Field 7 (I18n 1)</label>
+        <label for="dateOfBirthHeaderI18n1">Field 11 (I18n 1)</label>
         <input id="dateOfBirthHeaderI18n1" name="dateOfBirthHeaderI18n1" type="text" />
-        <label for="dateOfBirthHeaderI18n2">Field 7 (I18n 2)</label>
+        <label for="dateOfBirthHeaderI18n2">Field 11 (I18n 2)</label>
         <input id="dateOfBirthHeaderI18n2" name="dateOfBirthHeaderI18n2" type="text" />
-        <label for="genderHeader">Field 8</label>
+        <label for="genderHeader">Field 12</label>
         <input id="genderHeader" name="genderHeader" type="text" />
-        <label for="genderHeaderI18n1">Field 8 (I18n 1)</label>
+        <label for="genderHeaderI18n1">Field 12 (I18n 1)</label>
         <input id="genderHeaderI18n1" name="genderHeaderI18n1" type="text" />
-        <label for="genderHeaderI18n2">Field 8 (I18n 2)</label>
+        <label for="genderHeaderI18n2">Field 12 (I18n 2)</label>
         <input id="genderHeaderI18n2" name="genderHeaderI18n2" type="text" />
-        <label for="placeOfBirthHeader">Field 9</label>
-        <input id="placeOfBirthHeader" name="placeOfBirthHeader" type="text" />
-        <label for="placeOfBirthHeaderI18n1">Field 9 (I18n 1)</label>
-        <input id="placeOfBirthHeaderI18n1" name="placeOfBirthHeaderI18n1" type="text" />
-        <label for="placeOfBirthHeaderI18n2">Field 9 (I18n 2)</label>
-        <input id="placeOfBirthHeaderI18n2" name="placeOfBirthHeaderI18n2" type="text" />
-        <label for="issueHeader">Field 10</label>
-        <input id="issueHeader" name="issueHeader" type="text" />
-        <label for="issueHeaderI18n1">Field 10 (I18n 1)</label>
-        <input id="issueHeaderI18n1" name="issueHeaderI18n1" type="text" />
-        <label for="issueHeaderI18n2">Field 10 (I18n 2)</label>
-        <input id="issueHeaderI18n2" name="issueHeaderI18n2" type="text" />
-        <label for="dateOfExpirationHeader">Field 11</label>
-        <input id="dateOfExpirationHeader" name="dateOfExpirationHeader" type="text" />
-        <label for="dateOfExpirationHeaderI18n1">Field 11 (I18n1)</label>
-        <input id="dateOfExpirationHeaderI18n1" name="dateOfExpirationHeaderI18n1" type="text" />
-        <label for="dateOfExpirationHeaderI18n2">Field 11 (I18n2)</label>
-        <input id="dateOfExpirationHeaderI18n2" name="dateOfExpirationHeaderI18n2" type="text" />
-        <label for="endorsementsHeader">Field 12</label>
-        <input id="endorsementsHeader" name="endorsementsHeader" type="text" />
-        <label for="endorsementsHeaderI18n1">Field 12 (I18n 1)</label>
-        <input id="endorsementsHeaderI18n1" name="endorsementsHeaderI18n1" type="text" />
-        <label for="endorsementsHeaderI18n2">Field 12 (I18n 2)</label>
-        <input id="endorsementsHeaderI18n2" name="endorsementsHeaderI18n2" type="text" />
-        <label for="signatureHeader">Field 13</label>
-        <input id="signatureHeader" name="signatureHeader" type="text" />
-        <label for="signatureHeaderI18n1">Field 13 (I18n 1)</label>
-        <input id="signatureHeaderI18n1" name="signatureHeaderI18n1" type="text" />
-        <label for="signatureHeaderI18n2">Field 13 (I18n 2)</label>
-        <input id="signatureHeaderI18n2" name="signatureHeaderI18n2" type="text" />
         <h2>Debugging Options</h2>
         <label for="showGuides">Show Bleed/Safe Lines</label>
         <input id="showGuides" name="showGuides" type="checkbox" />
