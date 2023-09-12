@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { EventsPassport } from "/modules/EventsPassport.js";
-import { EventsPassportRenderer } from "./EventsPassportRenderer.js";
+import { EventsMRVA } from "/modules/EventsMRVA.js";
+import { EventsMRVARenderer } from "./EventsMRVARenderer.js";
 
-class EventsPassportViewModel {
-  #model = new EventsPassport({
+class EventsMRVAViewModel {
+  #model = new EventsMRVA({
     typeCode: "P",
     authorityCode: "XAF",
     number: "362142069",
@@ -26,7 +26,7 @@ class EventsPassportViewModel {
     url: "https://airlinefurries.com/"
   });
 
-  #renderer = new EventsPassportRenderer({
+  #renderer = new EventsMRVARenderer({
     headerColor: "#4090ba",
     textColor: "#000000",
     mrzColor: "#000000",
@@ -1565,4 +1565,4 @@ class EventsPassportViewModel {
   }
 }
 
-export { EventsPassportViewModel }
+export { EventsMRVAViewModel }

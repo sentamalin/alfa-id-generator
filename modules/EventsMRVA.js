@@ -6,7 +6,7 @@
 import { TD3Document } from "./icao9303/TD3Document.js";
 import { TravelDocument } from "./icao9303/TravelDocument.js";
 
-class EventsPassport {
+class EventsMRVA {
   /* This defines properties for an ICAO 9303 TD3-compliant Events Passport (MRP) */
 
   #document = new TD3Document();
@@ -113,4 +113,4 @@ class EventsPassport {
   }
 }
 
-export { EventsPassport };
+export { EventsMRVA };

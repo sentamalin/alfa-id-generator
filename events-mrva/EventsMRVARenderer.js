@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { EventsPassport } from "/modules/EventsPassport.js";
+import { EventsMRVA } from "/modules/EventsMRVA.js";
 import { QRCodeData } from "/modules/QRCodeData.js";
 
-class EventsPassportRenderer {
+class EventsMRVARenderer {
   #qrCode = new QRCodeData({
     generatorOpt: {
       width: this.constructor.#qrCodeArea,
@@ -54,7 +54,7 @@ class EventsPassportRenderer {
   fonts;
 
   // Public Methods
-  /** @param { EventsPassport } model */
+  /** @param { EventsMRVA } model */
   /** @param { HTMLCanvasElement } fallback */
   async generateCardFront(model, fallback) {
     let canvas;
@@ -472,7 +472,7 @@ class EventsPassportRenderer {
     return canvas;
   }
 
-  /** @param { EventsPassport } model */
+  /** @param { EventsMRVA } model */
   /** @param { HTMLCanvasElement } fallback */
   async generateCardBack(model, fallback) {
     let canvas;
@@ -902,4 +902,4 @@ class EventsPassportRenderer {
   }
 }
 
-export { EventsPassportRenderer };
+export { EventsMRVARenderer };
