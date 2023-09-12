@@ -164,6 +164,62 @@ class EventsMRVAViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #placeOfIssueInput;
+  /** @param { HTMLInputElement } input */
+  set placeOfIssueInput(input) {
+    this.#placeOfIssueInput = input;
+    this.#placeOfIssueInput.value = this.#model.placeOfIssue;
+    this.#placeOfIssueInput.setAttribute("placeholder", this.#model.placeOfIssue);
+    this.#placeOfIssueInput.addEventListener("input", this, false);
+    this.#placeOfIssueInput.addEventListener("change", this, false);
+  }
+  onPlaceOfIssueInputChange() {
+    if (this.#model.placeOfIssue !== this.#placeOfIssueInput.value) {
+      this.#model.placeOfIssue = this.#placeOfIssueInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #validFromInput;
+  /** @param { HTMLInputElement } input */
+  set validFromInput(input) {
+    this.#validFromInput = input;
+    this.#validFromInput.value = this.#model.validFrom;
+    this.#validFromInput.addEventListener("change", this, false);
+  }
+  onValidFromInputChange() {
+    this.#model.validFrom = this.#validFromInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #validThruInput;
+  /** @param { HTMLInputElement } input */
+  set validThruInput(input) {
+    this.#validThruInput = input;
+    this.#validThruInput.value = this.#model.validThru;
+    this.#validThruInput.addEventListener("change", this, false);
+  }
+  onValidThruInputChange() {
+    this.#model.validThru = this.#validThruInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #numberOfEntriesInput;
+  /** @param { HTMLInputElement } input */
+  set numberOfEntriesInput(input) {
+    this.#numberOfEntriesInput = input;
+    this.#numberOfEntriesInput.value = this.#model.numberOfEntries;
+    this.#numberOfEntriesInput.setAttribute("placeholder", this.#model.numberOfEntries);
+    this.#numberOfEntriesInput.addEventListener("input", this, false);
+    this.#numberOfEntriesInput.addEventListener("change", this, false);
+  }
+  onNumberOfEntriesInputChange() {
+    if (this.#model.numberOfEntries !== this.#numberOfEntriesInput.value) {
+      this.#model.numberOfEntries = this.#numberOfEntriesInput.value;
+      this.#generateCard();
+    }
+  }
+
   /** @type { HTMLInputElement } */ #numberInput;
   /** @param { HTMLInputElement } input */
   set numberInput(input) {
@@ -180,6 +236,41 @@ class EventsMRVAViewModel {
     this.#model.number !== this.#numberInput.value) {
       this.#model.number = this.#numberInput.value;
       this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #typeInput;
+  /** @param { HTMLInputElement } input */
+  set typeInput(input) {
+    this.#typeInput = input;
+    this.#typeInput.value = this.#model.type;
+    this.#typeInput.setAttribute("placeholder", this.#model.type);
+    this.#typeInput.addEventListener("input", this, false);
+    this.#typeInput.addEventListener("change", this, false);
+  }
+  onTypeInputChange() {
+    if (this.#model.type !== this.#typeInput.value) {
+      this.#model.type = this.#typeInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #additionalInfoInput;
+  /** @param { HTMLInputElement } input */
+  set additionalInfoInput(input) {
+    this.#additionalInfoInput = input;
+    this.#additionalInfoInput.setAttribute("cols", 71);
+    this.#additionalInfoInput.setAttribute("rows", 2);
+    this.#additionalInfoInput.setAttribute("wrap", "off");
+    this.#additionalInfoInput.value = this.#model.additionalInfo;
+    this.#additionalInfoInput.setAttribute("placeholder", this.#model.additionalInfo);
+    this.#additionalInfoInput.addEventListener("input", this, false);
+    this.#additionalInfoInput.addEventListener("change", this, false);
+  }
+  onAdditionalInfoInputChange() {
+    if (this.#model.additionalInfo !== this.#additionalInfoInput.value) {
+      this.#model.additionalInfo = this.#additionalInfoInput.value;
+      this.#generateCard();
     }
   }
 
@@ -200,6 +291,37 @@ class EventsMRVAViewModel {
       this.#model.fullName = this.#fullNameInput.value;
       this.#generateCardFront();
     }
+  }
+
+  /** @type { HTMLInputElement } */ #passportNumberInput;
+  /** @param { HTMLInputElement } input */
+  set passportNumberInput(input) {
+    this.#passportNumberInput = input;
+    this.#passportNumberInput.setAttribute("minlength", 1);
+    this.#passportNumberInput.setAttribute("maxlength", 9);
+    this.#passportNumberInput.value = this.#model.passportNumber;
+    this.#passportNumberInput.setAttribute("placeholder", this.#model.passportNumber);
+    this.#passportNumberInput.addEventListener("input", this, false);
+    this.#passportNumberInput.addEventListener("change", this, false);
+  }
+  onPassportNumberInputChange() {
+    if (this.#passportNumberInput.checkValidity() &&
+    this.#model.passportNumber !== this.#passportNumberInput.value) {
+      this.#model.passportNumber = this.#passportNumberInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #usePassportInMRZInput;
+  /** @param { HTMLInputElement } input */
+  set usePassportInMRZInput(input) {
+    this.#usePassportInMRZInput = input;
+    this.#usePassportInMRZInput.addEventListener("change", this, false);
+  }
+  onUsePassportInMRZInput() {
+    if (this.#renderer.usePassportInMRZ) { this.#renderer.usePassportInMRZ = false; }
+    else { this.#renderer.usePassportInMRZ = true; }
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #nationalityCodeInput;
@@ -243,78 +365,6 @@ class EventsMRVAViewModel {
   onGenderMarkerInputChange() {
     this.#model.genderMarker = this.#genderMarkerInput.value;
     this.#generateCardFront();
-  }
-
-  /** @type { HTMLInputElement } */ #placeOfBirthInput;
-  /** @param { HTMLInputElement } input */
-  set placeOfBirthInput(input) {
-    this.#placeOfBirthInput = input;
-    this.#placeOfBirthInput.value = this.#model.placeOfBirth;
-    this.#placeOfBirthInput.setAttribute("placeholder", this.#model.placeOfBirth);
-    this.#placeOfBirthInput.addEventListener("input", this, false);
-    this.#placeOfBirthInput.addEventListener("change", this, false);
-  }
-  onPlaceOfBirthInputChange() {
-    if (this.#model.placeOfBirth !== this.#placeOfBirthInput.value) {
-      this.#model.placeOfBirth = this.#placeOfBirthInput.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfIssueInput;
-  /** @param { HTMLInputElement } input */
-  set dateOfIssueInput(input) {
-    this.#dateOfIssueInput = input;
-    this.#dateOfIssueInput.value = this.#model.dateOfIssue;
-    this.#dateOfIssueInput.addEventListener("change", this, false);
-  }
-  onDateOfIssueInputChange() {
-    this.#model.dateOfIssue = this.#dateOfIssueInput.value;
-    this.#generateCardFront();
-  }
-
-  /** @type { HTMLInputElement } */ #authorityInput;
-  /** @param { HTMLInputElement } input */
-  set authorityInput(input) {
-    this.#authorityInput = input;
-    this.#authorityInput.value = this.#model.authority;
-    this.#authorityInput.setAttribute("placeholder", this.#model.authority);
-    this.#authorityInput.addEventListener("input", this, false);
-    this.#authorityInput.addEventListener("change", this, false);
-  }
-  onAuthorityInputChange() {
-    if (this.#model.authority !== this.#authorityInput.value) {
-      this.#model.authority = this.#authorityInput.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfExpirationInput;
-  /** @param { HTMLInputElement } input */
-  set dateOfExpirationInput(input) {
-    this.#dateOfExpirationInput = input;
-    this.#dateOfExpirationInput.value = this.#model.dateOfExpiration;
-    this.#dateOfExpirationInput.addEventListener("change", this, false);
-  }
-  onDateOfExpirationInputChange() {
-    this.#model.dateOfExpiration = this.#dateOfExpirationInput.value;
-    this.#generateCardFront();
-  }
-
-  /** @type { HTMLInputElement } */ #endorsementsInput;
-  /** @param { HTMLInputElement } input */
-  set endorsementsInput(input) {
-    this.#endorsementsInput = input;
-    this.#endorsementsInput.value = this.#model.endorsements;
-    this.#endorsementsInput.setAttribute("placeholder", this.#model.endorsements);
-    this.#endorsementsInput.addEventListener("input", this, false);
-    this.#endorsementsInput.addEventListener("change", this, false);
-  }
-  onEndorsementsInputChange() {
-    if (this.#model.endorsements !== this.#endorsementsInput.value) {
-      this.#model.endorsements = this.#endorsementsInput.value;
-      this.#generateCardFront();
-    }
   }
 
   /** @type { HTMLInputElement } */ #optionalDataInput;
@@ -474,18 +524,6 @@ class EventsMRVAViewModel {
     this.#generateCardFront();
   }
 
-  /** @type { HTMLInputElement } */ #passportHeaderColorInput;
-  /** @param { HTMLInputElement } input */
-  set passportHeaderColorInput(input) {
-    this.#passportHeaderColorInput = input;
-    this.#passportHeaderColorInput.value = this.#renderer.passportHeaderColor;
-    this.#passportHeaderColorInput.addEventListener("change", this, false);
-  }
-  onPassportHeaderColorInputChange() {
-    this.#renderer.passportHeaderColor = this.#passportHeaderColorInput.value;
-    this.#generateCardFront();
-  }
-
   /** @type { HTMLInputElement } */ #frontBackgroundColorInput;
   /** @param { HTMLInputElement } input */
   set frontBackgroundColorInput(input) {
@@ -536,59 +574,6 @@ class EventsMRVAViewModel {
     if (this.#frontBackgroundImageFileInput.files[0]) {
       this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
       this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #backBackgroundColorInput;
-  /** @param { HTMLInputElement } input */
-  set backBackgroundColorInput(input) {
-    this.#backBackgroundColorInput = input;
-    this.#backBackgroundColorInput.value = this.#renderer.backBackgroundColor;
-    this.#backBackgroundColorInput.addEventListener("change", this, false);
-  }
-  onBackBackgroundColorInputChange() {
-    this.#renderer.backBackgroundColor = this.#backBackgroundColorInput.value;
-    this.#generateCardBack();
-  }
-
-  /** @type { HTMLInputElement } */ #backBackgroundImageInput;
-  /** @param { HTMLInputElement } input */
-  set backBackgroundImageInput(input) {
-    this.#backBackgroundImageInput = input;
-    if (!this.#renderer.backBackgroundImage) { this.#backBackgroundImageInput.value = "none"; }
-    else { this.#backBackgroundImageInput.value = this.#renderer.backBackgroundImage; }
-    this.#backBackgroundImageInput.addEventListener("change", this, false);
-  }
-  onBackBackgroundImageInputChange() {
-    switch (this.#backBackgroundImageInput.value) {
-      case "none":
-        this.#backBackgroundImageFileInput.setAttribute("disabled", "disabled");
-        this.#renderer.backBackgroundImage = null;
-        this.#generateCardBack();
-        break;
-      case "upload":
-        this.#backBackgroundImageFileInput.removeAttribute("disabled");
-        break;
-      default:
-        this.#backBackgroundImageFileInput.setAttribute("disabled", "disabled");
-        this.#renderer.backBackgroundImage = this.#backBackgroundImageInput.value;
-        this.#generateCardBack();
-        break;
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #backBackgroundImageFileInput;
-  /** @param { HTMLInputElement } input */
-  set backBackgroundImageFileInput(input) {
-    this.#backBackgroundImageFileInput = input;
-    this.#backBackgroundImageFileInput.setAttribute("accept", "image/*");
-    this.#backBackgroundImageFileInput.setAttribute("disabled", "disabled");
-    this.#backBackgroundImageFileInput.addEventListener("change", this, false);
-  }
-  async onBackBackgroundImageFileInputChange() {
-    if (this.#backBackgroundImageFileInput.files[0]) {
-      this.#renderer.backBackgroundImage = await this.constructor.#getFileData(this.#backBackgroundImageFileInput.files[0]);
-      this.#generateCardBack();
     }
   }
 
@@ -738,146 +723,194 @@ class EventsMRVAViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #passportHeaderInput;
+  /** @type { HTMLInputElement } */ #placeOfIssueHeaderInput;
   /** @param { HTMLInputElement } input */
-  set passportHeaderInput(input) {
-    this.#passportHeaderInput = input;
-    this.#passportHeaderInput.value = this.#renderer.passportHeader[0];
-    this.#passportHeaderInput.setAttribute("placeholder", this.#renderer.passportHeader[0]);
-    this.#passportHeaderInput.addEventListener("input", this, false);
-    this.#passportHeaderInput.addEventListener("change", this, false);
+  set placeOfIssueHeaderInput(input) {
+    this.#placeOfIssueHeaderInput = input;
+    this.#placeOfIssueHeaderInput.value = this.#renderer.placeOfIssueHeader[0];
+    this.#placeOfIssueHeaderInput.setAttribute("placeholder", this.#renderer.placeOfIssueHeader[0]);
+    this.#placeOfIssueHeaderInput.addEventListener("input", this, false);
+    this.#placeOfIssueHeaderInput.addEventListener("change", this, false);
   }
-  onPassportHeaderInputChange() {
-    if (this.#renderer.passportHeader[0] !== this.#passportHeaderInput.value) {
-      this.#renderer.passportHeader[0] = this.#passportHeaderInput.value;
+  onPlaceOfIssueHeaderInputChange() {
+    if (this.#renderer.placeOfIssueHeader[0] !== this.#placeOfIssueHeaderInput.value) {
+      this.#renderer.placeOfIssueHeader[0] = this.#placeOfIssueHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #passportHeaderI18n1Input;
+  /** @type { HTMLInputElement } */ #placeOfIssueHeaderI18n1Input;
   /** @param { HTMLInputElement } input */
-  set passportHeaderI18n1Input(input) {
-    this.#passportHeaderI18n1Input = input;
-    this.#passportHeaderI18n1Input.value = this.#renderer.passportHeader[1];
-    this.#passportHeaderI18n1Input.setAttribute("placeholder", this.#renderer.passportHeader[1]);
-    this.#passportHeaderI18n1Input.addEventListener("input", this, false);
-    this.#passportHeaderI18n1Input.addEventListener("change", this, false);
+  set placeOfIssueHeaderI18n1Input(input) {
+    this.#placeOfIssueHeaderI18n1Input = input;
+    this.#placeOfIssueHeaderI18n1Input.value = this.#renderer.placeOfIssueHeader[1];
+    this.#placeOfIssueHeaderI18n1Input.setAttribute("placeholder", this.#renderer.placeOfIssueHeader[1]);
+    this.#placeOfIssueHeaderI18n1Input.addEventListener("input", this, false);
+    this.#placeOfIssueHeaderI18n1Input.addEventListener("change", this, false);
   }
-  onPassportHeaderI18n1InputChange() {
-    if (this.#renderer.passportHeader[1] !== this.#passportHeaderI18n1Input.value) {
-      this.#renderer.passportHeader[1] = this.#passportHeaderI18n1Input.value;
+  onPlaceOfIssueHeaderI18n1InputChange() {
+    if (this.#renderer.placeOfIssueHeader[1] !== this.#placeOfIssueHeaderI18n1Input.value) {
+      this.#renderer.placeOfIssueHeader[1] = this.#placeOfIssueHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #passportHeaderI18n2Input;
+  /** @type { HTMLInputElement } */ #placeOfIssueHeaderI18n2Input;
   /** @param { HTMLInputElement } input */
-  set passportHeaderI18n2Input(input) {
-    this.#passportHeaderI18n2Input = input;
-    this.#passportHeaderI18n2Input.value = this.#renderer.passportHeader[2];
-    this.#passportHeaderI18n2Input.setAttribute("placeholder", this.#renderer.passportHeader[2]);
-    this.#passportHeaderI18n2Input.addEventListener("input", this, false);
-    this.#passportHeaderI18n2Input.addEventListener("change", this, false);
+  set placeOfIssueHeaderI18n2Input(input) {
+    this.#placeOfIssueHeaderI18n2Input = input;
+    this.#placeOfIssueHeaderI18n2Input.value = this.#renderer.placeOfIssueHeader[2];
+    this.#placeOfIssueHeaderI18n2Input.setAttribute("placeholder", this.#renderer.placeOfIssueHeader[2]);
+    this.#placeOfIssueHeaderI18n2Input.addEventListener("input", this, false);
+    this.#placeOfIssueHeaderI18n2Input.addEventListener("change", this, false);
   }
-  onPassportHeaderI18n2InputChange() {
-    if (this.#renderer.passportHeader[2] !== this.#passportHeaderI18n2Input.value) {
-      this.#renderer.passportHeader[2] = this.#passportHeaderI18n2Input.value;
+  onPlaceOfIssueHeaderI18n2InputChange() {
+    if (this.#renderer.placeOfIssueHeader[2] !== this.#placeOfIssueHeaderI18n2Input.value) {
+      this.#renderer.placeOfIssueHeader[2] = this.#placeOfIssueHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #documentHeaderInput;
+  /** @type { HTMLInputElement } */ #validFromHeaderInput;
   /** @param { HTMLInputElement } input */
-  set documentHeaderInput(input) {
-    this.#documentHeaderInput = input;
-    this.#documentHeaderInput.value = this.#renderer.documentHeader[0];
-    this.#documentHeaderInput.setAttribute("placeholder", this.#renderer.documentHeader[0]);
-    this.#documentHeaderInput.addEventListener("input", this, false);
-    this.#documentHeaderInput.addEventListener("change", this, false);
+  set validFromHeaderInput(input) {
+    this.#validFromHeaderInput = input;
+    this.#validFromHeaderInput.value = this.#renderer.validFromHeader[0];
+    this.#validFromHeaderInput.setAttribute("placeholder", this.#renderer.validFromHeader[0]);
+    this.#validFromHeaderInput.addEventListener("input", this, false);
+    this.#validFromHeaderInput.addEventListener("change", this, false);
   }
-  onDocumentHeaderInputChange() {
-    if (this.#renderer.documentHeader[0] !== this.#documentHeaderInput.value) {
-      this.#renderer.documentHeader[0] = this.#documentHeaderInput.value;
+  onValidFromHeaderInputChange() {
+    if (this.#renderer.validFromHeader[0] !== this.#validFromHeaderInput.value) {
+      this.#renderer.validFromHeader[0] = this.#validFromHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #documentHeaderI18n1Input;
+  /** @type { HTMLInputElement } */ #validFromHeaderI18n1Input;
   /** @param { HTMLInputElement } input */
-  set documentHeaderI18n1Input(input) {
-    this.#documentHeaderI18n1Input = input;
-    this.#documentHeaderI18n1Input.value = this.#renderer.documentHeader[1];
-    this.#documentHeaderI18n1Input.setAttribute("placeholder", this.#renderer.documentHeader[1]);
-    this.#documentHeaderI18n1Input.addEventListener("input", this, false);
-    this.#documentHeaderI18n1Input.addEventListener("change", this, false);
+  set validFromHeaderI18n1Input(input) {
+    this.#validFromHeaderI18n1Input = input;
+    this.#validFromHeaderI18n1Input.value = this.#renderer.validFromHeader[1];
+    this.#validFromHeaderI18n1Input.setAttribute("placeholder", this.#renderer.validFromHeader[1]);
+    this.#validFromHeaderI18n1Input.addEventListener("input", this, false);
+    this.#validFromHeaderI18n1Input.addEventListener("change", this, false);
   }
-  onDocumentHeaderI18n1InputChange() {
-    if (this.#renderer.documentHeader[1] !== this.#documentHeaderI18n1Input.value) {
-      this.#renderer.documentHeader[1] = this.#documentHeaderI18n1Input.value;
+  onValidFromHeaderI18n1InputChange() {
+    if (this.#renderer.validFromHeader[1] !== this.#validFromHeaderI18n1Input.value) {
+      this.#renderer.validFromHeader[1] = this.#validFromHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #documentHeaderI18n2Input;
+  /** @type { HTMLInputElement } */ #validFromHeaderI18n2Input;
   /** @param { HTMLInputElement } input */
-  set documentHeaderI18n2Input(input) {
-    this.#documentHeaderI18n2Input = input;
-    this.#documentHeaderI18n2Input.value = this.#renderer.documentHeader[2];
-    this.#documentHeaderI18n2Input.setAttribute("placeholder", this.#renderer.documentHeader[2]);
-    this.#documentHeaderI18n2Input.addEventListener("input", this, false);
-    this.#documentHeaderI18n2Input.addEventListener("change", this, false);
+  set validFromHeaderI18n2Input(input) {
+    this.#validFromHeaderI18n2Input = input;
+    this.#validFromHeaderI18n2Input.value = this.#renderer.validFromHeader[2];
+    this.#validFromHeaderI18n2Input.setAttribute("placeholder", this.#renderer.validFromHeader[2]);
+    this.#validFromHeaderI18n2Input.addEventListener("input", this, false);
+    this.#validFromHeaderI18n2Input.addEventListener("change", this, false);
   }
-  onDocumentHeaderI18n2InputChange() {
-    if (this.#renderer.documentHeader[2] !== this.#documentHeaderI18n2Input.value) {
-      this.#renderer.documentHeader[2] = this.#documentHeaderI18n2Input.value;
+  onValidFromHeaderI18n2InputChange() {
+    if (this.#renderer.validFromHeader[2] !== this.#validFromHeaderI18n2Input.value) {
+      this.#renderer.validFromHeader[2] = this.#validFromHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityHeaderInput;
+  /** @type { HTMLInputElement } */ #validThruHeaderInput;
   /** @param { HTMLInputElement } input */
-  set authorityHeaderInput(input) {
-    this.#authorityHeaderInput = input;
-    this.#authorityHeaderInput.value = this.#renderer.authorityHeader[0];
-    this.#authorityHeaderInput.setAttribute("placeholder", this.#renderer.authorityHeader[0]);
-    this.#authorityHeaderInput.addEventListener("input", this, false);
-    this.#authorityHeaderInput.addEventListener("change", this, false);
+  set validThruHeaderInput(input) {
+    this.#validThruHeaderInput = input;
+    this.#validThruHeaderInput.value = this.#renderer.validThruHeader[0];
+    this.#validThruHeaderInput.setAttribute("placeholder", this.#renderer.validThruHeader[0]);
+    this.#validThruHeaderInput.addEventListener("input", this, false);
+    this.#validThruHeaderInput.addEventListener("change", this, false);
   }
-  onAuthorityHeaderInputChange() {
-    if (this.#renderer.authorityHeader[0] !== this.#authorityHeaderInput.value) {
-      this.#renderer.authorityHeader[0] = this.#authorityHeaderInput.value;
+  onValidThruHeaderInputChange() {
+    if (this.#renderer.validThruHeader[0] !== this.#validThruHeaderInput.value) {
+      this.#renderer.validThruHeader[0] = this.#validThruHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityHeaderI18n1Input;
+  /** @type { HTMLInputElement } */ #validThruHeaderI18n1Input;
   /** @param { HTMLInputElement } input */
-  set authorityHeaderI18n1Input(input) {
-    this.#authorityHeaderI18n1Input = input;
-    this.#authorityHeaderI18n1Input.value = this.#renderer.authorityHeader[1];
-    this.#authorityHeaderI18n1Input.setAttribute("placeholder", this.#renderer.authorityHeader[1]);
-    this.#authorityHeaderI18n1Input.addEventListener("input", this, false);
-    this.#authorityHeaderI18n1Input.addEventListener("change", this, false);
+  set validThruHeaderI18n1Input(input) {
+    this.#validThruHeaderI18n1Input = input;
+    this.#validThruHeaderI18n1Input.value = this.#renderer.validThruHeader[1];
+    this.#validThruHeaderI18n1Input.setAttribute("placeholder", this.#renderer.validThruHeader[1]);
+    this.#validThruHeaderI18n1Input.addEventListener("input", this, false);
+    this.#validThruHeaderI18n1Input.addEventListener("change", this, false);
   }
-  onAuthorityHeaderI18n1InputChange() {
-    if (this.#renderer.authorityHeader[1] !== this.#authorityHeaderI18n1Input.value) {
-      this.#renderer.authorityHeader[1] = this.#authorityHeaderI18n1Input.value;
+  onValidThruHeaderI18n1InputChange() {
+    if (this.#renderer.validThruHeader[1] !== this.#validThruHeaderI18n1Input.value) {
+      this.#renderer.validThruHeader[1] = this.#validThruHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityHeaderI18n2Input;
+  /** @type { HTMLInputElement } */ #validThruHeaderI18n2Input;
   /** @param { HTMLInputElement } input */
-  set authorityHeaderI18n2Input(input) {
-    this.#authorityHeaderI18n2Input = input;
-    this.#authorityHeaderI18n2Input.value = this.#renderer.authorityHeader[2];
-    this.#authorityHeaderI18n2Input.setAttribute("placeholder", this.#renderer.authorityHeader[2]);
-    this.#authorityHeaderI18n2Input.addEventListener("input", this, false);
-    this.#authorityHeaderI18n2Input.addEventListener("change", this, false);
+  set validThruHeaderI18n2Input(input) {
+    this.#validThruHeaderI18n2Input = input;
+    this.#validThruHeaderI18n2Input.value = this.#renderer.validThruHeader[2];
+    this.#validThruHeaderI18n2Input.setAttribute("placeholder", this.#renderer.validThruHeader[2]);
+    this.#validThruHeaderI18n2Input.addEventListener("input", this, false);
+    this.#validThruHeaderI18n2Input.addEventListener("change", this, false);
   }
-  onAuthorityHeaderI18n2InputChange() {
-    if (this.#renderer.authorityHeader[2] !== this.#authorityHeaderI18n2Input.value) {
-      this.#renderer.authorityHeader[2] = this.#authorityHeaderI18n2Input.value;
+  onValidThruHeaderI18n2InputChange() {
+    if (this.#renderer.validThruHeader[2] !== this.#validThruHeaderI18n2Input.value) {
+      this.#renderer.validThruHeader[2] = this.#validThruHeaderI18n2Input.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #numberOfEntriesHeaderInput;
+  /** @param { HTMLInputElement } input */
+  set numberOfEntriesHeaderInput(input) {
+    this.#numberOfEntriesHeaderInput = input;
+    this.#numberOfEntriesHeaderInput.value = this.#renderer.numberOfEntriesHeader[0];
+    this.#numberOfEntriesHeaderInput.setAttribute("placeholder", this.#renderer.numberOfEntriesHeader[0]);
+    this.#numberOfEntriesHeaderInput.addEventListener("input", this, false);
+    this.#numberOfEntriesHeaderInput.addEventListener("change", this, false);
+  }
+  onNumberOfEntriesHeaderInputChange() {
+    if (this.#renderer.numberOfEntriesHeader[0] !== this.#numberOfEntriesHeaderInput.value) {
+      this.#renderer.numberOfEntriesHeader[0] = this.#numberOfEntriesHeaderInput.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #numberOfEntriesHeaderI18n1Input;
+  /** @param { HTMLInputElement } input */
+  set numberOfEntriesHeaderI18n1Input(input) {
+    this.#numberOfEntriesHeaderI18n1Input = input;
+    this.#numberOfEntriesHeaderI18n1Input.value = this.#renderer.numberOfEntriesHeader[1];
+    this.#numberOfEntriesHeaderI18n1Input.setAttribute("placeholder", this.#renderer.numberOfEntriesHeader[1]);
+    this.#numberOfEntriesHeaderI18n1Input.addEventListener("input", this, false);
+    this.#numberOfEntriesHeaderI18n1Input.addEventListener("change", this, false);
+  }
+  onNumberOfEntriesHeaderI18n1InputChange() {
+    if (this.#renderer.numberOfEntriesHeader[1] !== this.#numberOfEntriesHeaderI18n1Input.value) {
+      this.#renderer.numberOfEntriesHeader[1] = this.#numberOfEntriesHeaderI18n1Input.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #numberOfEntriesHeaderI18n2Input;
+  /** @param { HTMLInputElement } input */
+  set numberOfEntriesHeaderI18n2Input(input) {
+    this.#numberOfEntriesHeaderI18n2Input = input;
+    this.#numberOfEntriesHeaderI18n2Input.value = this.#renderer.numberOfEntriesHeader[2];
+    this.#numberOfEntriesHeaderI18n2Input.setAttribute("placeholder", this.#renderer.numberOfEntriesHeader[2]);
+    this.#numberOfEntriesHeaderI18n2Input.addEventListener("input", this, false);
+    this.#numberOfEntriesHeaderI18n2Input.addEventListener("change", this, false);
+  }
+  onNumberOfEntriesHeaderI18n2InputChange() {
+    if (this.#renderer.numberOfEntriesHeader[2] !== this.#numberOfEntriesHeaderI18n2Input.value) {
+      this.#renderer.numberOfEntriesHeader[2] = this.#numberOfEntriesHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
@@ -926,6 +959,102 @@ class EventsMRVAViewModel {
   onNumberHeaderI18n2InputChange() {
     if (this.#renderer.numberHeader[2] !== this.#numberHeaderI18n2Input.value) {
       this.#renderer.numberHeader[2] = this.#numberHeaderI18n2Input.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #typeHeaderInput;
+  /** @param { HTMLInputElement } input */
+  set typeHeaderInput(input) {
+    this.#typeHeaderInput = input;
+    this.#typeHeaderInput.value = this.#renderer.typeHeader[0];
+    this.#typeHeaderInput.setAttribute("placeholder", this.#renderer.typeHeader[0]);
+    this.#typeHeaderInput.addEventListener("input", this, false);
+    this.#typeHeaderInput.addEventListener("change", this, false);
+  }
+  onTypeHeaderInputChange() {
+    if (this.#renderer.typeHeader[0] !== this.#typeHeaderInput.value) {
+      this.#renderer.typeHeader[0] = this.#typeHeaderInput.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #typeHeaderI18n1Input;
+  /** @param { HTMLInputElement } input */
+  set typeHeaderI18n1Input(input) {
+    this.#typeHeaderI18n1Input = input;
+    this.#typeHeaderI18n1Input.value = this.#renderer.typeHeader[1];
+    this.#typeHeaderI18n1Input.setAttribute("placeholder", this.#renderer.typeHeader[1]);
+    this.#typeHeaderI18n1Input.addEventListener("input", this, false);
+    this.#typeHeaderI18n1Input.addEventListener("change", this, false);
+  }
+  onTypeHeaderI18n1InputChange() {
+    if (this.#renderer.typeHeader[1] !== this.#typeHeaderI18n1Input.value) {
+      this.#renderer.typeHeader[1] = this.#typeHeaderI18n1Input.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #typeHeaderI18n2Input;
+  /** @param { HTMLInputElement } input */
+  set typeHeaderI18n2Input(input) {
+    this.#typeHeaderI18n2Input = input;
+    this.#typeHeaderI18n2Input.value = this.#renderer.typeHeader[2];
+    this.#typeHeaderI18n2Input.setAttribute("placeholder", this.#renderer.typeHeader[2]);
+    this.#typeHeaderI18n2Input.addEventListener("input", this, false);
+    this.#typeHeaderI18n2Input.addEventListener("change", this, false);
+  }
+  onTypeHeaderI18n2InputChange() {
+    if (this.#renderer.typeHeader[2] !== this.#typeHeaderI18n2Input.value) {
+      this.#renderer.typeHeader[2] = this.#typeHeaderI18n2Input.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #additionalInfoHeaderInput;
+  /** @param { HTMLInputElement } input */
+  set additionalInfoHeaderInput(input) {
+    this.#additionalInfoHeaderInput = input;
+    this.#additionalInfoHeaderInput.value = this.#renderer.additionalInfoHeader[0];
+    this.#additionalInfoHeaderInput.setAttribute("placeholder", this.#renderer.additionalInfoHeader[0]);
+    this.#additionalInfoHeaderInput.addEventListener("input", this, false);
+    this.#additionalInfoHeaderInput.addEventListener("change", this, false);
+  }
+  onAdditionalInfoHeaderInputChange() {
+    if (this.#renderer.additionalInfoHeader[0] !== this.#additionalInfoHeaderInput.value) {
+      this.#renderer.additionalInfoHeader[0] = this.#additionalInfoHeaderInput.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #additionalInfoHeaderI18n1Input;
+  /** @param { HTMLInputElement } input */
+  set additionalInfoHeaderI18n1Input(input) {
+    this.#additionalInfoHeaderI18n1Input = input;
+    this.#additionalInfoHeaderI18n1Input.value = this.#renderer.additionalInfoHeader[1];
+    this.#additionalInfoHeaderI18n1Input.setAttribute("placeholder", this.#renderer.additionalInfoHeader[1]);
+    this.#additionalInfoHeaderI18n1Input.addEventListener("input", this, false);
+    this.#additionalInfoHeaderI18n1Input.addEventListener("change", this, false);
+  }
+  onAdditionalInfoHeaderI18n1InputChange() {
+    if (this.#renderer.additionalInfoHeader[1] !== this.#additionalInfoHeaderI18n1Input.value) {
+      this.#renderer.additionalInfoHeader[1] = this.#additionalInfoHeaderI18n1Input.value;
+      this.#generateCardFront();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #additionalInfoHeaderI18n2Input;
+  /** @param { HTMLInputElement } input */
+  set additionalInfoHeaderI18n2Input(input) {
+    this.#additionalInfoHeaderI18n2Input = input;
+    this.#additionalInfoHeaderI18n2Input.value = this.#renderer.additionalInfoHeader[2];
+    this.#additionalInfoHeaderI18n2Input.setAttribute("placeholder", this.#renderer.additionalInfoHeader[2]);
+    this.#additionalInfoHeaderI18n2Input.addEventListener("input", this, false);
+    this.#additionalInfoHeaderI18n2Input.addEventListener("change", this, false);
+  }
+  onAdditionalInfoHeaderI18n2InputChange() {
+    if (this.#renderer.additionalInfoHeader[2] !== this.#additionalInfoHeaderI18n2Input.value) {
+      this.#renderer.additionalInfoHeader[2] = this.#additionalInfoHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
@@ -1122,246 +1251,6 @@ class EventsMRVAViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #placeOfBirthHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set placeOfBirthHeaderInput(input) {
-    this.#placeOfBirthHeaderInput = input;
-    this.#placeOfBirthHeaderInput.value = this.#renderer.placeOfBirthHeader[0];
-    this.#placeOfBirthHeaderInput.setAttribute("placeholder", this.#renderer.placeOfBirthHeader[0]);
-    this.#placeOfBirthHeaderInput.addEventListener("input", this, false);
-    this.#placeOfBirthHeaderInput.addEventListener("change", this, false);
-  }
-  onPlaceOfBirthHeaderInputChange() {
-    if (this.#renderer.placeOfBirthHeader[0] !== this.#placeOfBirthHeaderInput.value) {
-      this.#renderer.placeOfBirthHeader[0] = this.#placeOfBirthHeaderInput.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #placeOfBirthHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set placeOfBirthHeaderI18n1Input(input) {
-    this.#placeOfBirthHeaderI18n1Input = input;
-    this.#placeOfBirthHeaderI18n1Input.value = this.#renderer.placeOfBirthHeader[1];
-    this.#placeOfBirthHeaderI18n1Input.setAttribute("placeholder", this.#renderer.placeOfBirthHeader[1]);
-    this.#placeOfBirthHeaderI18n1Input.addEventListener("input", this, false);
-    this.#placeOfBirthHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onPlaceOfBirthHeaderI18n1InputChange() {
-    if (this.#renderer.placeOfBirthHeader[1] !== this.#placeOfBirthHeaderI18n1Input.value) {
-      this.#renderer.placeOfBirthHeader[1] = this.#placeOfBirthHeaderI18n1Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #placeOfBirthHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set placeOfBirthHeaderI18n2Input(input) {
-    this.#placeOfBirthHeaderI18n2Input = input;
-    this.#placeOfBirthHeaderI18n2Input.value = this.#renderer.placeOfBirthHeader[2];
-    this.#placeOfBirthHeaderI18n2Input.setAttribute("placeholder", this.#renderer.placeOfBirthHeader[2]);
-    this.#placeOfBirthHeaderI18n2Input.addEventListener("input", this, false);
-    this.#placeOfBirthHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onPlaceOfBirthHeaderI18n2InputChange() {
-    if (this.#renderer.placeOfBirthHeader[2] !== this.#placeOfBirthHeaderI18n2Input.value) {
-      this.#renderer.placeOfBirthHeader[2] = this.#placeOfBirthHeaderI18n2Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #issueHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set issueHeaderInput(input) {
-    this.#issueHeaderInput = input;
-    this.#issueHeaderInput.value = this.#renderer.issueHeader[0];
-    this.#issueHeaderInput.setAttribute("placeholder", this.#renderer.issueHeader[0]);
-    this.#issueHeaderInput.addEventListener("input", this, false);
-    this.#issueHeaderInput.addEventListener("change", this, false);
-  }
-  onIssueHeaderInputChange() {
-    if (this.#renderer.issueHeader[0] !== this.#issueHeaderInput.value) {
-      this.#renderer.issueHeader[0] = this.#issueHeaderInput.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #issueHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set issueHeaderI18n1Input(input) {
-    this.#issueHeaderI18n1Input = input;
-    this.#issueHeaderI18n1Input.value = this.#renderer.issueHeader[1];
-    this.#issueHeaderI18n1Input.setAttribute("placeholder", this.#renderer.issueHeader[1]);
-    this.#issueHeaderI18n1Input.addEventListener("input", this, false);
-    this.#issueHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onIssueHeaderI18n1InputChange() {
-    if (this.#renderer.issueHeader[1] !== this.#issueHeaderI18n1Input.value) {
-      this.#renderer.issueHeader[1] = this.#issueHeaderI18n1Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #issueHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set issueHeaderI18n2Input(input) {
-    this.#issueHeaderI18n2Input = input;
-    this.#issueHeaderI18n2Input.value = this.#renderer.issueHeader[2];
-    this.#issueHeaderI18n2Input.setAttribute("placeholder", this.#renderer.issueHeader[2]);
-    this.#issueHeaderI18n2Input.addEventListener("input", this, false);
-    this.#issueHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onIssueHeaderI18n2InputChange() {
-    if (this.#renderer.issueHeader[2] !== this.#issueHeaderI18n2Input.value) {
-      this.#renderer.issueHeader[2] = this.#issueHeaderI18n2Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfExpirationHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set dateOfExpirationHeaderInput(input) {
-    this.#dateOfExpirationHeaderInput = input;
-    this.#dateOfExpirationHeaderInput.value = this.#renderer.dateOfExpirationHeader[0];
-    this.#dateOfExpirationHeaderInput.setAttribute("placeholder", this.#renderer.dateOfExpirationHeader[0]);
-    this.#dateOfExpirationHeaderInput.addEventListener("input", this, false);
-    this.#dateOfExpirationHeaderInput.addEventListener("change", this, false);
-  }
-  onDateOfExpirationHeaderInputChange() {
-    if (this.#renderer.dateOfExpirationHeader[0] !== this.#dateOfExpirationHeaderInput.value) {
-      this.#renderer.dateOfExpirationHeader[0] = this.#dateOfExpirationHeaderInput.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfExpirationHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set dateOfExpirationHeaderI18n1Input(input) {
-    this.#dateOfExpirationHeaderI18n1Input = input;
-    this.#dateOfExpirationHeaderI18n1Input.value = this.#renderer.dateOfExpirationHeader[1];
-    this.#dateOfExpirationHeaderI18n1Input.setAttribute("placeholder", this.#renderer.dateOfExpirationHeader[1]);
-    this.#dateOfExpirationHeaderI18n1Input.addEventListener("input", this, false);
-    this.#dateOfExpirationHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onDateOfExpirationHeaderI18n1InputChange() {
-    if (this.#renderer.dateOfExpirationHeader[1] !== this.#dateOfExpirationHeaderI18n1Input.value) {
-      this.#renderer.dateOfExpirationHeader[1] = this.#dateOfExpirationHeaderI18n1Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfExpirationHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set dateOfExpirationHeaderI18n2Input(input) {
-    this.#dateOfExpirationHeaderI18n2Input = input;
-    this.#dateOfExpirationHeaderI18n2Input.value = this.#renderer.dateOfExpirationHeader[2];
-    this.#dateOfExpirationHeaderI18n2Input.setAttribute("placeholder", this.#renderer.dateOfExpirationHeader[2]);
-    this.#dateOfExpirationHeaderI18n2Input.addEventListener("input", this, false);
-    this.#dateOfExpirationHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onDateOfExpirationHeaderI18n2InputChange() {
-    if (this.#renderer.dateOfExpirationHeader[2] !== this.#dateOfExpirationHeaderI18n2Input.value) {
-      this.#renderer.dateOfExpirationHeader[2] = this.#dateOfExpirationHeaderI18n2Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #endorsementsHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set endorsementsHeaderInput(input) {
-    this.#endorsementsHeaderInput = input;
-    this.#endorsementsHeaderInput.value = this.#renderer.endorsementsHeader[0];
-    this.#endorsementsHeaderInput.setAttribute("placeholder", this.#renderer.endorsementsHeader[0]);
-    this.#endorsementsHeaderInput.addEventListener("input", this, false);
-    this.#endorsementsHeaderInput.addEventListener("change", this, false);
-  }
-  onEndorsementsHeaderInputChange() {
-    if (this.#renderer.endorsementsHeader[0] !== this.#endorsementsHeaderInput.value) {
-      this.#renderer.endorsementsHeader[0] = this.#endorsementsHeaderInput.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #endorsementsHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set endorsementsHeaderI18n1Input(input) {
-    this.#endorsementsHeaderI18n1Input = input;
-    this.#endorsementsHeaderI18n1Input.value = this.#renderer.endorsementsHeader[1];
-    this.#endorsementsHeaderI18n1Input.setAttribute("placeholder", this.#renderer.endorsementsHeader[1]);
-    this.#endorsementsHeaderI18n1Input.addEventListener("input", this, false);
-    this.#endorsementsHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onEndorsementsHeaderI18n1InputChange() {
-    if (this.#renderer.endorsementsHeader[1] !== this.#endorsementsHeaderI18n1Input.value) {
-      this.#renderer.endorsementsHeader[1] = this.#endorsementsHeaderI18n1Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #endorsementsHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set endorsementsHeaderI18n2Input(input) {
-    this.#endorsementsHeaderI18n2Input = input;
-    this.#endorsementsHeaderI18n2Input.value = this.#renderer.endorsementsHeader[2];
-    this.#endorsementsHeaderI18n2Input.setAttribute("placeholder", this.#renderer.endorsementsHeader[2]);
-    this.#endorsementsHeaderI18n2Input.addEventListener("input", this, false);
-    this.#endorsementsHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onEndorsementsHeaderI18n2InputChange() {
-    if (this.#renderer.endorsementsHeader[2] !== this.#endorsementsHeaderI18n2Input.value) {
-      this.#renderer.endorsementsHeader[2] = this.#endorsementsHeaderI18n2Input.value;
-      this.#generateCardFront();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #signatureHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set signatureHeaderInput(input) {
-    this.#signatureHeaderInput = input;
-    this.#signatureHeaderInput.value = this.#renderer.signatureHeader[0];
-    this.#signatureHeaderInput.setAttribute("placeholder", this.#renderer.signatureHeader[0]);
-    this.#signatureHeaderInput.addEventListener("input", this, false);
-    this.#signatureHeaderInput.addEventListener("change", this, false);
-  }
-  onSignatureHeaderInputChange() {
-    if (this.#renderer.signatureHeader[0] !== this.#signatureHeaderInput.value) {
-      this.#renderer.signatureHeader[0] = this.#signatureHeaderInput.value;
-      this.#generateCardBack();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #signatureHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set signatureHeaderI18n1Input(input) {
-    this.#signatureHeaderI18n1Input = input;
-    this.#signatureHeaderI18n1Input.value = this.#renderer.signatureHeader[1];
-    this.#signatureHeaderI18n1Input.setAttribute("placeholder", this.#renderer.signatureHeader[1]);
-    this.#signatureHeaderI18n1Input.addEventListener("input", this, false);
-    this.#signatureHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onSignatureHeaderI18n1InputChange() {
-    if (this.#renderer.signatureHeader[1] !== this.#signatureHeaderI18n1Input.value) {
-      this.#renderer.signatureHeader[1] = this.#signatureHeaderI18n1Input.value;
-      this.#generateCardBack();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #signatureHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set signatureHeaderI18n2Input(input) {
-    this.#signatureHeaderI18n2Input = input;
-    this.#signatureHeaderI18n2Input.value = this.#renderer.signatureHeader[2];
-    this.#signatureHeaderI18n2Input.setAttribute("placeholder", this.#renderer.signatureHeader[2]);
-    this.#signatureHeaderI18n2Input.addEventListener("input", this, false);
-    this.#signatureHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onSignatureHeaderI18n2InputChange() {
-    if (this.#renderer.signatureHeader[2] !== this.#signatureHeaderI18n2Input.value) {
-      this.#renderer.signatureHeader[2] = this.#signatureHeaderI18n2Input.value;
-      this.#generateCardBack();
-    }
-  }
-
   /** @type { HTMLInputElement } */ #showGuidesInput;
   /** @param { HTMLInputElement } input */
   set showGuidesInput(input) {
@@ -1401,16 +1290,19 @@ class EventsMRVAViewModel {
     const inputFields = [
       "typeCode",
       "authorityCode",
+      "placeOfIssue",
+      "validFrom",
+      "validThru",
+      "numberOfEntries",
       "number",
+      "type",
+      "additionalInfo",
       "fullName",
+      "passportNumber",
+      "usePassportInMRZ",
       "nationalityCode",
       "dateOfBirth",
       "genderMarker",
-      "placeOfBirth",
-      "dateOfIssue",
-      "authority",
-      "dateOfExpiration",
-      "endorsements",
       "url",
       "mrzInQRCode",
       "optionalData",
@@ -1421,37 +1313,45 @@ class EventsMRVAViewModel {
       "headerColor",
       "textColor",
       "mrzColor",
-      "passportHeaderColor",
       "frontBackgroundColor",
-      "backBackgroundColor",
       "mrzBackgroundColor",
       "logoUnderlayColor",
       "logoUnderlayAlpha",
       "frontBackgroundImage",
       "frontBackgroundImageFile",
-      "backBackgroundImage",
-      "backBackgroundImageFile",
       "mrzBackgroundImage",
       "mrzBackgroundImageFile",
       "logo",
       "logoFile",
       "fullAuthority",
       "fullDocumentName",
-      "passportHeader",
-      "passportHeaderI18n1",
-      "passportHeaderI18n2",
-      "documentHeader",
-      "documentHeaderI18n1",
-      "documentHeaderI18n2",
-      "authorityHeader",
-      "authorityHeaderI18n1",
-      "authorityHeaderI18n2",
+      "placeOfIssueHeader",
+      "placeOfIssueHeaderI18n1",
+      "placeOfIssueHeaderI18n2",
+      "validFromHeader",
+      "validFromHeaderI18n1",
+      "validFromHeaderI18n2",
+      "validThruHeader",
+      "validThruHeaderI18n1",
+      "validThruHeaderI18n2",
+      "numberOfEntriesHeader",
+      "numberOfEntriesHeaderI18n1",
+      "numberOfEntriesHeaderI18n2",
       "numberHeader",
       "numberHeaderI18n1",
       "numberHeaderI18n2",
+      "typeHeader",
+      "typeHeaderI18n1",
+      "typeHeaderI18n2",
+      "additionalInfoHeader",
+      "additionalInfoHeaderI18n1",
+      "additionalInfoHeaderI18n2",
       "nameHeader",
       "nameHeaderI18n1",
       "nameHeaderI18n2",
+      "passportNumberHeader",
+      "passportNumberHeaderI18n1",
+      "passportNumberHeaderI18n2",
       "nationalityHeader",
       "nationalityHeaderI18n1",
       "nationalityHeaderI18n2",
@@ -1461,21 +1361,6 @@ class EventsMRVAViewModel {
       "genderHeader",
       "genderHeaderI18n1",
       "genderHeaderI18n2",
-      "placeOfBirthHeader",
-      "placeOfBirthHeaderI18n1",
-      "placeOfBirthHeaderI18n2",
-      "issueHeader",
-      "issueHeaderI18n1",
-      "issueHeaderI18n2",
-      "dateOfExpirationHeader",
-      "dateOfExpirationHeaderI18n1",
-      "dateOfExpirationHeaderI18n2",
-      "endorsementsHeader",
-      "endorsementsHeaderI18n1",
-      "endorsementsHeaderI18n2",
-      "signatureHeader",
-      "signatureHeaderI18n1",
-      "signatureHeaderI18n2",
       "showGuides"
     ];
     for (const elementID of inputFields) {
