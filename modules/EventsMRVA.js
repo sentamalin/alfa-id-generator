@@ -40,10 +40,10 @@ class EventsMRVA {
   get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
   get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
   set genderMarker(value) { this.#document.genderMarker = value; }
-  get validThrough() { return this.#document.dateOfExpiration; }
-  get validThroughMRZ() { return this.#document.dateOfExpirationMRZ; }
-  get validThroughVIZ() { return this.#document.dateOfExpirationVIZ; }
-  set validThrough(value) { this.#document.dateOfExpiration = value; }
+  get validThru() { return this.#document.dateOfExpiration; }
+  get validThruMRZ() { return this.#document.dateOfExpirationMRZ; }
+  get validThruVIZ() { return this.#document.dateOfExpirationVIZ; }
+  set validThru(value) { this.#document.dateOfExpiration = value; }
   get optionalData() { return this.#document.optionalData; }
   get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
   set optionalData(value) { this.#document.optionalData = value; }
@@ -114,7 +114,7 @@ class EventsMRVA {
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
       if (opt.validFrom) { this.validFrom = opt.validFrom; }
-      if (opt.validThrough) { this.validThrough = opt.validThrough; }
+      if (opt.validThru) { this.validThru = opt.validThru; }
       if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
       if (opt.number) { this.number = opt.number; }
       if (opt.type) { this.type = opt.type; }
