@@ -1101,6 +1101,54 @@ class EventsMRVAViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #passportNumberHeaderInput;
+  /** @param { HTMLInputElement } input */
+  set passportNumberHeaderInput(input) {
+    this.#passportNumberHeaderInput = input;
+    this.#passportNumberHeaderInput.value = this.#renderer.passportNumberHeader[0];
+    this.#passportNumberHeaderInput.setAttribute("placeholder", this.#renderer.passportNumberHeader[0]);
+    this.#passportNumberHeaderInput.addEventListener("input", this, false);
+    this.#passportNumberHeaderInput.addEventListener("change", this, false);
+  }
+  onPassportNumberHeaderInputChange() {
+    if (this.#renderer.passportNumberHeader[0] !== this.#passportNumberHeaderInput.value) {
+      this.#renderer.passportNumberHeader[0] = this.#passportNumberHeaderInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #passportNumberHeaderI18n1Input;
+  /** @param { HTMLInputElement } input */
+  set passportNumberHeaderI18n1Input(input) {
+    this.#passportNumberHeaderI18n1Input = input;
+    this.#passportNumberHeaderI18n1Input.value = this.#renderer.passportNumberHeader[1];
+    this.#passportNumberHeaderI18n1Input.setAttribute("placeholder", this.#renderer.passportNumberHeader[1]);
+    this.#passportNumberHeaderI18n1Input.addEventListener("input", this, false);
+    this.#passportNumberHeaderI18n1Input.addEventListener("change", this, false);
+  }
+  onPassportNumberHeaderI18n1InputChange() {
+    if (this.#renderer.passportNumberHeader[1] !== this.#passportNumberHeaderI18n1Input.value) {
+      this.#renderer.passportNumberHeader[1] = this.#passportNumberHeaderI18n1Input.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #passportNumberHeaderI18n2Input;
+  /** @param { HTMLInputElement } input */
+  set passportNumberHeaderI18n2Input(input) {
+    this.#passportNumberHeaderI18n2Input = input;
+    this.#passportNumberHeaderI18n2Input.value = this.#renderer.passportNumberHeader[2];
+    this.#passportNumberHeaderI18n2Input.setAttribute("placeholder", this.#renderer.passportNumberHeader[2]);
+    this.#passportNumberHeaderI18n2Input.addEventListener("input", this, false);
+    this.#passportNumberHeaderI18n2Input.addEventListener("change", this, false);
+  }
+  onPassportNumberHeaderI18n2InputChange() {
+    if (this.#renderer.passportNumberHeader[2] !== this.#passportNumberHeaderI18n2Input.value) {
+      this.#renderer.passportNumberHeader[2] = this.#passportNumberHeaderI18n2Input.value;
+      this.#generateCard();
+    }
+  }
+
   /** @type { HTMLInputElement } */ #nationalityHeaderInput;
   /** @param { HTMLInputElement } input */
   set nationalityHeaderInput(input) {
