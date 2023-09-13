@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: CC0-1.0
  */
 
-import { EventsMRVAViewModel } from "./EventsPassportViewModel.js";
+import { EventsMRVAViewModel } from "./EventsMRVAViewModel.js";
 
 window.addEventListener("load", initViewModel, false);
 
