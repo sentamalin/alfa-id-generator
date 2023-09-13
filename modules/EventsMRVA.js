@@ -88,6 +88,7 @@ class EventsMRVA {
   #additionalInfo;
   get additionalInfo() { return this.#additionalInfo; }
   get additionalInfoVIZ() { return this.#additionalInfo.toUpperCase(); }
+  set additionalInfo(value) { this.#additionalInfo = value; }
 
   #passportNumber = "";
   get passportNumber() { return this.#passportNumber; }
