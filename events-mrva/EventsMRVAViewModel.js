@@ -108,11 +108,9 @@ class EventsMRVAViewModel {
 
   #inputTimeout = null;
   #frontFallback;
-  #backFallback;
   #signatureFallback;
   #signatureGenerator = null;
   #frontBlobURL = null;
-  #backBlobURL = null;
 
   /** @type { Document } */ #document;
   /** @param { Document } document */
@@ -121,10 +119,6 @@ class EventsMRVAViewModel {
   /** @type { HTMLCanvasElement } */ #cardFrontElement;
   /** @param { HTMLCanvasElement } canvas */
   set cardFrontElement(canvas) { this.#cardFrontElement = canvas; }
-
-  /** @type { HTMLCanvasElement } */ #cardBackElement;
-  /** @param { HTMLCanvasElement } canvas */
-  set cardBackElement(canvas) { this.#cardBackElement = canvas; }
 
   /** @type { HTMLInputElement } */ #typeCodeInput;
   /** @param { HTMLInputElement } input */
@@ -141,7 +135,7 @@ class EventsMRVAViewModel {
     if (this.#typeCodeInput.checkValidity() &&
     this.#model.typeCode !== this.#typeCodeInput.value) {
       this.#model.typeCode = this.#typeCodeInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -160,7 +154,7 @@ class EventsMRVAViewModel {
     if (this.#authorityCodeInput.checkValidity() &&
     this.#model.authorityCode !== this.#authorityCodeInput.value) {
       this.#model.authorityCode = this.#authorityCodeInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -235,7 +229,7 @@ class EventsMRVAViewModel {
     if (this.#numberInput.checkValidity() &&
     this.#model.number !== this.#numberInput.value) {
       this.#model.number = this.#numberInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -289,7 +283,7 @@ class EventsMRVAViewModel {
     if (this.#fullNameInput.checkValidity() &&
     this.#model.fullName !== this.#fullNameInput.value) {
       this.#model.fullName = this.#fullNameInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -339,7 +333,7 @@ class EventsMRVAViewModel {
     if (this.#nationalityCodeInput.checkValidity() &&
     this.#model.nationalityCode !== this.#nationalityCodeInput.value) {
       this.#model.nationalityCode = this.#nationalityCodeInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -352,7 +346,7 @@ class EventsMRVAViewModel {
   }
   onDateOfBirthInputChange() {
     this.#model.dateOfBirth = this.#dateOfBirthInput.value;
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #genderMarkerInput;
@@ -364,7 +358,7 @@ class EventsMRVAViewModel {
   }
   onGenderMarkerInputChange() {
     this.#model.genderMarker = this.#genderMarkerInput.value;
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #optionalDataInput;
@@ -380,7 +374,7 @@ class EventsMRVAViewModel {
     if (this.#optionalDataInput.checkValidity() &&
     this.#model.optionalData !== this.#optionalDataInput.value) {
       this.#model.optionalData = this.#optionalDataInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -394,7 +388,7 @@ class EventsMRVAViewModel {
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
       this.#model.picture = await this.constructor.#getFileData(this.#pictureInput.files[0]);
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -431,7 +425,7 @@ class EventsMRVAViewModel {
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
       this.#model.signature = await this.constructor.#getFileData(this.#signatureFileInput.files[0]);
-      this.#generateCardBack();
+      this.#generateCard();
     }
   }
 
@@ -455,7 +449,7 @@ class EventsMRVAViewModel {
     );
     if (signature.value.newSignature) {
       this.#model.signature = signature.value.signature;
-      this.#generateCardBack();
+      this.#generateCard();
     }
   }
 
@@ -472,7 +466,7 @@ class EventsMRVAViewModel {
     if (this.#urlInput.checkValidity() &&
     this.#model.url !== this.#urlInput.value) {
       this.#model.url = this.#urlInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -485,7 +479,7 @@ class EventsMRVAViewModel {
   onMrzInQRCodeInputChange() {
     if (this.#renderer.mrzInQRCode) { this.#renderer.mrzInQRCode = false; }
     else { this.#renderer.mrzInQRCode = true; }
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #headerColorInput;
@@ -521,7 +515,7 @@ class EventsMRVAViewModel {
   }
   onMrzColorInputChange() {
     this.#renderer.mrzColor = this.#mrzColorInput.value;
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #frontBackgroundColorInput;
@@ -533,7 +527,7 @@ class EventsMRVAViewModel {
   }
   onFrontBackgroundColorInputChange() {
     this.#renderer.frontBackgroundColor = this.#frontBackgroundColorInput.value;
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #frontBackgroundImageInput;
@@ -549,7 +543,7 @@ class EventsMRVAViewModel {
       case "none":
         this.#frontBackgroundImageFileInput.setAttribute("disabled", "disabled");
         this.#renderer.frontBackgroundImage = null;
-        this.#generateCardFront();
+        this.#generateCard();
         break;
       case "upload":
         this.#frontBackgroundImageFileInput.removeAttribute("disabled");
@@ -557,7 +551,7 @@ class EventsMRVAViewModel {
       default:
         this.#frontBackgroundImageFileInput.setAttribute("disabled", "disabled");
         this.#renderer.frontBackgroundImage = this.#frontBackgroundImageInput.value;
-        this.#generateCardFront();
+        this.#generateCard();
         break;
     }
   }
@@ -573,7 +567,7 @@ class EventsMRVAViewModel {
   async onFrontBackgroundImageFileInputChange() {
     if (this.#frontBackgroundImageFileInput.files[0]) {
       this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -586,7 +580,7 @@ class EventsMRVAViewModel {
   }
   onMrzBackgroundColorInputChange() {
     this.#renderer.mrzBackgroundColor = this.#mrzBackgroundColorInput.value;
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #mrzBackgroundImageInput;
@@ -602,7 +596,7 @@ class EventsMRVAViewModel {
       case "none":
         this.#mrzBackgroundImageFileInput.setAttribute("disabled", "disabled");
         this.#renderer.mrzBackgroundImage = null;
-        this.#generateCardFront();
+        this.#generateCard();
         break;
       case "upload":
         this.#mrzBackgroundImageFileInput.removeAttribute("disabled");
@@ -610,7 +604,7 @@ class EventsMRVAViewModel {
       default:
         this.#mrzBackgroundImageFileInput.setAttribute("disabled", "disabled");
         this.#renderer.mrzBackgroundImage = this.#mrzBackgroundImageInput.value;
-        this.#generateCardFront();
+        this.#generateCard();
         break;
     }
   }
@@ -626,7 +620,7 @@ class EventsMRVAViewModel {
   async onMrzBackgroundImageFileInputChange() {
     if (this.#mrzBackgroundImageFileInput.files[0]) {
       this.#renderer.mrzBackgroundImage = await this.constructor.#getFileData(this.#mrzBackgroundImageFileInput.files[0]);
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -639,7 +633,7 @@ class EventsMRVAViewModel {
   }
   onLogoUnderlayColorInputChange() {
     this.#renderer.logoUnderlayColor = this.#logoUnderlayColorInput.value;
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #logoUnderlayAlphaInput;
@@ -653,7 +647,7 @@ class EventsMRVAViewModel {
   }
   onLogoUnderlayAlphaInputChange() {
     this.#renderer.logoUnderlayAlpha = Number(this.#logoUnderlayAlphaInput.value);
-    this.#generateCardFront();
+    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #logoInput;
@@ -671,7 +665,7 @@ class EventsMRVAViewModel {
       default:
         this.#logoFileInput.setAttribute("disabled", "disabled");
         this.#renderer.logo = this.#logoInput.value;
-        this.#generateCardFront();
+        this.#generateCard();
         break;
     }
   }
@@ -687,7 +681,7 @@ class EventsMRVAViewModel {
   async onLogoFileInputChange() {
     if (this.#logoFileInput.files[0]) {
       this.#renderer.logo = await this.constructor.#getFileData(this.#logoFileInput.files[0]);
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -703,7 +697,7 @@ class EventsMRVAViewModel {
   onFullAuthorityInputChange() {
     if (this.#renderer.fullAuthority !== this.#fullAuthorityInput.value) {
       this.#renderer.fullAuthority = this.#fullAuthorityInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -719,7 +713,7 @@ class EventsMRVAViewModel {
   onFullDocumentNameInputChange() {
     if (this.#renderer.fullDocumentName !== this.#fullDocumentNameInput.value) {
       this.#renderer.fullDocumentName = this.#fullDocumentNameInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -735,7 +729,7 @@ class EventsMRVAViewModel {
   onPlaceOfIssueHeaderInputChange() {
     if (this.#renderer.placeOfIssueHeader[0] !== this.#placeOfIssueHeaderInput.value) {
       this.#renderer.placeOfIssueHeader[0] = this.#placeOfIssueHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -751,7 +745,7 @@ class EventsMRVAViewModel {
   onPlaceOfIssueHeaderI18n1InputChange() {
     if (this.#renderer.placeOfIssueHeader[1] !== this.#placeOfIssueHeaderI18n1Input.value) {
       this.#renderer.placeOfIssueHeader[1] = this.#placeOfIssueHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -767,7 +761,7 @@ class EventsMRVAViewModel {
   onPlaceOfIssueHeaderI18n2InputChange() {
     if (this.#renderer.placeOfIssueHeader[2] !== this.#placeOfIssueHeaderI18n2Input.value) {
       this.#renderer.placeOfIssueHeader[2] = this.#placeOfIssueHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -783,7 +777,7 @@ class EventsMRVAViewModel {
   onValidFromHeaderInputChange() {
     if (this.#renderer.validFromHeader[0] !== this.#validFromHeaderInput.value) {
       this.#renderer.validFromHeader[0] = this.#validFromHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -799,7 +793,7 @@ class EventsMRVAViewModel {
   onValidFromHeaderI18n1InputChange() {
     if (this.#renderer.validFromHeader[1] !== this.#validFromHeaderI18n1Input.value) {
       this.#renderer.validFromHeader[1] = this.#validFromHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -815,7 +809,7 @@ class EventsMRVAViewModel {
   onValidFromHeaderI18n2InputChange() {
     if (this.#renderer.validFromHeader[2] !== this.#validFromHeaderI18n2Input.value) {
       this.#renderer.validFromHeader[2] = this.#validFromHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -831,7 +825,7 @@ class EventsMRVAViewModel {
   onValidThruHeaderInputChange() {
     if (this.#renderer.validThruHeader[0] !== this.#validThruHeaderInput.value) {
       this.#renderer.validThruHeader[0] = this.#validThruHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -847,7 +841,7 @@ class EventsMRVAViewModel {
   onValidThruHeaderI18n1InputChange() {
     if (this.#renderer.validThruHeader[1] !== this.#validThruHeaderI18n1Input.value) {
       this.#renderer.validThruHeader[1] = this.#validThruHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -863,7 +857,7 @@ class EventsMRVAViewModel {
   onValidThruHeaderI18n2InputChange() {
     if (this.#renderer.validThruHeader[2] !== this.#validThruHeaderI18n2Input.value) {
       this.#renderer.validThruHeader[2] = this.#validThruHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -879,7 +873,7 @@ class EventsMRVAViewModel {
   onNumberOfEntriesHeaderInputChange() {
     if (this.#renderer.numberOfEntriesHeader[0] !== this.#numberOfEntriesHeaderInput.value) {
       this.#renderer.numberOfEntriesHeader[0] = this.#numberOfEntriesHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -895,7 +889,7 @@ class EventsMRVAViewModel {
   onNumberOfEntriesHeaderI18n1InputChange() {
     if (this.#renderer.numberOfEntriesHeader[1] !== this.#numberOfEntriesHeaderI18n1Input.value) {
       this.#renderer.numberOfEntriesHeader[1] = this.#numberOfEntriesHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -911,7 +905,7 @@ class EventsMRVAViewModel {
   onNumberOfEntriesHeaderI18n2InputChange() {
     if (this.#renderer.numberOfEntriesHeader[2] !== this.#numberOfEntriesHeaderI18n2Input.value) {
       this.#renderer.numberOfEntriesHeader[2] = this.#numberOfEntriesHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -927,7 +921,7 @@ class EventsMRVAViewModel {
   onNumberHeaderInputChange() {
     if (this.#renderer.numberHeader[0] !== this.#numberHeaderInput.value) {
       this.#renderer.numberHeader[0] = this.#numberHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -943,7 +937,7 @@ class EventsMRVAViewModel {
   onNumberHeaderI18n1InputChange() {
     if (this.#renderer.numberHeader[1] !== this.#numberHeaderI18n1Input.value) {
       this.#renderer.numberHeader[1] = this.#numberHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -959,7 +953,7 @@ class EventsMRVAViewModel {
   onNumberHeaderI18n2InputChange() {
     if (this.#renderer.numberHeader[2] !== this.#numberHeaderI18n2Input.value) {
       this.#renderer.numberHeader[2] = this.#numberHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -975,7 +969,7 @@ class EventsMRVAViewModel {
   onTypeHeaderInputChange() {
     if (this.#renderer.typeHeader[0] !== this.#typeHeaderInput.value) {
       this.#renderer.typeHeader[0] = this.#typeHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -991,7 +985,7 @@ class EventsMRVAViewModel {
   onTypeHeaderI18n1InputChange() {
     if (this.#renderer.typeHeader[1] !== this.#typeHeaderI18n1Input.value) {
       this.#renderer.typeHeader[1] = this.#typeHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1007,7 +1001,7 @@ class EventsMRVAViewModel {
   onTypeHeaderI18n2InputChange() {
     if (this.#renderer.typeHeader[2] !== this.#typeHeaderI18n2Input.value) {
       this.#renderer.typeHeader[2] = this.#typeHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1023,7 +1017,7 @@ class EventsMRVAViewModel {
   onAdditionalInfoHeaderInputChange() {
     if (this.#renderer.additionalInfoHeader[0] !== this.#additionalInfoHeaderInput.value) {
       this.#renderer.additionalInfoHeader[0] = this.#additionalInfoHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1039,7 +1033,7 @@ class EventsMRVAViewModel {
   onAdditionalInfoHeaderI18n1InputChange() {
     if (this.#renderer.additionalInfoHeader[1] !== this.#additionalInfoHeaderI18n1Input.value) {
       this.#renderer.additionalInfoHeader[1] = this.#additionalInfoHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1055,7 +1049,7 @@ class EventsMRVAViewModel {
   onAdditionalInfoHeaderI18n2InputChange() {
     if (this.#renderer.additionalInfoHeader[2] !== this.#additionalInfoHeaderI18n2Input.value) {
       this.#renderer.additionalInfoHeader[2] = this.#additionalInfoHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1071,7 +1065,7 @@ class EventsMRVAViewModel {
   onNameHeaderInputChange() {
     if (this.#renderer.nameHeader[0] !== this.#nameHeaderInput.value) {
       this.#renderer.nameHeader[0] = this.#nameHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1087,7 +1081,7 @@ class EventsMRVAViewModel {
   onNameHeaderI18n1InputChange() {
     if (this.#renderer.nameHeader[1] !== this.#nameHeaderI18n1Input.value) {
       this.#renderer.nameHeader[1] = this.#nameHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1103,7 +1097,7 @@ class EventsMRVAViewModel {
   onNameHeaderI18n2InputChange() {
     if (this.#renderer.nameHeader[2] !== this.#nameHeaderI18n2Input.value) {
       this.#renderer.nameHeader[2] = this.#nameHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1119,7 +1113,7 @@ class EventsMRVAViewModel {
   onNationalityHeaderInputChange() {
     if (this.#renderer.nationalityHeader[0] !== this.#nationalityHeaderInput.value) {
       this.#renderer.nationalityHeader[0] = this.#nationalityHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1135,7 +1129,7 @@ class EventsMRVAViewModel {
   onNationalityHeaderI18n1InputChange() {
     if (this.#renderer.nationalityHeader[1] !== this.#nationalityHeaderI18n1Input.value) {
       this.#renderer.nationalityHeader[1] = this.#nationalityHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1151,7 +1145,7 @@ class EventsMRVAViewModel {
   onNationalityHeaderI18n2InputChange() {
     if (this.#renderer.nationalityHeader[2] !== this.#nationalityHeaderI18n2Input.value) {
       this.#renderer.nationalityHeader[2] = this.#nationalityHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1167,7 +1161,7 @@ class EventsMRVAViewModel {
   onDateOfBirthHeaderInputChange() {
     if (this.#renderer.dateOfBirthHeader[0] !== this.#dateOfBirthHeaderInput.value) {
       this.#renderer.dateOfBirthHeader[0] = this.#dateOfBirthHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1183,7 +1177,7 @@ class EventsMRVAViewModel {
   onDateOfBirthHeaderI18n1InputChange() {
     if (this.#renderer.dateOfBirthHeader[1] !== this.#dateOfBirthHeaderI18n1Input.value) {
       this.#renderer.dateOfBirthHeader[1] = this.#dateOfBirthHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1199,7 +1193,7 @@ class EventsMRVAViewModel {
   onDateOfBirthHeaderI18n2InputChange() {
     if (this.#renderer.dateOfBirthHeader[2] !== this.#dateOfBirthHeaderI18n2Input.value) {
       this.#renderer.dateOfBirthHeader[2] = this.#dateOfBirthHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1215,7 +1209,7 @@ class EventsMRVAViewModel {
   onGenderHeaderInputChange() {
     if (this.#renderer.genderHeader[0] !== this.#genderHeaderInput.value) {
       this.#renderer.genderHeader[0] = this.#genderHeaderInput.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1231,7 +1225,7 @@ class EventsMRVAViewModel {
   onGenderHeaderI18n1InputChange() {
     if (this.#renderer.genderHeader[1] !== this.#genderHeaderI18n1Input.value) {
       this.#renderer.genderHeader[1] = this.#genderHeaderI18n1Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1247,7 +1241,7 @@ class EventsMRVAViewModel {
   onGenderHeaderI18n2InputChange() {
     if (this.#renderer.genderHeader[2] !== this.#genderHeaderI18n2Input.value) {
       this.#renderer.genderHeader[2] = this.#genderHeaderI18n2Input.value;
-      this.#generateCardFront();
+      this.#generateCard();
     }
   }
 
@@ -1282,9 +1276,7 @@ class EventsMRVAViewModel {
     this.#renderer.fonts = this.#document.fonts;
     await this.#renderer.loadCanvasFonts();
     this.cardFrontElement = this.#document.getElementById("cardFront");
-    this.cardBackElement = this.#document.getElementById("cardBack");
     this.#frontFallback = this.#document.getElementById("offscreen-front");
-    this.#backFallback = this.#document.getElementById("offscreen-back");
     this.#signatureFallback = this.#document.getElementById("offscreen-signature");
     await this.#generateCard();
     const inputFields = [
@@ -1369,7 +1361,7 @@ class EventsMRVAViewModel {
   }
 
   // Private methods
-  async #generateCardFront() {
+  async #generateCard() {
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
     this.#cardFrontElement.width = EventsPassportRenderer.cutCardArea[0];
     this.#cardFrontElement.height = EventsPassportRenderer.cutCardArea[1];
@@ -1392,43 +1384,6 @@ class EventsMRVAViewModel {
       `${this.#model.numberVIZ}-front.png`
     );
     downloadFront.setAttribute("href", this.#frontBlobURL);
-  }
-
-  async #generateCardBack() {
-    const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
-    this.#cardBackElement.width = EventsPassportRenderer.cutCardArea[0];
-    this.#cardBackElement.height = EventsPassportRenderer.cutCardArea[1];
-    const ctx = this.#cardBackElement.getContext("2d");
-    ctx.translate(
-      EventsPassportRenderer.cutCardArea[0] / 2,
-      EventsPassportRenderer.cutCardArea[1] / 2
-    );
-    ctx.rotate(180 * Math.PI / 180);
-    ctx.drawImage(
-      canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,
-      -this.#cardBackElement.width / 2, -this.#cardBackElement.height / 2, this.#cardBackElement.width, this.#cardBackElement.height
-    );
-    const downloadBack = this.#document.getElementById("downloadBack");
-    let blob;
-    if (typeof OffscreenCanvas === "undefined") {
-      blob = await new Promise(resolve => canvas.toBlob(resolve));
-    }
-    else { blob = await canvas.convertToBlob(); }
-    if (this.#backBlobURL !== null) { URL.revokeObjectURL(this.#backBlobURL); }
-    this.#backBlobURL = URL.createObjectURL(blob);
-    downloadBack.setAttribute(
-      "download",
-      `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
-      `${this.#model.numberVIZ}-back.png`
-    );
-    downloadBack.setAttribute("href", this.#backBlobURL);
-  }
-
-  async #generateCard() {
-    await Promise.all([
-      this.#generateCardFront(),
-      this.#generateCardBack()
-    ]);
   }
 
   // Static private methods
