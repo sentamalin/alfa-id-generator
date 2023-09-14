@@ -19,6 +19,7 @@ class EventsMRVAViewModel {
     additionalInfo: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     fullName: "Millefeuille, Alfalfa",
     passportNumber: "362142069",
+    usePassportInMRZ: true,
     nationalityCode: "UTO",
     dateOfBirth: "1998-04-17",
     genderMarker: "F",
@@ -41,7 +42,6 @@ class EventsMRVAViewModel {
     logo: "/smallLogos/alfa.svg",
     mrzInQRCode: true,
     showGuides: false,
-    usePassportInMRZ: true,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "FURRY EVENTS ENTRY VISA",
     placeOfIssueHeader: [
@@ -313,8 +313,8 @@ class EventsMRVAViewModel {
     this.#usePassportInMRZInput.addEventListener("change", this, false);
   }
   onUsePassportInMRZInput() {
-    if (this.#renderer.usePassportInMRZ) { this.#renderer.usePassportInMRZ = false; }
-    else { this.#renderer.usePassportInMRZ = true; }
+    if (this.#model.usePassportInMRZ) { this.#model.usePassportInMRZ = false; }
+    else { this.#model.usePassportInMRZ = true; }
     this.#generateCard();
   }
 

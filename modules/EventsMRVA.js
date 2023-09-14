@@ -102,10 +102,36 @@ class EventsMRVA {
     }
     else { this.#passportNumber = value.toString(); }
   }
+  #usePassportInMRZ;
+  get usePassportInMRZ() { return this.#usePassportInMRZ; }
+  set usePassportInMRZ(value) { this.#usePassportInMRZ = value; }
 
   // TD3Document MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }
-  get mrzLine2() { return this.#document.mrzLine2; }
+  get mrzLine2() {
+    let optionalDataCheckDigit;
+    if (this.optionalData === "") { optionalDataCheckDigit = "<"; }
+    else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalDataMRZ); }
+    let mrzNumber;
+    if (this.usePassportInMRZ) { mrzNumber = this.passportNumberMRZ; }
+    else { mrzNumber = this.numberMRZ; }
+    let uncheckedLine = mrzNumber +
+      TravelDocument.generateMRZCheckDigit(this.numberMRZ) +
+      this.nationalityCodeMRZ +
+      this.dateOfBirthMRZ +
+      TravelDocument.generateMRZCheckDigit(this.dateOfBirthMRZ) +
+      this.genderMarkerMRZ +
+      this.dateOfExpirationMRZ +
+      TravelDocument.generateMRZCheckDigit(this.dateOfExpirationMRZ) +
+      this.optionalDataMRZ +
+      optionalDataCheckDigit;
+    return uncheckedLine +
+      TravelDocument.generateMRZCheckDigit(
+        uncheckedLine.slice(0,10) +
+        uncheckedLine.slice(13,20) +
+        uncheckedLine.slice(21)
+      );
+  }
   get machineReadableZone() { return this.#document.machineReadableZone; }
 
   // Constructor
@@ -122,6 +148,7 @@ class EventsMRVA {
       if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
+      if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }

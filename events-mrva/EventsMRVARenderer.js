@@ -33,7 +33,6 @@ class EventsMRVARenderer {
   logo; // Defines the authority logo
   mrzInQRCode;
   showGuides;
-  usePassportInMRZ;
   fullAuthority;
   fullDocumentName;
   placeOfIssueHeader;
@@ -752,7 +751,6 @@ class EventsMRVARenderer {
       if (opt.logo) { this.logo = opt.logo; }
       if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
-      if (opt.usePassportInMRZ !== undefined) { this.usePassportInMRZ = opt.usePassportInMRZ; }
       if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
       if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }
       if (opt.placeOfIssueHeader) { this.placeOfIssueHeader = opt.placeOfIssueHeader; }
