@@ -108,7 +108,12 @@ class EventsMRVARenderer {
       this.constructor.#photoUnderlayArea[1]
     );
     if (this.mrzInQRCode) {
-      this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
+      if (model.usePassportInMRZ) {
+        this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.passportNumberVIZ}`;
+      }
+      else {
+        this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
+      }
     }
     else { this.#qrCode.qrCode = model.url; }
     const images = await Promise.all([
@@ -138,24 +143,14 @@ class EventsMRVARenderer {
       this.constructor.#qrCodeArea
     );
 
-    ctx.fillStyle = this.passportHeaderColor;
-    ctx.font = this.constructor.#passportHeaderFont;
-    for (let i = 0; i < this.passportHeader.length; i += 1) {
-      ctx.fillText(
-        this.passportHeader[i],
-        this.constructor.#passportHeaderX,
-        this.constructor.#passportHeaderY[i]
-      );
-    }
-
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#mainHeaderFont;
     ctx.fillText(
       this.fullAuthority,
       Math.max(
-        this.constructor.#documentX[2] -
+        this.constructor.#documentX[3] -
           ctx.measureText(this.fullAuthority).width,
-        this.constructor.#dataX[0]
+        this.constructor.#documentX[0]
       ),
       this.constructor.#documentY[0],
       this.constructor.#documentX[2] - this.constructor.#dataX[0]
@@ -469,109 +464,6 @@ class EventsMRVARenderer {
     return canvas;
   }
 
-  /** @param { EventsMRVA } model */
-  /** @param { HTMLCanvasElement } fallback */
-  async generateCardBack(model, fallback) {
-    let canvas;
-    if (typeof OffscreenCanvas === "undefined") {
-      canvas = fallback;
-      canvas.setAttribute("width", this.constructor.#cardArea[0]);
-      canvas.setAttribute("height", this.constructor.#cardArea[1]);
-    }
-    else {
-      canvas = new OffscreenCanvas(this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
-    }
-    const ctx = canvas.getContext("2d");
-    ctx.textBaseline = "top";
-
-    ctx.fillStyle = this.backBackgroundColor;
-    ctx.fillRect(
-      0, 0,
-      this.constructor.#cardArea[0],
-      this.constructor.#cardArea[1]
-    );
-    if (this.backBackgroundImage) {
-      const cardBackground = await this.constructor.#generateCanvasImg(
-        this.backBackgroundImage
-      );
-      ctx.drawImage(
-        cardBackground,
-        0, 0,
-        this.constructor.#cardArea[0],
-        this.constructor.#cardArea[1]
-      );
-    }
-
-    ctx.translate(this.constructor.#cardArea[0], 0);
-    ctx.rotate(90 * Math.PI / 180);
-
-    ctx.strokeStyle = this.headerColor;
-    ctx.lineWidth = 4;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(
-      this.constructor.#signatureX[0],
-      this.constructor.#signatureY[1]
-    );
-    ctx.lineTo(
-      this.constructor.#cardArea[1] - this.constructor.#signatureX[0],
-      this.constructor.#signatureY[1]
-    );
-    ctx.stroke();
-
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillStyle = this.headerColor;
-    ctx.fillText(
-      this.signatureHeader[0],
-      this.constructor.#signatureX[0],
-      this.constructor.#signatureY[2]
-    );
-    const signatureWidth = ctx.measureText(this.signatureHeader[0]).width
-    ctx.font = this.constructor.#intlFont;
-    ctx.fillText(
-      "/",
-      this.constructor.#signatureX[0] + signatureWidth,
-      this.constructor.#signatureY[2]
-    );
-    ctx.fillText(
-      `${this.signatureHeader[1]}/`,
-      this.constructor.#signatureX[0],
-      this.constructor.#signatureY[3]
-    );
-    ctx.fillText(
-      this.signatureHeader[2],
-      this.constructor.#signatureX[0],
-      this.constructor.#signatureY[4]
-    );
-
-    if (typeof model.signature !== typeof canvas) {
-      const image = await this.constructor.#generateCanvasImg(model.signature);
-      this.constructor.#fitImgInArea(
-        image, ctx,
-        this.constructor.#signatureX[1],
-        this.constructor.#signatureY[0],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1]
-      );
-    }
-    else {
-      ctx.drawImage(
-        model.signature,
-        this.constructor.#signatureX[1],
-        this.constructor.#signatureY[0],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1]
-      );
-    }
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    if (this.showGuides) {
-      this.constructor.#drawBleedAndSafeLines(ctx);
-    }
-
-    return canvas;
-  }
-
   async loadCanvasFonts() {
     this.fonts.add(this.constructor.#mrzFontFace);
     this.fonts.add(this.constructor.#vizFontFace);
@@ -614,9 +506,6 @@ class EventsMRVARenderer {
     "Yellowtail",
     "url('/fonts/Yellowtail-Regular.woff') format('woff')"
   );
-  static get #passportHeaderFont() {
-    return `bold 24px ${this.#vizFontFace.family}`;
-  }
   static get #mainHeaderFont() {
     return `bold 36px ${this.#vizFontFace.family}`;
   }
@@ -643,91 +532,77 @@ class EventsMRVARenderer {
   }
 
   // Coordinates used in card generation (static)
+  static #mainHeaderXY = [1417, 48];
+  static #documentHeaderXY = [1417, 92];
   static #photoUnderlayXY = [48, 0];
-  static #photoXY = [72, 256];
-  static #mrzUnderlayXY = [0, 789];
-  static #logoXY = [109, 79];
+  static #photoXY = [72, 267];
+  static #mrzUnderlayXY = [0, 695];
+  static #logoXY = [72, 48];
   static #signatureXY = [48, 543];
-  static #passportHeaderX = 261;
-  static #passportHeaderY = [102, 135, 168];
-  static #mrzX = 86;
-  static #mrzY = [858, 933];
+  static get #signatureXY() {
+    return [
+      this.#qrCodeXY[0] - 24 - this.#signatureArea,
+      this.#qrCodeXY[1]
+    ];
+  }
+  static #mrzX = 60;
+  static #mrzY = [768, 840];
   static #mrzSpacing = 30.75;
-  static get #documentX() {
-    return [
-      1072, // Document Header
-      1222, // Authority Header
-      this.#cardArea[0] - this.#safe // Number Header
-    ];
-  }
-  static get #documentY() {
-    return [
-      this.#safe, // Full Authority Header
-      100, // Full Document Header
-      136, // Document Header (primary)
-      161, // Document Header (I18n 1)
-      186, // Document Header (I18n 2)
-      213 // Document Data
-    ];
-  }
-  static #dataX = [
-    485, // Column 1
-    680, // Date of Birth
-    937, // Gender Marker
-    1083 // Place of Birth
+  static #documentX = [
+    415, // Place of issue
+    688, // Valid from
+    959, // Valid thru
+    1223 // Number of entries
   ];
-  static #dataY = [
-    256, // Name Header
-    283, // Name Data
-    332, // Row 2 Header (primary)
-    357, // Row 2 Header (I18n 1)
-    382, // Row 2 Header (I18n 2)
-    409, // Row 2 Data
-    458, // Issue Header
-    485, // Issue Data
-    534, // Authority Header
-    561, // Authority Data
-    610, // Date of Expiration Header
-    637, // Date of Expiration Data
-    686, // Endorsement Header
-    713 // Endorsement Data
+  static #documentY = [
+    166, // Row 1 header (primary)
+    191, // Row 1 header (I18n 1)
+    216, // Row 1 header (I18n 2)
+    243, // Row 1 data
+    292, // Row 2 header
+    319, // Row 2 data
+    368, // Additional information header
+    395, // Additional information data line 1
+    425 // Additional information data line 2
   ];
-  static #signatureX = [112, 160];
-  static #signatureY = [
-    1210, // Signature
-    1334, // Signature Line
-    1358, // Signature Header (primary)
-    1383, // Signature Header (I18n 1)
-    1408 // Signature Header (I18n 2)
+  static #passportX = [
+    415, // Nationality header
+    563, // Date of birth header
+    774 // Gender header
+  ];
+  static #passportY = [
+    474, // Name header
+    501, // Name data
+    550, // Passport header
+    577, // Passport data
+    626, // Row 3 header (primary)
+    651, // Row 3 header (I18n 1)
+    676, // Row 3 header (I18n 2)
+    703 // Row 3 data
   ];
   static get #qrCodeXY() {
     return [
       this.#cardArea[0] - this.#safe - this.#qrCodeArea,
-      this.#mrzUnderlayXY[1] - this.#qrCodeArea - 32
+      this.#mrzUnderlayXY[1] - this.#qrCodeArea - 24
     ];
   }
 
   // Areas used in card generation (static)
-  static #cardArea = [1524, 1087];
+  static #cardArea = [1465, 993];
   static get cutCardArea() {
     return [
       this.#cardArea[0] - (this.#bleed * 2),
       this.#cardArea[1] - (this.#bleed * 2)
     ];
   }
-  static #bleed = 16;
+  static #bleed = 24;
   static #safe = 48;
-  static #photoUnderlayArea = [413, 765];
-  static #photoArea = [365, 487];
-  static #logoArea = 128;
-  static get #signatureArea() {
-    return [
-      this.#cardArea[1] - (160 * 2),
-      164
-    ];
-  }
+  static #photoUnderlayArea = [343, 671];
+  static #photoArea = [295, 380];
+  static #logoArea = [295, 195];
+  static get #signatureArea() { return this.#qrCodeArea; }
   static get #qrCodeArea() {
-    return this.#mrzUnderlayXY[1] - 32 - this.#dataY[8];
+    return this.#mrzUnderlayXY[1] - 24 - this.#passportY[4];
   }
   static get #mrzUnderlayArea() {
     return [
