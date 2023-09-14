@@ -116,13 +116,13 @@ class EventsMRVA {
     if (this.usePassportInMRZ) { mrzNumber = this.passportNumberMRZ; }
     else { mrzNumber = this.numberMRZ; }
     let uncheckedLine = mrzNumber +
-      TravelDocument.generateMRZCheckDigit(this.numberMRZ) +
+      TravelDocument.generateMRZCheckDigit(mrzNumber) +
       this.nationalityCodeMRZ +
       this.dateOfBirthMRZ +
       TravelDocument.generateMRZCheckDigit(this.dateOfBirthMRZ) +
       this.genderMarkerMRZ +
-      this.dateOfExpirationMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfExpirationMRZ) +
+      this.validThruMRZ +
+      TravelDocument.generateMRZCheckDigit(this.validThruMRZ) +
       this.optionalDataMRZ +
       optionalDataCheckDigit;
     return uncheckedLine +
