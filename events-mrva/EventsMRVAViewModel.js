@@ -24,7 +24,7 @@ class EventsMRVAViewModel {
     genderMarker: "F",
     optionalData: "",
     picture: "/photos/fox.jpg",
-    signature: "/signatures/alfalfa.png",
+    signature: "/signatures/orgsigormark.png",
     url: "https://airlinefurries.com/"
   });
 
