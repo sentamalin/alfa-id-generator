@@ -115,11 +115,15 @@ class EventsMRVARenderer {
       }
     }
     else { this.#qrCode.qrCode = model.url; }
-    const images = await Promise.all([
+    const imagePromises = [
       this.constructor.#generateCanvasImg(model.picture),
       this.constructor.#generateCanvasImg(this.logo),
       this.constructor.#generateCanvasImg(this.#qrCode.qrCode)
-    ]);
+    ];
+    if (typeof model.signature !== typeof canvas) {
+      imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
+    }
+    const images = await Promise.all(imagePromises);
     this.constructor.#fillAreaWithImg(
       images[0], ctx,
       this.constructor.#photoXY[0],
@@ -131,8 +135,8 @@ class EventsMRVARenderer {
       images[1], ctx,
       this.constructor.#logoXY[0],
       this.constructor.#logoXY[1],
-      this.constructor.#logoArea,
-      this.constructor.#logoArea
+      this.constructor.#logoArea[0],
+      this.constructor.#logoArea[1]
     );
     ctx.drawImage(
       images[2],
@@ -141,304 +145,339 @@ class EventsMRVARenderer {
       this.constructor.#qrCodeArea,
       this.constructor.#qrCodeArea
     );
+    if (typeof model.signature !== typeof canvas) {
+      this.constructor.#fitImgInArea(
+        images[3], ctx,
+        this.constructor.#signatureXY[0],
+        this.constructor.#signatureXY[1],
+        this.constructor.#signatureArea,
+        this.constructor.#signatureArea
+      );
+    }
+    else {
+      ctx.drawImage(
+        model.signature,
+        this.constructor.#signatureXY[0],
+        this.constructor.#signatureXY[1],
+        this.constructor.#signatureArea,
+        this.constructor.#signatureArea
+      );
+    }
 
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#mainHeaderFont;
     ctx.fillText(
       this.fullAuthority,
       Math.max(
-        this.constructor.#documentX[3] -
+        this.constructor.#mainHeaderXY[0] -
           ctx.measureText(this.fullAuthority).width,
         this.constructor.#documentX[0]
       ),
-      this.constructor.#documentY[0],
-      this.constructor.#documentX[2] - this.constructor.#dataX[0]
+      this.constructor.#mainHeaderXY[1],
+      this.constructor.#mainHeaderXY[0] - this.constructor.#documentX[0]
     );
     ctx.font = this.constructor.#documentHeaderFont;
     let documentHeaderWidth = ctx.measureText(this.fullDocumentName).width;
     ctx.fillText(
       this.fullDocumentName,
-      this.constructor.#documentX[2] - documentHeaderWidth,
-      this.constructor.#documentY[1]
+      this.constructor.#documentHeaderXY[0] - documentHeaderWidth,
+      this.constructor.#documentHeaderXY[1]
     );
     ctx.font = this.constructor.#separatorHeaderFont;
     documentHeaderWidth += ctx.measureText(this.constructor.#headerSeparator).width;
     ctx.fillText(
       this.constructor.#headerSeparator,
-      this.constructor.#documentX[2] - documentHeaderWidth,
-      this.constructor.#documentY[1]
+      this.constructor.#documentHeaderXY[0] - documentHeaderWidth,
+      this.constructor.#documentHeaderXY[1]
     );
     ctx.font = this.constructor.#documentHeaderFont;
     documentHeaderWidth += ctx.measureText(`${model.typeCodeVIZ}-${model.authorityCodeVIZ}`).width;
     ctx.fillText(
       `${model.typeCodeVIZ}-${model.authorityCodeVIZ}`,
-      this.constructor.#documentX[2] - documentHeaderWidth,
-      this.constructor.#documentY[1]
+      this.constructor.#documentHeaderXY[0] - documentHeaderWidth,
+      this.constructor.#documentHeaderXY[1]
     );
 
     ctx.fillStyle = this.headerColor;
-    ctx.font = this.constructor.#intlFont;
-    const intlSeparatorWidth = ctx.measureText("/").width;
     ctx.font = this.constructor.#headerFont;
     ctx.fillText(
-      this.documentHeader[0],
-      this.constructor.#documentX[0] - ctx.measureText(this.documentHeader[0]).width - intlSeparatorWidth,
-      this.constructor.#documentY[2]
+      this.placeOfIssueHeader[0],
+      this.constructor.#documentX[0],
+      this.constructor.#documentY[0]
     );
     ctx.fillText(
-      this.authorityHeader[0],
-      this.constructor.#documentX[1] - ctx.measureText(this.authorityHeader[0]).width - intlSeparatorWidth,
-      this.constructor.#documentY[2]
+      this.validFromHeader[0],
+      this.constructor.#documentX[1],
+      this.constructor.#documentY[0]
+    );
+    ctx.fillText(
+      this.validThruHeader[0],
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[0]
+    );
+    ctx.fillText(
+      this.numberOfEntriesHeader[0],
+      this.constructor.#documentX[3],
+      this.constructor.#documentY[0]
     );
     ctx.fillText(
       this.numberHeader[0],
-      this.constructor.#documentX[2] - ctx.measureText(this.numberHeader[0]).width - intlSeparatorWidth,
-      this.constructor.#documentY[2]
+      this.constructor.#documentX[0],
+      this.constructor.#documentY[4]
+    );
+    ctx.fillText(
+      this.typeHeader[0],
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[4]
+    );
+    ctx.fillText(
+      this.additionalInfoHeader[0],
+      this.constructor.#documentX[0],
+      this.constructor.#documentY[6]
     );
     ctx.fillText(
       this.nameHeader[0],
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[0]
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[0]
+    );
+    ctx.fillText(
+      this.passportNumberHeader[0],
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[2]
     );
     ctx.fillText(
       this.nationalityHeader[0],
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[2]
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[4]
     );
     ctx.fillText(
       this.dateOfBirthHeader[0],
-      this.constructor.#dataX[1],
-      this.constructor.#dataY[2]
+      this.constructor.#passportX[1],
+      this.constructor.#passportY[4]
     );
     ctx.fillText(
       this.genderHeader[0],
-      this.constructor.#dataX[2],
-      this.constructor.#dataY[2]
+      this.constructor.#passportX[2],
+      this.constructor.#passportY[4]
     );
-    ctx.fillText(
-      this.placeOfBirthHeader[0],
-      this.constructor.#dataX[3],
-      this.constructor.#dataY[2]
-    );
-    ctx.fillText(
-      this.issueHeader[0],
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[6]
-    );
-    ctx.fillText(
-      this.authorityHeader[0],
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[8]
-    );
-    ctx.fillText(
-      this.dateOfExpirationHeader[0],
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[10]
-    );
-    ctx.fillText(
-      this.endorsementsHeader[0],
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[12]
-    );
-    const nameWidth = this.constructor.#dataX[0] +
+    const placeOfIssueWidth = this.constructor.#documentX[0] +
+      ctx.measureText(this.placeOfIssueHeader[0]).width;
+    const validFromWidth = this.constructor.#documentX[1] +
+      ctx.measureText(this.validFromHeader[0]).width;
+    const validThruWidth = this.constructor.#documentX[2] +
+      ctx.measureText(this.validThruHeader[0]).width;
+    const numberOfEntriesWidth = this.constructor.#documentX[3] +
+      ctx.measureText(this.numberOfEntriesHeader[0]).width;
+    const numberWidth = this.constructor.#documentX[0] +
+      ctx.measureText(this.numberHeader[0]).width;
+    const typeWidth = this.constructor.#documentX[2] +
+      ctx.measureText(this.typeHeader[0]).width;
+    const additionalInfoWidth = this.constructor.#documentX[0] +
+      ctx.measureText(this.additionalInfoHeader[0]).width;
+    const nameWidth = this.constructor.#passportX[0] +
       ctx.measureText(this.nameHeader[0]).width;
-    const nationalityWidth = this.constructor.#dataX[0] +
+    const passportNumberWidth = this.constructor.#passportX[0] +
+      ctx.measureText(this.passportNumberHeader[0]).width;
+    const nationalityWidth = this.constructor.#passportX[0] +
       ctx.measureText(this.nationalityHeader[0]).width;
-    const dateOfBirthWidth = this.constructor.#dataX[1] +
+    const dateOfBirthWidth = this.constructor.#passportX[1] +
       ctx.measureText(this.dateOfBirthHeader[0]).width;
-    const genderWidth = this.constructor.#dataX[2] +
+    const genderWidth = this.constructor.#passportX[2] +
       ctx.measureText(this.genderHeader[0]).width;
-    const placeOfBirthWidth = this.constructor.#dataX[3] +
-      ctx.measureText(this.placeOfBirthHeader[0]).width;
-    const issueWidth = this.constructor.#dataX[0] +
-      ctx.measureText(this.issueHeader[0]).width;
-    const authorityWidth = this.constructor.#dataX[0] +
-      ctx.measureText(this.authorityHeader[0]).width;
-    const dateOfExpirationWidth = this.constructor.#dataX[0] +
-      ctx.measureText(this.dateOfExpirationHeader[0]).width;
-    const endorsementsWidth = this.constructor.#dataX[0] +
-      ctx.measureText(this.endorsementsHeader[0]).width;
     
     ctx.font = this.constructor.#intlFont;
     ctx.fillText(
       "/",
-      this.constructor.#documentX[0] - intlSeparatorWidth,
+      placeOfIssueWidth,
+      this.constructor.#documentY[0]
+    );
+    ctx.fillText(
+      `${this.placeOfIssueHeader[1]}/`,
+      this.constructor.#documentX[0],
+      this.constructor.#documentY[1]
+    );
+    ctx.fillText(
+      this.placeOfIssueHeader[2],
+      this.constructor.#documentX[0],
       this.constructor.#documentY[2]
-    );
-    ctx.fillText(
-      `${this.documentHeader[1]}/`,
-      this.constructor.#documentX[0] - ctx.measureText(`${this.documentHeader[1]}/`).width,
-      this.constructor.#documentY[3]
-    );
-    ctx.fillText(
-      this.documentHeader[2],
-      this.constructor.#documentX[0] - ctx.measureText(this.documentHeader[2]).width,
-      this.constructor.#documentY[4]
     );
     ctx.fillText(
       "/",
-      this.constructor.#documentX[1] - intlSeparatorWidth,
+      validFromWidth,
+      this.constructor.#documentY[0]
+    );
+    ctx.fillText(
+      `${this.validFromHeader[1]}/`,
+      this.constructor.#documentX[1],
+      this.constructor.#documentY[1]
+    );
+    ctx.fillText(
+      this.validFromHeader[2],
+      this.constructor.#documentX[1],
       this.constructor.#documentY[2]
-    );
-    ctx.fillText(
-      `${this.authorityHeader[1]}/`,
-      this.constructor.#documentX[1] - ctx.measureText(`${this.authorityHeader[1]}/`).width,
-      this.constructor.#documentY[3]
-    );
-    ctx.fillText(
-      this.authorityHeader[2],
-      this.constructor.#documentX[1] - ctx.measureText(this.authorityHeader[2]).width,
-      this.constructor.#documentY[4]
     );
     ctx.fillText(
       "/",
-      this.constructor.#documentX[2] - intlSeparatorWidth,
+      validThruWidth,
+      this.constructor.#documentY[0]
+    );
+    ctx.fillText(
+      `${this.validThruHeader[1]}/`,
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[1]
+    );
+    ctx.fillText(
+      this.validThruHeader[2],
+      this.constructor.#documentX[2],
       this.constructor.#documentY[2]
     );
     ctx.fillText(
-      `${this.numberHeader[1]}/`,
-      this.constructor.#documentX[2] - ctx.measureText(`${this.numberHeader[1]}/`).width,
-      this.constructor.#documentY[3]
+      "/",
+      numberOfEntriesWidth,
+      this.constructor.#documentY[0],
     );
     ctx.fillText(
-      this.numberHeader[2],
-      this.constructor.#documentX[2] - ctx.measureText(this.numberHeader[2]).width,
+      `${this.numberOfEntriesHeader[1]}/`,
+      this.constructor.#documentX[3],
+      this.constructor.#documentY[1]
+    );
+    ctx.fillText(
+      this.numberOfEntriesHeader[2],
+      this.constructor.#documentX[3],
+      this.constructor.#documentY[2]
+    );
+    ctx.fillText(
+      `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
+      numberWidth,
       this.constructor.#documentY[4]
+    );
+    ctx.fillText(
+      `/ ${this.typeHeader[1]}/ ${this.typeHeader[2]}`,
+      typeWidth,
+      this.constructor.#documentY[4]
+    );
+    ctx.fillText(
+      `/ ${this.additionalInfoHeader[1]}/ ${this.additionalInfoHeader[2]}`,
+      additionalInfoWidth,
+      this.constructor.#documentY[6]
     );
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
       nameWidth,
-      this.constructor.#dataY[0]
+      this.constructor.#passportY[0]
     );
-    ctx.fillText("/", nationalityWidth, this.constructor.#dataY[2]);
+    ctx.fillText(
+      `/ ${this.passportNumberHeader[1]}/ ${this.passportNumberHeader[2]}`,
+      passportNumberWidth,
+      this.constructor.#passportY[2]
+    );
+    ctx.fillText(
+      "/",
+      nationalityWidth,
+      this.constructor.#passportY[4]
+    );
     ctx.fillText(
       `${this.nationalityHeader[1]}/`,
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[3]
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[5]
     );
     ctx.fillText(
       this.nationalityHeader[2],
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[4]
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[6]
     );
-    ctx.fillText("/", dateOfBirthWidth, this.constructor.#dataY[2]);
+    ctx.fillText(
+      "/",
+      dateOfBirthWidth,
+      this.constructor.#passportY[4]
+    );
     ctx.fillText(
       `${this.dateOfBirthHeader[1]}/`,
-      this.constructor.#dataX[1],
-      this.constructor.#dataY[3]
+      this.constructor.#passportX[1],
+      this.constructor.#passportY[5]
     );
     ctx.fillText(
       this.dateOfBirthHeader[2],
-      this.constructor.#dataX[1],
-      this.constructor.#dataY[4]
+      this.constructor.#passportX[1],
+      this.constructor.#passportY[6]
     );
-    ctx.fillText("/", genderWidth, this.constructor.#dataY[2]);
+    ctx.fillText(
+      "/",
+      genderWidth,
+      this.constructor.#passportY[4]
+    );
     ctx.fillText(
       `${this.genderHeader[1]}/`,
-      this.constructor.#dataX[2],
-      this.constructor.#dataY[3]
+      this.constructor.#passportX[2],
+      this.constructor.#passportY[5]
     );
     ctx.fillText(
       this.genderHeader[2],
-      this.constructor.#dataX[2],
-      this.constructor.#dataY[4]
-    );
-    ctx.fillText("/", placeOfBirthWidth, this.constructor.#dataY[2]);
-    ctx.fillText(
-      `${this.placeOfBirthHeader[1]}/`,
-      this.constructor.#dataX[3],
-      this.constructor.#dataY[3]
-    );
-    ctx.fillText(
-      this.placeOfBirthHeader[2],
-      this.constructor.#dataX[3],
-      this.constructor.#dataY[4]
-    );
-    ctx.fillText(
-      `/ ${this.issueHeader[1]}/ ${this.issueHeader[2]}`,
-      issueWidth,
-      this.constructor.#dataY[6]
-    );
-    ctx.fillText(
-      `/ ${this.authorityHeader[1]}/ ${this.authorityHeader[2]}`,
-      authorityWidth,
-      this.constructor.#dataY[8]
-    );
-    ctx.fillText(
-      `/ ${this.dateOfExpirationHeader[1]}/ ${this.dateOfExpirationHeader[2]}`,
-      dateOfExpirationWidth,
-      this.constructor.#dataY[10]
-    );
-    ctx.fillText(
-      `/ ${this.endorsementsHeader[1]}/ ${this.endorsementsHeader[2]}`,
-      endorsementsWidth,
-      this.constructor.#dataY[12]
+      this.constructor.#passportX[2],
+      this.constructor.#passportY[6]
     );
 
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
     ctx.fillText(
-      model.typeCodeVIZ,
-      this.constructor.#documentX[0] - ctx.measureText(model.typeCodeVIZ).width,
-      this.constructor.#documentY[5]
+      model.placeOfIssueVIZ,
+      this.constructor.#documentX[0],
+      this.constructor.#documentY[3]
     );
     ctx.fillText(
-      model.authorityCodeVIZ,
-      this.constructor.#documentX[1] - ctx.measureText(model.authorityCodeVIZ).width,
-      this.constructor.#documentY[5]
+      model.validFromVIZ,
+      this.constructor.#documentX[1],
+      this.constructor.#documentY[3]
+    );
+    ctx.fillText(
+      model.validThruVIZ,
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[3]
+    );
+    ctx.fillText(
+      model.numberOfEntriesVIZ,
+      this.constructor.#documentX[3],
+      this.constructor.#documentY[3]
     );
     ctx.fillText(
       model.numberVIZ,
-      this.constructor.#documentX[2] - ctx.measureText(model.numberVIZ).width,
+      this.constructor.#documentX[0],
       this.constructor.#documentY[5]
     );
     ctx.fillText(
+      model.typeVIZ,
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[5]
+    );
+    ctx.fillText(
+      model.additionalInfoVIZ,
+      this.constructor.#documentX[0],
+      this.constructor.#documentY[7]
+    );
+    ctx.fillText(
       model.fullNameVIZ,
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[1],
-      this.constructor.#documentX[2] - this.constructor.#dataX[0]
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[1]
+    );
+    ctx.fillText(
+      model.passportNumberVIZ,
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[3]
     );
     ctx.fillText(
       model.nationalityCodeVIZ,
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[5]
+      this.constructor.#passportX[0],
+      this.constructor.#passportY[7]
     );
     ctx.fillText(
       model.dateOfBirthVIZ,
-      this.constructor.#dataX[1],
-      this.constructor.#dataY[5]
+      this.constructor.#passportX[1],
+      this.constructor.#passportY[7]
     );
     ctx.fillText(
       model.genderMarkerVIZ,
-      this.constructor.#dataX[2],
-      this.constructor.#dataY[5]
-    );
-    ctx.fillText(
-      model.placeOfBirthVIZ,
-      this.constructor.#dataX[3],
-      this.constructor.#dataY[5]
-    );
-    ctx.fillText(
-      model.dateOfIssueVIZ,
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[7]
-    );
-    ctx.fillText(
-      model.authorityVIZ,
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[9],
-      this.constructor.#qrCodeXY[0] - this.constructor.#dataX[0] - 32
-    );
-    ctx.fillText(
-      model.dateOfExpirationVIZ,
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[11]
-    );
-    ctx.fillText(
-      model.endorsementsVIZ,
-      this.constructor.#dataX[0],
-      this.constructor.#dataY[13],
-      this.constructor.#qrCodeXY[0] - this.constructor.#dataX[0] - 32
+      this.constructor.#passportX[2],
+      this.constructor.#passportY[7]
     );
 
     ctx.fillStyle = this.mrzColor;
@@ -527,7 +566,7 @@ class EventsMRVARenderer {
     return `44px ${this.#mrzFontFace.family}`;
   }
   static get #signatureFont() {
-    return `148px ${this.#signatureFontFace.family}`;
+    return `${this.#qrCodeArea / 4}px ${this.#signatureFontFace.family}`;
   }
 
   // Coordinates used in card generation (static)
@@ -537,15 +576,14 @@ class EventsMRVARenderer {
   static #photoXY = [72, 267];
   static #mrzUnderlayXY = [0, 695];
   static #logoXY = [72, 48];
-  static #signatureXY = [48, 543];
   static get #signatureXY() {
     return [
       this.#qrCodeXY[0] - 24 - this.#signatureArea,
       this.#qrCodeXY[1]
     ];
   }
-  static #mrzX = 60;
-  static #mrzY = [768, 840];
+  static #mrzX = 56;
+  static #mrzY = [764, 839];
   static #mrzSpacing = 30.75;
   static #documentX = [
     415, // Place of issue
@@ -554,30 +592,29 @@ class EventsMRVARenderer {
     1223 // Number of entries
   ];
   static #documentY = [
-    166, // Row 1 header (primary)
-    191, // Row 1 header (I18n 1)
-    216, // Row 1 header (I18n 2)
-    243, // Row 1 data
-    292, // Row 2 header
-    319, // Row 2 data
-    368, // Additional information header
-    395, // Additional information data line 1
-    425 // Additional information data line 2
+    141, // Row 1 header (primary)
+    166, // Row 1 header (I18n 1)
+    191, // Row 1 header (I18n 2)
+    218, // Row 1 data
+    267, // Row 2 header
+    294, // Row 2 data
+    343, // Additional information header
+    370, // Additional information data line 1
   ];
   static #passportX = [
     415, // Nationality header
-    563, // Date of birth header
-    774 // Gender header
+    588, // Date of birth header
+    824 // Gender header
   ];
   static #passportY = [
-    474, // Name header
-    501, // Name data
-    550, // Passport header
-    577, // Passport data
-    626, // Row 3 header (primary)
-    651, // Row 3 header (I18n 1)
-    676, // Row 3 header (I18n 2)
-    703 // Row 3 data
+    419, // Name header
+    446, // Name data
+    495, // Passport header
+    522, // Passport data
+    571, // Row 3 header (primary)
+    596, // Row 3 header (I18n 1)
+    621, // Row 3 header (I18n 2)
+    648 // Row 3 data
   ];
   static get #qrCodeXY() {
     return [
@@ -594,14 +631,14 @@ class EventsMRVARenderer {
       this.#cardArea[1] - (this.#bleed * 2)
     ];
   }
-  static #bleed = 24;
+  static #bleed = 16;
   static #safe = 48;
   static #photoUnderlayArea = [343, 671];
   static #photoArea = [295, 380];
   static #logoArea = [295, 195];
   static get #signatureArea() { return this.#qrCodeArea; }
   static get #qrCodeArea() {
-    return this.#mrzUnderlayXY[1] - 24 - this.#passportY[4];
+    return this.#mrzUnderlayXY[1] - 24 - this.#passportY[2];
   }
   static get #mrzUnderlayArea() {
     return [
@@ -718,11 +755,11 @@ class EventsMRVARenderer {
     let ctx;
     if (typeof OffscreenCanvas === "undefined") {
       canvas = canvasFallback;
-      canvas.width = this.constructor.#signatureArea[0];
-      canvas.height = this.constructor.#signatureArea[1];
+      canvas.width = this.constructor.#signatureArea;
+      canvas.height = this.constructor.#signatureArea;
     }
     else {
-      canvas = new OffscreenCanvas(this.constructor.#signatureArea[0], this.constructor.#signatureArea[1]);
+      canvas = new OffscreenCanvas(this.constructor.#signatureArea, this.constructor.#signatureArea);
     }
     ctx = canvas.getContext("2d");
     ctx.fillStyle = this.textColor;
@@ -730,8 +767,8 @@ class EventsMRVARenderer {
     ctx.textBaseline = "top";
     const centerShift = (canvas.width - ctx.measureText(signature).width) / 2;
     ctx.fillText(
-      signature, Math.max(centerShift, 0), 0,
-      this.constructor.#signatureArea[0]
+      signature, Math.max(centerShift, 0), 65,
+      this.constructor.#signatureArea
     );
     return canvas;
   }

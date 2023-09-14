@@ -16,7 +16,7 @@ class EventsMRVAViewModel {
     numberOfEntries: "Multiple",
     number: "960241263",
     type: "Silver Sponsor—Adult",
-    additionalInfo: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    additionalInfo: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     fullName: "Millefeuille, Alfalfa",
     passportNumber: "362142069",
     usePassportInMRZ: true,
@@ -312,7 +312,7 @@ class EventsMRVAViewModel {
     this.#usePassportInMRZInput = input;
     this.#usePassportInMRZInput.addEventListener("change", this, false);
   }
-  onUsePassportInMRZInput() {
+  onUsePassportInMRZInputChange() {
     if (this.#model.usePassportInMRZ) { this.#model.usePassportInMRZ = false; }
     else { this.#model.usePassportInMRZ = true; }
     this.#generateCard();
@@ -1411,8 +1411,8 @@ class EventsMRVAViewModel {
   // Private methods
   async #generateCard() {
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
-    this.#cardFrontElement.width = EventsPassportRenderer.cutCardArea[0];
-    this.#cardFrontElement.height = EventsPassportRenderer.cutCardArea[1];
+    this.#cardFrontElement.width = EventsMRVARenderer.cutCardArea[0];
+    this.#cardFrontElement.height = EventsMRVARenderer.cutCardArea[1];
     const ctx = this.#cardFrontElement.getContext("2d");
     ctx.drawImage(
       canvas, 16, 16, this.#cardFrontElement.width, this.#cardFrontElement.height,
