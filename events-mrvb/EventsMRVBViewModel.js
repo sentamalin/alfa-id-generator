@@ -25,7 +25,7 @@ class EventsMRVBViewModel {
     genderMarker: "F",
     optionalData: "",
     picture: "/photos/fox.jpg",
-    signature: "/signatures/orgsigormark.png",
+    signature: "/signatures/alfa-census.svg",
     url: "https://airlinefurries.com/"
   });
 
@@ -1411,12 +1411,26 @@ class EventsMRVBViewModel {
   // Private methods
   async #generateCard() {
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
-    this.#cardFrontElement.width = EventsMRVBRenderer.cutCardArea[0];
-    this.#cardFrontElement.height = EventsMRVBRenderer.cutCardArea[1];
+    this.#cardFrontElement.width = 1492;
+    this.#cardFrontElement.height = 1055;
     const ctx = this.#cardFrontElement.getContext("2d");
+    const pageSpecimen = await new Promise((resolve, reject) => {
+      const imgNode = new Image();
+      imgNode.addEventListener(
+        "load",
+        () => { resolve(imgNode); },
+        false
+      );
+      imgNode.src = "/specimens/blank-page.png";
+    });
+    ctx.drawImage(pageSpecimen, 0, 0);
+    ctx.fillStyle = "#999999";
+    ctx.fillRect(0, 1055 - EventsMRVBRenderer.cutCardArea[1] - 1,
+      EventsMRVBRenderer.cutCardArea[0] + 1, EventsMRVBRenderer.cutCardArea[1] + 1);
     ctx.drawImage(
-      canvas, 16, 16, this.#cardFrontElement.width, this.#cardFrontElement.height,
-      0, 0, this.#cardFrontElement.width, this.#cardFrontElement.height
+      canvas, 16, 16, EventsMRVBRenderer.cutCardArea[0], EventsMRVBRenderer.cutCardArea[1],
+      0, 1055 - EventsMRVBRenderer.cutCardArea[1],
+      EventsMRVBRenderer.cutCardArea[0], EventsMRVBRenderer.cutCardArea[1]
     );
     const downloadFront = this.#document.getElementById("downloadFront");
     let blob;
