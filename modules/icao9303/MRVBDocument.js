@@ -3,17 +3,16 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { TD3Document } from "./TD3Document.js";
 import { TravelDocument } from "./TravelDocument.js";
 import { VisaDocument } from "./VisaDocument.js";
 
-class MRVADocument {
-  /* This defines properties for an ICAO 9303 MRV-A Visa */
+class MRVBDocument {
+  /* This defines properties for an ICAO 9303 MRV-B Visa */
 
-  #document = new TD3Document();
+  #document = new TravelDocument();
   #visa = new VisaDocument();
   
-  // General Text and Graphical Data (Forwards/Calls TD3Document)
+  // General Text and Graphical Data (Forwards/Calls TravelDocument)
   get typeCode() { return this.#document.typeCode; }
   get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
   get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
@@ -26,8 +25,8 @@ class MRVADocument {
   get numberMRZ() { return this.#document.numberMRZ; }
   get numberVIZ() { return this.#document.numberVIZ; }
   set number(value) { this.#document.number = value; }
-  get fullName() { return this.#document.fullName; }
-  get fullNameMRZ() { return this.#document.fullNameMRZ; }
+  get fullName() { return this.#document.fullName; } // 31 characters
+  get fullNameMRZ() { return this.#document.fullNameMRZ(31); }
   get fullNameVIZ() { return this.#document.fullNameVIZ; }
   set fullName(value) { this.#document.fullName = value; }
   get nationalityCode() { return this.#document.nationalityCode; }
@@ -46,8 +45,8 @@ class MRVADocument {
   get validThruMRZ() { return this.#document.dateOfExpirationMRZ; }
   get validThruVIZ() { return this.#document.dateOfExpirationVIZ; }
   set validThru(value) { this.#document.dateOfExpiration = value; }
-  get optionalData() { return this.#document.optionalData; }
-  get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
+  get optionalData() { return this.#document.optionalData; } // 8 characters
+  get optionalDataMRZ() { return this.#document.optionalDataMRZ(8); }
   set optionalData(value) { this.#document.optionalData = value; }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
@@ -75,16 +74,17 @@ class MRVADocument {
   get usePassportInMRZ() { return this.#visa.usePassportInMRZ; }
   set usePassportInMRZ(value) { this.#visa.usePassportInMRZ = value; }
 
-  // MRVADocument MRZ Getters
-  get mrzLine1() { return this.#document.mrzLine1; }
+  // MRVBDocument MRZ Getters
+  get mrzLine1() {
+    return this.typeCodeMRZ +
+      this.authorityCodeMRZ +
+      this.fullNameMRZ;    
+  }
   get mrzLine2() {
-    let optionalDataCheckDigit;
-    if (this.optionalData === "") { optionalDataCheckDigit = "<"; }
-    else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalDataMRZ); }
     let mrzNumber;
     if (this.usePassportInMRZ) { mrzNumber = this.passportNumberMRZ; }
     else { mrzNumber = this.numberMRZ; }
-    let uncheckedLine = mrzNumber +
+    return mrzNumber +
       TravelDocument.generateMRZCheckDigit(mrzNumber) +
       this.nationalityCodeMRZ +
       this.dateOfBirthMRZ +
@@ -92,16 +92,13 @@ class MRVADocument {
       this.genderMarkerMRZ +
       this.validThruMRZ +
       TravelDocument.generateMRZCheckDigit(this.validThruMRZ) +
-      this.optionalDataMRZ +
-      optionalDataCheckDigit;
-    return uncheckedLine +
-      TravelDocument.generateMRZCheckDigit(
-        uncheckedLine.slice(0,10) +
-        uncheckedLine.slice(13,20) +
-        uncheckedLine.slice(21)
-      );
+      this.optionalDataMRZ;
   }
-  get machineReadableZone() { return this.#document.machineReadableZone; }
+  get machineReadableZone() {
+    return this.mrzLine1 +
+    "\n" +
+    this.mrzLine2;
+  }
 
   // Constructor
   constructor(opt) {
@@ -128,4 +125,4 @@ class MRVADocument {
   }
 }
 
-export { MRVADocument };
+export { MRVBDocument };

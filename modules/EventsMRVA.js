@@ -39,10 +39,10 @@ class EventsMRVA {
   get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
   get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
   set genderMarker(value) { this.#document.genderMarker = value; }
-  get validThru() { return this.#document.dateOfExpiration; }
-  get validThruMRZ() { return this.#document.dateOfExpirationMRZ; }
-  get validThruVIZ() { return this.#document.dateOfExpirationVIZ; }
-  set validThru(value) { this.#document.dateOfExpiration = value; }
+  get validThru() { return this.#document.validThru; }
+  get validThruMRZ() { return this.#document.validThruMRZ; }
+  get validThruVIZ() { return this.#document.validThruVIZ; }
+  set validThru(value) { this.#document.validThru = value; }
   get optionalData() { return this.#document.optionalData; }
   get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
   set optionalData(value) { this.#document.optionalData = value; }
