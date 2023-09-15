@@ -1,0 +1,201 @@
+<!--
+  SPDX-FileCopyrightText: Don Geronimo <https://sentamal.in/>
+  SPDX-License-Identifier: CC0-1.0
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./index.css" />
+    <script src="/modules/qrcode.js/qrcode.min.js"></script>
+    <script type="module" src="./index.js"></script>
+    <title>Events Visa (MRV-B) Generator</title>
+  </head>
+  <body>
+    <main>
+      <h1>Events Visa (MRV-B) Generator</h1>
+      <div class="generated-card">
+        <p><canvas id="cardFront"></canvas></p>
+        <p><a id="downloadFront">Download Visa</a></p>
+      </div>
+      <section class="customizationForm">
+        <h2>Personalized Textual Data</h2>
+        <label for="typeCode">Document Code</label>
+        <input id="typeCode" name="typeCode" type="text" />
+        <label for="authorityCode">Issuing Authority Code</label>
+        <input id="authorityCode" name="authorityCode" type="text" />
+        <label for="placeOfIssue">Place of Issue</label>
+        <input id="placeOfIssue" name="placeOfIssue" type="text" />
+        <label for="validFrom">Valid From</label>
+        <input id="validFrom" name="validFrom" type="date" />
+        <label for="validThru">Valid Thru</label>
+        <input id="validThru" name="validThru" type="date" />
+        <label for="numberOfEntries">Number of Entries</label>
+        <input id="numberOfEntries" name="numberOfEntries" type="text" />
+        <label for="number">Document Number</label>
+        <input id="number" name="number" type="text" />
+        <label for="type">Visa Type</label>
+        <input id="type" name="type" type="text" />
+        <label for="additionalInfo">Additional Information</label>
+        <input id="additionalInfo" name="additionalInfo" type="text" />
+        <label for="fullName">Full Name</label>
+        <input id="fullName" name="fullName" type="text" />
+        <label for="passportNumber">Passport Number</label>
+        <input id="passportNumber" name="passportNumber" type="text" />
+        <label for="usePassportInMRZ">Use Passport in MRZ</label>
+        <input id="usePassportInMRZ" name="usePassportInMRZ" type="checkbox" checked="checked" />
+        <label for="nationalityCode">Nationality</label>
+        <input id="nationalityCode" name="nationalityCode" type="text" />
+        <label for="dateOfBirth">Date of Birth</label>
+        <input id="dateOfBirth" name="dateOfBirth" type="date" />
+        <label for="genderMarker">Gender</label>
+        <select id="genderMarker" name="genderMarker">
+          <option value="X">Other/Unspecified</option>
+          <option value="F">Female</option>
+          <option value="M">Male</option>
+        </select>
+        <label for="url">QR Code URL</label>
+        <input id="url" name="url" type="url" />
+        <label for="mrzInQRCode">MRZ in QR Code</label>
+        <input id="mrzInQRCode" name="mrzInQRCode" type="checkbox" checked="checked" />
+        <label for="optionalData">Optional Data</label>
+        <input id="optionalData" name="optionalData" type="text" />
+        <h2>Personalized Graphical Data</h2>
+        <label for="picture">Photo</label>
+        <input id="picture" name="picture" type="file" />
+        <label for="signature">Signature Type</label>
+        <select id="signature" name="signature">
+          <option value="upload">Upload File</option>
+          <option value="text">Type Signature</option>
+        </select>
+        <label for="signatureFile">Signature File</label>
+        <input id="signatureFile" name="signatureFile" type="file" />
+        <label for="signatureText">Signature Text</label>
+        <input id="signatureText" name="signatureText" type="text" />
+        <h2>Presentation Color Data</h2>
+        <label for="headerColor">Header Color</label>
+        <input id="headerColor" name="headerColor" type="color" />
+        <label for="textColor">Text Color</label>
+        <input id="textColor" name="textColor" type="color" />
+        <label for="mrzColor">MRZ Color</label>
+        <input id="mrzColor" name="mrzColor" type="color" />
+        <label for="frontBackgroundColor">Front Background Color</label>
+        <input id="frontBackgroundColor" name="frontBackgroundColor" type="color" />
+        <label for="mrzBackgroundColor">MRZ Background Color</label>
+        <input id="mrzBackgroundColor" name="mrzBackgroundColor" type="color" />
+        <label for="logoUnderlayColor">Logo Underlay Color</label>
+        <input id="logoUnderlayColor" name="logoUnderlayColor" type="color" />
+        <label for="logoUnderlayAlpha">Logo Underlay Opacity</label>
+        <input id="logoUnderlayAlpha" name="logoUnderlayAlpha" type="range" />
+        <h2>Presentation Graphical Data</h2>
+        <label for="frontBackgroundImage">Front Background Image</label>
+        <select id="frontBackgroundImage" name="frontBackgroundImage">
+          <option value="none">None</option>
+          <option value="upload">Upload File</option>
+          <option value="/cardBackgrounds/passport-mrva-lofiGrey.png">Lo-Fi Grey</option>
+        </select>
+        <label for="frontBackgroundImageFile">Front Background Image File</label>
+        <input id="frontBackgroundImageFile" name="frontBackgroundImageFile" type="file" />
+        <label for="mrzBackgroundImage">MRZ Background Image</label>
+        <select id="mrzBackgroundImage" name="mrzBackgroundImage">
+          <option value="none">None</option>
+          <option value="upload">Upload File</option>
+        </select>
+        <label for="mrzBackgroundImageFile">MRZ Background Image File</label>
+        <input id="mrzBackgroundImageFile" name="mrzBackgroundImageFile" type="file" />
+        <label for="logo">Authority Logo</label>
+        <select id="logo" name="logo">
+          <option value="upload">Upload File</option>
+          <option value="/smallLogos/alfa.svg">ALFA</option>
+        </select>
+        <label for="logoFile">Authority Logo Image File</label>
+        <input id="logoFile" name="logoFile" type="file" />
+        <h2>Presentation Header Data</h2>
+        <label for="fullAuthority">Main Header</label>
+        <input id="fullAuthority" name="fullAuthority" type="text" />
+        <label for="fullDocumentName">Sub-Header</label>
+        <input id="fullDocumentName" name="fullDocumentName" type="text" />
+        <label for="placeOfIssueHeader">Field 1</label>
+        <input id="placeOfIssueHeader" name="placeOfIssueHeader" type="text" />
+        <label for="placeOfIssueHeaderI18n1">Field 1 (I18n 1)</label>
+        <input id="placeOfIssueHeaderI18n1" name="placeOfIssueHeaderI18n1" type="text" />
+        <label for="placeOfIssueHeaderI18n2">Field 1 (I18n 2)</label>
+        <input id="placeOfIssueHeaderI18n2" name="placeOfIssueHeaderI18n2" type="text" />
+        <label for="validFromHeader">Field 2</label>
+        <input id="validFromHeader" name="validFromHeader" type="text" />
+        <label for="validFromHeaderI18n1">Field 2 (I18n 1)</label>
+        <input id="validFromHeaderI18n1" name="validFromHeaderI18n1" type="text" />
+        <label for="validFromHeaderI18n2">Field 2 (I18n 2)</label>
+        <input id="validFromHeaderI18n2" name="validFromHeaderI18n2" type="text" />
+        <label for="validThruHeader">Field 3</label>
+        <input id="validThruHeader" name="validThruHeader" type="text" />
+        <label for="validThruHeaderI18n1">Field 3 (I18n 1)</label>
+        <input id="validThruHeaderI18n1" name="validThruHeaderI18n1" type="text" />
+        <label for="validThruHeaderI18n2">Field 3 (I18n 2)</label>
+        <input id="validThruHeaderI18n2" name="validThruHeaderI18n2" type="text" />
+        <label for="numberOfEntriesHeader">Field 4</label>
+        <input id="numberOfEntriesHeader" name="numberOfEntriesHeader" type="text" />
+        <label for="numberOfEntriesHeaderI18n1">Field 4 (I18n 1)</label>
+        <input id="numberOfEntriesHeaderI18n1" name="numberOfEntriesHeaderI18n1" type="text" />
+        <label for="numberOfEntriesHeaderI18n2">Field 4 (I18n 2)</label>
+        <input id="numberOfEntriesHeaderI18n2" name="numberOfEntriesHeaderI18n2" type="text" />
+        <label for="numberHeader">Field 5</label>
+        <input id="numberHeader" name="numberHeader" type="text" />
+        <label for="numberHeaderI18n1">Field 5 (I18n 1)</label>
+        <input id="numberHeaderI18n1" name="numberHeaderI18n1" type="text" />
+        <label for="numberHeaderI18n2">Field 5 (I18n 2)</label>
+        <input id="numberHeaderI18n2" name="numberHeaderI18n2" type="text" />
+        <label for="typeHeader">Field 6</label>
+        <input id="typeHeader" name="typeHeader" type="text" />
+        <label for="typeHeaderI18n1">Field 6 (I18n 1)</label>
+        <input id="typeHeaderI18n1" name="typeHeaderI18n1" type="text" />
+        <label for="typeHeaderI18n2">Field 6 (I18n 2)</label>
+        <input id="typeHeaderI18n2" name="typeHeaderI18n2" type="text" />
+        <label for="additionalInfoHeader">Field 7</label>
+        <input id="additionalInfoHeader" name="additionalInfoHeader" type="text" />
+        <label for="additionalInfoHeaderI18n1">Field 7 (I18n 1)</label>
+        <input id="additionalInfoHeaderI18n1" name="additionalInfoHeaderI18n1" type="text" />
+        <label for="additionalInfoHeaderI18n2">Field 7 (I18n 2)</label>
+        <input id="additionalInfoHeaderI18n2" name="additionalInfoHeaderI18n2" type="text" />
+        <label for="nameHeader">Field 8</label>
+        <input id="nameHeader" name="nameHeader" type="text" />
+        <label for="nameHeaderI18n1">Field 8 (<abbr title="Internationalization">I18n</abbr> 1)</label>
+        <input id="nameHeaderI18n1" name="nameHeaderI18n1" type="text" />
+        <label for="nameHeaderI18n2">Field 8 (I18n 2)</label>
+        <input id="nameHeaderI18n2" name="nameHeaderI18n2" type="text" />
+        <label for="passportNumberHeader">Field 9</label>
+        <input id="passportNumberHeader" name="passportNumberHeader" type="text" />
+        <label for="passportNumberHeaderI18n1">Field 9 (I18n 1)</label>
+        <input id="passportNumberHeaderI18n1" name="passportNumberHeaderI18n1" type="text" />
+        <label for="passportNumberHeaderI18n2">Field 9 (I18n 2)</label>
+        <input id="passportNumberHeaderI18n2" name="passportNumberHeaderI18n2" type="text" />
+        <label for="nationalityHeader">Field 10</label>
+        <input id="nationalityHeader" name="nationalityHeader" type="text" />
+        <label for="nationalityHeaderI18n1">Field 10 (I18n 1)</label>
+        <input id="nationalityHeaderI18n1" name="nationalityHeaderI18n1" type="text" />
+        <label for="nationalityHeaderI18n2">Field 10 (I18n 2)</label>
+        <input id="nationalityHeaderI18n2" name="nationalityHeaderI18n2" type="text" />
+        <label for="dateOfBirthHeader">Field 11</label>
+        <input id="dateOfBirthHeader" name="dateOfBirthHeader" type="text" />
+        <label for="dateOfBirthHeaderI18n1">Field 11 (I18n 1)</label>
+        <input id="dateOfBirthHeaderI18n1" name="dateOfBirthHeaderI18n1" type="text" />
+        <label for="dateOfBirthHeaderI18n2">Field 11 (I18n 2)</label>
+        <input id="dateOfBirthHeaderI18n2" name="dateOfBirthHeaderI18n2" type="text" />
+        <label for="genderHeader">Field 12</label>
+        <input id="genderHeader" name="genderHeader" type="text" />
+        <label for="genderHeaderI18n1">Field 12 (I18n 1)</label>
+        <input id="genderHeaderI18n1" name="genderHeaderI18n1" type="text" />
+        <label for="genderHeaderI18n2">Field 12 (I18n 2)</label>
+        <input id="genderHeaderI18n2" name="genderHeaderI18n2" type="text" />
+        <h2>Debugging Options</h2>
+        <label for="showGuides">Show Bleed/Safe Lines</label>
+        <input id="showGuides" name="showGuides" type="checkbox" />
+      </section>
+    </main>
+    <div id="offscreenCanvases">
+      <canvas id="offscreen-front"></canvas>
+      <canvas id="offscreen-signature"></canvas>
+    </div>
+  </body>
+</html>
