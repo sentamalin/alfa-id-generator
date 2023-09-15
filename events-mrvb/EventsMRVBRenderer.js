@@ -232,7 +232,7 @@ class EventsMRVBRenderer {
     );
     ctx.fillText(
       this.additionalInfoHeader[0],
-      this.constructor.#documentX[0],
+      this.constructor.#documentX[2],
       this.constructor.#documentY[6]
     );
     ctx.fillText(
@@ -272,7 +272,7 @@ class EventsMRVBRenderer {
       ctx.measureText(this.numberHeader[0]).width;
     const typeWidth = this.constructor.#documentX[2] +
       ctx.measureText(this.typeHeader[0]).width;
-    const additionalInfoWidth = this.constructor.#documentX[0] +
+    const additionalInfoWidth = this.constructor.#documentX[2] +
       ctx.measureText(this.additionalInfoHeader[0]).width;
     const nameWidth = this.constructor.#passportX[0] +
       ctx.measureText(this.nameHeader[0]).width;
@@ -357,9 +357,19 @@ class EventsMRVBRenderer {
       this.constructor.#documentY[4]
     );
     ctx.fillText(
-      `/ ${this.additionalInfoHeader[1]}/ ${this.additionalInfoHeader[2]}`,
+      "/",
       additionalInfoWidth,
       this.constructor.#documentY[6]
+    );
+    ctx.fillText(
+      `${this.additionalInfoHeader[1]}/`,
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[7]
+    );
+    ctx.fillText(
+      this.additionalInfoHeader[2],
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[8]
     );
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
@@ -451,8 +461,8 @@ class EventsMRVBRenderer {
     );
     ctx.fillText(
       model.additionalInfoVIZ,
-      this.constructor.#documentX[0],
-      this.constructor.#documentY[7]
+      this.constructor.#documentX[2],
+      this.constructor.#documentY[9]
     );
     ctx.fillText(
       model.fullNameVIZ,
@@ -570,11 +580,11 @@ class EventsMRVBRenderer {
   }
 
   // Coordinates used in card generation (static)
-  static #mainHeaderXY = [1417, 48];
-  static #documentHeaderXY = [1417, 92];
+  static #mainHeaderXY = [1238, 48];
+  static #documentHeaderXY = [1238, 92];
   static #photoUnderlayXY = [48, 0];
-  static #photoXY = [72, 267];
-  static #mrzUnderlayXY = [0, 695];
+  static #photoXY = [72, 213];
+  static #mrzUnderlayXY = [0, 618];
   static #logoXY = [72, 48];
   static get #signatureXY() {
     return [
@@ -583,13 +593,13 @@ class EventsMRVBRenderer {
     ];
   }
   static #mrzX = 56;
-  static #mrzY = [764, 839];
+  static #mrzY = [687, 762];
   static #mrzSpacing = 30.75;
   static #documentX = [
-    415, // Place of issue
-    688, // Valid from
-    959, // Valid thru
-    1223 // Number of entries
+    340, // Place of issue (used to be 415)
+    610, // Valid from
+    840, // Valid thru
+    1043 // Number of entries
   ];
   static #documentY = [
     141, // Row 1 header (primary)
@@ -598,23 +608,25 @@ class EventsMRVBRenderer {
     218, // Row 1 data
     267, // Row 2 header
     294, // Row 2 data
-    343, // Additional information header
-    370, // Additional information data line 1
+    343, // Additional information header (primary)
+    368, // Additional information header (I18n 1)
+    393, // Additional information header (I18n 2)
+    420 // Additional information data line 1
   ];
   static #passportX = [
-    415, // Nationality header
-    588, // Date of birth header
-    824 // Gender header
+    340, // Nationality header (used to be 415)
+    490, // Date of birth header
+    700 // Gender header
   ];
   static #passportY = [
-    419, // Name header
-    446, // Name data
-    495, // Passport header
-    522, // Passport data
-    571, // Row 3 header (primary)
-    596, // Row 3 header (I18n 1)
-    621, // Row 3 header (I18n 2)
-    648 // Row 3 data
+    343, // Name header
+    370, // Name data
+    419, // Passport header
+    446, // Passport data
+    495, // Row 3 header (primary)
+    520, // Row 3 header (I18n 1)
+    545, // Row 3 header (I18n 2)
+    572 // Row 3 data
   ];
   static get #qrCodeXY() {
     return [
@@ -624,7 +636,7 @@ class EventsMRVBRenderer {
   }
 
   // Areas used in card generation (static)
-  static #cardArea = [1465, 993];
+  static #cardArea = [1286, 916];
   static get cutCardArea() {
     return [
       this.#cardArea[0] - (this.#bleed * 2),
@@ -633,12 +645,12 @@ class EventsMRVBRenderer {
   }
   static #bleed = 16;
   static #safe = 48;
-  static #photoUnderlayArea = [343, 671];
-  static #photoArea = [295, 380];
-  static #logoArea = [295, 195];
+  static #photoUnderlayArea = [268, 520];
+  static #photoArea = [220, 283];
+  static #logoArea = [220, 145];
   static get #signatureArea() { return this.#qrCodeArea; }
   static get #qrCodeArea() {
-    return this.#mrzUnderlayXY[1] - 24 - this.#passportY[2];
+    return this.#mrzUnderlayXY[1] - 24 - this.#passportY[4];
   }
   static get #mrzUnderlayArea() {
     return [
