@@ -253,9 +253,6 @@ class EventsMRVAViewModel {
   /** @param { HTMLInputElement } input */
   set additionalInfoInput(input) {
     this.#additionalInfoInput = input;
-    this.#additionalInfoInput.setAttribute("cols", 71);
-    this.#additionalInfoInput.setAttribute("rows", 2);
-    this.#additionalInfoInput.setAttribute("wrap", "off");
     this.#additionalInfoInput.value = this.#model.additionalInfo;
     this.#additionalInfoInput.setAttribute("placeholder", this.#model.additionalInfo);
     this.#additionalInfoInput.addEventListener("input", this, false);
