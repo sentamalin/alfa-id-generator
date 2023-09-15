@@ -16,7 +16,7 @@ class EventsMRVBViewModel {
     numberOfEntries: "Multiple",
     number: "960241263",
     type: "Silver Sponsor—Adult",
-    additionalInfo: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    additionalInfo: "XXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     fullName: "Millefeuille, Alfalfa",
     passportNumber: "362142069",
     usePassportInMRZ: true,
@@ -253,7 +253,7 @@ class EventsMRVBViewModel {
   /** @param { HTMLInputElement } input */
   set additionalInfoInput(input) {
     this.#additionalInfoInput = input;
-    this.#additionalInfoInput.setAttribute("cols", 71);
+    this.#additionalInfoInput.setAttribute("cols", 28);
     this.#additionalInfoInput.setAttribute("rows", 2);
     this.#additionalInfoInput.setAttribute("wrap", "off");
     this.#additionalInfoInput.value = this.#model.additionalInfo;

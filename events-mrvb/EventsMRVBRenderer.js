@@ -459,11 +459,14 @@ class EventsMRVBRenderer {
       this.constructor.#documentX[2],
       this.constructor.#documentY[5]
     );
-    ctx.fillText(
-      model.additionalInfoVIZ,
-      this.constructor.#documentX[2],
-      this.constructor.#documentY[9]
-    );
+    const splitString = model.additionalInfoVIZ.split(/\r?\n/);
+    for (let i = 0; i < splitString.length; i += 1) {
+      ctx.fillText(
+        splitString[i],
+        this.constructor.#documentX[2],
+        this.constructor.#documentY[9] + (i * 30)
+      );
+    }
     ctx.fillText(
       model.fullNameVIZ,
       this.constructor.#passportX[0],
