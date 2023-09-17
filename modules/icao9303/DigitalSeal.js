@@ -4,13 +4,20 @@
  */
 
 class DigitalSeal {
+  static c40SHIFT1 = Symbol("c40SHIFT1");
+  
   static c40Encode(string) {}
   static c40Decode(string) {}
-  /** @param { string } char */
+  /** @param { string | DigitalSeal.c40SHIFT1 } char */
   static charToC40(char) {
+    if (char !== DigitalSeal.c40SHIFT1 || char.length !== 1) {
+      throw new RangeError(
+        "Input must be a string of one character or SHIFT1 (DigitalSeal.c40SHIFT1)."
+      );
+    }
     let output;
     switch (char.toUpperCase()) {
-      case "SHIFT1":
+      case DigitalSeal.c40SHIFT1:
         output = 0;
         break;
       case " ":
@@ -127,7 +134,7 @@ class DigitalSeal {
         break;
       default:
         throw new TypeError(
-          "Characters in Digital Seals may only contain the characters 0-9, A-Z, <SPACE>, and the symbol '<'."
+          "Characters in Digital Seals may only contain the characters 0-9, A-Z, <SPACE>, the symbol '<', or SHIFT1 (DigitalSeal.c40SHIFT1)."
         );
     }
     return output;
@@ -137,7 +144,7 @@ class DigitalSeal {
     let output;
     switch (char) {
       case 0:
-        output = "SHIFT1";
+        output = DigitalSeal.c40SHIFT1;
         break;
       case 3:
         output = " ";
@@ -252,7 +259,7 @@ class DigitalSeal {
         break;
       default:
         throw new RangeError(
-          "A C40 value in Digital Seals must be in the range of 3-39."
+          "A C40 value in Digital Seals must be 0 or in the range of 3-39."
         );
     }
     return output;
@@ -261,7 +268,7 @@ class DigitalSeal {
   static charToDataMatrixASCII(char) {
     if (char.length !== "1") {
       throw new RangeError(
-        "Input must be one character containing 0-9, A-Z, <SPACE>, and the symbol '<'."
+        "Input must be one character containing 0-9, A-Z, <SPACE>, or the symbol '<'."
       );
     }
     let output;
@@ -380,7 +387,7 @@ class DigitalSeal {
         break;
       default:
         throw new TypeError(
-          "Characters in Digital Seals may only contain the characters 0-9, A-Z, <SPACE>, and the symbol '<'."
+          "Characters in Digital Seals may only contain the characters 0-9, A-Z, <SPACE>, or the symbol '<'."
         );
     }
     return output;
