@@ -681,7 +681,23 @@ class DigitalSeal {
   }
   /** @param { number[] } tlv */
   static derToECDSASignature(tlv) {
-    let output;
+    if (tlv[0] !== parseInt("0x30")) {
+      throw new TypeError(
+        `TLV tag '0x${tlv[0].toString(16).padStart(2, "0").toUpperCase()}' is not a valid DER ECDSA Signature tag (0x30).`
+      );
+    }
+    if (tlv[1] !== (tlv.length - 2)) {
+      throw new RangeError(
+        `TLV length (${tlv[1]}) and actual length (${tlv.length - 2}) of value do not match.`
+      );
+    }
+    let output = [];
+    let start = 2;
+    do {
+      const length = tlv[start + 1];
+      output.push(DigitalSeal.derToInt(tlv.slice(start, start + length + 2)));
+      start = start + length + 2;
+    } while (start < tlv.length);
     return output;
   }
 }
