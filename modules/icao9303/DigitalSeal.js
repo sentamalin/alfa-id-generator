@@ -666,7 +666,17 @@ class DigitalSeal {
   }
   /** @param { number[] } signature */
   static ecdsaSignatureToDER(signature) {
-    let output;
+    let output = [];
+    output.push(0x30);
+    const rDER = DigitalSeal.intToDER(signature[0]);
+    const sDER = DigitalSeal.intToDER(signature[1]);
+    output.push(rDER.length + sDER.length);
+    for (let i = 0; i < rDER.length; i += 1) {
+      output.push(rDER[i]);
+    }
+    for (let i = 0; i < sDER.length; i += 1) {
+      output.push(sDER[i]);
+    }
     return output;
   }
   /** @param { number[] } tlv */
