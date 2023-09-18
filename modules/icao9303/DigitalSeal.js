@@ -664,6 +664,16 @@ class DigitalSeal {
       return output;
     }
   }
+  /** @param { number[] } signature */
+  static ecdsaSignatureToDER(signature) {
+    let output;
+    return output;
+  }
+  /** @param { number[] } tlv */
+  static derToECDSASignature(tlv) {
+    let output;
+    return output;
+  }
 }
 
 export { DigitalSeal };
