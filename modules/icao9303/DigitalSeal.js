@@ -46,19 +46,19 @@ class DigitalSeal {
     }
     return output;
   }
-  /** @param { number[] } array */
-  static c40Decode(array) {
+  /** @param { number[] } c40 */
+  static c40Decode(c40) {
     let output = "";
     let i1 = null, i2 = null;
-    for (let i = 0; i < array.length; i += 1) {
+    for (let i = 0; i < c40.length; i += 1) {
       if (i1 === null) {
-        i1 = array[i];
+        i1 = c40[i];
       } else {
         if (i1 === parseInt("0xFE")) {
-          output += DigitalSeal.dataMatrixASCIIToChar(array[i]);
+          output += DigitalSeal.dataMatrixASCIIToChar(c40[i]);
         }
         else {
-          i2 = array[i];
+          i2 = c40[i];
           const i16 = (i1 * 256) + i2;
           const u1 = Math.floor((i16 - 1) / 1600);
           const u2 = Math.floor((i16 - (u1 * 1600) -1) / 40);
