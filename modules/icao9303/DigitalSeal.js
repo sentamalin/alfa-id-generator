@@ -4,7 +4,8 @@
  */
 
 class DigitalSeal {
-  static get c40SHIFT1() { return Symbol("c40SHIFT1"); }
+  static #c40SHIFT1 = Symbol("c40SHIFT1");
+  static get c40SHIFT1() { return this.#c40SHIFT1; }
   static get magic() { return 0xDC; }
   authority;
   identifier;
@@ -624,10 +625,44 @@ class DigitalSeal {
     }
     return output;
   }
-  /** @param { number[] } array */
-  static derToInt(array) {
-    let output;
-    return output;
+  /** @param { number[] } tlv */
+  static derToInt(tlv) {
+    if (tlv[0] !== parseInt("0x02")) {
+      throw new TypeError(
+        `TLV tag '0x${tlv[0].toString(16).padStart(2, "0").toUpperCase()}' is not a valid DER integer tag (0x02).`
+      );
+    }
+    if (tlv[1] !== (tlv.length - 2)) {
+      throw new RangeError(
+        `TLV length (${tlv[1]}) and actual length (${tlv.length - 2}) of value do not match.`
+      );
+    }
+    let base2 = "";
+    for (let i = 2; i < tlv.length; i += 1) {
+      const byteString = tlv[i].toString(2).padStart(8, "0");
+      base2 += byteString;
+    }
+    let transformed = "";
+    let isNegative = false;
+    if (base2[0] === "1") {
+      isNegative = true;
+      base2 = (parseInt(base2, 2) - 1).toString(2);
+      for (let i = 0; i < base2.length; i += 1) {
+        if (base2[i] === "0") {
+          transformed += "1";
+        } else {
+          transformed += "0";
+        }
+      }
+    } else {
+      transformed = base2;
+    }
+    const output = parseInt(transformed, 2);
+    if (isNegative) {
+      return -output;
+    } else {
+      return output;
+    }
   }
 }
 
