@@ -7,7 +7,7 @@ import { DigitalSeal } from "./DigitalSeal.js";
 
 class DigitalSealV3 {
   #digitalseal = new DigitalSeal();
-  version = 0x02;
+  get version() { return 0x02; }
   get authority() { return this.#digitalseal.authority; }
   set authority(value) { this.#digitalseal.authority = value; }
   get identifier() { return this.#digitalseal.identifier; }

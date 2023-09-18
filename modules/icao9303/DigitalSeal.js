@@ -4,8 +4,8 @@
  */
 
 class DigitalSeal {
-  static c40SHIFT1 = Symbol("c40SHIFT1");
-  static magic = 0xDC;
+  static get c40SHIFT1() { return Symbol("c40SHIFT1"); }
+  static get magic() { return 0xDC; }
   authority;
   identifier;
   certReference;
@@ -14,7 +14,7 @@ class DigitalSeal {
   featureDefinition;
   typeCategory;
   features = [];
-  static signatureMagic = 0xFF;
+  static get signatureMagic() { return 0xFF; }
   signature;
 
   /** @param { string } string */
