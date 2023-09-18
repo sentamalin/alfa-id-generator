@@ -54,7 +54,7 @@ class DigitalSeal {
       if (i1 === null) {
         i1 = array[i];
       } else {
-        if (i1 === 0xDE) {
+        if (i1 === parseInt("0xFE")) {
           output += DigitalSeal.dataMatrixASCIIToChar(array[i]);
         }
         else {
@@ -76,10 +76,12 @@ class DigitalSeal {
   }
   /** @param { string | DigitalSeal.c40SHIFT1 } char */
   static charToC40(char) {
-    if (char !== DigitalSeal.c40SHIFT1 || char.length !== 1) {
-      throw new RangeError(
-        "Input must be a string of one character or SHIFT1 (DigitalSeal.c40SHIFT1)."
-      );
+    if (char !== DigitalSeal.c40SHIFT1) {
+      if (char.length !== 1) {
+        throw new RangeError(
+          "Input must be a string of one character or SHIFT1 (DigitalSeal.c40SHIFT1)."
+        );
+      }
     }
     let output;
     if (char === DigitalSeal.c40SHIFT1) {
@@ -334,7 +336,7 @@ class DigitalSeal {
   }
   /** @param { string } char */
   static charToDataMatrixASCII(char) {
-    if (char.length !== "1") {
+    if (char.length !== 1) {
       throw new RangeError(
         "Input must be one character containing 0-9, A-Z, <SPACE>, or the symbol '<'."
       );
@@ -582,6 +584,10 @@ class DigitalSeal {
     }
     return output;
   }
+  /** @param { number } number */
+  static intToDER(number) {}
+  /** @param { number[] } array */
+  static derToInt(array) {}
 }
 
 export { DigitalSeal };
