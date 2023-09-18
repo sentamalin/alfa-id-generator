@@ -5,6 +5,18 @@
 
 class DigitalSeal {
   static c40SHIFT1 = Symbol("c40SHIFT1");
+  static magic = 0xDC;
+  static version = 0x03;
+  authority;
+  identifier;
+  certReference;
+  issueDate;
+  signatureDate;
+  featureDefinition;
+  typeCategory;
+  features = [];
+  static signatureMagic = 0xFF;
+  signature;
 
   /** @param { string } string */
   static c40Encode(string) {
