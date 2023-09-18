@@ -584,6 +584,16 @@ class DigitalSeal {
     }
     return output;
   }
+  /** @param { Date } date */
+  static dateToBytes(date) {
+    let output;
+    return output;
+  }
+  /** @param { number[] } date */
+  static bytesToDate(date) {
+    let output;
+    return output;
+  }
   /** @param { number } number */
   static intToDER(number) {
     let output = [];
