@@ -584,9 +584,51 @@ class DigitalSeal {
     return output;
   }
   /** @param { number } number */
-  static intToDER(number) {}
+  static intToDER(number) {
+    let output = [];
+    output.push(0x02);
+    let base2 = number.toString(2);
+    let isNegative = false;
+    if (number < 0) {
+      isNegative = true;
+      base2 = base2.slice(1);
+    }
+    if (base2.length % 8 !== 0) {
+      base2 = base2.padStart((Math.floor(base2.length / 8) + 1) * 8, "0");
+    }
+    if (base2[0] === "1") {
+      base2 = base2.padStart(base2.length + 8, "0");
+    }
+    output.push(Math.floor(base2.length / 8));
+    let transformed = "";
+    if (isNegative) {
+      for (let i = 0; i < base2.length; i += 1) {
+        if (base2[i] === "0") {
+          transformed += "1";
+        } else {
+          transformed += "0";
+        }
+      }
+      transformed = (parseInt(transformed, 2) + 1).toString(2);
+    } else {
+      transformed = base2;
+    }
+    let b = [0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < transformed.length; i += 1) {
+      b[i % 8] = transformed[i];
+      if ((i + 1) % 8 === 0) {
+        output.push(parseInt(
+          `${b[0]}${b[1]}${b[2]}${b[3]}${b[4]}${b[5]}${b[6]}${b[7]}`, 2
+        ));
+      }
+    }
+    return output;
+  }
   /** @param { number[] } array */
-  static derToInt(array) {}
+  static derToInt(array) {
+    let output;
+    return output;
+  }
 }
 
 export { DigitalSeal };
