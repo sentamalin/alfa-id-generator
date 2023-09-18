@@ -5,9 +5,63 @@
 
 class DigitalSeal {
   static c40SHIFT1 = Symbol("c40SHIFT1");
-  
-  static c40Encode(string) {}
-  static c40Decode(string) {}
+
+  /** @param { string } string */
+  static c40Encode(string) {
+    let output = [];
+    let i16, u1 = null, u2 = null, u3 = null;
+    for (let i = 0; i < string.length; i += 1) {
+      if (u1 === null && ((string.length - (i + 1)) === 0)) {
+        output.push(0xFE);
+        output.push(DigitalSeal.charToDataMatrixASCII(string[i]));
+      } else if (u1 === null) {
+        u1 = DigitalSeal.charToC40(string[i]);
+      } else if (u2 === null) {
+        u2 = DigitalSeal.charToC40(string[i]);
+        if ((string.length - (i + 1)) === 0) {
+          u3 = DigitalSeal.charToC40(DigitalSeal.c40SHIFT1);
+          i16 = (1600 * u1) + (40 * u2) + u3 + 1;
+          output.push(Math.floor(i16 / 256));
+          output.push(i16 % 256);
+        }
+      } else {
+        u3 = DigitalSeal.charToC40(string[i]);
+        i16 = (1600 * u1) + (40 * u2) + u3 + 1;
+        output.push(Math.floor(i16 / 256));
+        output.push(i16 % 256);
+        i16 = null, u1 = null, u2 = null, u3 = null;
+      }
+    }
+    return output;
+  }
+  /** @param { number[] } array */
+  static c40Decode(array) {
+    let output = "";
+    let i1 = null, i2 = null;
+    for (let i = 0; i < array.length; i += 1) {
+      if (i1 === null) {
+        i1 = array[i];
+      } else {
+        if (i1 === 0xDE) {
+          output += DigitalSeal.dataMatrixASCIIToChar(array[i]);
+        }
+        else {
+          i2 = array[i];
+          const i16 = (i1 * 256) + i2;
+          const u1 = Math.floor((i16 - 1) / 1600);
+          const u2 = Math.floor((i16 - (u1 * 1600) -1) / 40);
+          const u3 = i16 - (u1 * 1600) - (u2 * 40) - 1;
+          output += DigitalSeal.c40ToChar(u1);
+          output += DigitalSeal.c40ToChar(u2);
+          if (DigitalSeal.c40ToChar(u3) !== DigitalSeal.c40SHIFT1) {
+            output += DigitalSeal.c40ToChar(u3);
+          }
+        }
+        i1 = null, i2 = null;
+      }
+    }
+    return output;
+  }
   /** @param { string | DigitalSeal.c40SHIFT1 } char */
   static charToC40(char) {
     if (char !== DigitalSeal.c40SHIFT1 || char.length !== 1) {
@@ -16,126 +70,128 @@ class DigitalSeal {
       );
     }
     let output;
-    switch (char.toUpperCase()) {
-      case DigitalSeal.c40SHIFT1:
-        output = 0;
-        break;
-      case " ":
-      case "<":
-        output = 3;
-        break;
-      case "0":
-        output = 4;
-        break;
-      case "1":
-        output = 5;
-        break;
-      case "2":
-        output = 6;
-        break;
-      case "3":
-        output = 7;
-        break;
-      case "4":
-        output = 8;
-        break;
-      case "5":
-        output = 9;
-        break;
-      case "6":
-        output = 10;
-        break;
-      case "7":
-        output = 11;
-        break;
-      case "8":
-        output = 12;
-        break;
-      case "9":
-        output = 13;
-        break;
-      case "A":
-        output = 14;
-        break;
-      case "B":
-        output = 15;
-        break;
-      case "C":
-        output = 16;
-        break;
-      case "D":
-        output = 17;
-        break;
-      case "E":
-        output = 18;
-        break;
-      case "F":
-        output = 19;
-        break;
-      case "G":
-        output = 20;
-        break;
-      case "H":
-        output = 21;
-        break;
-      case "I":
-        output = 22;
-        break;
-      case "J":
-        output = 23;
-        break;
-      case "K":
-        output = 24;
-        break;
-      case "L":
-        output = 25;
-        break;
-      case "M":
-        output = 26;
-        break;
-      case "N":
-        output = 27;
-        break;
-      case "O":
-        output = 28;
-        break;
-      case "P":
-        output = 29;
-        break;
-      case "Q":
-        output = 30;
-        break;
-      case "R":
-        output = 31;
-        break;
-      case "S":
-        output = 32;
-        break;
-      case "T":
-        output = 33;
-        break;
-      case "U":
-        output = 34;
-        break;
-      case "V":
-        output = 35;
-        break;
-      case "W":
-        output = 36;
-        break;
-      case "X":
-        output = 37;
-        break;
-      case "Y":
-        output = 38;
-        break;
-      case "Z":
-        output = 39;
-        break;
-      default:
-        throw new TypeError(
-          "Characters in Digital Seals may only contain the characters 0-9, A-Z, <SPACE>, the symbol '<', or SHIFT1 (DigitalSeal.c40SHIFT1)."
-        );
+    if (char === DigitalSeal.c40SHIFT1) {
+      output = 0;
+    }
+    else {
+      switch (char.toUpperCase()) {
+        case " ":
+        case "<":
+          output = 3;
+          break;
+        case "0":
+          output = 4;
+          break;
+        case "1":
+          output = 5;
+          break;
+        case "2":
+          output = 6;
+          break;
+        case "3":
+          output = 7;
+          break;
+        case "4":
+          output = 8;
+          break;
+        case "5":
+          output = 9;
+          break;
+        case "6":
+          output = 10;
+          break;
+        case "7":
+          output = 11;
+          break;
+        case "8":
+          output = 12;
+          break;
+        case "9":
+          output = 13;
+          break;
+        case "A":
+          output = 14;
+          break;
+        case "B":
+          output = 15;
+          break;
+        case "C":
+          output = 16;
+          break;
+        case "D":
+          output = 17;
+          break;
+        case "E":
+          output = 18;
+          break;
+        case "F":
+          output = 19;
+          break;
+        case "G":
+          output = 20;
+          break;
+        case "H":
+          output = 21;
+          break;
+        case "I":
+          output = 22;
+          break;
+        case "J":
+          output = 23;
+          break;
+        case "K":
+          output = 24;
+          break;
+        case "L":
+          output = 25;
+          break;
+        case "M":
+          output = 26;
+          break;
+        case "N":
+          output = 27;
+          break;
+        case "O":
+          output = 28;
+          break;
+        case "P":
+          output = 29;
+          break;
+        case "Q":
+          output = 30;
+          break;
+        case "R":
+          output = 31;
+          break;
+        case "S":
+          output = 32;
+          break;
+        case "T":
+          output = 33;
+          break;
+        case "U":
+          output = 34;
+          break;
+        case "V":
+          output = 35;
+          break;
+        case "W":
+          output = 36;
+          break;
+        case "X":
+          output = 37;
+          break;
+        case "Y":
+          output = 38;
+          break;
+        case "Z":
+          output = 39;
+          break;
+        default:
+          throw new TypeError(
+            "Characters in Digital Seals may only contain the characters 0-9, A-Z, <SPACE>, the symbol '<', or SHIFT1 (DigitalSeal.c40SHIFT1)."
+          );
+      }
     }
     return output;
   }
