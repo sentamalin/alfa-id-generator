@@ -85,7 +85,7 @@ class DigitalSealV3 {
   set messageZone(value) {
     this.features.clear();
     let start = 0;
-    do {
+    while (start < value.length) {
       const tag = value[start];
       start += 1;
       const length = value[start];
@@ -98,7 +98,7 @@ class DigitalSealV3 {
       }
       this.features.set(tag, slicedValue);
       start += length;
-    } while (start < value.length);
+    }
   }
 
   get signatureZone() { return this.#digitalseal.signatureZone; }
