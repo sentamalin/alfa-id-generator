@@ -25,19 +25,19 @@ class DigitalSeal {
     for (let i = 0; i < string.length; i += 1) {
       if (u1 === null && ((string.length - (i + 1)) === 0)) {
         output.push(0xFE);
-        output.push(DigitalSeal.charToDataMatrixASCII(string[i]));
+        output.push(DigitalSeal.#charToDataMatrixASCII(string[i]));
       } else if (u1 === null) {
-        u1 = DigitalSeal.charToC40(string[i]);
+        u1 = DigitalSeal.#charToC40(string[i]);
       } else if (u2 === null) {
-        u2 = DigitalSeal.charToC40(string[i]);
+        u2 = DigitalSeal.#charToC40(string[i]);
         if ((string.length - (i + 1)) === 0) {
-          u3 = DigitalSeal.charToC40(DigitalSeal.c40SHIFT1);
+          u3 = DigitalSeal.#charToC40(DigitalSeal.c40SHIFT1);
           i16 = (1600 * u1) + (40 * u2) + u3 + 1;
           output.push(Math.floor(i16 / 256));
           output.push(i16 % 256);
         }
       } else {
-        u3 = DigitalSeal.charToC40(string[i]);
+        u3 = DigitalSeal.#charToC40(string[i]);
         i16 = (1600 * u1) + (40 * u2) + u3 + 1;
         output.push(Math.floor(i16 / 256));
         output.push(i16 % 256);
@@ -55,7 +55,7 @@ class DigitalSeal {
         i1 = c40[i];
       } else {
         if (i1 === parseInt("0xFE")) {
-          output += DigitalSeal.dataMatrixASCIIToChar(c40[i]);
+          output += DigitalSeal.#dataMatrixASCIIToChar(c40[i]);
         }
         else {
           i2 = c40[i];
@@ -63,10 +63,10 @@ class DigitalSeal {
           const u1 = Math.floor((i16 - 1) / 1600);
           const u2 = Math.floor((i16 - (u1 * 1600) -1) / 40);
           const u3 = i16 - (u1 * 1600) - (u2 * 40) - 1;
-          output += DigitalSeal.c40ToChar(u1);
-          output += DigitalSeal.c40ToChar(u2);
-          if (DigitalSeal.c40ToChar(u3) !== DigitalSeal.c40SHIFT1) {
-            output += DigitalSeal.c40ToChar(u3);
+          output += DigitalSeal.#c40ToChar(u1);
+          output += DigitalSeal.#c40ToChar(u2);
+          if (DigitalSeal.#c40ToChar(u3) !== DigitalSeal.c40SHIFT1) {
+            output += DigitalSeal.#c40ToChar(u3);
           }
         }
         i1 = null, i2 = null;
@@ -75,7 +75,7 @@ class DigitalSeal {
     return output;
   }
   /** @param { string | DigitalSeal.c40SHIFT1 } char */
-  static charToC40(char) {
+  static #charToC40(char) {
     if (char !== DigitalSeal.c40SHIFT1) {
       if (char.length !== 1) {
         throw new RangeError(
@@ -210,7 +210,7 @@ class DigitalSeal {
     return output;
   }
   /** @param { number } char  */
-  static c40ToChar(char) {
+  static #c40ToChar(char) {
     let output;
     switch (char) {
       case 0:
@@ -335,7 +335,7 @@ class DigitalSeal {
     return output;
   }
   /** @param { string } char */
-  static charToDataMatrixASCII(char) {
+  static #charToDataMatrixASCII(char) {
     if (char.length !== 1) {
       throw new RangeError(
         "Input must be one character containing 0-9, A-Z, <SPACE>, or the symbol '<'."
@@ -463,7 +463,7 @@ class DigitalSeal {
     return output;
   }
   /** @param { number } char */
-  static dataMatrixASCIIToChar(char) {
+  static #dataMatrixASCIIToChar(char) {
     let output;
     switch (char) {
       case 33:
@@ -604,8 +604,16 @@ class DigitalSeal {
   }
   /** @param { number[] } date */
   static bytesToDate(date) {
-    let output;
-    return output;
+    let base2 = "";
+    for (let i = 0; i < date.length; i += 1) {
+      const byteString = date[i].toString(2).padStart(8, "0");
+      base2 += byteString;
+    }
+    const dateIntegerString = parseInt(base2, 2).toString(10).padStart(8, "0");
+    const month = dateIntegerString.slice(0, 2);
+    const day = dateIntegerString.slice(2, 4);
+    const year = dateIntegerString.slice(4);
+    return new Date(`${year}-${month}-${day}T00:00:00`);
   }
   /** @param { number } number */
   static intToDER(number) {
