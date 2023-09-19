@@ -52,7 +52,7 @@ class DigitalSealV4 {
     let output = [];
     for (const [tag, value] of this.features) {
       output.push(tag);
-      output = output.concat(DigitalSeal.intToDER(value.length));
+      output = output.concat(DigitalSeal.lengthToDERLength(value.length));
       output = output.concat(value);
     }
     return output;
@@ -142,8 +142,8 @@ class DigitalSealV4 {
       }
       const tag = value[start];
       start += 1;
-      const length = DigitalSeal.derToInt(value.slice(start, start + value[start + 1] + 2));
-      start += value[start + 1] + 2;
+      const length = DigitalSeal.derLengthToLength(value.slice(start));
+      start += DigitalSeal.lengthToDERLength(length).length;
       const slicedValue = value.slice(start, start + length);
       if (slicedValue.length !== length) {
         throw new RangeError(

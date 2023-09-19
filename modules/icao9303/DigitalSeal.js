@@ -91,7 +91,7 @@ class DigitalSeal {
   get signatureZone() {
     let output = [];
     output.push(DigitalSeal.signatureMarker);
-    output = output.concat(DigitalSeal.intToDER(this.signature.length));
+    output = output.concat(DigitalSeal.lengthToDERLength(this.signature.length));
     output = output.concat(this.signature);
     return output;
   }
@@ -110,11 +110,11 @@ class DigitalSeal {
       );
     }
     start += 1;
-    const sigLength = DigitalSeal.derToInt(value.slice(start, start + value[start + 1] + 2));
-    start += value[start + 1] + 2;
-    if (value.slice(start).length !== sigLength) {
+    const length = DigitalSeal.derLengthToLength(value.slice(start));
+    start += DigitalSeal.lengthToDERLength(length).length;
+    if (value.slice(start).length !== length) {
       throw new RangeError(
-        `Length '${sigLength}' of signature does not match the actual length (${value.slice(start).length}).`
+        `Length '${length}' of signature does not match the actual length (${value.slice(start).length}).`
       );
     }
     this.signature = value.slice(start);
