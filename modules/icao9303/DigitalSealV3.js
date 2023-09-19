@@ -49,6 +49,27 @@ class DigitalSealV3 {
     output.push(this.featureDefinition);
     output.push(this.typeCategory);
   }
+  /** @param { number[] } value */
+  set header(value) {
+    if (value[0] !== DigitalSeal.magic) {
+      throw new TypeError(
+        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
+      );
+    }
+    if (value[1] !== this.version) {
+      throw new TypeError(
+        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not version 3 of an ICAO Digital Seal (${this.version.toString(16).padStart(2, "0").toUpperCase()}).`
+      );
+    }
+    this.authority = DigitalSeal.c40Decode(value.slice(2, 4)).trim();
+    const idCert = DigitalSeal.c40Decode(value.slice(4, value.length - 8));
+    this.identifier = idCert.substring(0, 4);
+    this.certReference = idCert.substring(4);
+    this.issueDate = DigitalSeal.bytesToDate(value.slice(value.length - 8, value.length - 5));
+    this.signatureDate = DigitalSeal.bytesToDate(value.slice(value.length - 5, value.length - 2));
+    this.featureDefinition = value[value.length - 2];
+    this.typeCategory = value[value.length - 1];
+  }
 }
 
 export { DigitalSealV3 };
