@@ -13,7 +13,15 @@ class DigitalSealV3 {
   get identifier() { return this.#digitalseal.identifier; }
   set identifier(value) { this.#digitalseal.identifier = value; }
   get certReference() { return this.#digitalseal.certReference; }
-  set certReference(value) { this.#digitalseal.certReference = value; }
+  set certReference(value) {
+    if (value !== 5) {
+      throw new RangeError(
+        "Certificate reference must be a hex string of exactly 5 characters."
+      );
+    } else {
+      this.#digitalseal.certReference = value;
+    }
+  }
   get issueDate() { return this.#digitalseal.issueDate; }
   set issueDate(value) { this.#digitalseal.issueDate = value; }
   get signatureDate() { return this.#digitalseal.signatureDate; }
