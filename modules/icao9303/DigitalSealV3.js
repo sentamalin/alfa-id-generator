@@ -35,7 +35,7 @@ class DigitalSealV3 {
   get signature() { return this.#digitalseal.signature; }
   set signature(value) { this.#digitalseal.signature = value; }
 
-  get header() {
+  get headerZone() {
     let output = [];
     output.push(DigitalSeal.magic);
     output.push(this.version);
@@ -51,7 +51,7 @@ class DigitalSealV3 {
     return output;
   }
   /** @param { number[] } value */
-  set header(value) {
+  set headerZone(value) {
     if (value[0] !== DigitalSeal.magic) {
       throw new TypeError(
         `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
