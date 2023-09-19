@@ -39,7 +39,7 @@ class DigitalSealV3 {
     let output = [];
     output.push(DigitalSeal.magic);
     output.push(this.version);
-    output = output.concat(DigitalSeal.c40Encode(authority.padEnd(3, "<")));
+    output = output.concat(DigitalSeal.c40Encode(this.authority.padEnd(3, "<")));
     output = output.concat(DigitalSeal.c40Encode(
       this.identifier +
       this.certReference
