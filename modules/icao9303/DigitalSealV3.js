@@ -83,7 +83,7 @@ class DigitalSealV3 {
   }
   /** @param { number[] } value */
   set messageZone(value) {
-    this.features = new Map();
+    this.features.clear();
     let start = 0;
     do {
       const tag = value[start];
