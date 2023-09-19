@@ -586,7 +586,20 @@ class DigitalSeal {
   }
   /** @param { Date } date */
   static dateToBytes(date) {
-    let output;
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const dateInteger = `${month.toString().padStart(2, "0")}${day.toString().padStart(2, "0")}${year}`;
+    const base2 = parseInt(dateInteger, 10).toString(2).padStart(24, "0");
+    const output = [], b = [0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < base2.length; i += 1) {
+      b[i % 8] = base2[i];
+      if ((i + 1) % 8 === 0) {
+        output.push(parseInt(
+          `${b[0]}${b[1]}${b[2]}${b[3]}${b[4]}${b[5]}${b[6]}${b[7]}`, 2
+        ));
+      }
+    }
     return output;
   }
   /** @param { number[] } date */
