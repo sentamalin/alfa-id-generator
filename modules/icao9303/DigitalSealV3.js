@@ -70,6 +70,20 @@ class DigitalSealV3 {
     this.featureDefinition = value[value.length - 2];
     this.typeCategory = value[value.length - 1];
   }
+
+  constructor(opt) {
+    if (opt) {
+      if (opt.authority) { this.authority = opt.authority; }
+      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.certReference) { this.certReference = opt.certReference; }
+      if (opt.issueDate) { this.issueDate = opt.issueDate; }
+      if (opt.signatureDate) { this.signatureDate = opt.signatureDate; }
+      if (opt.featureDefinition) { this.featureDefinition = opt.featureDefinition; }
+      if (opt.typeCategory) { this.typeCategory = opt.typeCategory; }
+      if (opt.features) { this.features = opt.features; }
+      if (opt.signature) { this.signature = opt.signature; }
+    }
+  }
 }
 
 export { DigitalSealV3 };
