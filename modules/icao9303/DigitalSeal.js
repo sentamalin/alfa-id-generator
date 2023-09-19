@@ -15,7 +15,7 @@ class DigitalSeal {
   featureDefinition;
   typeCategory;
   features = [];
-  static get signatureMagic() { return 0xFF; }
+  static get signatureMarker() { return 0xFF; }
   signature;
 
   /** @param { string } string */
