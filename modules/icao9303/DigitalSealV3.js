@@ -96,6 +96,12 @@ class DigitalSealV3 {
     } while (start < value.length);
   }
 
+  get unsignedSeal() {
+    return this.headerZone.concat(this.messageZone);
+  }
+  /** @param { number[] } value */
+  set unsignedSeal(value) {}
+
   constructor(opt) {
     if (opt) {
       if (opt.authority) { this.authority = opt.authority; }
