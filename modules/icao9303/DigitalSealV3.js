@@ -72,6 +72,30 @@ class DigitalSealV3 {
     this.typeCategory = value[value.length - 1];
   }
 
+  get messageZone() {
+    let output = [];
+    for (const [tag, value] of this.features) {
+      output.push(tag);
+      output.push(value.length);
+      output = output.concat(value);
+    }
+    return output;
+  }
+  /** @param { number[] } value */
+  set messageZone(value) {
+    this.features = new Map();
+    let start = 0;
+    do {
+      const tag = value[start];
+      start += 1;
+      const length = value[start];
+      start += 1;
+      const slicedValue = value.slice(start, start + length);
+      this.features.set(tag, slicedValue);
+      start += length;
+    } while (start < value.length);
+  }
+
   constructor(opt) {
     if (opt) {
       if (opt.authority) { this.authority = opt.authority; }
