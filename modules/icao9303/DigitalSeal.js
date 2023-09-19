@@ -80,6 +80,8 @@ class DigitalSeal {
       throw new RangeError(
         "Document type category must be in the range between 1-254."
       );
+    } else {
+      this.#typeCategory = value;
     }
   }
   features = new Map();
