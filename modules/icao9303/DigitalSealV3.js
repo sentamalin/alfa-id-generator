@@ -26,6 +26,21 @@ class DigitalSealV3 {
   set features(value) { this.#digitalseal.features = value; }
   get signature() { return this.#digitalseal.signature; }
   set signature(value) { this.#digitalseal.signature = value; }
+
+  get header() {
+    let output = [];
+    output.push(DigitalSeal.magic);
+    output.push(this.version);
+    output = output.concat(DigitalSeal.c40Encode(authority.padEnd(3, "<")));
+    output = output.concat(DigitalSeal.c40Encode(
+      this.identifier +
+      this.certReference
+    ));
+    output = output.concat(DigitalSeal.dateToBytes(this.issueDate));
+    output = output.concat(DigitalSeal.dateToBytes(this.signatureDate));
+    output.push(this.featureDefinition);
+    output.push(this.typeCategory);
+  }
 }
 
 export { DigitalSealV3 };
