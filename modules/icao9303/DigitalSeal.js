@@ -95,17 +95,24 @@ class DigitalSeal {
   }
   /** @param { number[] } value */
   set signatureZone(value) {
-    if (value[0] !== DigitalSeal.signatureMarker) {
+    this.setSignature(0, value);
+  }
+
+  /**
+   * @param { number } start 
+   * @param { number[] } value */
+  setSignature(start, value) {
+    if (value[start] !== DigitalSeal.signatureMarker) {
       throw new TypeError(
-        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' does not match signature marker (${DigitalSeal.signatureMarker.toString(16).padStart(2, "0").toUpperCase()}).`
+        `Value '${value[start].toString(16).padStart(2, "0").toUpperCase()}' does not match signature marker (${DigitalSeal.signatureMarker.toString(16).padStart(2, "0").toUpperCase()}).`
       );
     }
-    let start = 1;
-    const length = DigitalSeal.derToInt(value.slice(start, start + value[start + 1] + 2));
+    start += 1;
+    const sigLength = DigitalSeal.derToInt(value.slice(start, start + value[start + 1] + 2));
     start += value[start + 1] + 2;
-    if (value.slice(start).length !== length) {
+    if (value.slice(start).length !== sigLength) {
       throw new RangeError(
-        `Length '${length}' of signature does not match the actual length (${value.slice(start).length}).`
+        `Length '${sigLength}' of signature does not match the actual length (${value.slice(start).length}).`
       );
     }
     this.signature = value.slice(start);

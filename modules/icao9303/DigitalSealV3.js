@@ -52,24 +52,7 @@ class DigitalSealV3 {
   }
   /** @param { number[] } value */
   set headerZone(value) {
-    if (value[0] !== DigitalSeal.magic) {
-      throw new TypeError(
-        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
-      );
-    }
-    if (value[1] !== this.version) {
-      throw new TypeError(
-        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not version 3 of an ICAO Digital Seal (${this.version.toString(16).padStart(2, "0").toUpperCase()}).`
-      );
-    }
-    this.authority = DigitalSeal.c40Decode(value.slice(2, 4)).trim();
-    const idCert = DigitalSeal.c40Decode(value.slice(4, value.length - 8));
-    this.identifier = idCert.substring(0, 4);
-    this.certReference = idCert.substring(4);
-    this.issueDate = DigitalSeal.bytesToDate(value.slice(value.length - 8, value.length - 5));
-    this.signatureDate = DigitalSeal.bytesToDate(value.slice(value.length - 5, value.length - 2));
-    this.featureDefinition = value[value.length - 2];
-    this.typeCategory = value[value.length - 1];
+    this.#setHeader(0, value);
   }
 
   get messageZone() {
@@ -83,22 +66,7 @@ class DigitalSealV3 {
   }
   /** @param { number[] } value */
   set messageZone(value) {
-    this.features.clear();
-    let start = 0;
-    while (start < value.length) {
-      const tag = value[start];
-      start += 1;
-      const length = value[start];
-      start += 1;
-      const slicedValue = value.slice(start, start + length);
-      if (slicedValue.length !== length) {
-        throw new RangeError(
-          `Length '${length}' of document feature does not match the actual length (${slicedValue.length}).`
-        );
-      }
-      this.features.set(tag, slicedValue);
-      start += length;
-    }
+    this.#setMessage(0, value);
   }
 
   get signatureZone() { return this.#digitalseal.signatureZone; }
@@ -109,47 +77,9 @@ class DigitalSealV3 {
   }
   /** @param { number[] } value */
   set unsignedSeal(value) {
-    if (value[0] !== DigitalSeal.magic) {
-      throw new TypeError(
-        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
-      );
-    }
-    if (value[1] !== this.version) {
-      throw new TypeError(
-        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not version 3 of an ICAO Digital Seal (${this.version.toString(16).padStart(2, "0").toUpperCase()}).`
-      );
-    }
-    let start = 2;
-    this.authority = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
-    start += 2;
-    const idCertRef = DigitalSeal.c40Decode(value.slice(start, start + 6));
-    this.identifier = idCertRef.substring(0, 4);
-    this.certReference = idCertRef.substring(4);
-    start += 6;
-    this.issueDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
-    start += 3;
-    this.signatureDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
-    start += 3;
-    this.featureDefinition = value[start];
-    start += 1;
-    this.typeCategory = value[start];
-    start += 1;
-
-    this.features.clear();
-    while (start < value.length) {
-      const tag = value[start];
-      start += 1;
-      const length = value[start];
-      start += 1;
-      const slicedValue = value.slice(start, start + length);
-      if (slicedValue.length !== length) {
-        throw new RangeError(
-          `Length '${length}' of document feature does not match the actual length (${slicedValue.length}).`
-        );
-      }
-      this.features.set(tag, slicedValue);
-      start += length;
-    }
+    let start = 0;
+    start = this.#setHeader(start, value);
+    this.#setMessage(start, value);
   }
 
   get signedSeal() {
@@ -157,6 +87,16 @@ class DigitalSealV3 {
   }
   /** @param { number[] } value */
   set signedSeal(value) {
+    let start = 0;
+    start = this.#setHeader(start, value);
+    start = this.#setMessage(start, value);
+    this.#setSignature(start, value);
+  }
+
+  /**
+   * @param { number } start 
+   * @param { number[] } value */
+  #setHeader(start, value) {
     if (value[0] !== DigitalSeal.magic) {
       throw new TypeError(
         `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
@@ -167,7 +107,7 @@ class DigitalSealV3 {
         `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not version 3 of an ICAO Digital Seal (${this.version.toString(16).padStart(2, "0").toUpperCase()}).`
       );
     }
-    let start = 2;
+    start += 2;
     this.authority = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
     start += 2;
     const idCertRef = DigitalSeal.c40Decode(value.slice(start, start + 6));
@@ -182,7 +122,12 @@ class DigitalSealV3 {
     start += 1;
     this.typeCategory = value[start];
     start += 1;
-
+    return start;
+  }
+  /**
+   * @param { number } start 
+   * @param { number[] } value */
+  #setMessage(start, value) {
     this.features.clear();
     while (start < value.length) {
       if (value[start] === DigitalSeal.signatureMarker) {
@@ -201,21 +146,13 @@ class DigitalSealV3 {
       this.features.set(tag, slicedValue);
       start += length;
     }
-
-    if (value[start] !== DigitalSeal.signatureMarker) {
-      throw new TypeError(
-        `Value '${value[start].toString(16).padStart(2, "0").toUpperCase()}' does not match signature marker (${DigitalSeal.signatureMarker.toString(16).padStart(2, "0").toUpperCase()}).`
-      );
-    }
-    start += 1;
-    const sigLength = DigitalSeal.derToInt(value.slice(start, start + value[start + 1] + 2));
-    start += value[start + 1] + 2;
-    if (value.slice(start).length !== sigLength) {
-      throw new RangeError(
-        `Length '${sigLength}' of signature does not match the actual length (${value.slice(start).length}).`
-      );
-    }
-    this.signature = value.slice(start);
+    return start;
+  }
+  /**
+   * @param { number } start 
+   * @param { number[] } value */
+  #setSignature(start, value) {
+    this.#digitalseal.setSignature(start, value);
   }
 
   constructor(opt) {
