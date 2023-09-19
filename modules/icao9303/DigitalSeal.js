@@ -34,9 +34,32 @@ class DigitalSeal {
   /** @type { string } */
   certReference;
   /** @type { Date } */
-  issueDate;
+  #issueDate;
+  get issueDate() { return this.#issueDate; }
+  /** @param { string | Date } value */
+  set issueDate(value) {
+    const date = new Date(value);
+    if (date.valueOf() === NaN) {
+      throw new TypeError(
+        `Value '${value}' is not a valid date string or Date object.`
+      );
+    } else {
+      this.#issueDate = date;
+    }
+  }
   /** @type { Date } */
-  signatureDate;
+  #signatureDate;
+  get signatureDate() { return this.#signatureDate; }
+  set signatureDate(value) {
+    const date = new Date(value);
+    if (date.valueOf() === NaN) {
+      throw new TypeError(
+        `Value '${value}' is not a valid date string or Date object.`
+      );
+    } else {
+      this.#signatureDate = date;
+    }
+  }
   #featureDefinition = 1;
   get featureDefinition() { return this.#featureDefinition; }
   /** @param { number } value */
