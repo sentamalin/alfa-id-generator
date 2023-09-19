@@ -14,7 +14,7 @@ class DigitalSealV3 {
   set identifier(value) { this.#digitalseal.identifier = value; }
   get certReference() { return this.#digitalseal.certReference; }
   set certReference(value) {
-    if (value !== 5) {
+    if (value.length !== 5) {
       throw new RangeError(
         "Certificate reference must be a hex string of exactly 5 characters."
       );
