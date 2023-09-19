@@ -91,6 +91,11 @@ class DigitalSealV3 {
       const length = value[start];
       start += 1;
       const slicedValue = value.slice(start, start + length);
+      if (slicedValue.length !== length) {
+        throw new RangeError(
+          `Length '${length}' of document feature does not match the actual length (${slicedValue.length}).`
+        );
+      }
       this.features.set(tag, slicedValue);
       start += length;
     } while (start < value.length);
@@ -104,6 +109,12 @@ class DigitalSealV3 {
   }
   /** @param { number[] } value */
   set unsignedSeal(value) {}
+
+  get signedSeal() {
+    return this.headerZone.concat(this.messageZone.concat(this.signatureZone));
+  }
+  /** @param { number[] } value */
+  set signedSeal(value) {}
 
   constructor(opt) {
     if (opt) {
