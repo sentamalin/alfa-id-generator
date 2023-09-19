@@ -53,9 +53,9 @@ class DigitalSeal {
   get typeCategory() { return this.#typeCategory; }
   /** @param { number } value */
   set typeCategory(value) {
-    if (value <= 0 || value > 255) {
+    if (value <= 0 || value > 254) {
       throw new RangeError(
-        "Document type category must be in the range between 1-255."
+        "Document type category must be in the range between 1-254."
       );
     }
   }
