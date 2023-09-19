@@ -96,6 +96,9 @@ class DigitalSealV3 {
     } while (start < value.length);
   }
 
+  get signatureZone() { return this.#digitalseal.signatureZone; }
+  set signatureZone(value) { this.#digitalseal.signatureZone = value; }
+
   get unsignedSeal() {
     return this.headerZone.concat(this.messageZone);
   }

@@ -86,6 +86,31 @@ class DigitalSeal {
   static get signatureMarker() { return 0xFF; }
   signature;
 
+  get signatureZone() {
+    let output = [];
+    output.push(DigitalSeal.signatureMarker);
+    output = output.concat(DigitalSeal.intToDER(this.signature.length));
+    output = output.concat(this.signature);
+    return output;
+  }
+  /** @param { number[] } value */
+  set signatureZone(value) {
+    if (value[0] !== DigitalSeal.signatureMarker) {
+      throw new TypeError(
+        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' does not match signature marker (${DigitalSeal.signatureMarker.toString(16).padStart(2, "0").toUpperCase()}).`
+      );
+    }
+    let start = 1;
+    const length = DigitalSeal.derToInt(value.slice(start, start + value[start + 1] + 2));
+    start += value[start + 1] + 2;
+    if (value.slice(start).length !== length) {
+      throw new RangeError(
+        `Length '${length}' of signature does not match the actual length (${value.slice(start).length}).`
+      );
+    }
+    this.signature = value.slice(start);
+  }
+
   /** @param { string } string */
   static c40Encode(string) {
     let output = [];
