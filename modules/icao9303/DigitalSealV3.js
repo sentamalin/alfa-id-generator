@@ -108,7 +108,49 @@ class DigitalSealV3 {
     return this.headerZone.concat(this.messageZone);
   }
   /** @param { number[] } value */
-  set unsignedSeal(value) {}
+  set unsignedSeal(value) {
+    if (value[0] !== DigitalSeal.magic) {
+      throw new TypeError(
+        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
+      );
+    }
+    if (value[1] !== this.version) {
+      throw new TypeError(
+        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not version 3 of an ICAO Digital Seal (${this.version.toString(16).padStart(2, "0").toUpperCase()}).`
+      );
+    }
+    let start = 2;
+    this.authority = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
+    start += 2;
+    const idCertRef = DigitalSeal.c40Decode(value.slice(start, start + 6));
+    this.identifier = idCertRef.substring(0, 4);
+    this.certReference = idCertRef.substring(4);
+    start += 6;
+    this.issueDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
+    start += 3;
+    this.signatureDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
+    start += 3;
+    this.featureDefinition = value[start];
+    start += 1;
+    this.typeCategory = value[start];
+    start += 1;
+
+    this.features.clear();
+    while (start < value.length) {
+      const tag = value[start];
+      start += 1;
+      const length = value[start];
+      start += 1;
+      const slicedValue = value.slice(start, start + length);
+      if (slicedValue.length !== length) {
+        throw new RangeError(
+          `Length '${length}' of document feature does not match the actual length (${slicedValue.length}).`
+        );
+      }
+      this.features.set(tag, slicedValue);
+      start += length;
+    }
+  }
 
   get signedSeal() {
     return this.headerZone.concat(this.messageZone.concat(this.signatureZone));
