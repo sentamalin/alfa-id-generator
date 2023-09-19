@@ -833,6 +833,49 @@ class DigitalSeal {
     } while (start < tlv.length);
     return output;
   }
+  /** @param { number } length */
+  static lengthToDERLength(length) {
+    if (length < 128) {
+      return [length];
+    } else {
+      const output = [];
+      let base2 = length.toString(2);
+      if (base2.length % 8 !== 0) {
+        base2 = base2.padStart((Math.floor(base2.length / 8) + 1) * 8, "0");
+      }
+      if (base2.length / 8 > 4) {
+        throw new RangeError(
+          "The definite long-form length value for this TLV is too big for the context of ICAO 9303 Digital Seals."
+        );
+      }
+      output.push(parseInt(`1${(base2.length / 8).toString(2).padStart(7, "0")}`, 2));
+      let b = [0, 0, 0, 0, 0, 0, 0, 0];
+      for (let i = 0; i < base2.length; i += 1) {
+        b[i % 8] = base2[i];
+        if((i + 1) % 8 === 0) {
+          output.push(parseInt(
+            `${b[0]}${b[1]}${b[2]}${b[3]}${b[4]}${b[5]}${b[6]}${b[7]}`, 2
+          ));
+        }
+      }
+      return output;
+    }
+  }
+  /** @param { number[] } length */
+  static derLengthToLength(length) {
+    if (length[0] < 128) {
+      return length[0];
+    } else {
+      const numOctetsString = length[0].toString(2);
+      const numOctets = parseInt(`0${numOctetsString.slice(1)}`, 2);
+      const lengthArray = length.slice(1, numOctets + 1);
+      let outputString = "";
+      for (let i = 0; i < lengthArray.length; i += 1) {
+        outputString += lengthArray[i].toString(2).padStart(8, "0");
+      }
+      return parseInt(outputString, 2);
+    }
+  }
 
   constructor(opt) {
     if (opt) {
