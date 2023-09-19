@@ -48,6 +48,7 @@ class DigitalSealV3 {
     output = output.concat(DigitalSeal.dateToBytes(this.signatureDate));
     output.push(this.featureDefinition);
     output.push(this.typeCategory);
+    return output;
   }
   /** @param { number[] } value */
   set header(value) {
