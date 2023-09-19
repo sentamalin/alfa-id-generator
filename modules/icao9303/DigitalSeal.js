@@ -7,14 +7,59 @@ class DigitalSeal {
   static #c40SHIFT1 = Symbol("c40SHIFT1");
   static get c40SHIFT1() { return this.#c40SHIFT1; }
   static get magic() { return 0xDC; }
-  authority;
-  identifier;
+  #authority = "";
+  get authority() { return this.#authority; }
+  /** @param { string } value */
+  set authority(value) {
+    if (value.length > 3) {
+      throw new RangeError(
+        "Issuing authority must be according to ICAO 9303-3 and be three letters or less."
+      );
+    } else {
+      this.#authority = value;
+    }
+  }
+  #identifier = "";
+  get identifier() { return this.#identifier; }
+  /** @param { string } value */
+  set identifier(value) {
+    if (value.length !== 4) {
+      throw new RangeError(
+        "Signer identifier must be a combination of a two-letter code of the issuing authority and of two alphanumeric characters to identify a signer within the defined issuing authority."
+      );
+    } else {
+      this.#identifier = value;
+    }
+  }
+  /** @type { string } */
   certReference;
+  /** @type { Date } */
   issueDate;
+  /** @type { Date } */
   signatureDate;
-  featureDefinition;
-  typeCategory;
-  features = [];
+  #featureDefinition = 1;
+  get featureDefinition() { return this.#featureDefinition; }
+  /** @param { number } value */
+  set featureDefinition(value) {
+    if (value <= 0 || value > 254) {
+      throw new RangeError(
+        "Document feature definition reference must be in the range between 1-254."
+      );
+    } else {
+      this.#featureDefinition = value;
+    }
+  }
+  #typeCategory = 2;
+  get typeCategory() { return this.#typeCategory; }
+  /** @param { number } value */
+  set typeCategory(value) {
+    if (value <= 0 || value > 255) {
+      throw new RangeError(
+        "Document type category must be in the range between 1-255."
+      );
+    }
+  }
+  features = new Map();
   static get signatureMarker() { return 0xFF; }
   signature;
 
