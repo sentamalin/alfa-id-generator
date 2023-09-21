@@ -750,6 +750,11 @@ class DigitalSeal {
     if (length[0] < 128) {
       return length[0];
     } else {
+      if (length.length > 5) {
+        throw new RangeError(
+          "The definite long-form length value for this TLV is too big for the context of ICAO 9303 Digital Seals."
+        );
+      }
       const numOctetsString = length[0].toString(2);
       const numOctets = parseInt(`0${numOctetsString.slice(1)}`, 2);
       const lengthArray = length.slice(1, numOctets + 1);
