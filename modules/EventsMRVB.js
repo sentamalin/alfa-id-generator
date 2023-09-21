@@ -4,11 +4,14 @@
  */
 
 import { MRVBDocument } from "./icao9303/MRVBDocument.js";
+import { DigitalSeal } from "./icao9303/DigitalSeal.js";
+import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 
 class EventsMRVB {
-  /* This defines properties for an Events Visa (MRV-A) */
+  /* This defines properties for an Events Visa (MRV-B) */
 
   #document = new MRVBDocument();
+  #seal = new DigitalSealV4();
   
   // General Text and Graphical Data (Forwards/Calls TD3Document)
   get typeCode() { return this.#document.typeCode; }

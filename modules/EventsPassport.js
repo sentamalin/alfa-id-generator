@@ -5,11 +5,14 @@
 
 import { TD3Document } from "./icao9303/TD3Document.js";
 import { TravelDocument } from "./icao9303/TravelDocument.js";
+import { DigitalSeal } from "./icao9303/DigitalSeal.js";
+import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 
 class EventsPassport {
   /* This defines properties for an ICAO 9303 TD3-compliant Events Passport (MRP) */
 
   #document = new TD3Document();
+  #seal = new DigitalSealV4();
   
   // General Text and Graphical Data (Forwards/Calls TD3Document)
   get typeCode() { return this.#document.typeCode; }

@@ -4,11 +4,14 @@
  */
 
 import { TD1Document } from "./icao9303/TD1Document.js"
+import { DigitalSeal } from "./icao9303/DigitalSeal.js";
+import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 
 class CrewLicense {
   /* This defines properties for an ICAO 9303 TD1-compliant Crewmember License */
 
   #document = new TD1Document();
+  #seal = new DigitalSealV4();
   
   // General Text and Graphical Data (Forwards/Calls TD1Document)
   get typeCode() { return this.#document.typeCode; }
