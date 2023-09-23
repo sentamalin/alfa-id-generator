@@ -11,44 +11,75 @@ class EventsMRVB {
   /* This defines properties for an Events Visa (MRV-B) */
 
   #document = new MRVBDocument();
-  #seal = new DigitalSealV4();
+  #seal = new DigitalSealV4({
+    typeCategory: 0x0A,
+    featureDefinition: 0x01
+  });
   
   // General Text and Graphical Data (Forwards/Calls TD3Document)
   get typeCode() { return this.#document.typeCode; }
   get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
   get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
-  set typeCode(value) { this.#document.typeCode = value; }
+  set typeCode(value) {
+    this.#document.typeCode = value;
+    this.#setDigitalSealMRZ();
+  }
   get authorityCode() { return this.#document.authorityCode; }
   get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
   get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
-  set authorityCode(value) { this.#document.authorityCode = value; }
+  set authorityCode(value) {
+    this.#document.authorityCode = value;
+    this.#seal.authorityCode = value;
+    this.#setDigitalSealMRZ();
+  }
   get number() { return this.#document.number; }
   get numberMRZ() { return this.#document.numberMRZ; }
   get numberVIZ() { return this.#document.numberVIZ; }
-  set number(value) { this.#document.number = value; }
+  set number(value) {
+    this.#document.number = value;
+    this.#setDigitalSealMRZ();
+  }
   get fullName() { return this.#document.fullName; }
   get fullNameMRZ() { return this.#document.fullNameMRZ; }
   get fullNameVIZ() { return this.#document.fullNameVIZ; }
-  set fullName(value) { this.#document.fullName = value; }
+  set fullName(value) {
+    this.#document.fullName = value;
+    this.#setDigitalSealMRZ();
+  }
   get nationalityCode() { return this.#document.nationalityCode; }
   get nationalityCodeMRZ() { return this.#document.nationalityCodeMRZ; }
   get nationalityCodeVIZ() { return this.#document.nationalityCodeVIZ; }
-  set nationalityCode(value) { this.#document.nationalityCode = value; }
+  set nationalityCode(value) {
+    this.#document.nationalityCode = value;
+    this.#setDigitalSealMRZ();
+  }
   get dateOfBirth() { return this.#document.dateOfBirth; }
   get dateOfBirthMRZ() { return this.#document.dateOfBirthMRZ; }
   get dateOfBirthVIZ() { return this.#document.dateOfBirthVIZ; }
-  set dateOfBirth(value) { this.#document.dateOfBirth = value; }
+  set dateOfBirth(value) {
+    this.#document.dateOfBirth = value;
+    this.#setDigitalSealMRZ();
+  }
   get genderMarker() { return this.#document.genderMarker; }
   get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
   get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
-  set genderMarker(value) { this.#document.genderMarker = value; }
+  set genderMarker(value) {
+    this.#document.genderMarker = value;
+    this.#setDigitalSealMRZ();
+  }
   get validThru() { return this.#document.validThru; }
   get validThruMRZ() { return this.#document.validThruMRZ; }
   get validThruVIZ() { return this.#document.validThruVIZ; }
-  set validThru(value) { this.#document.validThru = value; }
+  set validThru(value) {
+    this.#document.validThru = value;
+    this.#setDigitalSealMRZ();
+  }
   get optionalData() { return this.#document.optionalData; }
   get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
-  set optionalData(value) { this.#document.optionalData = value; }
+  set optionalData(value) {
+    this.#document.optionalData = value;
+    this.#setDigitalSealMRZ();
+  }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
   get signature() { return this.#document.signature; }
@@ -61,7 +92,14 @@ class EventsMRVB {
   set validFrom(value) { this.#document.validFrom = value; }
   get numberOfEntries() { return this.#document.numberOfEntries; }
   get numberOfEntriesVIZ() { return this.#document.numberOfEntriesVIZ; }
-  set numberOfEntries(value) { this.#document.numberOfEntries = value; }
+  set numberOfEntries(value) {
+    this.#document.numberOfEntries = value;
+    if (parseInt(value) === NaN) {
+      this.#seal.features.set(0x03, [0]);
+    } else {
+      this.#seal.features.set(0x03, [parseInt(value)]);
+    }
+  }
   get type() { return this.#document.type; }
   get typeVIZ() { return this.#document.typeVIZ; }
   set type(value) { this.#document.type = value; }
@@ -71,19 +109,67 @@ class EventsMRVB {
   get passportNumber() { return this.#document.passportNumber; }
   get passportNumberMRZ() { return this.#document.passportNumberMRZ; }
   get passportNumberVIZ() { return this.#document.passportNumberVIZ; }
-  set passportNumber(value) { this.#document.passportNumber = value; }
+  set passportNumber(value) { 
+    this.#document.passportNumber = value;
+    this.#seal.features.set(0x05, DigitalSeal.c40Encode(value));
+    this.#setDigitalSealMRZ();
+  }
   get usePassportInMRZ() { return this.#document.usePassportInMRZ; }
-  set usePassportInMRZ(value) { this.#document.usePassportInMRZ = value; }
+  set usePassportInMRZ(value) {
+    this.#document.usePassportInMRZ = value;
+    this.#setDigitalSealMRZ();
+  }
 
-  // EventsMRVA-specific data
+  // EventsMRVB-specific data
   #url;
   get url() { return this.#url; }
   set url(value) { this.#url = value; this.qrCode = value; }
 
-  // TD3Document MRZ Getters
+  // TD2Document MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() { return this.#document.mrzLine2; }
   get machineReadableZone() { return this.#document.machineReadableZone; }
+
+  // Digital Seal features
+  #setDigitalSealMRZ() {
+    this.#seal.features.set(0x02, DigitalSeal.c40Encode(
+      this.mrzLine1 + this.mrzLine2.slice(0, 28)
+    ));
+  }
+  get durationOfStay() {
+    return this.#seal.features.get(0x04);
+  }
+  /**
+   * @param { number[] } duration */
+  set durationOfStay(duration) {
+    this.#seal.features.set(0x04,duration);
+  }
+  get visaTypeCode() {
+    let output = "";
+    const visaType = this.#seal.features.get(0x06);
+    for (let i = 0; i < visaType.length; i += 1) {
+      output += visaType[i].toString(16).padStart(2, "0").toUpperCase();
+    }
+    return output;
+  }
+  /**
+   * @param { string } type */
+  set visaTypeCode(type) {
+    const input = [];
+    const paddedType = type.padStart(8, "0");
+    for (let i = 0; i < paddedType.length; i += 2) {
+      input.push(parseInt(paddedType.slice(i, i + 2), 16));
+    }
+    this.#seal.features.set(0x06, input);
+  }
+  get additionalFeature() {
+    return this.#seal.features.get(0x07);
+  }
+  /**
+   * @param { number [] } value */
+  set additionalFeature(value) {
+    this.#seal.features.set(0x07, value);
+  }
 
   // Constructor
   constructor(opt) {
