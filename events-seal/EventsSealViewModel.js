@@ -6,7 +6,7 @@
 import { EventsMRVB } from "/modules/EventsMRVB.js";
 import { EventsSealRenderer } from "./EventsSealRenderer.js";
 
-class EventsMRVBViewModel {
+class EventsSealViewModel {
   #model = new EventsMRVB({
     typeCode: "V",
     authorityCode: "XAF",
@@ -1462,4 +1462,4 @@ class EventsMRVBViewModel {
   }
 }
 
-export { EventsMRVBViewModel }
+export { EventsSealViewModel }
