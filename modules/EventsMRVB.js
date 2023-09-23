@@ -95,7 +95,7 @@ class EventsMRVB {
   get numberOfEntriesVIZ() { return this.#document.numberOfEntriesVIZ; }
   set numberOfEntries(value) {
     this.#document.numberOfEntries = value;
-    if (parseInt(value) === NaN) {
+    if (isNaN(parseInt(value))) {
       this.#seal.features.set(0x03, [0]);
     } else {
       this.#seal.features.set(0x03, [parseInt(value)]);
