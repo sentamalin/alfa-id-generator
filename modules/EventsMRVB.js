@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import { TravelDocument } from "./icao9303/TravelDocument.js";
 import { MRVBDocument } from "./icao9303/MRVBDocument.js";
 import { DigitalSeal } from "./icao9303/DigitalSeal.js";
 import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
@@ -29,7 +30,7 @@ class EventsMRVB {
   get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
-    this.#seal.authorityCode = value;
+    this.#seal.authority = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
@@ -130,11 +131,91 @@ class EventsMRVB {
   get mrzLine2() { return this.#document.mrzLine2; }
   get machineReadableZone() { return this.#document.machineReadableZone; }
 
+  // Digital Seal properties
+  get identifier() { return this.#seal.identifier; }
+  set identifier(value) { this.#seal.identifier = value; }
+  get certReference() { return this.#seal.certReference; }
+  set certReference(value) { this.#seal.certReference = value; }
+  get issueDate() { return this.#seal.issueDate; }
+  set issueDate(value) { this.#seal.issueDate = value; }
+  get sealSignatureDate() { return this.#seal.signatureDate; }
+  set sealSignatureDate(value) { this.#seal.signatureDate = value; }
+  get sealSignature() { return this.#seal.signature; }
+  set sealSignature(value) { this.#seal.signature = value; }
+  get headerZone() { return this.#seal.headerZone; }
+  set headerZone(value) {
+    this.#seal.headerZone = value;
+    this.#document.authorityCode = this.#seal.authority;
+  }
+  get messageZone() { return this.#seal.messageZone; }
+  set messageZone(value) {
+    this.#seal.messageZone = value;
+    this.#setAllValuesFromDigitalSeal();
+  }
+  get sealSignatureZone() { return this.#seal.signatureZone; }
+  set sealSignatureZone(value) { this.#seal.signatureZone = value; }
+  get unsignedSeal() { return this.#seal.unsignedSeal; }
+  set unsignedSeal(value) {
+    this.#seal.unsignedSeal = value;
+    this.#setAllValuesFromDigitalSeal();
+  }
+  get signedSeal() { return this.#seal.signedSeal; }
+  set signedSeal(value) {
+    this.#seal.signedSeal = value;
+    this.#setAllValuesFromDigitalSeal();
+  }
+
   // Digital Seal features
   #setDigitalSealMRZ() {
     this.#seal.features.set(0x02, DigitalSeal.c40Encode(
       this.mrzLine1 + this.mrzLine2.slice(0, 28)
     ));
+  }
+  #setAllValuesFromDigitalSeal() {
+    const twoDigitYearStart = 32;
+    const sealMRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x02));
+    this.#document.typeCode = sealMRZ.slice(0, 2).trimEnd();
+    this.#document.authorityCode = sealMRZ.slice(2, 5).trimEnd();
+    this.#document.fullName = sealMRZ.slice(5, 36).replace("  ", ", ").trimEnd();
+    if (sealMRZ[45] !== TravelDocument.generateMRZCheckDigit(sealMRZ.slice(36, 45).replace(/ /gi, "<"))) {
+      throw new EvalError(
+        `Document number check digit '${sealMRZ[45]}' does not match for document number '${sealMRZ.slice(36, 45).replace(/ /gi, "<")}.`
+      );
+    } else {
+      this.#document.number = sealMRZ.slice(36, 45).trimEnd();
+    }
+    this.#document.nationalityCode = sealMRZ.slice(46, 49).trimEnd();
+    if (sealMRZ[55] !== TravelDocument.generateMRZCheckDigit(sealMRZ.slice(49, 55).replace(/ /gi, "<"))) {
+      throw new EvalError(
+        `Date of birth check digit '${sealMRZ[55]}' does not match for date of birth '${sealMRZ.slice(49, 55).replace(/ /gi, "<")}'.`
+      );
+    } else {
+      let yearOfBirth = sealMRZ.slice(49, 51);
+      const monthOfBirth = sealMRZ.slice(51, 53);
+      const dayOfBirth = sealMRZ.slice(53, 55);
+      if (parseInt(yearOfBirth, 10) >= twoDigitYearStart) {
+        this.#document.dateOfBirth = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+      } else {
+        this.#document.dateOfBirth = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+      }
+    }
+    this.#document.genderMarker = sealMRZ[56];
+    if (sealMRZ[63] !== TravelDocument.generateMRZCheckDigit(sealMRZ.slice(57, 63).replace(/ /gi, "<"))) {
+      throw new EvalError(
+        `Valid thru check digit '${sealMRZ[63]}' does not match for valid thru '${sealMRZ.slice(57, 63).replace(/ /gi, "<")}'.`
+      );
+    } else {
+      const yearValidThru = sealMRZ.slice(57, 59);
+      const monthValidThru = sealMRZ.slice(59, 61);
+      const dayValidThru = sealMRZ.slice(61, 63);
+      this.#document.validThru = `20${yearValidThru}-${monthValidThru}-${dayValidThru}`;
+    }
+    if (this.#seal.features.get(0x03)[0] === 0) {
+      this.#document.numberOfEntries = "MULTIPLE";
+    } else {
+      this.#document.numberOfEntries = this.#seal.features.get(0x03)[0];
+    }
+    this.#document.passportNumber = DigitalSeal.c40Decode(this.#seal.features.get(0x05));
   }
   get durationOfStay() {
     return this.#seal.features.get(0x04);
