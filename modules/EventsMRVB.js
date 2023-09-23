@@ -284,6 +284,8 @@ class EventsMRVB {
       if (opt.sealSignatureZone) { this.sealSignatureZone = opt.sealSignatureZone; }
       if (opt.unsignedSeal) { this.unsignedSeal = opt.unsignedSeal; }
       if (opt.signedSeal) { this.signedSeal = opt.signedSeal; }
+      if (opt.durationOfStay) { this.durationOfStay = opt.durationOfStay; }
+      if (opt.visaTypeCode) { this.visaTypeCode = opt.visaTypeCode; }
     }
   }
 }
