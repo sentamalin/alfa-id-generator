@@ -238,8 +238,13 @@ class EventsMRVB {
   set visaTypeCode(type) {
     const input = [];
     const paddedType = type.padStart(8, "0");
+    let previousIsZero = true;
     for (let i = 0; i < paddedType.length; i += 2) {
+      if ((parseInt(paddedType.slice(i, i + 2), 16) === 0) && previousIsZero === true ) {
+        continue;
+      }
       input.push(parseInt(paddedType.slice(i, i + 2), 16));
+      previousIsZero = false;
     }
     this.#seal.features.set(0x06, input);
   }
