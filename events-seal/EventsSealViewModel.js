@@ -32,11 +32,11 @@ class EventsSealViewModel {
   });
 
   #renderer = new EventsSealRenderer({
-    headerColor: "#4090ba",
+    headerColor: "#000000",
     textColor: "#000000",
     frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/passport-mrva-lofiGrey.png",
-    logo: "/smallLogos/alfa.svg",
+    logo: "/smallLogos/alfa-bw.svg",
     showGuides: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "FURRY EVENTS ENTRY VISA"
@@ -92,34 +92,6 @@ class EventsSealViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #placeOfIssueInput;
-  /** @param { HTMLInputElement } input */
-  set placeOfIssueInput(input) {
-    this.#placeOfIssueInput = input;
-    this.#placeOfIssueInput.value = this.#model.placeOfIssue;
-    this.#placeOfIssueInput.setAttribute("placeholder", this.#model.placeOfIssue);
-    this.#placeOfIssueInput.addEventListener("input", this, false);
-    this.#placeOfIssueInput.addEventListener("change", this, false);
-  }
-  onPlaceOfIssueInputChange() {
-    if (this.#model.placeOfIssue !== this.#placeOfIssueInput.value) {
-      this.#model.placeOfIssue = this.#placeOfIssueInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #validFromInput;
-  /** @param { HTMLInputElement } input */
-  set validFromInput(input) {
-    this.#validFromInput = input;
-    this.#validFromInput.value = this.#model.validFrom;
-    this.#validFromInput.addEventListener("change", this, false);
-  }
-  onValidFromInputChange() {
-    this.#model.validFrom = this.#validFromInput.value;
-    this.#generateCard();
-  }
-
   /** @type { HTMLInputElement } */ #validThruInput;
   /** @param { HTMLInputElement } input */
   set validThruInput(input) {
@@ -163,41 +135,6 @@ class EventsSealViewModel {
     if (this.#numberInput.checkValidity() &&
     this.#model.number !== this.#numberInput.value) {
       this.#model.number = this.#numberInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #typeInput;
-  /** @param { HTMLInputElement } input */
-  set typeInput(input) {
-    this.#typeInput = input;
-    this.#typeInput.value = this.#model.type;
-    this.#typeInput.setAttribute("placeholder", this.#model.type);
-    this.#typeInput.addEventListener("input", this, false);
-    this.#typeInput.addEventListener("change", this, false);
-  }
-  onTypeInputChange() {
-    if (this.#model.type !== this.#typeInput.value) {
-      this.#model.type = this.#typeInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #additionalInfoInput;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoInput(input) {
-    this.#additionalInfoInput = input;
-    this.#additionalInfoInput.setAttribute("cols", 28);
-    this.#additionalInfoInput.setAttribute("rows", 2);
-    this.#additionalInfoInput.setAttribute("wrap", "off");
-    this.#additionalInfoInput.value = this.#model.additionalInfo;
-    this.#additionalInfoInput.setAttribute("placeholder", this.#model.additionalInfo);
-    this.#additionalInfoInput.addEventListener("input", this, false);
-    this.#additionalInfoInput.addEventListener("change", this, false);
-  }
-  onAdditionalInfoInputChange() {
-    if (this.#model.additionalInfo !== this.#additionalInfoInput.value) {
-      this.#model.additionalInfo = this.#additionalInfoInput.value;
       this.#generateCard();
     }
   }
@@ -480,12 +417,9 @@ class EventsSealViewModel {
     const inputFields = [
       "typeCode",
       "authorityCode",
-      "placeOfIssue",
-      "validFrom",
       "validThru",
       "numberOfEntries",
       "number",
-      "type",
       "fullName",
       "passportNumber",
       "nationalityCode",
