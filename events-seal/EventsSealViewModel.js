@@ -16,21 +16,17 @@ class EventsSealViewModel {
     numberOfEntries: "Multiple",
     number: "960241263",
     type: "Silver Sponsor—Adult",
-    additionalInfo: "XXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     fullName: "Millefeuille, Alfalfa",
     passportNumber: "362142069",
-    usePassportInMRZ: true,
+    usePassportInMRZ: false,
     nationalityCode: "UTO",
     dateOfBirth: "1998-04-17",
     genderMarker: "F",
     optionalData: "",
-    picture: "/photos/fox.jpg",
-    signature: "/signatures/alfa-census.svg",
-    url: "https://airlinefurries.com/",
     identifier: "XFSS",
     certReference: "00000",
-    issueDate: "2023-09-23",
-    sealSignatureDate: "2023-09-23",
+    issueDate: "2023-09-01",
+    sealSignatureDate: "2023-09-01",
     durationOfStay: [4, 0, 0],
     visaTypeCode: "1"
   });
@@ -38,84 +34,16 @@ class EventsSealViewModel {
   #renderer = new EventsSealRenderer({
     headerColor: "#4090ba",
     textColor: "#000000",
-    mrzColor: "#000000",
     frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/passport-mrva-lofiGrey.png",
-    mrzBackgroundColor: "#ffffff",
-    mrzBackgroundImage: null,
-    logoUnderlayColor: "#4090ba",
-    logoUnderlayAlpha: 255,
     logo: "/smallLogos/alfa.svg",
-    mrzInQRCode: true,
     showGuides: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
-    fullDocumentName: "FURRY EVENTS ENTRY VISA",
-    placeOfIssueHeader: [
-      "PLACE OF ISSUE",
-      "LIEU DE DÉLIVRANCE",
-      "LUGAR DE EMISIÓN"
-    ],
-    validFromHeader: [
-      "VALID FROM",
-      "VALABLE À PARTIR DU",
-      "VÁLIDO DESDE EL"
-    ],
-    validThruHeader: [
-      "VALID THRU",
-      "VALABLE JUSQU'AU",
-      "VÁLIDO HASTA"
-    ],
-    numberOfEntriesHeader: [
-      "NUMBER OF ENTRIES",
-      "NOMBRE D'ENTRÉES",
-      "NÚMERO DE ENTRADAS"
-    ],
-    numberHeader: [
-      "DOCUMENT NO",
-      "NO DU DOCUMENT",
-      "NO DEL DOCUMENTO"
-    ],
-    typeHeader: [
-      "TYPE",
-      "TYPE",
-      "TIPO"
-    ],
-    additionalInfoHeader: [
-      "ADDITIONAL INFORMATION",
-      "INFORMATIONS COMPLÉMENTAIRES",
-      "INFORMACIÓN ADICIONAL"
-    ],
-    nameHeader: [
-      "NAME",
-      "NOM",
-      "APELLIDOS"
-    ],
-    passportNumberHeader: [
-      "PASSPORT NO",
-      "NO DE PASSEPORT",
-      "NO DE PASAPORTE"
-    ],
-    nationalityHeader: [
-      "NATIONALITY",
-      "NATIONALITÉ",
-      "NACIONALIDAD"
-    ],
-    dateOfBirthHeader: [
-      "DATE OF BIRTH",
-      "DATE DE NAISSANCE",
-      "FECHA DE NACIMIENTO"
-    ],
-    genderHeader: [
-      "GENDER",
-      "GENRE",
-      "GENÉRO"
-    ],
+    fullDocumentName: "FURRY EVENTS ENTRY VISA"
   });
 
   #inputTimeout = null;
   #frontFallback;
-  #signatureFallback;
-  #signatureGenerator = null;
   #frontBlobURL = null;
 
   /** @type { Document } */ #document;
@@ -312,18 +240,6 @@ class EventsSealViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #usePassportInMRZInput;
-  /** @param { HTMLInputElement } input */
-  set usePassportInMRZInput(input) {
-    this.#usePassportInMRZInput = input;
-    this.#usePassportInMRZInput.addEventListener("change", this, false);
-  }
-  onUsePassportInMRZInputChange() {
-    if (this.#model.usePassportInMRZ) { this.#model.usePassportInMRZ = false; }
-    else { this.#model.usePassportInMRZ = true; }
-    this.#generateCard();
-  }
-
   /** @type { HTMLInputElement } */ #nationalityCodeInput;
   /** @param { HTMLInputElement } input */
   set nationalityCodeInput(input) {
@@ -384,110 +300,6 @@ class EventsSealViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #pictureInput;
-  /** @param { HTMLInputElement } input */
-  set pictureInput(input) {
-    this.#pictureInput = input;
-    this.#pictureInput.setAttribute("accept", "image/*");
-    this.#pictureInput.addEventListener("change", this, false);
-  }
-  async onPictureInputChange() {
-    if (this.#pictureInput.files[0]) {
-      this.#model.picture = await this.constructor.#getFileData(this.#pictureInput.files[0]);
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #signatureInput;
-  /** @param { HTMLInputElement } input */
-  set signatureInput(input) {
-    this.#signatureInput = input;
-    this.#signatureInput.addEventListener("change", this, false);
-  }
-  onSignatureInputChange() {
-    switch (this.#signatureInput.value) {
-      case "upload":
-        this.#signatureFileInput.removeAttribute("disabled");
-        this.#signatureTextInput.setAttribute("disabled", "disabled");
-        break;
-      case "text":
-        this.#signatureFileInput.setAttribute("disabled", "disabled");
-        this.#signatureTextInput.removeAttribute("disabled");
-        break;
-      default:
-        this.#signatureFileInput.setAttribute("disabled", "disabled");
-        this.#signatureTextInput.setAttribute("disabled", "disabled");
-        break;
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #signatureFileInput;
-  /** @param { HTMLInputElement } input */
-  set signatureFileInput(input) {
-    this.#signatureFileInput = input;
-    this.#signatureFileInput.setAttribute("accept", "image/*");
-    this.#signatureFileInput.addEventListener("change", this, false);
-  }
-  async onSignatureFileInputChange() {
-    if (this.#signatureFileInput.files[0]) {
-      this.#model.signature = await this.constructor.#getFileData(this.#signatureFileInput.files[0]);
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #signatureTextInput;
-  /** @param { HTMLInputElement } input */
-  set signatureTextInput(input) {
-    this.#signatureTextInput = input;
-    this.#signatureTextInput.setAttribute("disabled", "disabled");
-    this.#signatureTextInput.addEventListener("input", this, false);
-    this.#signatureTextInput.addEventListener("change", this, false);
-  }
-  onSignatureTextInputChange() {
-    if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
-        this.#signatureFallback
-      );
-    }
-    this.#signatureGenerator.next();
-    const signature = this.#signatureGenerator.next(
-      this.#signatureTextInput.value
-    );
-    if (signature.value.newSignature) {
-      this.#model.signature = signature.value.signature;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #urlInput;
-  /** @param { HTMLInputElement } input */
-  set urlInput(input) {
-    this.#urlInput = input;
-    this.#urlInput.value = this.#model.url;
-    this.#urlInput.setAttribute("placeholder", this.#model.url);
-    this.#urlInput.addEventListener("input", this, false);
-    this.#urlInput.addEventListener("change", this, false);
-  }
-  onUrlInputChange() {
-    if (this.#urlInput.checkValidity() &&
-    this.#model.url !== this.#urlInput.value) {
-      this.#model.url = this.#urlInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #mrzInQRCodeInput;
-  /** @param { HTMLInputElement } input */
-  set mrzInQRCodeInput(input) {
-    this.#mrzInQRCodeInput = input;
-    this.#mrzInQRCodeInput.addEventListener("change", this, false);
-  }
-  onMrzInQRCodeInputChange() {
-    if (this.#renderer.mrzInQRCode) { this.#renderer.mrzInQRCode = false; }
-    else { this.#renderer.mrzInQRCode = true; }
-    this.#generateCard();
-  }
-
   /** @type { HTMLInputElement } */ #headerColorInput;
   /** @param { HTMLInputElement } input */
   set headerColorInput(input) {
@@ -509,18 +321,6 @@ class EventsSealViewModel {
   }
   onTextColorInputChange() {
     this.#renderer.textColor = this.#textColorInput.value;
-    this.#generateCard();
-  }
-
-  /** @type { HTMLInputElement } */ #mrzColorInput;
-  /** @param { HTMLInputElement } input */
-  set mrzColorInput(input) {
-    this.#mrzColorInput = input;
-    this.#mrzColorInput.value = this.#renderer.mrzColor;
-    this.#mrzColorInput.addEventListener("change", this, false);
-  }
-  onMrzColorInputChange() {
-    this.#renderer.mrzColor = this.#mrzColorInput.value;
     this.#generateCard();
   }
 
@@ -575,85 +375,6 @@ class EventsSealViewModel {
       this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
       this.#generateCard();
     }
-  }
-
-  /** @type { HTMLInputElement } */ #mrzBackgroundColorInput;
-  /** @param { HTMLInputElement } input */
-  set mrzBackgroundColorInput(input) {
-    this.#mrzBackgroundColorInput = input;
-    this.#mrzBackgroundColorInput.value = this.#renderer.mrzBackgroundColor;
-    this.#mrzBackgroundColorInput.addEventListener("change", this, false);
-  }
-  onMrzBackgroundColorInputChange() {
-    this.#renderer.mrzBackgroundColor = this.#mrzBackgroundColorInput.value;
-    this.#generateCard();
-  }
-
-  /** @type { HTMLInputElement } */ #mrzBackgroundImageInput;
-  /** @param { HTMLInputElement } input */
-  set mrzBackgroundImageInput(input) {
-    this.#mrzBackgroundImageInput = input;
-    if (!this.#renderer.mrzBackgroundImage) { this.#mrzBackgroundImageInput.value = "none"; }
-    else { this.#mrzBackgroundImageInput.value = this.#renderer.mrzBackgroundImage; }
-    this.#mrzBackgroundImageInput.addEventListener("change", this, false);
-  }
-  onMrzBackgroundImageInputChange() {
-    switch (this.#mrzBackgroundImageInput.value) {
-      case "none":
-        this.#mrzBackgroundImageFileInput.setAttribute("disabled", "disabled");
-        this.#renderer.mrzBackgroundImage = null;
-        this.#generateCard();
-        break;
-      case "upload":
-        this.#mrzBackgroundImageFileInput.removeAttribute("disabled");
-        break;
-      default:
-        this.#mrzBackgroundImageFileInput.setAttribute("disabled", "disabled");
-        this.#renderer.mrzBackgroundImage = this.#mrzBackgroundImageInput.value;
-        this.#generateCard();
-        break;
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #mrzBackgroundImageFileInput;
-  /** @param { HTMLInputElement } input */
-  set mrzBackgroundImageFileInput(input) {
-    this.#mrzBackgroundImageFileInput = input;
-    this.#mrzBackgroundImageFileInput.setAttribute("accept", "image/*");
-    this.#mrzBackgroundImageFileInput.setAttribute("disabled", "disabled");
-    this.#mrzBackgroundImageFileInput.addEventListener("change", this, false);
-  }
-  async onMrzBackgroundImageFileInputChange() {
-    if (this.#mrzBackgroundImageFileInput.files[0]) {
-      this.#renderer.mrzBackgroundImage = await this.constructor.#getFileData(this.#mrzBackgroundImageFileInput.files[0]);
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #logoUnderlayColorInput;
-  /** @param { HTMLInputElement } input */
-  set logoUnderlayColorInput(input) {
-    this.#logoUnderlayColorInput = input;
-    this.#logoUnderlayColorInput.value = this.#renderer.logoUnderlayColor;
-    this.#logoUnderlayColorInput.addEventListener("change", this, false);
-  }
-  onLogoUnderlayColorInputChange() {
-    this.#renderer.logoUnderlayColor = this.#logoUnderlayColorInput.value;
-    this.#generateCard();
-  }
-
-  /** @type { HTMLInputElement } */ #logoUnderlayAlphaInput;
-  /** @param { HTMLInputElement } input */
-  set logoUnderlayAlphaInput(input) {
-    this.#logoUnderlayAlphaInput = input;
-    this.#logoUnderlayAlphaInput.setAttribute("min", 0);
-    this.#logoUnderlayAlphaInput.setAttribute("max", 255);
-    this.#logoUnderlayAlphaInput.value = this.#renderer.logoUnderlayAlpha;
-    this.#logoUnderlayAlphaInput.addEventListener("change", this, false);
-  }
-  onLogoUnderlayAlphaInputChange() {
-    this.#renderer.logoUnderlayAlpha = Number(this.#logoUnderlayAlphaInput.value);
-    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #logoInput;
@@ -723,582 +444,6 @@ class EventsSealViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #placeOfIssueHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set placeOfIssueHeaderInput(input) {
-    this.#placeOfIssueHeaderInput = input;
-    this.#placeOfIssueHeaderInput.value = this.#renderer.placeOfIssueHeader[0];
-    this.#placeOfIssueHeaderInput.setAttribute("placeholder", this.#renderer.placeOfIssueHeader[0]);
-    this.#placeOfIssueHeaderInput.addEventListener("input", this, false);
-    this.#placeOfIssueHeaderInput.addEventListener("change", this, false);
-  }
-  onPlaceOfIssueHeaderInputChange() {
-    if (this.#renderer.placeOfIssueHeader[0] !== this.#placeOfIssueHeaderInput.value) {
-      this.#renderer.placeOfIssueHeader[0] = this.#placeOfIssueHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #placeOfIssueHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set placeOfIssueHeaderI18n1Input(input) {
-    this.#placeOfIssueHeaderI18n1Input = input;
-    this.#placeOfIssueHeaderI18n1Input.value = this.#renderer.placeOfIssueHeader[1];
-    this.#placeOfIssueHeaderI18n1Input.setAttribute("placeholder", this.#renderer.placeOfIssueHeader[1]);
-    this.#placeOfIssueHeaderI18n1Input.addEventListener("input", this, false);
-    this.#placeOfIssueHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onPlaceOfIssueHeaderI18n1InputChange() {
-    if (this.#renderer.placeOfIssueHeader[1] !== this.#placeOfIssueHeaderI18n1Input.value) {
-      this.#renderer.placeOfIssueHeader[1] = this.#placeOfIssueHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #placeOfIssueHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set placeOfIssueHeaderI18n2Input(input) {
-    this.#placeOfIssueHeaderI18n2Input = input;
-    this.#placeOfIssueHeaderI18n2Input.value = this.#renderer.placeOfIssueHeader[2];
-    this.#placeOfIssueHeaderI18n2Input.setAttribute("placeholder", this.#renderer.placeOfIssueHeader[2]);
-    this.#placeOfIssueHeaderI18n2Input.addEventListener("input", this, false);
-    this.#placeOfIssueHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onPlaceOfIssueHeaderI18n2InputChange() {
-    if (this.#renderer.placeOfIssueHeader[2] !== this.#placeOfIssueHeaderI18n2Input.value) {
-      this.#renderer.placeOfIssueHeader[2] = this.#placeOfIssueHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #validFromHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set validFromHeaderInput(input) {
-    this.#validFromHeaderInput = input;
-    this.#validFromHeaderInput.value = this.#renderer.validFromHeader[0];
-    this.#validFromHeaderInput.setAttribute("placeholder", this.#renderer.validFromHeader[0]);
-    this.#validFromHeaderInput.addEventListener("input", this, false);
-    this.#validFromHeaderInput.addEventListener("change", this, false);
-  }
-  onValidFromHeaderInputChange() {
-    if (this.#renderer.validFromHeader[0] !== this.#validFromHeaderInput.value) {
-      this.#renderer.validFromHeader[0] = this.#validFromHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #validFromHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set validFromHeaderI18n1Input(input) {
-    this.#validFromHeaderI18n1Input = input;
-    this.#validFromHeaderI18n1Input.value = this.#renderer.validFromHeader[1];
-    this.#validFromHeaderI18n1Input.setAttribute("placeholder", this.#renderer.validFromHeader[1]);
-    this.#validFromHeaderI18n1Input.addEventListener("input", this, false);
-    this.#validFromHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onValidFromHeaderI18n1InputChange() {
-    if (this.#renderer.validFromHeader[1] !== this.#validFromHeaderI18n1Input.value) {
-      this.#renderer.validFromHeader[1] = this.#validFromHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #validFromHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set validFromHeaderI18n2Input(input) {
-    this.#validFromHeaderI18n2Input = input;
-    this.#validFromHeaderI18n2Input.value = this.#renderer.validFromHeader[2];
-    this.#validFromHeaderI18n2Input.setAttribute("placeholder", this.#renderer.validFromHeader[2]);
-    this.#validFromHeaderI18n2Input.addEventListener("input", this, false);
-    this.#validFromHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onValidFromHeaderI18n2InputChange() {
-    if (this.#renderer.validFromHeader[2] !== this.#validFromHeaderI18n2Input.value) {
-      this.#renderer.validFromHeader[2] = this.#validFromHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #validThruHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set validThruHeaderInput(input) {
-    this.#validThruHeaderInput = input;
-    this.#validThruHeaderInput.value = this.#renderer.validThruHeader[0];
-    this.#validThruHeaderInput.setAttribute("placeholder", this.#renderer.validThruHeader[0]);
-    this.#validThruHeaderInput.addEventListener("input", this, false);
-    this.#validThruHeaderInput.addEventListener("change", this, false);
-  }
-  onValidThruHeaderInputChange() {
-    if (this.#renderer.validThruHeader[0] !== this.#validThruHeaderInput.value) {
-      this.#renderer.validThruHeader[0] = this.#validThruHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #validThruHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set validThruHeaderI18n1Input(input) {
-    this.#validThruHeaderI18n1Input = input;
-    this.#validThruHeaderI18n1Input.value = this.#renderer.validThruHeader[1];
-    this.#validThruHeaderI18n1Input.setAttribute("placeholder", this.#renderer.validThruHeader[1]);
-    this.#validThruHeaderI18n1Input.addEventListener("input", this, false);
-    this.#validThruHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onValidThruHeaderI18n1InputChange() {
-    if (this.#renderer.validThruHeader[1] !== this.#validThruHeaderI18n1Input.value) {
-      this.#renderer.validThruHeader[1] = this.#validThruHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #validThruHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set validThruHeaderI18n2Input(input) {
-    this.#validThruHeaderI18n2Input = input;
-    this.#validThruHeaderI18n2Input.value = this.#renderer.validThruHeader[2];
-    this.#validThruHeaderI18n2Input.setAttribute("placeholder", this.#renderer.validThruHeader[2]);
-    this.#validThruHeaderI18n2Input.addEventListener("input", this, false);
-    this.#validThruHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onValidThruHeaderI18n2InputChange() {
-    if (this.#renderer.validThruHeader[2] !== this.#validThruHeaderI18n2Input.value) {
-      this.#renderer.validThruHeader[2] = this.#validThruHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #numberOfEntriesHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set numberOfEntriesHeaderInput(input) {
-    this.#numberOfEntriesHeaderInput = input;
-    this.#numberOfEntriesHeaderInput.value = this.#renderer.numberOfEntriesHeader[0];
-    this.#numberOfEntriesHeaderInput.setAttribute("placeholder", this.#renderer.numberOfEntriesHeader[0]);
-    this.#numberOfEntriesHeaderInput.addEventListener("input", this, false);
-    this.#numberOfEntriesHeaderInput.addEventListener("change", this, false);
-  }
-  onNumberOfEntriesHeaderInputChange() {
-    if (this.#renderer.numberOfEntriesHeader[0] !== this.#numberOfEntriesHeaderInput.value) {
-      this.#renderer.numberOfEntriesHeader[0] = this.#numberOfEntriesHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #numberOfEntriesHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set numberOfEntriesHeaderI18n1Input(input) {
-    this.#numberOfEntriesHeaderI18n1Input = input;
-    this.#numberOfEntriesHeaderI18n1Input.value = this.#renderer.numberOfEntriesHeader[1];
-    this.#numberOfEntriesHeaderI18n1Input.setAttribute("placeholder", this.#renderer.numberOfEntriesHeader[1]);
-    this.#numberOfEntriesHeaderI18n1Input.addEventListener("input", this, false);
-    this.#numberOfEntriesHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onNumberOfEntriesHeaderI18n1InputChange() {
-    if (this.#renderer.numberOfEntriesHeader[1] !== this.#numberOfEntriesHeaderI18n1Input.value) {
-      this.#renderer.numberOfEntriesHeader[1] = this.#numberOfEntriesHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #numberOfEntriesHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set numberOfEntriesHeaderI18n2Input(input) {
-    this.#numberOfEntriesHeaderI18n2Input = input;
-    this.#numberOfEntriesHeaderI18n2Input.value = this.#renderer.numberOfEntriesHeader[2];
-    this.#numberOfEntriesHeaderI18n2Input.setAttribute("placeholder", this.#renderer.numberOfEntriesHeader[2]);
-    this.#numberOfEntriesHeaderI18n2Input.addEventListener("input", this, false);
-    this.#numberOfEntriesHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onNumberOfEntriesHeaderI18n2InputChange() {
-    if (this.#renderer.numberOfEntriesHeader[2] !== this.#numberOfEntriesHeaderI18n2Input.value) {
-      this.#renderer.numberOfEntriesHeader[2] = this.#numberOfEntriesHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #numberHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set numberHeaderInput(input) {
-    this.#numberHeaderInput = input;
-    this.#numberHeaderInput.value = this.#renderer.numberHeader[0];
-    this.#numberHeaderInput.setAttribute("placeholder", this.#renderer.numberHeader[0]);
-    this.#numberHeaderInput.addEventListener("input", this, false);
-    this.#numberHeaderInput.addEventListener("change", this, false);
-  }
-  onNumberHeaderInputChange() {
-    if (this.#renderer.numberHeader[0] !== this.#numberHeaderInput.value) {
-      this.#renderer.numberHeader[0] = this.#numberHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #numberHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set numberHeaderI18n1Input(input) {
-    this.#numberHeaderI18n1Input = input;
-    this.#numberHeaderI18n1Input.value = this.#renderer.numberHeader[1];
-    this.#numberHeaderI18n1Input.setAttribute("placeholder", this.#renderer.numberHeader[1]);
-    this.#numberHeaderI18n1Input.addEventListener("input", this, false);
-    this.#numberHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onNumberHeaderI18n1InputChange() {
-    if (this.#renderer.numberHeader[1] !== this.#numberHeaderI18n1Input.value) {
-      this.#renderer.numberHeader[1] = this.#numberHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #numberHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set numberHeaderI18n2Input(input) {
-    this.#numberHeaderI18n2Input = input;
-    this.#numberHeaderI18n2Input.value = this.#renderer.numberHeader[2];
-    this.#numberHeaderI18n2Input.setAttribute("placeholder", this.#renderer.numberHeader[2]);
-    this.#numberHeaderI18n2Input.addEventListener("input", this, false);
-    this.#numberHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onNumberHeaderI18n2InputChange() {
-    if (this.#renderer.numberHeader[2] !== this.#numberHeaderI18n2Input.value) {
-      this.#renderer.numberHeader[2] = this.#numberHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #typeHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set typeHeaderInput(input) {
-    this.#typeHeaderInput = input;
-    this.#typeHeaderInput.value = this.#renderer.typeHeader[0];
-    this.#typeHeaderInput.setAttribute("placeholder", this.#renderer.typeHeader[0]);
-    this.#typeHeaderInput.addEventListener("input", this, false);
-    this.#typeHeaderInput.addEventListener("change", this, false);
-  }
-  onTypeHeaderInputChange() {
-    if (this.#renderer.typeHeader[0] !== this.#typeHeaderInput.value) {
-      this.#renderer.typeHeader[0] = this.#typeHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #typeHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set typeHeaderI18n1Input(input) {
-    this.#typeHeaderI18n1Input = input;
-    this.#typeHeaderI18n1Input.value = this.#renderer.typeHeader[1];
-    this.#typeHeaderI18n1Input.setAttribute("placeholder", this.#renderer.typeHeader[1]);
-    this.#typeHeaderI18n1Input.addEventListener("input", this, false);
-    this.#typeHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onTypeHeaderI18n1InputChange() {
-    if (this.#renderer.typeHeader[1] !== this.#typeHeaderI18n1Input.value) {
-      this.#renderer.typeHeader[1] = this.#typeHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #typeHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set typeHeaderI18n2Input(input) {
-    this.#typeHeaderI18n2Input = input;
-    this.#typeHeaderI18n2Input.value = this.#renderer.typeHeader[2];
-    this.#typeHeaderI18n2Input.setAttribute("placeholder", this.#renderer.typeHeader[2]);
-    this.#typeHeaderI18n2Input.addEventListener("input", this, false);
-    this.#typeHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onTypeHeaderI18n2InputChange() {
-    if (this.#renderer.typeHeader[2] !== this.#typeHeaderI18n2Input.value) {
-      this.#renderer.typeHeader[2] = this.#typeHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #additionalInfoHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoHeaderInput(input) {
-    this.#additionalInfoHeaderInput = input;
-    this.#additionalInfoHeaderInput.value = this.#renderer.additionalInfoHeader[0];
-    this.#additionalInfoHeaderInput.setAttribute("placeholder", this.#renderer.additionalInfoHeader[0]);
-    this.#additionalInfoHeaderInput.addEventListener("input", this, false);
-    this.#additionalInfoHeaderInput.addEventListener("change", this, false);
-  }
-  onAdditionalInfoHeaderInputChange() {
-    if (this.#renderer.additionalInfoHeader[0] !== this.#additionalInfoHeaderInput.value) {
-      this.#renderer.additionalInfoHeader[0] = this.#additionalInfoHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #additionalInfoHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoHeaderI18n1Input(input) {
-    this.#additionalInfoHeaderI18n1Input = input;
-    this.#additionalInfoHeaderI18n1Input.value = this.#renderer.additionalInfoHeader[1];
-    this.#additionalInfoHeaderI18n1Input.setAttribute("placeholder", this.#renderer.additionalInfoHeader[1]);
-    this.#additionalInfoHeaderI18n1Input.addEventListener("input", this, false);
-    this.#additionalInfoHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onAdditionalInfoHeaderI18n1InputChange() {
-    if (this.#renderer.additionalInfoHeader[1] !== this.#additionalInfoHeaderI18n1Input.value) {
-      this.#renderer.additionalInfoHeader[1] = this.#additionalInfoHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #additionalInfoHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoHeaderI18n2Input(input) {
-    this.#additionalInfoHeaderI18n2Input = input;
-    this.#additionalInfoHeaderI18n2Input.value = this.#renderer.additionalInfoHeader[2];
-    this.#additionalInfoHeaderI18n2Input.setAttribute("placeholder", this.#renderer.additionalInfoHeader[2]);
-    this.#additionalInfoHeaderI18n2Input.addEventListener("input", this, false);
-    this.#additionalInfoHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onAdditionalInfoHeaderI18n2InputChange() {
-    if (this.#renderer.additionalInfoHeader[2] !== this.#additionalInfoHeaderI18n2Input.value) {
-      this.#renderer.additionalInfoHeader[2] = this.#additionalInfoHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #nameHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set nameHeaderInput(input) {
-    this.#nameHeaderInput = input;
-    this.#nameHeaderInput.value = this.#renderer.nameHeader[0];
-    this.#nameHeaderInput.setAttribute("placeholder", this.#renderer.nameHeader[0]);
-    this.#nameHeaderInput.addEventListener("input", this, false);
-    this.#nameHeaderInput.addEventListener("change", this, false);
-  }
-  onNameHeaderInputChange() {
-    if (this.#renderer.nameHeader[0] !== this.#nameHeaderInput.value) {
-      this.#renderer.nameHeader[0] = this.#nameHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #nameHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set nameHeaderI18n1Input(input) {
-    this.#nameHeaderI18n1Input = input;
-    this.#nameHeaderI18n1Input.value = this.#renderer.nameHeader[1];
-    this.#nameHeaderI18n1Input.setAttribute("placeholder", this.#renderer.nameHeader[1]);
-    this.#nameHeaderI18n1Input.addEventListener("input", this, false);
-    this.#nameHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onNameHeaderI18n1InputChange() {
-    if (this.#renderer.nameHeader[1] !== this.#nameHeaderI18n1Input.value) {
-      this.#renderer.nameHeader[1] = this.#nameHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #nameHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set nameHeaderI18n2Input(input) {
-    this.#nameHeaderI18n2Input = input;
-    this.#nameHeaderI18n2Input.value = this.#renderer.nameHeader[2];
-    this.#nameHeaderI18n2Input.setAttribute("placeholder", this.#renderer.nameHeader[2]);
-    this.#nameHeaderI18n2Input.addEventListener("input", this, false);
-    this.#nameHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onNameHeaderI18n2InputChange() {
-    if (this.#renderer.nameHeader[2] !== this.#nameHeaderI18n2Input.value) {
-      this.#renderer.nameHeader[2] = this.#nameHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #passportNumberHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set passportNumberHeaderInput(input) {
-    this.#passportNumberHeaderInput = input;
-    this.#passportNumberHeaderInput.value = this.#renderer.passportNumberHeader[0];
-    this.#passportNumberHeaderInput.setAttribute("placeholder", this.#renderer.passportNumberHeader[0]);
-    this.#passportNumberHeaderInput.addEventListener("input", this, false);
-    this.#passportNumberHeaderInput.addEventListener("change", this, false);
-  }
-  onPassportNumberHeaderInputChange() {
-    if (this.#renderer.passportNumberHeader[0] !== this.#passportNumberHeaderInput.value) {
-      this.#renderer.passportNumberHeader[0] = this.#passportNumberHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #passportNumberHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set passportNumberHeaderI18n1Input(input) {
-    this.#passportNumberHeaderI18n1Input = input;
-    this.#passportNumberHeaderI18n1Input.value = this.#renderer.passportNumberHeader[1];
-    this.#passportNumberHeaderI18n1Input.setAttribute("placeholder", this.#renderer.passportNumberHeader[1]);
-    this.#passportNumberHeaderI18n1Input.addEventListener("input", this, false);
-    this.#passportNumberHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onPassportNumberHeaderI18n1InputChange() {
-    if (this.#renderer.passportNumberHeader[1] !== this.#passportNumberHeaderI18n1Input.value) {
-      this.#renderer.passportNumberHeader[1] = this.#passportNumberHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #passportNumberHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set passportNumberHeaderI18n2Input(input) {
-    this.#passportNumberHeaderI18n2Input = input;
-    this.#passportNumberHeaderI18n2Input.value = this.#renderer.passportNumberHeader[2];
-    this.#passportNumberHeaderI18n2Input.setAttribute("placeholder", this.#renderer.passportNumberHeader[2]);
-    this.#passportNumberHeaderI18n2Input.addEventListener("input", this, false);
-    this.#passportNumberHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onPassportNumberHeaderI18n2InputChange() {
-    if (this.#renderer.passportNumberHeader[2] !== this.#passportNumberHeaderI18n2Input.value) {
-      this.#renderer.passportNumberHeader[2] = this.#passportNumberHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #nationalityHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set nationalityHeaderInput(input) {
-    this.#nationalityHeaderInput = input;
-    this.#nationalityHeaderInput.value = this.#renderer.nationalityHeader[0];
-    this.#nationalityHeaderInput.setAttribute("placeholder", this.#renderer.nationalityHeader[0]);
-    this.#nationalityHeaderInput.addEventListener("input", this, false);
-    this.#nationalityHeaderInput.addEventListener("change", this, false);
-  }
-  onNationalityHeaderInputChange() {
-    if (this.#renderer.nationalityHeader[0] !== this.#nationalityHeaderInput.value) {
-      this.#renderer.nationalityHeader[0] = this.#nationalityHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #nationalityHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set nationalityHeaderI18n1Input(input) {
-    this.#nationalityHeaderI18n1Input = input;
-    this.#nationalityHeaderI18n1Input.value = this.#renderer.nationalityHeader[1];
-    this.#nationalityHeaderI18n1Input.setAttribute("placeholder", this.#renderer.nationalityHeader[1]);
-    this.#nationalityHeaderI18n1Input.addEventListener("input", this, false);
-    this.#nationalityHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onNationalityHeaderI18n1InputChange() {
-    if (this.#renderer.nationalityHeader[1] !== this.#nationalityHeaderI18n1Input.value) {
-      this.#renderer.nationalityHeader[1] = this.#nationalityHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #nationalityHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set nationalityHeaderI18n2Input(input) {
-    this.#nationalityHeaderI18n2Input = input;
-    this.#nationalityHeaderI18n2Input.value = this.#renderer.nationalityHeader[2];
-    this.#nationalityHeaderI18n2Input.setAttribute("placeholder", this.#renderer.nationalityHeader[2]);
-    this.#nationalityHeaderI18n2Input.addEventListener("input", this, false);
-    this.#nationalityHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onNationalityHeaderI18n2InputChange() {
-    if (this.#renderer.nationalityHeader[2] !== this.#nationalityHeaderI18n2Input.value) {
-      this.#renderer.nationalityHeader[2] = this.#nationalityHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfBirthHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set dateOfBirthHeaderInput(input) {
-    this.#dateOfBirthHeaderInput = input;
-    this.#dateOfBirthHeaderInput.value = this.#renderer.dateOfBirthHeader[0];
-    this.#dateOfBirthHeaderInput.setAttribute("placeholder", this.#renderer.dateOfBirthHeader[0]);
-    this.#dateOfBirthHeaderInput.addEventListener("input", this, false);
-    this.#dateOfBirthHeaderInput.addEventListener("change", this, false);
-  }
-  onDateOfBirthHeaderInputChange() {
-    if (this.#renderer.dateOfBirthHeader[0] !== this.#dateOfBirthHeaderInput.value) {
-      this.#renderer.dateOfBirthHeader[0] = this.#dateOfBirthHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfBirthHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set dateOfBirthHeaderI18n1Input(input) {
-    this.#dateOfBirthHeaderI18n1Input = input;
-    this.#dateOfBirthHeaderI18n1Input.value = this.#renderer.dateOfBirthHeader[1];
-    this.#dateOfBirthHeaderI18n1Input.setAttribute("placeholder", this.#renderer.dateOfBirthHeader[1]);
-    this.#dateOfBirthHeaderI18n1Input.addEventListener("input", this, false);
-    this.#dateOfBirthHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onDateOfBirthHeaderI18n1InputChange() {
-    if (this.#renderer.dateOfBirthHeader[1] !== this.#dateOfBirthHeaderI18n1Input.value) {
-      this.#renderer.dateOfBirthHeader[1] = this.#dateOfBirthHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #dateOfBirthHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set dateOfBirthHeaderI18n2Input(input) {
-    this.#dateOfBirthHeaderI18n2Input = input;
-    this.#dateOfBirthHeaderI18n2Input.value = this.#renderer.dateOfBirthHeader[2];
-    this.#dateOfBirthHeaderI18n2Input.setAttribute("placeholder", this.#renderer.dateOfBirthHeader[2]);
-    this.#dateOfBirthHeaderI18n2Input.addEventListener("input", this, false);
-    this.#dateOfBirthHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onDateOfBirthHeaderI18n2InputChange() {
-    if (this.#renderer.dateOfBirthHeader[2] !== this.#dateOfBirthHeaderI18n2Input.value) {
-      this.#renderer.dateOfBirthHeader[2] = this.#dateOfBirthHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #genderHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set genderHeaderInput(input) {
-    this.#genderHeaderInput = input;
-    this.#genderHeaderInput.value = this.#renderer.genderHeader[0];
-    this.#genderHeaderInput.setAttribute("placeholder", this.#renderer.genderHeader[0]);
-    this.#genderHeaderInput.addEventListener("input", this, false);
-    this.#genderHeaderInput.addEventListener("change", this, false);
-  }
-  onGenderHeaderInputChange() {
-    if (this.#renderer.genderHeader[0] !== this.#genderHeaderInput.value) {
-      this.#renderer.genderHeader[0] = this.#genderHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #genderHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set genderHeaderI18n1Input(input) {
-    this.#genderHeaderI18n1Input = input;
-    this.#genderHeaderI18n1Input.value = this.#renderer.genderHeader[1];
-    this.#genderHeaderI18n1Input.setAttribute("placeholder", this.#renderer.genderHeader[1]);
-    this.#genderHeaderI18n1Input.addEventListener("input", this, false);
-    this.#genderHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onGenderHeaderI18n1InputChange() {
-    if (this.#renderer.genderHeader[1] !== this.#genderHeaderI18n1Input.value) {
-      this.#renderer.genderHeader[1] = this.#genderHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #genderHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set genderHeaderI18n2Input(input) {
-    this.#genderHeaderI18n2Input = input;
-    this.#genderHeaderI18n2Input.value = this.#renderer.genderHeader[2];
-    this.#genderHeaderI18n2Input.setAttribute("placeholder", this.#renderer.genderHeader[2]);
-    this.#genderHeaderI18n2Input.addEventListener("input", this, false);
-    this.#genderHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onGenderHeaderI18n2InputChange() {
-    if (this.#renderer.genderHeader[2] !== this.#genderHeaderI18n2Input.value) {
-      this.#renderer.genderHeader[2] = this.#genderHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
   /** @type { HTMLInputElement } */ #showGuidesInput;
   /** @param { HTMLInputElement } input */
   set showGuidesInput(input) {
@@ -1331,7 +476,6 @@ class EventsSealViewModel {
     await this.#renderer.loadCanvasFonts();
     this.cardFrontElement = this.#document.getElementById("cardFront");
     this.#frontFallback = this.#document.getElementById("offscreen-front");
-    this.#signatureFallback = this.#document.getElementById("offscreen-signature");
     await this.#generateCard();
     const inputFields = [
       "typeCode",
@@ -1342,71 +486,21 @@ class EventsSealViewModel {
       "numberOfEntries",
       "number",
       "type",
-      "additionalInfo",
       "fullName",
       "passportNumber",
-      "usePassportInMRZ",
       "nationalityCode",
       "dateOfBirth",
       "genderMarker",
-      "url",
-      "mrzInQRCode",
       "optionalData",
-      "picture",
-      "signature",
-      "signatureFile",
-      "signatureText",
       "headerColor",
       "textColor",
-      "mrzColor",
       "frontBackgroundColor",
-      "mrzBackgroundColor",
-      "logoUnderlayColor",
-      "logoUnderlayAlpha",
       "frontBackgroundImage",
       "frontBackgroundImageFile",
-      "mrzBackgroundImage",
-      "mrzBackgroundImageFile",
       "logo",
       "logoFile",
       "fullAuthority",
       "fullDocumentName",
-      "placeOfIssueHeader",
-      "placeOfIssueHeaderI18n1",
-      "placeOfIssueHeaderI18n2",
-      "validFromHeader",
-      "validFromHeaderI18n1",
-      "validFromHeaderI18n2",
-      "validThruHeader",
-      "validThruHeaderI18n1",
-      "validThruHeaderI18n2",
-      "numberOfEntriesHeader",
-      "numberOfEntriesHeaderI18n1",
-      "numberOfEntriesHeaderI18n2",
-      "numberHeader",
-      "numberHeaderI18n1",
-      "numberHeaderI18n2",
-      "typeHeader",
-      "typeHeaderI18n1",
-      "typeHeaderI18n2",
-      "additionalInfoHeader",
-      "additionalInfoHeaderI18n1",
-      "additionalInfoHeaderI18n2",
-      "nameHeader",
-      "nameHeaderI18n1",
-      "nameHeaderI18n2",
-      "passportNumberHeader",
-      "passportNumberHeaderI18n1",
-      "passportNumberHeaderI18n2",
-      "nationalityHeader",
-      "nationalityHeaderI18n1",
-      "nationalityHeaderI18n2",
-      "dateOfBirthHeader",
-      "dateOfBirthHeaderI18n1",
-      "dateOfBirthHeaderI18n2",
-      "genderHeader",
-      "genderHeaderI18n1",
-      "genderHeaderI18n2",
       "showGuides"
     ];
     for (const elementID of inputFields) {
@@ -1424,8 +518,8 @@ class EventsSealViewModel {
   async #generateCard() {
     await this.#signSeal();
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
-    this.#cardFrontElement.width = 1492;
-    this.#cardFrontElement.height = 1055;
+    this.#cardFrontElement.width = 1055;
+    this.#cardFrontElement.height = 1492;
     const ctx = this.#cardFrontElement.getContext("2d");
     const pageSpecimen = await new Promise((resolve, reject) => {
       const imgNode = new Image();
@@ -1436,14 +530,16 @@ class EventsSealViewModel {
       );
       imgNode.src = "/specimens/blank-page.png";
     });
+    ctx.translate(0, 1492);
+    ctx.rotate(270 * Math.PI / 180);
     ctx.drawImage(pageSpecimen, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "#999999";
-    ctx.fillRect(0, 1055 - EventsSealRenderer.cutCardArea[1] - 1,
-      EventsSealRenderer.cutCardArea[0] + 1, EventsSealRenderer.cutCardArea[1] + 1);
+    ctx.fillRect(31, 237, 481, 597);
+    // Draw seal sticker using 32, 238, 479, 595
     ctx.drawImage(
       canvas, 16, 16, EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1],
-      0, 1055 - EventsSealRenderer.cutCardArea[1],
-      EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1]
+      32, 238, EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1]
     );
     const downloadFront = this.#document.getElementById("downloadFront");
     let blob;
