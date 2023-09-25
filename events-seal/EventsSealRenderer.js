@@ -5,6 +5,7 @@
 
 import { EventsMRVB } from "/modules/EventsMRVB.js";
 import { QRCodeData } from "/modules/QRCodeData.js";
+import * as b45 from "/modules/base45-ts/base45.js";
 
 class EventsSealRenderer {
   #qrCode = new QRCodeData({
@@ -61,7 +62,7 @@ class EventsSealRenderer {
         this.constructor.#cardArea[1]
       );
     }
-    this.#qrCode.qrCode = window.btoa(String.fromCharCode.apply(null, model.signedSeal));
+    this.#qrCode.qrCode = this.#qrCode.qrCode = `VDS:/${b45.encode(model.signedSeal)}`;
     const images = await Promise.all([
       this.constructor.#generateCanvasImg(this.logo),
       this.constructor.#generateCanvasImg(this.#qrCode.qrCode)
