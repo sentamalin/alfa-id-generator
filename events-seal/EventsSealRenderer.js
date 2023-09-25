@@ -4,21 +4,14 @@
  */
 
 import { EventsMRVB } from "/modules/EventsMRVB.js";
-import { QRCodeData } from "/modules/QRCodeData.js";
 import * as b45 from "/modules/base45-ts/base45.js";
+import * as qrLite from "/modules/qrcode-lite/qrcode.mjs";
 
 class EventsSealRenderer {
-  #qrCode = new QRCodeData({
-    generatorOpt: {
-      width: this.constructor.#qrCodeArea,
-      height: this.constructor.#qrCodeArea,
-      colorDark: "#000000ff",
-      colorLight: "#00000000",
-      correctLevel: QRCode.CorrectLevel.L
-    }
-  });
-
   // Customizable Presentation Data
+  barcodeDarkColor = "#000000ff";
+  barcodeLightColor = "#00000000";
+  barcodeErrorCorrection = "L";
   headerColor; // Defines background color around picture and header text color
   textColor; // Defines data text color
   frontBackgroundColor; // Defines a solid color when no front image is used
@@ -62,10 +55,28 @@ class EventsSealRenderer {
         this.constructor.#cardArea[1]
       );
     }
-    this.#qrCode.qrCode = this.#qrCode.qrCode = `VDS:/${b45.encode(model.signedSeal)}`;
+    const sealDataB45 = `VDS:/${b45.encode(model.signedSeal)}`;
+    console.log(`Current barcode contents: "${sealDataB45}".`);
     const images = await Promise.all([
       this.constructor.#generateCanvasImg(this.logo),
-      this.constructor.#generateCanvasImg(this.#qrCode.qrCode)
+      /*qrLite.toCanvas([
+        { data: sealDataB45, mode: "alphanumeric" }
+      ],{
+        errorCorrectionLevel: "L",
+        margin: 0,
+        width: this.constructor.#qrCodeArea,
+        color: {
+          dark: this.barcodeDarkColor,
+          light: this.barcodeLightColor
+        }
+      })*/
+      dataMatrix(sealDataB45, {
+        paddingwidth: 0,
+        paddingheight: 0,
+        scale: this.constructor.#qrCodeArea / 2.835,
+        barcolor: "000000",
+        backgroundcolor: "FFFFFF"
+      })
     ]);
     this.constructor.#fitImgInArea(
       images[0], ctx,
@@ -237,7 +248,7 @@ class EventsSealRenderer {
     this.#cardArea[0] - (this.#safe * 2) - this.#logoArea - 24,
     this.#cardArea[1] - this.#safe - this.#qrCodeArea - 24
   ]; }
-  static #qrCodeArea = 416;
+  static #qrCodeArea = 256;
 
   // Methods used in card generation (static)
   static #generateCanvasImg(img) {
