@@ -252,7 +252,7 @@ class EventsMRVB {
     return this.#seal.features.get(0x07);
   }
   /**
-   * @param { number [] } value */
+   * @param { number[] } value */
   set additionalFeature(value) {
     this.#seal.features.set(0x07, value);
   }
@@ -291,6 +291,7 @@ class EventsMRVB {
       if (opt.signedSeal) { this.signedSeal = opt.signedSeal; }
       if (opt.durationOfStay) { this.durationOfStay = opt.durationOfStay; }
       if (opt.visaTypeCode) { this.visaTypeCode = opt.visaTypeCode; }
+      if (opt.additionalFeature) { this.additionalFeature = opt.additionalFeature; }
     }
   }
 }
