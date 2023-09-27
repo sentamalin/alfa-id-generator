@@ -134,12 +134,14 @@ class EventsMRVA {
   // Digital Seal properties
   get identifier() { return this.#seal.identifier; }
   set identifier(value) { this.#seal.identifier = value; }
-  get certReference() { this.#seal.certReference; }
+  get certReference() { return this.#seal.certReference; }
   set certReference(value) { this.#seal.certReference = value; }
   get issueDate() { return this.#seal.issueDate; }
   set issueDate(value) { this.#seal.issueDate = value; }
   get sealSignatureDate() { return this.#seal.signatureDate; }
   set sealSignatureDate(value) { this.#seal.signatureDate = value; }
+  get sealSignature() { return this.#seal.signature; }
+  set sealSignature(value) { this.#seal.signature = value; }
   get headerZone() { return this.#seal.headerZone; }
   set headerZone(value) {
     this.#seal.headerZone = value;
