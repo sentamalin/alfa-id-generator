@@ -76,10 +76,7 @@ class EventsPassport {
   }
   get optionalData() { return this.#document.optionalData; }
   get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
-  set optionalData(value) {
-    this.#document.optionalData = value;
-    this.#setDigitalSealMRZ();
-  }
+  set optionalData(value) { this.#document.optionalData = value; }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
   get signature() { return this.#document.signature; }
