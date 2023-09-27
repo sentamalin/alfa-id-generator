@@ -136,10 +136,10 @@ class EventsMRVB {
   set identifier(value) { this.#seal.identifier = value; }
   get certReference() { return this.#seal.certReference; }
   set certReference(value) { this.#seal.certReference = value; }
-  get issueDate() { return this.#seal.issueDate.toISOString().slice(0,10); }
-  set issueDate(value) { this.#seal.issueDate = `${value}T00:00:00`; }
-  get sealSignatureDate() { return this.#seal.signatureDate.toISOString().slice(0,10); }
-  set sealSignatureDate(value) { this.#seal.signatureDate = `${value}T00:00:00`; }
+  get issueDate() { return this.#seal.issueDate; }
+  set issueDate(value) { this.#seal.issueDate = value; }
+  get sealSignatureDate() { return this.#seal.signatureDate; }
+  set sealSignatureDate(value) { this.#seal.signatureDate = value; }
   get sealSignature() { return this.#seal.signature; }
   set sealSignature(value) { this.#seal.signature = value; }
   get headerZone() { return this.#seal.headerZone; }

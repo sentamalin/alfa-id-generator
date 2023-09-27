@@ -35,13 +35,13 @@ class DigitalSeal {
   certReference;
   /** @type { Date } */
   #issueDate;
-  get issueDate() { return this.#issueDate; }
-  /** @param { string | Date } value */
+  get issueDate() { return this.#issueDate.toISOString().slice(0,10); }
+  /** @param { string } value */
   set issueDate(value) {
-    const date = new Date(value);
-    if (date.valueOf() === NaN) {
+    const date = new Date(`${value}T00:00:00`);
+    if (date.toString() === "Invalid Date") {
       throw new TypeError(
-        `Value '${value}' is not a valid date string or Date object.`
+        `Value '${value}' is not a valid date string.`
       );
     } else {
       this.#issueDate = date;
@@ -49,12 +49,12 @@ class DigitalSeal {
   }
   /** @type { Date } */
   #signatureDate;
-  get signatureDate() { return this.#signatureDate; }
+  get signatureDate() { return this.#signatureDate.toISOString().slice(0,10); }
   set signatureDate(value) {
-    const date = new Date(value);
-    if (date.valueOf() === NaN) {
+    const date = new Date(`${value}T00:00:00`);
+    if (date.toString() === "Invalid Date") {
       throw new TypeError(
-        `Value '${value}' is not a valid date string or Date object.`
+        `Value '${value}' is not a valid date string.`
       );
     } else {
       this.#signatureDate = date;
@@ -686,11 +686,12 @@ class DigitalSeal {
     }
     return output;
   }
-  /** @param { Date } date */
+  /** @param { string } date */
   static dateToBytes(date) {
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const year = date.getFullYear();
+    const dateFromString = new Date(`${date}T00:00:00`);
+    const month = dateFromString.getMonth() + 1;
+    const day = dateFromString.getDate();
+    const year = dateFromString.getFullYear();
     const dateInteger = `${month.toString().padStart(2, "0")}${day.toString().padStart(2, "0")}${year}`;
     const base2 = parseInt(dateInteger, 10).toString(2).padStart(24, "0");
     const output = [], b = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -715,7 +716,8 @@ class DigitalSeal {
     const month = dateIntegerString.slice(0, 2);
     const day = dateIntegerString.slice(2, 4);
     const year = dateIntegerString.slice(4);
-    return new Date(`${year}-${month}-${day}T00:00:00`);
+    const outputAsDate = new Date(`${year}-${month}-${day}T00:00:00`);
+    return outputAsDate.toISOString().slice(0,10);
   }
   /** @param { number } length */
   static lengthToDERLength(length) {
