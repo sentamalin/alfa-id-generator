@@ -196,6 +196,85 @@ class IDBadgeViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #issueDateInput;
+  /** @param { HTMLInputElement } input */
+  set issueDateInput(input) {
+    this.#issueDateInput = input;
+    this.#issueDateInput.value = this.#model.issueDate;
+    this.#issueDateInput.addEventListener("change", this, false);
+  }
+  onIssueDateInputChange() {
+    this.#model.issueDate = this.#issueDateInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #identifierInput;
+  /** @param { HTMLInputElement } input */
+  set identifierInput(input) {
+    this.#identifierInput = input;
+    this.#identifierInput.setAttribute("minlength", 4);
+    this.#identifierInput.setAttribute("maxlength", 4);
+    this.#identifierInput.value = this.#model.identifier;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.addEventListener("input", this, false);
+    this.#identifierInput.addEventListener("change", this, false);
+  }
+  onIdentifierInputChange() {
+    if (this.#identifierInput.checkValidity() &&
+    this.#model.identifier !== this.#identifierInput.value) {
+      this.#model.identifier = this.#identifierInput.value;
+      this.#generateCard();
+    }
+  }
+  /** @type { HTMLInputElement } */ #certReferenceInput;
+  /** @param { HTMLInputElement } input */
+  set certReferenceInput(input) {
+    this.#certReferenceInput = input;
+    this.#certReferenceInput.setAttribute("minlength", 1);
+    this.#certReferenceInput.value = this.#model.certReference;
+    this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
+    this.#certReferenceInput.addEventListener("input", this, false);
+    this.#certReferenceInput.addEventListener("change", this, false);
+  }
+  onCertReferenceInputChange() {
+    if (this.#certReferenceInput.checkValidity() &&
+    this.#model.certReference !== this.#certReferenceInput.value) {
+      this.#model.certReference = this.#certReferenceInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #sealSignatureDateInput;
+  /** @param { HTMLInputElement } input */
+  set sealSignatureDateInput(input) {
+    this.#sealSignatureDateInput = input;
+    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.addEventListener("change", this, false);
+  }
+  onSealSignatureDateInputChange() {
+    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #employerCodeInput;
+  /** @param { HTMLInputElement } input */
+  set employerCodeInput(input) {
+    this.#employerCodeInput = input;
+    this.#employerCodeInput.setAttribute("minlength", 1);
+    this.#employerCodeInput.setAttribute("maxlength", 8);
+    this.#employerCodeInput.value = this.#model.employerCode;
+    this.#employerCodeInput.setAttribute("placeholder", this.#model.employerCode);
+    this.#employerCodeInput.addEventListener("input", this, false);
+    this.#employerCodeInput.addEventListener("change", this, false);
+  }
+  onEmployerCodeInputChange() {
+    if (this.#employerCodeInput.checkValidity() &&
+    this.#model.employerCode !== this.#employerCodeInput.value) {
+      this.#model.employerCode = this.#employerCodeInput.value;
+      this.#generateCard();
+    }
+  }
+
   /** @type { HTMLInputElement } */ #employerInput;
   /** @param { HTMLInputElement } input */
   set employerInput(input) {
@@ -960,7 +1039,12 @@ class IDBadgeViewModel {
       "additionalElementsHeader",
       "additionalElementsHeaderI18n1",
       "additionalElementsHeaderI18n2",
-      "showGuides"
+      "showGuides",
+      "identifier",
+      "certReference",
+      "issueDate",
+      "sealSignatureDate",
+      "employerCode"
     ];
     for (const elementID of inputFields) {
       this[`${elementID}Input`] = this.#document.getElementById(elementID);

@@ -343,6 +343,73 @@ class EventsPassportViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #identifierInput;
+  /** @param { HTMLInputElement } input */
+  set identifierInput(input) {
+    this.#identifierInput = input;
+    this.#identifierInput.setAttribute("minlength", 4);
+    this.#identifierInput.setAttribute("maxlength", 4);
+    this.#identifierInput.value = this.#model.identifier;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.addEventListener("input", this, false);
+    this.#identifierInput.addEventListener("change", this, false);
+  }
+  onIdentifierInputChange() {
+    if (this.#identifierInput.checkValidity() &&
+    this.#model.identifier !== this.#identifierInput.value) {
+      this.#model.identifier = this.#identifierInput.value;
+      this.#generateCard();
+    }
+  }
+  /** @type { HTMLInputElement } */ #certReferenceInput;
+  /** @param { HTMLInputElement } input */
+  set certReferenceInput(input) {
+    this.#certReferenceInput = input;
+    this.#certReferenceInput.setAttribute("minlength", 1);
+    this.#certReferenceInput.value = this.#model.certReference;
+    this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
+    this.#certReferenceInput.addEventListener("input", this, false);
+    this.#certReferenceInput.addEventListener("change", this, false);
+  }
+  onCertReferenceInputChange() {
+    if (this.#certReferenceInput.checkValidity() &&
+    this.#model.certReference !== this.#certReferenceInput.value) {
+      this.#model.certReference = this.#certReferenceInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #sealSignatureDateInput;
+  /** @param { HTMLInputElement } input */
+  set sealSignatureDateInput(input) {
+    this.#sealSignatureDateInput = input;
+    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.addEventListener("change", this, false);
+  }
+  onSealSignatureDateInputChange() {
+    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #subauthorityCodeInput;
+  /** @param { HTMLInputElement } input */
+  set subauthorityCodeInput(input) {
+    this.#subauthorityCodeInput = input;
+    this.#subauthorityCodeInput.setAttribute("minlength", 1);
+    this.#subauthorityCodeInput.setAttribute("maxlength", 8);
+    this.#subauthorityCodeInput.value = this.#model.subauthorityCode;
+    this.#subauthorityCodeInput.setAttribute("placeholder", this.#model.subauthorityCode);
+    this.#subauthorityCodeInput.addEventListener("input", this, false);
+    this.#subauthorityCodeInput.addEventListener("change", this, false);
+  }
+  onSubauthorityCodeInputChange() {
+    if (this.#subauthorityCodeInput.checkValidity() &&
+    this.#model.subauthorityCode !== this.#subauthorityCodeInput.value) {
+      this.#model.subauthorityCode = this.#subauthorityCodeInput.value;
+      this.#generateCard();
+    }
+  }
+
   /** @type { HTMLInputElement } */ #pictureInput;
   /** @param { HTMLInputElement } input */
   set pictureInput(input) {
@@ -1485,7 +1552,11 @@ class EventsPassportViewModel {
       "signatureHeader",
       "signatureHeaderI18n1",
       "signatureHeaderI18n2",
-      "showGuides"
+      "showGuides",
+      "identifier",
+      "certReference",
+      "sealSignatureDate",
+      "subauthorityCode"
     ];
     for (const elementID of inputFields) {
       this[`${elementID}Input`] = this.#document.getElementById(elementID);
