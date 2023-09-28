@@ -206,8 +206,8 @@ class EventsPassport {
       const dayExpiration = sealMRZ.slice(69, 71);
       this.#document.dateOfExpiration = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
     }
-    this.#document.dateOfIssue = this.#seal.issueDate;
-    this.#document.endorsements = DigitalSeal.c40Decode(this.#seal.features.get(0x04));
+    this.#dateOfIssue = new Date(`${this.#seal.issueDate}T00:00:00`);
+    this.#endorsements = DigitalSeal.c40Decode(this.#seal.features.get(0x04));
   }
   get subauthorityCode() {
     let output = "";
