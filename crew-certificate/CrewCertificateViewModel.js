@@ -1492,6 +1492,13 @@ class CrewCertificateViewModel {
   }
 
   // Private methods
+  async #signSeal() {
+    this.#model.sealSignature = [];
+    for (let i = 0; i < 64; i += 1) {
+      this.#model.sealSignature.push(Math.floor(Math.random() * 256));
+    }
+  }
+
   async #generateCardFront() {
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
     this.#cardFrontElement.width = CrewCertificateRenderer.cutCardArea[0];
@@ -1518,6 +1525,7 @@ class CrewCertificateViewModel {
   }
 
   async #generateCardBack() {
+    await this.#signSeal();
     const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
     this.#cardBackElement.width = CrewCertificateRenderer.cutCardArea[0];
     this.#cardBackElement.height = CrewCertificateRenderer.cutCardArea[1];

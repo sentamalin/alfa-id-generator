@@ -1564,7 +1564,15 @@ class EventsPassportViewModel {
   }
 
   // Private methods
+  async #signSeal() {
+    this.#model.sealSignature = [];
+    for (let i = 0; i < 64; i += 1) {
+      this.#model.sealSignature.push(Math.floor(Math.random() * 256));
+    }
+  }
+
   async #generateCardFront() {
+    await this.#signSeal();
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
     this.#cardFrontElement.width = EventsPassportRenderer.cutCardArea[0];
     this.#cardFrontElement.height = EventsPassportRenderer.cutCardArea[1];
