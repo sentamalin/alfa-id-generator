@@ -100,6 +100,8 @@ class EventsMRVBRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
+    console.log("Current Model:");
+    console.log(model);
     let barcode;
     if (this.mrzInQRCode) {
       if (model.usePassportInMRZ) {

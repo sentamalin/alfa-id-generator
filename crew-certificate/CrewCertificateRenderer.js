@@ -402,6 +402,8 @@ class CrewCertificateRenderer {
       this.constructor.#numberUnderlayArea[0],
       this.constructor.#numberUnderlayArea[1]
     );
+    console.log("Current Model:");
+    console.log(model);
     let barcode;
     if (this.mrzInQRCode) {
       barcode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;

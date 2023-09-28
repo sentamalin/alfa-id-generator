@@ -55,8 +55,9 @@ class EventsSealRenderer {
         this.constructor.#cardArea[1]
       );
     }
+    console.log("Current Model:");
+    console.log(model);
     const sealDataB45 = `VDS:/${b45.encode(model.signedSeal)}`;
-    console.log(`Current barcode contents: "${sealDataB45}".`);
     const images = await Promise.all([
       this.constructor.#generateCanvasImg(this.logo),
       qrLite.toCanvas([
