@@ -59,7 +59,7 @@ class EventsSealRenderer {
     console.log(`Current barcode contents: "${sealDataB45}".`);
     const images = await Promise.all([
       this.constructor.#generateCanvasImg(this.logo),
-      /*qrLite.toCanvas([
+      qrLite.toCanvas([
         { data: sealDataB45, mode: "alphanumeric" }
       ],{
         errorCorrectionLevel: "L",
@@ -69,13 +69,6 @@ class EventsSealRenderer {
           dark: this.barcodeDarkColor,
           light: this.barcodeLightColor
         }
-      })*/
-      dataMatrix(sealDataB45, {
-        paddingwidth: 0,
-        paddingheight: 0,
-        scale: this.constructor.#qrCodeArea / 2.835,
-        barcolor: "000000",
-        backgroundcolor: "FFFFFF"
       })
     ]);
     this.constructor.#fitImgInArea(
