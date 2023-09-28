@@ -30,6 +30,7 @@ class CrewLicense {
   get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
+    this.#seal.authority = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }

@@ -30,6 +30,7 @@ class CrewID {
   get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
+    this.#seal.authority = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
