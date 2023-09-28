@@ -315,30 +315,12 @@ class EventsSealRenderer {
     if (opt) {
       if (opt.headerColor) { this.headerColor = opt.headerColor; }
       if (opt.textColor) { this.textColor = opt.textColor; }
-      if (opt.mrzColor) { this.mrzColor = opt.mrzColor; }
       if (opt.frontBackgroundColor) { this.frontBackgroundColor = opt.frontBackgroundColor; }
       if (opt.frontBackgroundImage) { this.frontBackgroundImage = opt.frontBackgroundImage; }
-      if (opt.mrzBackgroundColor) { this.mrzBackgroundColor = opt.mrzBackgroundColor; }
-      if (opt.mrzBackgroundImage) { this.mrzBackgroundImage = opt.mrzBackgroundImage; }
-      if (opt.logoUnderlayColor) { this.logoUnderlayColor = opt.logoUnderlayColor; }
-      if (opt.logoUnderlayAlpha) { this.logoUnderlayAlpha = opt.logoUnderlayAlpha; }
       if (opt.logo) { this.logo = opt.logo; }
-      if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
       if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
       if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }
-      if (opt.placeOfIssueHeader) { this.placeOfIssueHeader = opt.placeOfIssueHeader; }
-      if (opt.validFromHeader) { this.validFromHeader = opt.validFromHeader; }
-      if (opt.validThruHeader) { this.validThruHeader = opt.validThruHeader; }
-      if (opt.numberOfEntriesHeader) { this.numberOfEntriesHeader = opt.numberOfEntriesHeader; }
-      if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
-      if (opt.typeHeader) { this.typeHeader = opt.typeHeader; }
-      if (opt.additionalInfoHeader) { this.additionalInfoHeader = opt.additionalInfoHeader; }
-      if (opt.nameHeader) { this.nameHeader = opt.nameHeader; }
-      if (opt.passportNumberHeader) { this.passportNumberHeader = opt.passportNumberHeader; }
-      if (opt.nationalityHeader) { this.nationalityHeader = opt.nationalityHeader; }
-      if (opt.dateOfBirthHeader) { this.dateOfBirthHeader = opt.dateOfBirthHeader; }
-      if (opt.genderHeader) { this.genderHeader = opt.genderHeader; }
     }
   }
 }
