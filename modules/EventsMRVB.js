@@ -101,9 +101,6 @@ class EventsMRVB {
   get type() { return this.#document.type; }
   get typeVIZ() { return this.#document.typeVIZ; }
   set type(value) { this.#document.type = value; }
-  get additionalInfo() { return this.#document.additionalInfo; }
-  get additionalInfoVIZ() { return this.#document.additionalInfoVIZ; }
-  set additionalInfo(value) { this.#document.additionalInfo = value; }
   get passportNumber() { return this.#document.passportNumber; }
   get passportNumberMRZ() { return this.#document.passportNumberMRZ; }
   get passportNumberVIZ() { return this.#document.passportNumberVIZ; }
@@ -265,7 +262,6 @@ class EventsMRVB {
       if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
       if (opt.number) { this.number = opt.number; }
       if (opt.type) { this.type = opt.type; }
-      if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
       if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }

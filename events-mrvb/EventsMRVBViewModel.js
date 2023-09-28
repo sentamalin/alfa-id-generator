@@ -16,7 +16,6 @@ class EventsMRVBViewModel {
     numberOfEntries: "Multiple",
     number: "960241263",
     type: "Silver Sponsor—Adult",
-    additionalInfo: "XXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     fullName: "Millefeuille, Alfalfa",
     passportNumber: "362142069",
     usePassportInMRZ: true,
@@ -78,11 +77,6 @@ class EventsMRVBViewModel {
       "TYPE",
       "TYPE",
       "TIPO"
-    ],
-    additionalInfoHeader: [
-      "ADDITIONAL INFORMATION",
-      "INFORMATIONS COMPLÉMENTAIRES",
-      "INFORMACIÓN ADICIONAL"
     ],
     nameHeader: [
       "NAME",
@@ -250,25 +244,6 @@ class EventsMRVBViewModel {
   onTypeInputChange() {
     if (this.#model.type !== this.#typeInput.value) {
       this.#model.type = this.#typeInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #additionalInfoInput;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoInput(input) {
-    this.#additionalInfoInput = input;
-    this.#additionalInfoInput.setAttribute("cols", 28);
-    this.#additionalInfoInput.setAttribute("rows", 2);
-    this.#additionalInfoInput.setAttribute("wrap", "off");
-    this.#additionalInfoInput.value = this.#model.additionalInfo;
-    this.#additionalInfoInput.setAttribute("placeholder", this.#model.additionalInfo);
-    this.#additionalInfoInput.addEventListener("input", this, false);
-    this.#additionalInfoInput.addEventListener("change", this, false);
-  }
-  onAdditionalInfoInputChange() {
-    if (this.#model.additionalInfo !== this.#additionalInfoInput.value) {
-      this.#model.additionalInfo = this.#additionalInfoInput.value;
       this.#generateCard();
     }
   }
@@ -1137,54 +1112,6 @@ class EventsMRVBViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #additionalInfoHeaderInput;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoHeaderInput(input) {
-    this.#additionalInfoHeaderInput = input;
-    this.#additionalInfoHeaderInput.value = this.#renderer.additionalInfoHeader[0];
-    this.#additionalInfoHeaderInput.setAttribute("placeholder", this.#renderer.additionalInfoHeader[0]);
-    this.#additionalInfoHeaderInput.addEventListener("input", this, false);
-    this.#additionalInfoHeaderInput.addEventListener("change", this, false);
-  }
-  onAdditionalInfoHeaderInputChange() {
-    if (this.#renderer.additionalInfoHeader[0] !== this.#additionalInfoHeaderInput.value) {
-      this.#renderer.additionalInfoHeader[0] = this.#additionalInfoHeaderInput.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #additionalInfoHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoHeaderI18n1Input(input) {
-    this.#additionalInfoHeaderI18n1Input = input;
-    this.#additionalInfoHeaderI18n1Input.value = this.#renderer.additionalInfoHeader[1];
-    this.#additionalInfoHeaderI18n1Input.setAttribute("placeholder", this.#renderer.additionalInfoHeader[1]);
-    this.#additionalInfoHeaderI18n1Input.addEventListener("input", this, false);
-    this.#additionalInfoHeaderI18n1Input.addEventListener("change", this, false);
-  }
-  onAdditionalInfoHeaderI18n1InputChange() {
-    if (this.#renderer.additionalInfoHeader[1] !== this.#additionalInfoHeaderI18n1Input.value) {
-      this.#renderer.additionalInfoHeader[1] = this.#additionalInfoHeaderI18n1Input.value;
-      this.#generateCard();
-    }
-  }
-
-  /** @type { HTMLInputElement } */ #additionalInfoHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
-  set additionalInfoHeaderI18n2Input(input) {
-    this.#additionalInfoHeaderI18n2Input = input;
-    this.#additionalInfoHeaderI18n2Input.value = this.#renderer.additionalInfoHeader[2];
-    this.#additionalInfoHeaderI18n2Input.setAttribute("placeholder", this.#renderer.additionalInfoHeader[2]);
-    this.#additionalInfoHeaderI18n2Input.addEventListener("input", this, false);
-    this.#additionalInfoHeaderI18n2Input.addEventListener("change", this, false);
-  }
-  onAdditionalInfoHeaderI18n2InputChange() {
-    if (this.#renderer.additionalInfoHeader[2] !== this.#additionalInfoHeaderI18n2Input.value) {
-      this.#renderer.additionalInfoHeader[2] = this.#additionalInfoHeaderI18n2Input.value;
-      this.#generateCard();
-    }
-  }
-
   /** @type { HTMLInputElement } */ #nameHeaderInput;
   /** @param { HTMLInputElement } input */
   set nameHeaderInput(input) {
@@ -1468,7 +1395,6 @@ class EventsMRVBViewModel {
       "numberOfEntries",
       "number",
       "type",
-      "additionalInfo",
       "fullName",
       "passportNumber",
       "usePassportInMRZ",
@@ -1514,9 +1440,6 @@ class EventsMRVBViewModel {
       "typeHeader",
       "typeHeaderI18n1",
       "typeHeaderI18n2",
-      "additionalInfoHeader",
-      "additionalInfoHeaderI18n1",
-      "additionalInfoHeaderI18n2",
       "nameHeader",
       "nameHeaderI18n1",
       "nameHeaderI18n2",

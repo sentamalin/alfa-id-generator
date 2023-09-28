@@ -34,7 +34,6 @@ class EventsMRVBRenderer {
   numberOfEntriesHeader;
   numberHeader;
   typeHeader;
-  additionalInfoHeader;
   nameHeader;
   passportNumberHeader;
   nationalityHeader;
@@ -227,11 +226,6 @@ class EventsMRVBRenderer {
       this.constructor.#documentY[4]
     );
     ctx.fillText(
-      this.additionalInfoHeader[0],
-      this.constructor.#documentX[2],
-      this.constructor.#documentY[6]
-    );
-    ctx.fillText(
       this.nameHeader[0],
       this.constructor.#passportX[0],
       this.constructor.#passportY[0]
@@ -268,8 +262,6 @@ class EventsMRVBRenderer {
       ctx.measureText(this.numberHeader[0]).width;
     const typeWidth = this.constructor.#documentX[2] +
       ctx.measureText(this.typeHeader[0]).width;
-    const additionalInfoWidth = this.constructor.#documentX[2] +
-      ctx.measureText(this.additionalInfoHeader[0]).width;
     const nameWidth = this.constructor.#passportX[0] +
       ctx.measureText(this.nameHeader[0]).width;
     const passportNumberWidth = this.constructor.#passportX[0] +
@@ -351,21 +343,6 @@ class EventsMRVBRenderer {
       `/ ${this.typeHeader[1]}/ ${this.typeHeader[2]}`,
       typeWidth,
       this.constructor.#documentY[4]
-    );
-    ctx.fillText(
-      "/",
-      additionalInfoWidth,
-      this.constructor.#documentY[6]
-    );
-    ctx.fillText(
-      `${this.additionalInfoHeader[1]}/`,
-      this.constructor.#documentX[2],
-      this.constructor.#documentY[7]
-    );
-    ctx.fillText(
-      this.additionalInfoHeader[2],
-      this.constructor.#documentX[2],
-      this.constructor.#documentY[8]
     );
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
@@ -455,14 +432,6 @@ class EventsMRVBRenderer {
       this.constructor.#documentX[2],
       this.constructor.#documentY[5]
     );
-    const splitString = model.additionalInfoVIZ.split(/\r?\n/);
-    for (let i = 0; i < splitString.length; i += 1) {
-      ctx.fillText(
-        splitString[i],
-        this.constructor.#documentX[2],
-        this.constructor.#documentY[9] + (i * 30)
-      );
-    }
     ctx.fillText(
       model.fullNameVIZ,
       this.constructor.#passportX[0],
@@ -806,7 +775,6 @@ class EventsMRVBRenderer {
       if (opt.numberOfEntriesHeader) { this.numberOfEntriesHeader = opt.numberOfEntriesHeader; }
       if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
       if (opt.typeHeader) { this.typeHeader = opt.typeHeader; }
-      if (opt.additionalInfoHeader) { this.additionalInfoHeader = opt.additionalInfoHeader; }
       if (opt.nameHeader) { this.nameHeader = opt.nameHeader; }
       if (opt.passportNumberHeader) { this.passportNumberHeader = opt.passportNumberHeader; }
       if (opt.nationalityHeader) { this.nationalityHeader = opt.nationalityHeader; }
