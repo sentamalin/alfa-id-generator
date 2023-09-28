@@ -4,23 +4,17 @@
  */
 
 import { CrewLicense  } from "/modules/CrewLicense.js";
-import { QRCodeData } from "/modules/QRCodeData.js";
+import * as b45 from "/modules/base45-ts/base45.js";
+import * as qrLite from "/modules/qrcode-lite/qrcode.mjs";
 
 class CrewLicenseRenderer {
-  #qrCode = new QRCodeData({
-    generatorOpt: {
-      width: this.constructor.#qrCodeArea[0],
-      height: this.constructor.#qrCodeArea[1],
-      colorDark: "#000000ff",
-      colorLight: "#00000000",
-      correctLevel: QRCode.CorrectLevel.H
-    }
-  });
-
   // Customizable Presentation Data
   headerColor; // Defines background color around picture and header text color
   textColor; // Defines data text color
   mrzColor;
+  barcodeDarkColor = "#000000ff";
+  barcodeLightColor = "#00000000";
+  barcodeErrorCorrection = "L";
   frontBackgroundColor; // Defines a solid color when no front image is used
   frontBackgroundImage; // Defines a front image to use for a background
   backBackgroundColor; // Defines a solid color when no back image is used
@@ -408,12 +402,21 @@ class CrewLicenseRenderer {
       this.constructor.#numberUnderlayArea[0],
       this.constructor.#numberUnderlayArea[1]
     );
+    let barcode;
     if (this.mrzInQRCode) {
-      this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
+      barcode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
     }
-    else { this.#qrCode.qrCode = model.url; }
+    else { barcode = model.url; }
     const images = await Promise.all([
-      this.constructor.#generateCanvasImg(this.#qrCode.qrCode),
+      qrLite.toCanvas(barcode, {
+        errorCorrectionLevel: this.barcodeErrorCorrection,
+        margin: 0,
+        width: this.constructor.#qrCodeArea,
+        color: {
+          dark: this.barcodeDarkColor,
+          light: this.barcodeLightColor
+        }
+      }),
       this.constructor.#generateCanvasImg(this.logo),
       this.constructor.#generateCanvasImg(this.smallLogo)
     ]);

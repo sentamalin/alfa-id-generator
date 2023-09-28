@@ -4,23 +4,17 @@
  */
 
 import { EventsMRVA } from "/modules/EventsMRVA.js";
-import { QRCodeData } from "/modules/QRCodeData.js";
+import * as b45 from "/modules/base45-ts/base45.js";
+import * as qrLite from "/modules/qrcode-lite/qrcode.mjs";
 
 class EventsMRVARenderer {
-  #qrCode = new QRCodeData({
-    generatorOpt: {
-      width: this.constructor.#qrCodeArea,
-      height: this.constructor.#qrCodeArea,
-      colorDark: "#000000ff",
-      colorLight: "#00000000",
-      correctLevel: QRCode.CorrectLevel.H
-    }
-  });
-
   // Customizable Presentation Data
   headerColor; // Defines background color around picture and header text color
   textColor; // Defines data text color
   mrzColor;
+  barcodeDarkColor = "#000000ff";
+  barcodeLightColor = "#00000000";
+  barcodeErrorCorrection = "L";
   frontBackgroundColor; // Defines a solid color when no front image is used
   frontBackgroundImage; // Defines a front image to use for a background
   mrzBackgroundColor; // Defines a solid color when no MRZ underlay is used
@@ -106,19 +100,28 @@ class EventsMRVARenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
+    let barcode;
     if (this.mrzInQRCode) {
       if (model.usePassportInMRZ) {
-        this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.passportNumberVIZ}`;
+        barcode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.passportNumberVIZ}`;
       }
       else {
-        this.#qrCode.qrCode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
+        barcode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
       }
     }
-    else { this.#qrCode.qrCode = model.url; }
+    else { barcode = model.url; }
     const imagePromises = [
       this.constructor.#generateCanvasImg(model.picture),
       this.constructor.#generateCanvasImg(this.logo),
-      this.constructor.#generateCanvasImg(this.#qrCode.qrCode)
+      qrLite.toCanvas(barcode, {
+        errorCorrectionLevel: this.barcodeErrorCorrection,
+        margin: 0,
+        width: this.constructor.#qrCodeArea,
+        color: {
+          dark: this.barcodeDarkColor,
+          light: this.barcodeLightColor
+        }
+      })
     ];
     if (typeof model.signature !== typeof canvas) {
       imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
