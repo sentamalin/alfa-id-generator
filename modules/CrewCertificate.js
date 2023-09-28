@@ -102,7 +102,7 @@ class CrewCertificate {
   get declarationVIZ() { return this.#declaration.toUpperCase(); }
   set declaration(value) {
     this.#declaration = value;
-    const stripReturn = value.replace(/\n/gi, " ");
+    const stripReturn = value.replace(/\n/gi, " ").replace(/-/gi, " ").toUpperCase();
     this.#seal.features.set(0x04, DigitalSeal.c40Encode(stripReturn));
   }
 
