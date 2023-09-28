@@ -119,7 +119,7 @@ class CrewLicense {
   // CrewLicense MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() { return this.#document.mrzLine2; }
-  get mrzLine3() { return this.#document.fullNameMRZ; }
+  get mrzLine3() { return this.#document.mrzLine3; }
   get machineReadableZone() { return this.#document.machineReadableZone; }
 
   // Digital Seal properties

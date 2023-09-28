@@ -86,7 +86,7 @@ class CrewCertificate {
   // CrewCertificate Data
   #url;
   get url() { return this.#url; }
-  set url(value) { this.#url = value; this.qrCode = value; }
+  set url(value) { this.#url = value; }
   
   #employer;
   get employer() { return this.#employer; }
@@ -131,7 +131,7 @@ class CrewCertificate {
   // CrewCertificate MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() { return this.#document.mrzLine2; }
-  get mrzLine3() { return this.#document.fullNameMRZ; }
+  get mrzLine3() { return this.#document.mrzLine3; }
   get machineReadableZone() { return this.#document.machineReadableZone; }
 
   // Digital Seal properties
@@ -277,7 +277,6 @@ class CrewCertificate {
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
-      if (opt.qrCode) { this.qrCode = opt.qrCode; }
       if (opt.url) { this.url = opt.url; }
       if (opt.employer) { this.employer = opt.employer; }
       if (opt.occupation) { this.occupation = opt.occupation; }
