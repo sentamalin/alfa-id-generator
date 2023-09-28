@@ -63,7 +63,7 @@ class EventsSealRenderer {
       qrLite.toCanvas([
         { data: sealDataB45, mode: "alphanumeric" }
       ],{
-        errorCorrectionLevel: "L",
+        errorCorrectionLevel: this.barcodeErrorCorrection,
         margin: 0,
         width: this.constructor.#qrCodeArea,
         color: {
