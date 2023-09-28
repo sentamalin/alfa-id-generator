@@ -272,6 +272,92 @@ class CrewCertificateViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #identifierInput;
+  /** @param { HTMLInputElement } input */
+  set identifierInput(input) {
+    this.#identifierInput = input;
+    this.#identifierInput.setAttribute("minlength", 4);
+    this.#identifierInput.setAttribute("maxlength", 4);
+    this.#identifierInput.value = this.#model.identifier;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.addEventListener("input", this, false);
+    this.#identifierInput.addEventListener("change", this, false);
+  }
+  onIdentifierInputChange() {
+    if (this.#identifierInput.checkValidity() &&
+    this.#model.identifier !== this.#identifierInput.value) {
+      this.#model.identifier = this.#identifierInput.value;
+      this.#generateCard();
+    }
+  }
+  /** @type { HTMLInputElement } */ #certReferenceInput;
+  /** @param { HTMLInputElement } input */
+  set certReferenceInput(input) {
+    this.#certReferenceInput = input;
+    this.#certReferenceInput.setAttribute("minlength", 1);
+    this.#certReferenceInput.value = this.#model.certReference;
+    this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
+    this.#certReferenceInput.addEventListener("input", this, false);
+    this.#certReferenceInput.addEventListener("change", this, false);
+  }
+  onCertReferenceInputChange() {
+    if (this.#certReferenceInput.checkValidity() &&
+    this.#model.certReference !== this.#certReferenceInput.value) {
+      this.#model.certReference = this.#certReferenceInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #sealSignatureDateInput;
+  /** @param { HTMLInputElement } input */
+  set sealSignatureDateInput(input) {
+    this.#sealSignatureDateInput = input;
+    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.addEventListener("change", this, false);
+  }
+  onSealSignatureDateInputChange() {
+    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #employerCodeInput;
+  /** @param { HTMLInputElement } input */
+  set employerCodeInput(input) {
+    this.#employerCodeInput = input;
+    this.#employerCodeInput.setAttribute("minlength", 1);
+    this.#employerCodeInput.setAttribute("maxlength", 8);
+    this.#employerCodeInput.value = this.#model.employerCode;
+    this.#employerCodeInput.setAttribute("placeholder", this.#model.employerCode);
+    this.#employerCodeInput.addEventListener("input", this, false);
+    this.#employerCodeInput.addEventListener("change", this, false);
+  }
+  onEmployerCodeInputChange() {
+    if (this.#employerCodeInput.checkValidity() &&
+    this.#model.employerCode !== this.#employerCodeInput.value) {
+      this.#model.employerCode = this.#employerCodeInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #occupationCodeInput;
+  /** @param { HTMLInputElement } input */
+  set occupationCodeInput(input) {
+    this.#occupationCodeInput = input;
+    this.#occupationCodeInput.setAttribute("minlength", 1);
+    this.#occupationCodeInput.setAttribute("maxlength", 8);
+    this.#occupationCodeInput.value = this.#model.occupationCode;
+    this.#occupationCodeInput.setAttribute("placeholder", this.#model.occupationCode);
+    this.#occupationCodeInput.addEventListener("input", this, false);
+    this.#occupationCodeInput.addEventListener("change", this, false);
+  }
+  onOccupationCodeInputChange() {
+    if (this.#occupationCodeInput.checkValidity() &&
+    this.#model.occupationCode !== this.#occupationCodeInput.value) {
+      this.#model.occupationCode = this.#occupationCodeInput.value;
+      this.#generateCard();
+    }
+  }
+
   /** @type { HTMLInputElement } */ #employerInput;
   /** @param { HTMLInputElement } input */
   set employerInput(input) {
@@ -1393,7 +1479,12 @@ class CrewCertificateViewModel {
       "issueHeader",
       "issueHeaderI18n1",
       "issueHeaderI18n2",
-      "showGuides"
+      "showGuides",
+      "identifier",
+      "certReference",
+      "sealSignatureDate",
+      "employerCode",
+      "occupationCode"
     ];
     for (const elementID of inputFields) {
       this[`${elementID}Input`] = this.#document.getElementById(elementID);
