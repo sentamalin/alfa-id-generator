@@ -237,6 +237,145 @@ class EventsSealViewModel {
     }
   }
 
+  /** @type { HTMLInputElement } */ #issueDateInput;
+  /** @param { HTMLInputElement } input */
+  set issueDateInput(input) {
+    this.#issueDateInput = input;
+    this.#issueDateInput.value = this.#model.issueDate;
+    this.#issueDateInput.addEventListener("change", this, false);
+  }
+  onIssueDateInputChange() {
+    this.#model.issueDate = this.#issueDateInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #identifierInput;
+  /** @param { HTMLInputElement } input */
+  set identifierInput(input) {
+    this.#identifierInput = input;
+    this.#identifierInput.setAttribute("minlength", 4);
+    this.#identifierInput.setAttribute("maxlength", 4);
+    this.#identifierInput.value = this.#model.identifier;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.addEventListener("input", this, false);
+    this.#identifierInput.addEventListener("change", this, false);
+  }
+  onIdentifierInputChange() {
+    if (this.#identifierInput.checkValidity() &&
+    this.#model.identifier !== this.#identifierInput.value) {
+      this.#model.identifier = this.#identifierInput.value;
+      this.#generateCard();
+    }
+  }
+  /** @type { HTMLInputElement } */ #certReferenceInput;
+  /** @param { HTMLInputElement } input */
+  set certReferenceInput(input) {
+    this.#certReferenceInput = input;
+    this.#certReferenceInput.setAttribute("minlength", 1);
+    this.#certReferenceInput.value = this.#model.certReference;
+    this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
+    this.#certReferenceInput.addEventListener("input", this, false);
+    this.#certReferenceInput.addEventListener("change", this, false);
+  }
+  onCertReferenceInputChange() {
+    if (this.#certReferenceInput.checkValidity() &&
+    this.#model.certReference !== this.#certReferenceInput.value) {
+      this.#model.certReference = this.#certReferenceInput.value;
+      this.#generateCard();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #sealSignatureDateInput;
+  /** @param { HTMLInputElement } input */
+  set sealSignatureDateInput(input) {
+    this.#sealSignatureDateInput = input;
+    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.addEventListener("change", this, false);
+  }
+  onSealSignatureDateInputChange() {
+    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #dayDurationInput;
+  /** @param { HTMLInputElement } input */
+  set dayDurationInput(input) {
+    this.#dayDurationInput = input;
+    this.#dayDurationInput.setAttribute("min", 0);
+    this.#dayDurationInput.setAttribute("max", 254);
+    this.#dayDurationInput.value = this.#model.durationOfStay[0];
+    this.#dayDurationInput.addEventListener("input", this, false);
+    this.#dayDurationInput.addEventListener("change", this, false);
+  }
+  onDayDurationInputChange() {
+    if (this.#dayDurationInput.checkValidity() &&
+    this.#model.durationOfStay[0] !== this.#dayDurationInput.value) {
+      this.#updateDurationOfStay();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #monthDurationInput;
+  /** @param { HTMLInputElement } input */
+  set monthDurationInput(input) {
+    this.#monthDurationInput = input;
+    this.#monthDurationInput.setAttribute("min", 0);
+    this.#monthDurationInput.setAttribute("max", 254);
+    this.#monthDurationInput.value = this.#model.durationOfStay[1];
+    this.#monthDurationInput.addEventListener("input", this, false);
+    this.#monthDurationInput.addEventListener("change", this, false);
+  }
+  onMonthDurationInputChange() {
+    if (this.#monthDurationInput.checkValidity() &&
+    this.#model.durationOfStay[1] !== this.#monthDurationInput.value) {
+      this.#updateDurationOfStay();
+    }
+  }
+
+  /** @type { HTMLInputElement } */ #yearDurationInput;
+  /** @param { HTMLInputElement } input */
+  set yearDurationInput(input) {
+    this.#yearDurationInput = input;
+    this.#yearDurationInput.setAttribute("min", 0);
+    this.#yearDurationInput.setAttribute("max", 254);
+    this.#yearDurationInput.value = this.#model.durationOfStay[2];
+    this.#yearDurationInput.addEventListener("input", this, false);
+    this.#yearDurationInput.addEventListener("change", this, false);
+  }
+  onYearDurationInputChange() {
+    if (this.#yearDurationInput.checkValidity() &&
+    this.#model.durationOfStay[2] !== this.#yearDurationInput.value) {
+      this.#updateDurationOfStay();
+    }
+  }
+
+  #updateDurationOfStay() {
+    this.#model.durationOfStay = [
+      this.#dayDurationInput.value,
+      this.#monthDurationInput.value,
+      this.#yearDurationInput.value
+    ];
+    this.#generateCard();
+  }
+
+  /** @type { HTMLInputElement } */ #visaTypeCodeInput;
+  /** @param { HTMLInputElement } input */
+  set visaTypeCodeInput(input) {
+    this.#visaTypeCodeInput = input;
+    this.#visaTypeCodeInput.setAttribute("minlength", 1);
+    this.#visaTypeCodeInput.setAttribute("maxlength", 8);
+    this.#visaTypeCodeInput.value = this.#model.visaTypeCode;
+    this.#visaTypeCodeInput.setAttribute("placeholder", this.#model.visaTypeCode);
+    this.#visaTypeCodeInput.addEventListener("input", this, false);
+    this.#visaTypeCodeInput.addEventListener("change", this, false);
+  }
+  onVisaTypeCodeInputChange() {
+    if (this.#visaTypeCodeInput.checkValidity() &&
+    this.#model.visaTypeCode !== this.#visaTypeCodeInput.value) {
+      this.#model.visaTypeCode = this.#visaTypeCodeInput.value;
+      this.#generateCard();
+    }
+  }
+
   /** @type { HTMLInputElement } */ #headerColorInput;
   /** @param { HTMLInputElement } input */
   set headerColorInput(input) {
@@ -435,7 +574,15 @@ class EventsSealViewModel {
       "logoFile",
       "fullAuthority",
       "fullDocumentName",
-      "showGuides"
+      "showGuides",
+      "identifier",
+      "certReference",
+      "issueDate",
+      "sealSignatureDate",
+      "dayDuration",
+      "monthDuration",
+      "yearDuration",
+      "visaTypeCode"
     ];
     for (const elementID of inputFields) {
       this[`${elementID}Input`] = this.#document.getElementById(elementID);
