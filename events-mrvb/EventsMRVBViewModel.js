@@ -46,7 +46,6 @@ class EventsMRVBViewModel {
     logoUnderlayColor: "#4090ba",
     logoUnderlayAlpha: 255,
     logo: "/smallLogos/alfa.svg",
-    mrzInQRCode: true,
     showGuides: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "FURRY EVENTS ENTRY VISA",
@@ -613,18 +612,6 @@ class EventsMRVBViewModel {
       this.#model.url = this.#urlInput.value;
       this.#generateCard();
     }
-  }
-
-  /** @type { HTMLInputElement } */ #mrzInQRCodeInput;
-  /** @param { HTMLInputElement } input */
-  set mrzInQRCodeInput(input) {
-    this.#mrzInQRCodeInput = input;
-    this.#mrzInQRCodeInput.addEventListener("change", this, false);
-  }
-  onMrzInQRCodeInputChange() {
-    if (this.#renderer.mrzInQRCode) { this.#renderer.mrzInQRCode = false; }
-    else { this.#renderer.mrzInQRCode = true; }
-    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #headerColorInput;
@@ -1489,7 +1476,6 @@ class EventsMRVBViewModel {
       "dateOfBirth",
       "genderMarker",
       "url",
-      "mrzInQRCode",
       "optionalData",
       "picture",
       "signature",

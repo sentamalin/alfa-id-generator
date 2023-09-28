@@ -48,7 +48,6 @@ class CrewCertificateViewModel {
     logoUnderlayAlpha: 255,
     logo: "/logos/lambda.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
-    mrzInQRCode: true,
     showGuides: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INT'L",
     fullDocumentName: "CREWMEMBER CERTIFICATE",
@@ -527,18 +526,6 @@ class CrewCertificateViewModel {
       this.#model.url = this.#urlInput.value;
       this.#generateCardBack();
     }
-  }
-
-  /** @type { HTMLInputElement } */ #mrzInQRCodeInput;
-  /** @param { HTMLInputElement } input */
-  set mrzInQRCodeInput(input) {
-    this.#mrzInQRCodeInput = input;
-    this.#mrzInQRCodeInput.addEventListener("change", this, false);
-  }
-  onMrzInQRCodeInputChange() {
-    if (this.#renderer.mrzInQRCode) { this.#renderer.mrzInQRCode = false; }
-    else { this.#renderer.mrzInQRCode = true; }
-    this.#generateCardBack();
   }
 
   /** @type { HTMLInputElement } */ #headerColorInput;
@@ -1421,7 +1408,6 @@ class CrewCertificateViewModel {
       "dateOfIssue",
       "placeOfIssue",
       "url",
-      "mrzInQRCode",
       "optionalData",
       "picture",
       "signature",

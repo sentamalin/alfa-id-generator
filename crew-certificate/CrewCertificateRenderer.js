@@ -33,7 +33,6 @@ class CrewCertificateRenderer {
   }
   logo; // Defines the authority logo
   smallLogo; // Defines the small authority logo
-  mrzInQRCode;
   showGuides;
   fullAuthority;
   fullDocumentName;
@@ -405,10 +404,7 @@ class CrewCertificateRenderer {
     console.log("Current Model:");
     console.log(model);
     let barcode;
-    if (this.mrzInQRCode) {
-      barcode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
-    }
-    else { barcode = model.url; }
+    barcode = model.url;
     const images = await Promise.all([
       qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
@@ -816,7 +812,6 @@ class CrewCertificateRenderer {
       if (opt.logoUnderlayAlpha) { this.logoUnderlayAlpha = opt.logoUnderlayAlpha; }
       if (opt.logo) { this.logo = opt.logo; }
       if (opt.smallLogo) { this.smallLogo = opt.smallLogo; }
-      if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
       if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
       if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }

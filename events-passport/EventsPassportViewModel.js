@@ -44,7 +44,6 @@ class EventsPassportViewModel {
     logoUnderlayColor: "#4090ba",
     logoUnderlayAlpha: 255,
     logo: "/smallLogos/alfa.svg",
-    mrzInQRCode: true,
     showGuides: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "FURRY EVENTS PASSPORT",
@@ -500,18 +499,6 @@ class EventsPassportViewModel {
       this.#model.url = this.#urlInput.value;
       this.#generateCardFront();
     }
-  }
-
-  /** @type { HTMLInputElement } */ #mrzInQRCodeInput;
-  /** @param { HTMLInputElement } input */
-  set mrzInQRCodeInput(input) {
-    this.#mrzInQRCodeInput = input;
-    this.#mrzInQRCodeInput.addEventListener("change", this, false);
-  }
-  onMrzInQRCodeInputChange() {
-    if (this.#renderer.mrzInQRCode) { this.#renderer.mrzInQRCode = false; }
-    else { this.#renderer.mrzInQRCode = true; }
-    this.#generateCardFront();
   }
 
   /** @type { HTMLInputElement } */ #headerColorInput;
@@ -1488,7 +1475,6 @@ class EventsPassportViewModel {
       "dateOfExpiration",
       "endorsements",
       "url",
-      "mrzInQRCode",
       "optionalData",
       "picture",
       "signature",

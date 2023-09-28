@@ -25,7 +25,6 @@ class EventsMRVBRenderer {
     return `${this.logoUnderlayColor}${this.logoUnderlayAlpha.toString(16).padStart(2, "0")}`;
   }
   logo; // Defines the authority logo
-  mrzInQRCode;
   showGuides;
   fullAuthority;
   fullDocumentName;
@@ -103,15 +102,7 @@ class EventsMRVBRenderer {
     console.log("Current Model:");
     console.log(model);
     let barcode;
-    if (this.mrzInQRCode) {
-      if (model.usePassportInMRZ) {
-        barcode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.passportNumberVIZ}`;
-      }
-      else {
-        barcode = `${model.url}?mrz=${model.typeCodeMRZ}${model.authorityCodeMRZ}${model.numberVIZ}`;
-      }
-    }
-    else { barcode = model.url; }
+    barcode = model.url;
     const imagePromises = [
       this.constructor.#generateCanvasImg(model.picture),
       this.constructor.#generateCanvasImg(this.logo),
@@ -806,7 +797,6 @@ class EventsMRVBRenderer {
       if (opt.logoUnderlayColor) { this.logoUnderlayColor = opt.logoUnderlayColor; }
       if (opt.logoUnderlayAlpha) { this.logoUnderlayAlpha = opt.logoUnderlayAlpha; }
       if (opt.logo) { this.logo = opt.logo; }
-      if (opt.mrzInQRCode !== undefined) { this.mrzInQRCode = opt.mrzInQRCode; }
       if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
       if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
       if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }

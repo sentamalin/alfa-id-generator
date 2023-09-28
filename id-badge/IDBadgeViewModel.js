@@ -41,7 +41,6 @@ class IDBadgeViewModel {
     logo: "/logos/peets.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
     showPunchSlot: false,
-    mrzInQRCode: true,
     showGuides: false,
     additionalElements: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n",
     badgeType: "CREW",
@@ -320,18 +319,6 @@ class IDBadgeViewModel {
       this.#model.url = this.#urlInput.value;
       this.#generateCard();
     }
-  }
-
-  /** @type { HTMLInputElement } */ #mrzInQRCodeInput;
-  /** @param { HTMLInputElement } input */
-  set mrzInQRCodeInput(input) {
-    this.#mrzInQRCodeInput = input;
-    this.#mrzInQRCodeInput.addEventListener("change", this, false);
-  }
-  onMrzInQRCodeInputChange() {
-    if (this.#renderer.mrzInQRCode) { this.#renderer.mrzInQRCode = false; }
-    else { this.#renderer.mrzInQRCode = true; }
-    this.#generateCard();
   }
 
   /** @type { HTMLInputElement } */ #headerColorInput;
@@ -997,7 +984,6 @@ class IDBadgeViewModel {
       "fullName",
       "employer",
       "url",
-      "mrzInQRCode",
       "optionalData",
       "picture",
       "headerColor",
