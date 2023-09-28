@@ -24,7 +24,12 @@ class CrewCertificateViewModel {
     placeOfIssue: "Utopiopolis, Utopia",
     picture: "/photos/fox.jpg",
     signature: "/signatures/alfalfa.png",
-    url: "https://airlinefurries.com/"
+    url: "https://airlinefurries.com/",
+    identifier: "XFSS",
+    certReference: "00000",
+    sealSignatureDate: "2023-09-01",
+    employerCode: "1",
+    occupationCode: "1"
   });
 
   #renderer = new CrewCertificateRenderer({

@@ -16,7 +16,12 @@ class IDBadgeViewModel {
     optionalData: "",
     employer: "Peets Aviation Limited",
     picture: "/photos/fox.jpg",
-    url: "https://airlinefurries.com/"
+    url: "https://airlinefurries.com/",
+    identifier: "XFSS",
+    certReference: "00000",
+    issueDate: "2023-09-01",
+    sealSignatureDate: "2023-09-01",
+    employerCode: "1"
   });
 
   #renderer = new IDBadgeRenderer({

@@ -26,7 +26,13 @@ class EventsMRVBViewModel {
     optionalData: "",
     picture: "/photos/fox.jpg",
     signature: "/signatures/alfa-census.svg",
-    url: "https://airlinefurries.com/"
+    url: "https://airlinefurries.com/",
+    identifier: "XFSS",
+    certReference: "00000",
+    issueDate: "2023-09-01",
+    sealSignatureDate: "2023-09-01",
+    durationOfStay: [4, 0, 0],
+    visaTypeCode: "1"
   });
 
   #renderer = new EventsMRVBRenderer({

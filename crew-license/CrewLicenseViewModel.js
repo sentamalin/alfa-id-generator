@@ -24,7 +24,13 @@ class CrewLicenseViewModel {
     limitations: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     picture: "/photos/fox.jpg",
     signature: "/signatures/alfalfa.png",
-    url: "https://airlinefurries.com/"
+    url: "https://airlinefurries.com/",
+    identifier: "XFSS",
+    certReference: "00000",
+    issueDate: "2023-09-01",
+    sealSignatureDate: "2023-09-01",
+    subauthorityCode: "1",
+    privilegeCode: "1"
   });
 
   #renderer = new CrewLicenseRenderer({
