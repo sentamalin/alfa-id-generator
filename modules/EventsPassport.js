@@ -230,7 +230,7 @@ class EventsPassport {
       input.push(parseInt(paddedType.slice(i, i + 2), 16));
       previousIsZero = false;
     }
-    this.#seal.features.set(0x03);
+    this.#seal.features.set(0x03, input);
   }
 
   // Constructor
