@@ -10,7 +10,6 @@ class VisaDocument {
 
   #placeOfIssue;
   get placeOfIssue() { return this.#placeOfIssue; }
-  get placeOfIssueVIZ() { return this.#placeOfIssue.toUpperCase(); }
   set placeOfIssue(value) {
     this.#placeOfIssue = new String(value);
     this.#placeOfIssue.toVIZ = function() {
@@ -20,7 +19,6 @@ class VisaDocument {
   
   #validFrom;
   get validFrom() { return this.#validFrom; }
-  get validFromVIZ() { return TravelDocument.dateToVIZ(this.#validFrom).toUpperCase(); }
   set validFrom(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
@@ -37,7 +35,6 @@ class VisaDocument {
 
   #numberOfEntries;
   get numberOfEntries() { return this.#numberOfEntries; }
-  get numberOfEntriesVIZ() { return this.#numberOfEntries.toUpperCase(); }
   set numberOfEntries(value) {
     this.#numberOfEntries = new String(value);
     this.#numberOfEntries.toVIZ = function() {
@@ -47,7 +44,6 @@ class VisaDocument {
 
   #type;
   get type() { return this.#type; }
-  get typeVIZ() { return this.#type.toUpperCase(); }
   set type(value) {
     this.#type = new String(value);
     this.#type.toVIZ = function() {
@@ -57,7 +53,6 @@ class VisaDocument {
 
   #additionalInfo;
   get additionalInfo() { return this.#additionalInfo; }
-  get additionalInfoVIZ() { return this.#additionalInfo.toUpperCase(); }
   set additionalInfo(value) {
     this.#additionalInfo = new String(value);
     this.#additionalInfo.toVIZ = function() {
@@ -67,8 +62,6 @@ class VisaDocument {
 
   #passportNumber = "";
   get passportNumber() { return this.#passportNumber; }
-  get passportNumberMRZ() { return TravelDocument.padMRZString(this.#passportNumber, 9); }
-  get passportNumberVIZ() { return this.#passportNumber.toUpperCase(); }
   set passportNumber(value) {
     if (value.toString().length > 9) {
       throw new RangeError(

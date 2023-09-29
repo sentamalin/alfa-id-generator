@@ -19,43 +19,32 @@ class CrewID {
 
   // General Text and Graphical Data (Forwards/Calls TD1Document)
   get typeCode() { return this.#document.typeCode; }
-  get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
-  get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
   set typeCode(value) {
     this.#document.typeCode = value;
     this.#setDigitalSealMRZ();
   }
   get authorityCode() { return this.#document.authorityCode; }
-  get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
-  get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
     this.#seal.authority = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
-  get numberMRZ() { return this.#document.numberMRZ; }
-  get numberVIZ() { return this.#document.numberVIZ; }
   set number(value) {
     this.#document.number = value;
     this.#setDigitalSealMRZ();
   }
   get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  get dateOfExpirationMRZ() { return this.#document.dateOfExpirationMRZ; }
-  get dateOfExpirationVIZ() { return this.#document.dateOfExpirationVIZ; }
   set dateOfExpiration(value) {
     this.#document.dateOfExpiration = value;
     this.#setDigitalSealMRZ();
   }
   get fullName() { return this.#document.fullName; } // 30 characters
-  get fullNameMRZ() { return this.#document.fullNameMRZ; }
-  get fullNameVIZ() { return this.#document.fullNameVIZ; }
   set fullName(value) {
     this.#document.fullName = value;
     this.#setDigitalSealMRZ();
   }
   get optionalData() { return this.#document.optionalData; } // 26 characters
-  get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
   set optionalData(value) { this.#document.optionalData = value; }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
@@ -67,7 +56,6 @@ class CrewID {
 
   #employer;
   get employer() { return this.#employer; }
-  get employerVIZ() { return this.#employer.toUpperCase(); }
   set employer(value) {
     this.#employer = new String(value);
     this.#employer.toVIZ = function() {

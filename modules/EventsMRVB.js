@@ -19,77 +19,57 @@ class EventsMRVB {
   
   // General Text and Graphical Data (Forwards/Calls TD3Document)
   get typeCode() { return this.#document.typeCode; }
-  get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
-  get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
   set typeCode(value) {
     this.#document.typeCode = value;
     this.#setDigitalSealMRZ();
   }
   get authorityCode() { return this.#document.authorityCode; }
-  get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
-  get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
     this.#seal.authority = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
-  get numberMRZ() { return this.#document.numberMRZ; }
-  get numberVIZ() { return this.#document.numberVIZ; }
   set number(value) {
     this.#document.number = value;
     this.#setDigitalSealMRZ();
   }
   get fullName() { return this.#document.fullName; }
-  get fullNameMRZ() { return this.#document.fullNameMRZ; }
-  get fullNameVIZ() { return this.#document.fullNameVIZ; }
   set fullName(value) {
     this.#document.fullName = value;
     this.#setDigitalSealMRZ();
   }
   get nationalityCode() { return this.#document.nationalityCode; }
-  get nationalityCodeMRZ() { return this.#document.nationalityCodeMRZ; }
-  get nationalityCodeVIZ() { return this.#document.nationalityCodeVIZ; }
   set nationalityCode(value) {
     this.#document.nationalityCode = value;
     this.#setDigitalSealMRZ();
   }
   get dateOfBirth() { return this.#document.dateOfBirth; }
-  get dateOfBirthMRZ() { return this.#document.dateOfBirthMRZ; }
-  get dateOfBirthVIZ() { return this.#document.dateOfBirthVIZ; }
   set dateOfBirth(value) {
     this.#document.dateOfBirth = value;
     this.#setDigitalSealMRZ();
   }
   get genderMarker() { return this.#document.genderMarker; }
-  get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
-  get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
   set genderMarker(value) {
     this.#document.genderMarker = value;
     this.#setDigitalSealMRZ();
   }
   get validThru() { return this.#document.validThru; }
-  get validThruMRZ() { return this.#document.validThruMRZ; }
-  get validThruVIZ() { return this.#document.validThruVIZ; }
   set validThru(value) {
     this.#document.validThru = value;
     this.#setDigitalSealMRZ();
   }
   get optionalData() { return this.#document.optionalData; }
-  get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
   set optionalData(value) { this.#document.optionalData = value; }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
   get signature() { return this.#document.signature; }
   set signature(value) { this.#document.signature = value; }
   get placeOfIssue() { return this.#document.placeOfIssue; }
-  get placeOfIssueVIZ() { return this.#document.placeOfIssueVIZ; }
   set placeOfIssue(value) { this.#document.placeOfIssue = value; }
   get validFrom() { return this.#document.validFrom; }
-  get validFromVIZ() { return this.#document.validFromVIZ; }
   set validFrom(value) { this.#document.validFrom = value; }
   get numberOfEntries() { return this.#document.numberOfEntries; }
-  get numberOfEntriesVIZ() { return this.#document.numberOfEntriesVIZ; }
   set numberOfEntries(value) {
     this.#document.numberOfEntries = value;
     if (isNaN(parseInt(value))) {
@@ -99,11 +79,8 @@ class EventsMRVB {
     }
   }
   get type() { return this.#document.type; }
-  get typeVIZ() { return this.#document.typeVIZ; }
   set type(value) { this.#document.type = value; }
   get passportNumber() { return this.#document.passportNumber; }
-  get passportNumberMRZ() { return this.#document.passportNumberMRZ; }
-  get passportNumberVIZ() { return this.#document.passportNumberVIZ; }
   set passportNumber(value) { 
     this.#document.passportNumber = value;
     this.#seal.features.set(0x05, DigitalSeal.c40Encode(value));

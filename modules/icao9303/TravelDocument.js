@@ -10,8 +10,6 @@ class TravelDocument {
   // General Text Data
   #typeCode = ""; // Up to 2 characters
   get typeCode() { return this.#typeCode; }
-  get typeCodeMRZ() { return TravelDocument.padMRZString(this.#typeCode, 2); }
-  get typeCodeVIZ() { return this.#typeCode.toUpperCase(); }
   set typeCode(value) {
     if (value.toString().length > 2) {
       throw new RangeError(
@@ -30,8 +28,6 @@ class TravelDocument {
 
   #authorityCode = ""; // 3 characters
   get authorityCode() { return this.#authorityCode; }
-  get authorityCodeMRZ() { return this.authorityCode; }
-  get authorityCodeVIZ() { return this.authorityCode; }
   set authorityCode(value) {
     if (value.toString().toUpperCase().length !== 3) {
       throw new RangeError(
@@ -59,8 +55,6 @@ class TravelDocument {
 
   #number = ""; // Up to 9 characters
   get number() { return this.#number; }
-  get numberMRZ() { return TravelDocument.padMRZString(this.#number, 9); }
-  get numberVIZ() { return this.#number.toUpperCase(); }
   set number(value) {
     if (value.toString().length > 9) {
       throw new RangeError(
@@ -79,8 +73,6 @@ class TravelDocument {
 
   #dateOfBirth = new Date();
   get dateOfBirth() { return this.#dateOfBirth; }
-  get dateOfBirthMRZ() { return TravelDocument.dateToMRZ(this.#dateOfBirth); }
-  get dateOfBirthVIZ() { return TravelDocument.dateToVIZ(this.#dateOfBirth); }
   set dateOfBirth(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
@@ -102,11 +94,6 @@ class TravelDocument {
   get genderMarker() {
     return this.#genderMarker;
   }
-  get genderMarkerMRZ() {
-    if (this.genderMarker === "X") { return "<"; }
-    else { return this.genderMarker; }
-  }
-  get genderMarkerVIZ() { return this.genderMarker; }
   set genderMarker(value) {
     if (!["F", "M", "X"].includes(value.toUpperCase())) {
       throw new RangeError(
@@ -126,8 +113,6 @@ class TravelDocument {
 
   #dateOfExpiration = new Date();
   get dateOfExpiration() { return this.#dateOfExpiration; }
-  get dateOfExpirationMRZ() { return TravelDocument.dateToMRZ(this.#dateOfExpiration); }
-  get dateOfExpirationVIZ() { return TravelDocument.dateToVIZ(this.#dateOfExpiration); }
   set dateOfExpiration(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
@@ -147,8 +132,6 @@ class TravelDocument {
 
   #nationalityCode = ""; // ISO 3166-1 alpha-3; 3 characters
   get nationalityCode() { return this.#nationalityCode; }
-  get nationalityCodeMRZ() { return this.#nationalityCode.toUpperCase(); }
-  get nationalityCodeVIZ() { return this.nationalityCodeMRZ; }
   set nationalityCode(value) {
     if (value.toString().length !== 3) {
       throw new RangeError(
@@ -186,7 +169,6 @@ class TravelDocument {
     }
     return TravelDocument.padMRZString(normalized.substring(0,length), length);
   }
-  get fullNameVIZ() { return this.#fullName.toUpperCase(); }
   set fullName(value) {
     this.#fullName = new String(value.toString());
     this.#fullName.toVIZ = function() {

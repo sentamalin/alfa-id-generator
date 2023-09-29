@@ -14,20 +14,12 @@ class MRVBDocument {
   
   // General Text and Graphical Data (Forwards/Calls TravelDocument)
   get typeCode() { return this.#document.typeCode; }
-  get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
-  get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
   set typeCode(value) { this.#document.typeCode = value; }
   get authorityCode() { return this.#document.authorityCode; }
-  get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
-  get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
   set authorityCode(value) { this.#document.authorityCode = value; }
   get number() { return this.#document.number; }
-  get numberMRZ() { return this.#document.numberMRZ; }
-  get numberVIZ() { return this.#document.numberVIZ; }
   set number(value) { this.#document.number = value; }
   get fullName() { return this.#document.fullName; } // 31 characters
-  get fullNameMRZ() { return this.#document.fullNameMRZ(31); }
-  get fullNameVIZ() { return this.#document.fullNameVIZ; }
   set fullName(value) {
     this.#document.fullName = value;
     this.#document.fullName.toMRZ = function() {
@@ -42,23 +34,14 @@ class MRVBDocument {
     }
   }
   get nationalityCode() { return this.#document.nationalityCode; }
-  get nationalityCodeMRZ() { return this.#document.nationalityCodeMRZ; }
-  get nationalityCodeVIZ() { return this.#document.nationalityCodeVIZ; }
   set nationalityCode(value) { this.#document.nationalityCode = value; }
   get dateOfBirth() { return this.#document.dateOfBirth; }
-  get dateOfBirthMRZ() { return this.#document.dateOfBirthMRZ; }
-  get dateOfBirthVIZ() { return this.#document.dateOfBirthVIZ; }
   set dateOfBirth(value) { this.#document.dateOfBirth = value; }
   get genderMarker() { return this.#document.genderMarker; }
-  get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
-  get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
   set genderMarker(value) { this.#document.genderMarker = value; }
   get validThru() { return this.#document.dateOfExpiration; }
-  get validThruMRZ() { return this.#document.dateOfExpirationMRZ; }
-  get validThruVIZ() { return this.#document.dateOfExpirationVIZ; }
   set validThru(value) { this.#document.dateOfExpiration = value; }
   get optionalData() { return this.#document.optionalData; } // 8 characters
-  get optionalDataMRZ() { return this.#document.optionalDataMRZ(8); }
   set optionalData(value) {
     this.#document.optionalData = value;
     this.#document.optionalData.toMRZ = function() {
@@ -77,23 +60,16 @@ class MRVBDocument {
   get signature() { return this.#document.signature; }
   set signature(value) { this.#document.signature = value; }
   get placeOfIssue() { return this.#visa.placeOfIssue; }
-  get placeOfIssueVIZ() { return this.#visa.placeOfIssueVIZ; }
   set placeOfIssue(value) { this.#visa.placeOfIssue = value; }
   get validFrom() { return this.#visa.validFrom; }
-  get validFromVIZ() { return this.#visa.validFromVIZ; }
   set validFrom(value) { this.#visa.validFrom = value; }
   get numberOfEntries() { return this.#visa.numberOfEntries; }
-  get numberOfEntriesVIZ() { return this.#visa.numberOfEntriesVIZ; }
   set numberOfEntries(value) { this.#visa.numberOfEntries = value; }
   get type() { return this.#visa.type; }
-  get typeVIZ() { return this.#visa.typeVIZ; }
   set type(value) { this.#visa.type = value; }
   get additionalInfo() { return this.#visa.additionalInfo; }
-  get additionalInfoVIZ() { return this.#visa.additionalInfoVIZ; }
   set additionalInfo(value) { this.#visa.additionalInfo = value; }
   get passportNumber() { return this.#visa.passportNumber; }
-  get passportNumberMRZ() { return this.#visa.passportNumberMRZ; }
-  get passportNumberVIZ() { return this.#visa.passportNumberVIZ; }
   set passportNumber(value) { this.#visa.passportNumber = value; }
   get usePassportInMRZ() { return this.#visa.usePassportInMRZ; }
   set usePassportInMRZ(value) { this.#visa.usePassportInMRZ = value; }

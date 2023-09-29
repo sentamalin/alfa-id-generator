@@ -13,36 +13,20 @@ class TD1Document {
   
   // General Text and Graphical Data (Forwards/Calls TravelDocument)
   get typeCode() { return this.#document.typeCode; }
-  get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
-  get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
   set typeCode(value) { this.#document.typeCode = value; }
   get authorityCode() { return this.#document.authorityCode; }
-  get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
-  get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
   set authorityCode(value) { this.#document.authorityCode = value; }
   get number() { return this.#document.number; }
-  get numberMRZ() { return this.#document.numberMRZ; }
-  get numberVIZ() { return this.#document.numberVIZ; }
   set number(value) { this.#document.number = value; }
   get dateOfBirth() { return this.#document.dateOfBirth; }
-  get dateOfBirthMRZ() { return this.#document.dateOfBirthMRZ; }
-  get dateOfBirthVIZ() { return this.#document.dateOfBirthVIZ; }
   set dateOfBirth(value) { this.#document.dateOfBirth = value; }
   get genderMarker() { return this.#document.genderMarker; }
-  get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
-  get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
   set genderMarker(value) { this.#document.genderMarker = value; }
   get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  get dateOfExpirationMRZ() { return this.#document.dateOfExpirationMRZ; }
-  get dateOfExpirationVIZ() { return this.#document.dateOfExpirationVIZ; }
   set dateOfExpiration(value) { this.#document.dateOfExpiration = value; }
   get nationalityCode() { return this.#document.nationalityCode; }
-  get nationalityCodeMRZ() { return this.#document.nationalityCodeMRZ; }
-  get nationalityCodeVIZ() { return this.#document.nationalityCodeVIZ; }
   set nationalityCode(value) { this.#document.nationalityCode = value; }
   get fullName() { return this.#document.fullName; } // 30 characters
-  get fullNameMRZ() { return this.#document.fullNameMRZ(30); }
-  get fullNameVIZ() { return this.#document.fullNameVIZ; }
   set fullName(value) {
     this.#document.fullName = value;
     this.#document.fullName.toMRZ = function() {
@@ -57,7 +41,6 @@ class TD1Document {
     }
   }
   get optionalData() { return this.#document.optionalData; } // 26 characters
-  get optionalDataMRZ() { return this.#document.optionalDataMRZ(26); }
   set optionalData(value) {
     this.#document.optionalData = value;
     this.#document.optionalData.toMRZ = function() {

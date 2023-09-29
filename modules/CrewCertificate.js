@@ -19,64 +19,47 @@ class CrewCertificate {
   
   // General Text and Graphical Data (Forwards/Calls TD1Document)
   get typeCode() { return this.#document.typeCode; }
-  get typeCodeMRZ() { return this.#document.typeCodeMRZ; }
-  get typeCodeVIZ() { return this.#document.typeCodeVIZ; }
   set typeCode(value) {
     this.#document.typeCode = value;
     this.#setDigitalSealMRZ();
   }
   get authorityCode() { return this.#document.authorityCode; }
-  get authorityCodeMRZ() { return this.#document.authorityCodeMRZ; }
-  get authorityCodeVIZ() { return this.#document.authorityCodeVIZ; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
     this.#seal.authority = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
-  get numberMRZ() { return this.#document.numberMRZ; }
-  get numberVIZ() { return this.#document.numberVIZ; }
   set number(value) {
     this.#document.number = value;
     this.#setDigitalSealMRZ();
   }
   get dateOfBirth() { return this.#document.dateOfBirth; }
-  get dateOfBirthMRZ() { return this.#document.dateOfBirthMRZ; }
-  get dateOfBirthVIZ() { return this.#document.dateOfBirthVIZ; }
   set dateOfBirth(value) {
     this.#document.dateOfBirth = value;
     this.#setDigitalSealMRZ();
   }
   get genderMarker() { return this.#document.genderMarker; }
-  get genderMarkerMRZ() { return this.#document.genderMarkerMRZ; }
-  get genderMarkerVIZ() { return this.#document.genderMarkerVIZ; }
   set genderMarker(value) {
     this.#document.genderMarker = value;
     this.#setDigitalSealMRZ();
   }
   get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  get dateOfExpirationMRZ() { return this.#document.dateOfExpirationMRZ; }
-  get dateOfExpirationVIZ() { return this.#document.dateOfExpirationVIZ; }
   set dateOfExpiration(value) {
     this.#document.dateOfExpiration = value;
     this.#setDigitalSealMRZ();
   }
   get nationalityCode() { return this.#document.nationalityCode; }
-  get nationalityCodeMRZ() { return this.#document.nationalityCodeMRZ; }
-  get nationalityCodeVIZ() { return this.#document.nationalityCodeVIZ; }
   set nationalityCode(value) {
     this.#document.nationalityCode = value;
     this.#setDigitalSealMRZ();
   }
   get fullName() { return this.#document.fullName; }
-  get fullNameMRZ() { return this.#document.fullNameMRZ; }
-  get fullNameVIZ() { return this.#document.fullNameVIZ; }
   set fullName(value) {
     this.#document.fullName = value;
     this.#setDigitalSealMRZ();
   }
   get optionalData() { return this.#document.optionalData; }
-  get optionalDataMRZ() { return this.#document.optionalDataMRZ; }
   set optionalData(value) { this.#document.optionalData = value; }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
@@ -90,7 +73,6 @@ class CrewCertificate {
   
   #employer;
   get employer() { return this.#employer; }
-  get employerVIZ() { return this.#employer.toUpperCase(); }
   set employer(value) {
     this.#employer = new String(value);
     this.#employer.toVIZ = function() {
@@ -100,7 +82,6 @@ class CrewCertificate {
 
   #occupation;
   get occupation() { return this.#occupation; }
-  get occupationVIZ() { return this.#occupation.toUpperCase(); }
   set occupation(value) {
     this.#occupation = new String(value);
     this.#occupation.toVIZ = function() {
@@ -110,7 +91,6 @@ class CrewCertificate {
 
   #declaration;
   get declaration() { return this.#declaration; }
-  get declarationVIZ() { return this.#declaration.toUpperCase(); }
   set declaration(value) {
     this.#declaration = new String(value);
     this.#declaration.toVIZ = function() {
@@ -120,7 +100,6 @@ class CrewCertificate {
 
   #dateOfIssue;
   get dateOfIssue() { return this.#dateOfIssue; }
-  get dateOfIssueVIZ() { return TravelDocument.dateToVIZ(this.#dateOfIssue).toUpperCase(); }
   set dateOfIssue(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
@@ -139,7 +118,6 @@ class CrewCertificate {
 
   #placeOfIssue;
   get placeOfIssue() { return this.#placeOfIssue; }
-  get placeOfIssueVIZ() { return this.#placeOfIssue.toUpperCase(); }
   set placeOfIssue(value) {
     this.#placeOfIssue = new String(value);
     this.#placeOfIssue.toVIZ = function() {
