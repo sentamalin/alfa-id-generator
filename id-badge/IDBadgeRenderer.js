@@ -44,6 +44,7 @@ class IDBadgeRenderer {
   dateOfExpirationHeader;
   additionalElementsHeader;
   fonts;
+  useDigitalSeal = true;
 
   // Public Methods
   /** @param { CrewID } model */
@@ -296,8 +297,14 @@ class IDBadgeRenderer {
     );
     console.log("Current Model:");
     console.log(model);
+    let barcode;
+    if (this.useDigitalSeal) {
+      barcode = [{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }];
+    } else {
+      barcode = model.url;
+    }
     const images = await Promise.all([
-      qrLite.toCanvas([{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }], {
+      qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         margin: 0,
         width: this.constructor.#backQRCodeArea[0],
