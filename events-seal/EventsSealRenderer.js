@@ -96,12 +96,10 @@ class EventsSealRenderer {
       this.constructor.#textY[0],
       this.constructor.#textArea[0]
     );
-    const documentType = `${model.typeCodeVIZ}-${model.authorityCodeVIZ}` +
-      this.constructor.#headerSeparator + this.fullDocumentName;
     ctx.fillText(
-      documentType,
+      this.fullDocumentName,
       Math.max(
-        this.constructor.#cardArea[0] - this.constructor.#safe - ctx.measureText(documentType).width,
+        this.constructor.#cardArea[0] - this.constructor.#safe - ctx.measureText(this.fullDocumentName).width,
         this.constructor.#textX
       ),
       this.constructor.#textY[1],
@@ -109,33 +107,17 @@ class EventsSealRenderer {
     );
     ctx.font = this.constructor.#dataFont;
     ctx.fillStyle = this.textColor;
-    let numberWidth = this.constructor.#cardArea[0] - this.constructor.#safe - ctx.measureText(model.issueDate).width;
+    let numberWidth = this.constructor.#cardArea[0] - this.constructor.#safe - ctx.measureText(model.number).width;
     ctx.fillText(
-      model.issueDate,
+      model.number,
       numberWidth,
       this.constructor.#textY[2]
     );
     ctx.font = this.constructor.#headerFont;
     ctx.fillStyle = this.headerColor;
-    numberWidth -= ctx.measureText("I: ").width;
+    numberWidth -= ctx.measureText("NO: ").width;
     ctx.fillText(
-      "I: ",
-      numberWidth,
-      this.constructor.#textY[2]
-    );
-    ctx.font = this.constructor.#dataFont;
-    ctx.fillStyle = this.textColor;
-    numberWidth -= ctx.measureText(`${model.number} `).width;
-    ctx.fillText(
-      `${model.number} `,
-      numberWidth,
-      this.constructor.#textY[2]
-    );
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillStyle = this.headerColor;
-    numberWidth -= ctx.measureText("DOC NO: ").width;
-    ctx.fillText(
-      "DOC NO: ",
+      "NO: ",
       numberWidth,
       this.constructor.#textY[2]
     );
@@ -150,25 +132,9 @@ class EventsSealRenderer {
     );
     ctx.font = this.constructor.#headerFont;
     ctx.fillStyle = this.headerColor;
-    passportWidth -= ctx.measureText("T: ").width;
+    passportWidth -= ctx.measureText("THRU: ").width;
     ctx.fillText(
-      "T: ",
-      passportWidth,
-      this.constructor.#textY[3]
-    );
-    ctx.font = this.constructor.#dataFont;
-    ctx.fillStyle = this.textColor;
-    passportWidth -= ctx.measureText(`${model.passportNumberVIZ} `).width;
-    ctx.fillText(
-      `${model.passportNumberVIZ} `,
-      passportWidth,
-      this.constructor.#textY[3]
-    );
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillStyle = this.headerColor;
-    passportWidth -= ctx.measureText("PASS NO: ").width;
-    ctx.fillText(
-      "PASS NO: ",
+      "THRU: ",
       passportWidth,
       this.constructor.#textY[3]
     );
@@ -226,7 +192,7 @@ class EventsSealRenderer {
   }
 
   // Areas used in card generation (static)
-  static #cardArea = [511, 627];
+  static #cardArea = [352, 480];
   static get cutCardArea() {
     return [
       this.#cardArea[0] - (this.#bleed * 2),
@@ -235,7 +201,7 @@ class EventsSealRenderer {
   }
   static #bleed = 16;
   static #safe = 48;
-  static #logoArea = 93;
+  static #logoArea = 96;
   static get #textArea() { return [
     this.#cardArea[0] - (this.#safe * 2) - this.#logoArea - 24,
     this.#cardArea[1] - this.#safe - this.#qrCodeArea - 24

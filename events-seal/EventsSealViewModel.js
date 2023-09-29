@@ -38,8 +38,8 @@ class EventsSealViewModel {
     frontBackgroundImage: "/cardBackgrounds/passport-mrva-lofiGrey.png",
     logo: "/smallLogos/alfa-bw.svg",
     showGuides: false,
-    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
-    fullDocumentName: "FURRY EVENTS ENTRY VISA"
+    fullAuthority: "ALFACON 2023",
+    fullDocumentName: "PARTICIPANT"
   });
 
   #inputTimeout = null;
@@ -616,11 +616,10 @@ class EventsSealViewModel {
     ctx.drawImage(pageSpecimen, 0, 0);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "#999999";
-    ctx.fillRect(31, 237, 481, 597);
-    // Draw seal sticker using 32, 238, 479, 595
+    ctx.fillRect(190, 237, 322, 450);
     ctx.drawImage(
       canvas, 16, 16, EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1],
-      32, 238, EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1]
+      191, 238, EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1]
     );
     const downloadFront = this.#document.getElementById("downloadFront");
     let blob;
