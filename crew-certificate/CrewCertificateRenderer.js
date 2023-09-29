@@ -47,6 +47,7 @@ class CrewCertificateRenderer {
   declarationHeader;
   issueHeader;
   fonts;
+  useDigitalSeal = true;
 
   // Public Methods
   /** @param { CrewCertificate } model */
@@ -404,7 +405,11 @@ class CrewCertificateRenderer {
     console.log("Current Model:");
     console.log(model);
     let barcode;
-    barcode = model.url;
+    if (this.useDigitalSeal) {
+      barcode = [{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }];
+    } else {
+      barcode = model.url;
+    }
     const images = await Promise.all([
       qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,

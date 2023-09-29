@@ -40,6 +40,7 @@ class EventsMRVBRenderer {
   dateOfBirthHeader;
   genderHeader;
   fonts;
+  useDigitalSeal = true;
 
   // Public Methods
   /** @param { EventsMRVB } model */
@@ -101,7 +102,11 @@ class EventsMRVBRenderer {
     console.log("Current Model:");
     console.log(model);
     let barcode;
-    barcode = model.url;
+    if (this.useDigitalSeal) {
+      barcode = [{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }];
+    } else {
+      barcode = model.url;
+    }
     const imagePromises = [
       this.constructor.#generateCanvasImg(model.picture),
       this.constructor.#generateCanvasImg(this.logo),
