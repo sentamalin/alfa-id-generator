@@ -102,7 +102,7 @@ class TravelDocument {
     } else {
       this.#genderMarker = new String(value.toUpperCase());
       this.#genderMarker.toMRZ = function() {
-        if (this === "X") { return "<"; }
+        if (`${this}` === "X") { return "<"; }
         else { return this; }
       }
       this.#genderMarker.toVIZ = function() {
