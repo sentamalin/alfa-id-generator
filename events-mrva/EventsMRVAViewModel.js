@@ -47,6 +47,7 @@ class EventsMRVAViewModel {
     logoUnderlayAlpha: 255,
     logo: "/smallLogos/alfa.svg",
     showGuides: false,
+    useDigitalSeal: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "FURRY EVENTS ENTRY VISA",
     placeOfIssueHeader: [
@@ -386,6 +387,7 @@ class EventsMRVAViewModel {
     this.#issueDateInput = input;
     this.#issueDateInput.value = this.#model.issueDate;
     this.#issueDateInput.addEventListener("change", this, false);
+    this.#issueDateInput.setAttribute("disabled", "disabled");
   }
   onIssueDateInputChange() {
     this.#model.issueDate = this.#issueDateInput.value;
@@ -402,6 +404,7 @@ class EventsMRVAViewModel {
     this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
+    this.#identifierInput.setAttribute("disabled", "disabled");
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
@@ -419,6 +422,7 @@ class EventsMRVAViewModel {
     this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
     this.#certReferenceInput.addEventListener("input", this, false);
     this.#certReferenceInput.addEventListener("change", this, false);
+    this.#certReferenceInput.setAttribute("disabled", "disabled");
   }
   onCertReferenceInputChange() {
     if (this.#certReferenceInput.checkValidity() &&
@@ -434,6 +438,7 @@ class EventsMRVAViewModel {
     this.#sealSignatureDateInput = input;
     this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
+    this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
     this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
@@ -449,6 +454,7 @@ class EventsMRVAViewModel {
     this.#dayDurationInput.value = this.#model.durationOfStay[0];
     this.#dayDurationInput.addEventListener("input", this, false);
     this.#dayDurationInput.addEventListener("change", this, false);
+    this.#dayDurationInput.setAttribute("disabled", "disabled");
   }
   onDayDurationInputChange() {
     if (this.#dayDurationInput.checkValidity() &&
@@ -466,6 +472,7 @@ class EventsMRVAViewModel {
     this.#monthDurationInput.value = this.#model.durationOfStay[1];
     this.#monthDurationInput.addEventListener("input", this, false);
     this.#monthDurationInput.addEventListener("change", this, false);
+    this.#monthDurationInput.setAttribute("disabled", "disabled");
   }
   onMonthDurationInputChange() {
     if (this.#monthDurationInput.checkValidity() &&
@@ -483,6 +490,7 @@ class EventsMRVAViewModel {
     this.#yearDurationInput.value = this.#model.durationOfStay[2];
     this.#yearDurationInput.addEventListener("input", this, false);
     this.#yearDurationInput.addEventListener("change", this, false);
+    this.#yearDurationInput.setAttribute("disabled", "disabled");
   }
   onYearDurationInputChange() {
     if (this.#yearDurationInput.checkValidity() &&
@@ -510,6 +518,7 @@ class EventsMRVAViewModel {
     this.#visaTypeCodeInput.setAttribute("placeholder", this.#model.visaTypeCode);
     this.#visaTypeCodeInput.addEventListener("input", this, false);
     this.#visaTypeCodeInput.addEventListener("change", this, false);
+    this.#visaTypeCodeInput.setAttribute("disabled", "disabled");
   }
   onVisaTypeCodeInputChange() {
     if (this.#visaTypeCodeInput.checkValidity() &&
@@ -1434,6 +1443,40 @@ class EventsMRVAViewModel {
     this.#generateCard();
   }
 
+  /** @type { HTMLInputElement } */ #useDigitalSealInput;
+  /** @param { HTMLInputElement } input */
+  set useDigitalSealInput(input) {
+    this.#useDigitalSealInput = input;
+    this.#useDigitalSealInput.addEventListener("change", this, false);
+  }
+  onUseDigitalSealInputChange() {
+    if (this.#renderer.useDigitalSeal) {
+      this.#renderer.useDigitalSeal = false;
+      this.#issueDateInput.setAttribute("disabled", "disabled");
+      this.#identifierInput.setAttribute("disabled", "disabled");
+      this.#certReferenceInput.setAttribute("disabled", "disabled");
+      this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
+      this.#dayDurationInput.setAttribute("disabled", "disabled");
+      this.#monthDurationInput.setAttribute("disabled", "disabled");
+      this.#yearDurationInput.setAttribute("disabled", "disabled");
+      this.#visaTypeCodeInput.setAttribute("disabled", "disabled");
+      this.#urlInput.removeAttribute("disabled");
+    }
+    else {
+      this.#renderer.useDigitalSeal = true;
+      this.#issueDateInput.removeAttribute("disabled");
+      this.#identifierInput.removeAttribute("disabled");
+      this.#certReferenceInput.removeAttribute("disabled");
+      this.#sealSignatureDateInput.removeAttribute("disabled");
+      this.#dayDurationInput.removeAttribute("disabled");
+      this.#monthDurationInput.removeAttribute("disabled");
+      this.#yearDurationInput.removeAttribute("disabled");
+      this.#visaTypeCodeInput.removeAttribute("disabled");
+      this.#urlInput.setAttribute("disabled", "disabled");
+    }
+    this.#generateCard();
+  }
+
   // Public methods
   /** @param { Event } e */
   handleEvent(e) {
@@ -1530,6 +1573,7 @@ class EventsMRVAViewModel {
       "genderHeaderI18n1",
       "genderHeaderI18n2",
       "showGuides",
+      "useDigitalSeal",
       "identifier",
       "certReference",
       "issueDate",

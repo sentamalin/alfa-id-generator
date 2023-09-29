@@ -50,6 +50,7 @@ class CrewLicenseViewModel {
     logo: "/logos/alfa.png",
     smallLogo: "/smallLogos/alfa-bw.svg",
     showGuides: false,
+    useDigitalSeal: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INT'L",
     fullDocumentName: "CREWMEMBER LICENSE",
     nameHeader: [
@@ -278,6 +279,7 @@ class CrewLicenseViewModel {
     this.#issueDateInput = input;
     this.#issueDateInput.value = this.#model.issueDate;
     this.#issueDateInput.addEventListener("change", this, false);
+    this.#issueDateInput.setAttribute("disabled", "disabled");
   }
   onIssueDateInputChange() {
     this.#model.issueDate = this.#issueDateInput.value;
@@ -294,6 +296,7 @@ class CrewLicenseViewModel {
     this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
+    this.#identifierInput.setAttribute("disabled", "disabled");
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
@@ -311,6 +314,7 @@ class CrewLicenseViewModel {
     this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
     this.#certReferenceInput.addEventListener("input", this, false);
     this.#certReferenceInput.addEventListener("change", this, false);
+    this.#certReferenceInput.setAttribute("disabled", "disabled");
   }
   onCertReferenceInputChange() {
     if (this.#certReferenceInput.checkValidity() &&
@@ -326,6 +330,7 @@ class CrewLicenseViewModel {
     this.#sealSignatureDateInput = input;
     this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
+    this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
     this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
@@ -342,6 +347,7 @@ class CrewLicenseViewModel {
     this.#subauthorityCodeInput.setAttribute("placeholder", this.#model.subauthorityCode);
     this.#subauthorityCodeInput.addEventListener("input", this, false);
     this.#subauthorityCodeInput.addEventListener("change", this, false);
+    this.#subauthorityCodeInput.setAttribute("disabled", "disabled");
   }
   onSubauthorityCodeInputChange() {
     if (this.#subauthorityCodeInput.checkValidity() &&
@@ -361,6 +367,7 @@ class CrewLicenseViewModel {
     this.#privilegeCodeInput.setAttribute("placeholder", this.#model.privilegeCode);
     this.#privilegeCodeInput.addEventListener("input", this, false);
     this.#privilegeCodeInput.addEventListener("change", this, false);
+    this.#privilegeCodeInput.setAttribute("disabled", "disabled");
   }
   onPrivilegeCodeInputChange() {
     if (this.#privilegeCodeInput.checkValidity() &&
@@ -1373,6 +1380,36 @@ class CrewLicenseViewModel {
     this.#generateCard();
   }
 
+  /** @type { HTMLInputElement } */ #useDigitalSealInput;
+  /** @param { HTMLInputElement } input */
+  set useDigitalSealInput(input) {
+    this.#useDigitalSealInput = input;
+    this.#useDigitalSealInput.addEventListener("change", this, false);
+  }
+  onUseDigitalSealInputChange() {
+    if (this.#renderer.useDigitalSeal) {
+      this.#renderer.useDigitalSeal = false;
+      this.#issueDateInput.setAttribute("disabled", "disabled");
+      this.#identifierInput.setAttribute("disabled", "disabled");
+      this.#certReferenceInput.setAttribute("disabled", "disabled");
+      this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
+      this.#subauthorityCodeInput.setAttribute("disabled", "disabled");
+      this.#privilegeCodeInput.setAttribute("disabled", "disabled");
+      this.#urlInput.removeAttribute("disabled");
+    }
+    else {
+      this.#renderer.useDigitalSeal = true;
+      this.#issueDateInput.removeAttribute("disabled");
+      this.#identifierInput.removeAttribute("disabled");
+      this.#certReferenceInput.removeAttribute("disabled");
+      this.#sealSignatureDateInput.removeAttribute("disabled");
+      this.#subauthorityCodeInput.removeAttribute("disabled");
+      this.#privilegeCodeInput.removeAttribute("disabled");
+      this.#urlInput.setAttribute("disabled", "disabled");
+    }
+    this.#generateCard();
+  }
+
   // Public methods
   /** @param { Event } e */
   handleEvent(e) {
@@ -1469,6 +1506,7 @@ class CrewLicenseViewModel {
       "limitationsHeaderI18n1",
       "limitationsHeaderI18n2",
       "showGuides",
+      "useDigitalSeal",
       "identifier",
       "certReference",
       "issueDate",

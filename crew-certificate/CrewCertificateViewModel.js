@@ -49,6 +49,7 @@ class CrewCertificateViewModel {
     logo: "/logos/lambda.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
     showGuides: false,
+    useDigitalSeal: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INT'L",
     fullDocumentName: "CREWMEMBER CERTIFICATE",
     nameHeader: [
@@ -281,6 +282,7 @@ class CrewCertificateViewModel {
     this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
+    this.#identifierInput.setAttribute("disabled", "disabled");
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
@@ -298,6 +300,7 @@ class CrewCertificateViewModel {
     this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
     this.#certReferenceInput.addEventListener("input", this, false);
     this.#certReferenceInput.addEventListener("change", this, false);
+    this.#certReferenceInput.setAttribute("disabled", "disabled");
   }
   onCertReferenceInputChange() {
     if (this.#certReferenceInput.checkValidity() &&
@@ -313,6 +316,7 @@ class CrewCertificateViewModel {
     this.#sealSignatureDateInput = input;
     this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
+    this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
     this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
@@ -329,6 +333,7 @@ class CrewCertificateViewModel {
     this.#employerCodeInput.setAttribute("placeholder", this.#model.employerCode);
     this.#employerCodeInput.addEventListener("input", this, false);
     this.#employerCodeInput.addEventListener("change", this, false);
+    this.#employerCodeInput.setAttribute("disabled", "disabled");
   }
   onEmployerCodeInputChange() {
     if (this.#employerCodeInput.checkValidity() &&
@@ -348,6 +353,7 @@ class CrewCertificateViewModel {
     this.#occupationCodeInput.setAttribute("placeholder", this.#model.occupationCode);
     this.#occupationCodeInput.addEventListener("input", this, false);
     this.#occupationCodeInput.addEventListener("change", this, false);
+    this.#occupationCodeInput.setAttribute("disabled", "disabled");
   }
   onOccupationCodeInputChange() {
     if (this.#occupationCodeInput.checkValidity() &&
@@ -1369,6 +1375,34 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
+  /** @type { HTMLInputElement } */ #useDigitalSealInput;
+  /** @param { HTMLInputElement } input */
+  set useDigitalSealInput(input) {
+    this.#useDigitalSealInput = input;
+    this.#useDigitalSealInput.addEventListener("change", this, false);
+  }
+  onUseDigitalSealInputChange() {
+    if (this.#renderer.useDigitalSeal) {
+      this.#renderer.useDigitalSeal = false;
+      this.#identifierInput.setAttribute("disabled", "disabled");
+      this.#certReferenceInput.setAttribute("disabled", "disabled");
+      this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
+      this.#employerCodeInput.setAttribute("disabled", "disabled");
+      this.#occupationCodeInput.setAttribute("disabled", "disabled");
+      this.#urlInput.removeAttribute("disabled");
+    }
+    else {
+      this.#renderer.useDigitalSeal = true;
+      this.#identifierInput.removeAttribute("disabled");
+      this.#certReferenceInput.removeAttribute("disabled");
+      this.#sealSignatureDateInput.removeAttribute("disabled");
+      this.#employerCodeInput.removeAttribute("disabled");
+      this.#occupationCodeInput.removeAttribute("disabled");
+      this.#urlInput.setAttribute("disabled", "disabled");
+    }
+    this.#generateCard();
+  }
+
   // Public methods
   /** @param { Event } e */
   handleEvent(e) {
@@ -1466,6 +1500,7 @@ class CrewCertificateViewModel {
       "issueHeaderI18n1",
       "issueHeaderI18n2",
       "showGuides",
+      "useDigitalSeal",
       "identifier",
       "certReference",
       "sealSignatureDate",

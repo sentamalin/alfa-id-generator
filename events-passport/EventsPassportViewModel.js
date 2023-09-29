@@ -45,6 +45,7 @@ class EventsPassportViewModel {
     logoUnderlayAlpha: 255,
     logo: "/smallLogos/alfa.svg",
     showGuides: false,
+    useDigitalSeal: false,
     fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "FURRY EVENTS PASSPORT",
     passportHeader: [
@@ -352,6 +353,7 @@ class EventsPassportViewModel {
     this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
+    this.#identifierInput.setAttribute("disabled", "disabled");
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
@@ -369,6 +371,7 @@ class EventsPassportViewModel {
     this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
     this.#certReferenceInput.addEventListener("input", this, false);
     this.#certReferenceInput.addEventListener("change", this, false);
+    this.#certReferenceInput.setAttribute("disabled", "disabled");
   }
   onCertReferenceInputChange() {
     if (this.#certReferenceInput.checkValidity() &&
@@ -384,6 +387,7 @@ class EventsPassportViewModel {
     this.#sealSignatureDateInput = input;
     this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
+    this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
     this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
@@ -400,6 +404,7 @@ class EventsPassportViewModel {
     this.#subauthorityCodeInput.setAttribute("placeholder", this.#model.subauthorityCode);
     this.#subauthorityCodeInput.addEventListener("input", this, false);
     this.#subauthorityCodeInput.addEventListener("change", this, false);
+    this.#subauthorityCodeInput.setAttribute("disabled", "disabled");
   }
   onSubauthorityCodeInputChange() {
     if (this.#subauthorityCodeInput.checkValidity() &&
@@ -1437,6 +1442,32 @@ class EventsPassportViewModel {
     this.#generateCard();
   }
 
+  /** @type { HTMLInputElement } */ #useDigitalSealInput;
+  /** @param { HTMLInputElement } input */
+  set useDigitalSealInput(input) {
+    this.#useDigitalSealInput = input;
+    this.#useDigitalSealInput.addEventListener("change", this, false);
+  }
+  onUseDigitalSealInputChange() {
+    if (this.#renderer.useDigitalSeal) {
+      this.#renderer.useDigitalSeal = false;
+      this.#identifierInput.setAttribute("disabled", "disabled");
+      this.#certReferenceInput.setAttribute("disabled", "disabled");
+      this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
+      this.#subauthorityCodeInput.setAttribute("disabled", "disabled");
+      this.#urlInput.removeAttribute("disabled");
+    }
+    else {
+      this.#renderer.useDigitalSeal = true;
+      this.#identifierInput.removeAttribute("disabled");
+      this.#certReferenceInput.removeAttribute("disabled");
+      this.#sealSignatureDateInput.removeAttribute("disabled");
+      this.#subauthorityCodeInput.removeAttribute("disabled");
+      this.#urlInput.setAttribute("disabled", "disabled");
+    }
+    this.#generateCard();
+  }
+
   // Public methods
   /** @param { Event } e */
   handleEvent(e) {
@@ -1539,6 +1570,7 @@ class EventsPassportViewModel {
       "signatureHeaderI18n1",
       "signatureHeaderI18n2",
       "showGuides",
+      "useDigitalSeal",
       "identifier",
       "certReference",
       "sealSignatureDate",
