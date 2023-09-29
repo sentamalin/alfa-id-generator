@@ -229,6 +229,11 @@ class EventsPassport {
 
   // Constructor
   constructor(opt) {
+    this.placeOfBirth = "UTOPIA";
+    this.dateOfIssue = "2023-09-29";
+    this.authority = "Unknown";
+    this.endorsements = "None";
+    
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }

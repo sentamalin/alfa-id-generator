@@ -67,7 +67,7 @@ class TD3Document {
   }
   get mrzLine2() {
     let optionalDataCheckDigit;
-    if (this.optionalData === "") { optionalDataCheckDigit = "<"; }
+    if (`${this.optionalData}` === "") { optionalDataCheckDigit = "<"; }
     else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalData.toMRZ()); }
     let uncheckedLine = this.number.toMRZ() +
       TravelDocument.generateMRZCheckDigit(this.number.toMRZ()) +
@@ -94,6 +94,9 @@ class TD3Document {
 
   // Constructor
   constructor(opt) {
+    this.fullName = "Mann, Mister";
+    this.optionalData = "";
+    
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }

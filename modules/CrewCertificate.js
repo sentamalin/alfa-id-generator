@@ -261,6 +261,12 @@ class CrewCertificate {
 
   // Constructor
   constructor(opt) {
+    this.employer = "Unknown";
+    this.occupation = "Unknown";
+    this.declaration = "Unknown";
+    this.dateOfIssue = "2023-09-29";
+    this.placeOfIssue = "Zenith, UTO";
+    
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }

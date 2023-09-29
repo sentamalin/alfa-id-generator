@@ -78,6 +78,15 @@ class VisaDocument {
     }
   }
   usePassportInMRZ;
+
+  constructor() {
+    this.placeOfIssue = "Zenith, UTO";
+    this.validFrom = "2023-09-29";
+    this.numberOfEntries = "Multiple";
+    this.type = "Participant";
+    this.additionalInfo = "None";
+    this.passportNumber = "111222333";
+  }
 }
 
 export { VisaDocument };

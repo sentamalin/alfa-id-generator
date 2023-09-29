@@ -55,7 +55,7 @@ class MRVADocument {
   get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() {
     let optionalDataCheckDigit;
-    if (this.optionalData === "") { optionalDataCheckDigit = "<"; }
+    if (`${this.optionalData}` === "") { optionalDataCheckDigit = "<"; }
     else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalData.toMRZ()); }
     let mrzNumber;
     if (this.usePassportInMRZ) { mrzNumber = this.passportNumber.toMRZ(); }

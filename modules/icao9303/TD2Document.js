@@ -90,6 +90,9 @@ class TD2Document {
 
   // Constructor
   constructor(opt) {
+    this.fullName = "Mann, Mister";
+    this.optionalData = "";
+    
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }

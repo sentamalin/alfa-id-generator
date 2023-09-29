@@ -67,10 +67,10 @@ class CrewID {
   get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() {
     let uncheckedLine = "<<<<<<0<" +
-      this.dateOfExpirationMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfExpirationMRZ) +
+      this.dateOfExpiration.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.dateOfExpiration.toMRZ()) +
       "XXX" +
-      this.optionalDataMRZ.slice(15);
+      this.optionalData.toMRZ().slice(15);
     return uncheckedLine +
       TravelDocument.generateMRZCheckDigit(
         this.mrzLine1.slice(5) +
@@ -180,6 +180,8 @@ class CrewID {
 
   // Constructor
   constructor(opt) {
+    this.employer = "Unknown";
+    
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }

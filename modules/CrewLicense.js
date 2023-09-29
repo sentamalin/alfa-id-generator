@@ -244,6 +244,11 @@ class CrewLicense {
 
   // Constructor
   constructor(opt) {
+    this.authority = "Unknown";
+    this.privilege = "None";
+    this.ratings = "None";
+    this.limitations = "None";
+    
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }

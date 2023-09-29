@@ -8,7 +8,7 @@ class TravelDocument {
      ICAO 9303-compliant travel documents with machine-readable zones (MRZs). */
 
   // General Text Data
-  #typeCode = ""; // Up to 2 characters
+  #typeCode; // Up to 2 characters
   get typeCode() { return this.#typeCode; }
   set typeCode(value) {
     if (value.toString().length > 2) {
@@ -26,7 +26,7 @@ class TravelDocument {
     }
   }
 
-  #authorityCode = ""; // 3 characters
+  #authorityCode; // 3 characters
   get authorityCode() { return this.#authorityCode; }
   set authorityCode(value) {
     if (value.toString().toUpperCase().length !== 3) {
@@ -53,7 +53,7 @@ class TravelDocument {
     }
   }
 
-  #number = ""; // Up to 9 characters
+  #number; // Up to 9 characters
   get number() { return this.#number; }
   set number(value) {
     if (value.toString().length > 9) {
@@ -71,7 +71,7 @@ class TravelDocument {
     }
   }
 
-  #dateOfBirth = new Date();
+  #dateOfBirth;
   get dateOfBirth() { return this.#dateOfBirth; }
   set dateOfBirth(value) {
     let test = new Date(`${value}T00:00:00`);
@@ -90,7 +90,7 @@ class TravelDocument {
     }
   }
 
-  #genderMarker = "X";
+  #genderMarker;
   get genderMarker() {
     return this.#genderMarker;
   }
@@ -111,7 +111,7 @@ class TravelDocument {
     }
   }
 
-  #dateOfExpiration = new Date();
+  #dateOfExpiration;
   get dateOfExpiration() { return this.#dateOfExpiration; }
   set dateOfExpiration(value) {
     let test = new Date(`${value}T00:00:00`);
@@ -130,7 +130,7 @@ class TravelDocument {
     }
   }
 
-  #nationalityCode = ""; // ISO 3166-1 alpha-3; 3 characters
+  #nationalityCode; // ISO 3166-1 alpha-3; 3 characters
   get nationalityCode() { return this.#nationalityCode; }
   set nationalityCode(value) {
     if (value.toString().length !== 3) {
@@ -158,7 +158,7 @@ class TravelDocument {
     }
   }
 
-  #fullName = ""; // Variable characters; ', ' separates surname from given name
+  #fullName; // Variable characters; ', ' separates surname from given name
   get fullName() { return this.#fullName; }
   fullNameMRZ(length) {
     let normalized = TravelDocument.normalizeMRZString(this.#fullName.replace(", ","<<"));
@@ -578,6 +578,14 @@ class TravelDocument {
 
   // Constructor
   constructor(opt) {
+    this.typeCode = "UN";
+    this.authorityCode = "UNK";
+    this.number = "111222333";
+    this.dateOfBirth = "2023-09-29";
+    this.genderMarker = "X";
+    this.dateOfExpiration = "2023-09-29";
+    this.nationalityCode = "UNK";
+    
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
