@@ -101,11 +101,7 @@ class CrewCertificate {
   #declaration;
   get declaration() { return this.#declaration; }
   get declarationVIZ() { return this.#declaration.toUpperCase(); }
-  set declaration(value) {
-    this.#declaration = value;
-    const stripReturn = value.replace(/\n/gi, " ").replace(/-/gi, " ").toUpperCase();
-    this.#seal.features.set(0x04, DigitalSeal.c40Encode(stripReturn));
-  }
+  set declaration(value) { this.#declaration = value; }
 
   #dateOfIssue;
   get dateOfIssue() { return this.#dateOfIssue.toISOString().slice(0,10); }
@@ -213,7 +209,6 @@ class CrewCertificate {
     }
     this.#document.nationalityCode = sealMRZ.slice(30, 33).trimEnd();
     this.#document.fullName = sealMRZ.slice(33).replace("  ", ", ").trimEnd();
-    this.#declaration = DigitalSeal.c40Decode(this.#seal.features.get(0x04));
     this.#dateOfIssue = new Date(`${this.#seal.issueDate}T00:00:00`);
   }
   get employerCode() {
