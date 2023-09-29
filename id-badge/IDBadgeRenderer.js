@@ -264,6 +264,12 @@ class IDBadgeRenderer {
     }
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
     ctx.fillRect(
+      this.constructor.#stripeXY[0],
+      this.constructor.#stripeXY[1],
+      this.constructor.#stripeArea[0],
+      this.constructor.#stripeArea[1]
+    );
+    ctx.fillRect(
       this.constructor.#logoUnderlayXY[0],
       this.constructor.#logoUnderlayXY[1],
       this.constructor.#logoUnderlayArea[0],
@@ -325,8 +331,8 @@ class IDBadgeRenderer {
       images[1], ctx,
       this.constructor.#logoBackXY[0],
       this.constructor.#logoBackXY[1],
-      this.constructor.#logoArea[0],
-      this.constructor.#logoArea[1]
+      this.constructor.#backLogoArea[0],
+      this.constructor.#backLogoArea[1]
     );
     ctx.drawImage(
       images[2],
@@ -487,12 +493,13 @@ class IDBadgeRenderer {
   // Coordinates used in card generation (static)
   static #badgeTypeHeaderY = [48, 85];
   static #photoUnderlayXY = [32, 0];
-  static #logoUnderlayXY = [618, 274];
+  static #stripeXY = [594, 328];
+  static #logoUnderlayXY = [871, 282];
   static #numberUnderlayXY = [871, 193];
   static #mrzUnderlayXY = [0, 379];
   static #shortHeaderXY = [886, 167];
-  static #backQRCodeXY = [618, 48];
-  static #logoBackXY = [634, 290];
+  static #backQRCodeXY = [594, 48];
+  static #logoBackXY = [895, 306];
   static #smallLogoXY = [886, 48];
   static #backNumberXY = [888, 216];
   static #mrzX = 71;
@@ -527,12 +534,14 @@ class IDBadgeRenderer {
   static cutCardArea = [640, 1020];
   static #photoUnderlayArea = [402, 624];
   static #photoArea = [370, 370];
-  static #logoUnderlayArea = [434, 93];
+  static #stripeArea = [458, 39];
+  static #logoUnderlayArea = [181, 46];
   static #numberUnderlayArea = [181, 65];
   static #mrzUnderlayArea = [1052, 293];
   static #frontQRCodeArea = [158, 158];
-  static #backQRCodeArea = [212, 212];
+  static #backQRCodeArea = [256, 256];
   static #logoArea = [370, 61];
+  static #backLogoArea = [109, 37];
   static #smallLogoArea = [103, 103];
 
   // Methods used in card generation (static)

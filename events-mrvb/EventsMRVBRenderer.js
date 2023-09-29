@@ -560,7 +560,7 @@ class EventsMRVBRenderer {
   static get #signatureXY() {
     return [
       this.#qrCodeXY[0] - 24 - this.#signatureArea,
-      this.#qrCodeXY[1]
+      this.#mrzUnderlayXY[1] - 24 - this.#signatureArea
     ];
   }
   static #mrzX = 56;
@@ -619,10 +619,8 @@ class EventsMRVBRenderer {
   static #photoUnderlayArea = [268, 520];
   static #photoArea = [220, 283];
   static #logoArea = [220, 145];
-  static get #signatureArea() { return this.#qrCodeArea; }
-  static get #qrCodeArea() {
-    return this.#mrzUnderlayXY[1] - 24 - this.#passportY[4];
-  }
+  static get #signatureArea() { return this.#qrCodeArea / 2; }
+  static #qrCodeArea = 256;
   static get #mrzUnderlayArea() {
     return [
       this.#cardArea[0],

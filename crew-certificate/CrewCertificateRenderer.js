@@ -371,6 +371,12 @@ class CrewCertificateRenderer {
     }
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
     ctx.fillRect(
+      this.constructor.#stripeXY[0],
+      this.constructor.#stripeXY[1],
+      this.constructor.#stripeArea[0],
+      this.constructor.#stripeArea[1]
+    );
+    ctx.fillRect(
       this.constructor.#logoUnderlayXY[0],
       this.constructor.#logoUnderlayXY[1],
       this.constructor.#logoUnderlayArea[0],
@@ -432,8 +438,8 @@ class CrewCertificateRenderer {
       images[1], ctx,
       this.constructor.#logoBackXY[0],
       this.constructor.#logoBackXY[1],
-      this.constructor.#logoArea[0],
-      this.constructor.#logoArea[1]
+      this.constructor.#backLogoArea[0],
+      this.constructor.#backLogoArea[1]
     );
     ctx.drawImage(
       images[2],
@@ -613,13 +619,14 @@ class CrewCertificateRenderer {
   static #mainHeaderY = [48, 85];
   static #photoUnderlayXY = [32, 0];
   static #photoXY = [48, 141];
-  static #logoUnderlayXY = [618, 274];
+  static #stripeXY = [594, 328];
+  static #logoUnderlayXY = [871, 282];
   static #numberUnderlayXY = [871, 193];
   static #mrzUnderlayXY = [0, 379];
   static #shortHeaderXY = [886, 167];
-  static #qrCodeXY = [618, 48];
+  static #qrCodeXY = [594, 48];
   static #logoFrontXY = [48, 48];
-  static #logoBackXY = [634, 290];
+  static #logoBackXY = [895, 306];
   static #smallLogoXY = [886, 48];
   static #signatureXY = [48, 543];
   static #backNumberXY = [888, 216];
@@ -663,11 +670,13 @@ class CrewCertificateRenderer {
   static cutCardArea = [1020, 640];
   static #photoUnderlayArea = [402, 527];
   static #photoArea = [370, 370];
-  static #logoUnderlayArea = [434, 93];
+  static #stripeArea = [458, 39];
+  static #logoUnderlayArea = [181, 46];
   static #numberUnderlayArea = [181, 65];
   static #mrzUnderlayArea = [1052, 293];
-  static #qrCodeArea = [212, 212];
+  static #qrCodeArea = [256, 256];
   static #logoArea = [370, 61];
+  static #backLogoArea = [109, 37];
   static #smallLogoArea = [103, 103];
   static #signatureArea = [370, 81];
 

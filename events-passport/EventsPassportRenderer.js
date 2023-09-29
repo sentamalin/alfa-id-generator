@@ -733,9 +733,7 @@ class EventsPassportRenderer {
       164
     ];
   }
-  static get #qrCodeArea() {
-    return this.#mrzUnderlayXY[1] - 32 - this.#dataY[8];
-  }
+  static #qrCodeArea = 256;
   static get #mrzUnderlayArea() {
     return [
       this.#cardArea[0],
