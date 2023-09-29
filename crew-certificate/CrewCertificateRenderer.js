@@ -828,7 +828,7 @@ class CrewCertificateRenderer {
       if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
       if (opt.declarationHeader) { this.declarationHeader = opt.declarationHeader; }
       if (opt.issueHeader) { this.issueHeader = opt.issueHeader; }
-      if (opt.useDigitalSeal) { this.useDigitalSeal = opt.useDigitalSeal; }
+      if (opt.useDigitalSeal !== undefined) { this.useDigitalSeal = opt.useDigitalSeal; }
     }
   }
 }

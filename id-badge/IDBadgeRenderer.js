@@ -665,7 +665,7 @@ class IDBadgeRenderer {
       if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
       if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
       if (opt.additionalElementsHeader) { this.additionalElementsHeader = opt.additionalElementsHeader; }
-      if (opt.useDigitalSeal) { this.useDigitalSeal = opt.useDigitalSeal; }
+      if (opt.useDigitalSeal !== undefined) { this.useDigitalSeal = opt.useDigitalSeal; }
     }
   }
 }

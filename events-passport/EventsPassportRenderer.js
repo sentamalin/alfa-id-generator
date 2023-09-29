@@ -901,7 +901,7 @@ class EventsPassportRenderer {
       if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
       if (opt.endorsementsHeader) { this.endorsementsHeader = opt.endorsementsHeader; }
       if (opt.signatureHeader) { this.signatureHeader = opt.signatureHeader; }
-      if (opt.useDigitalSeal) { this.useDigitalSeal = opt.useDigitalSeal; }
+      if (opt.useDigitalSeal !== undefined) { this.useDigitalSeal = opt.useDigitalSeal; }
     }
   }
 }
