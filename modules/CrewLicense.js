@@ -101,20 +101,12 @@ class CrewLicense {
   #ratings;
   get ratings() { return this.#ratings; }
   get ratingsVIZ() { return this.#ratings.toUpperCase(); }
-  set ratings(value) {
-    this.#ratings = value;
-    const stripReturn = value.replace(/\n/gi, " ");
-    this.#seal.features.set(0x04, DigitalSeal.c40Encode(stripReturn));
-  }
+  set ratings(value) { this.#ratings = value; }
 
   #limitations;
   get limitations() { return this.#limitations; }
   get limitationsVIZ() { return this.#limitations.toUpperCase(); }
-  set limitations(value) {
-    this.#limitations = value;
-    const stripReturn = value.replace(/\n/gi, " ");
-    this.#seal.features.set(0x05, DigitalSeal.c40Encode(stripReturn));
-  }
+  set limitations(value) { this.#limitations = value; }
 
   // CrewLicense MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }
@@ -203,8 +195,6 @@ class CrewLicense {
     }
     this.#document.nationalityCode = sealMRZ.slice(30, 33).trimEnd();
     this.#document.fullName = sealMRZ.slice(33).replace("  ", ", ").trimEnd();
-    this.#ratings = TravelDocument.c40Decode(this.#seal.features.get(0x04));
-    this.#limitations = TravelDocument.c40Decode(this.#seal.features.get(0x05));
   }
   get subauthorityCode() {
     let output = "";
