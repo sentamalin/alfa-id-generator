@@ -118,7 +118,7 @@ class EventsMRVB {
   // EventsMRVB-specific data
   #url;
   get url() { return this.#url; }
-  set url(value) { this.#url = value; this.qrCode = value; }
+  set url(value) { this.#url = value; }
 
   // TD2Document MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }

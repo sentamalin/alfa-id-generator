@@ -101,7 +101,11 @@ class MRVADocument {
         uncheckedLine.slice(21)
       );
   }
-  get machineReadableZone() { return this.#document.machineReadableZone; }
+  get machineReadableZone() {
+    return this.mrzLine1 +
+    "\n" +
+    this.mrzLine2;
+  }
 
   // Constructor
   constructor(opt) {

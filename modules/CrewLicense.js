@@ -91,22 +91,42 @@ class CrewLicense {
   #authority;
   get authority() { return this.#authority; }
   get authorityVIZ() { return this.#authority.toUpperCase(); }
-  set authority(value) { this.#authority = value; }
+  set authority(value) {
+    this.#authority = new String(value);
+    this.#authority.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #privilege;
   get privilege() { return this.#privilege; }
   get privilegeVIZ() { return this.#privilege.toUpperCase(); }
-  set privilege(value) { this.#privilege = value; }
+  set privilege(value) {
+    this.#privilege = new String(value);
+    this.#privilege.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #ratings;
   get ratings() { return this.#ratings; }
   get ratingsVIZ() { return this.#ratings.toUpperCase(); }
-  set ratings(value) { this.#ratings = value; }
+  set ratings(value) {
+    this.#ratings = new String(value);
+    this.#ratings.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #limitations;
   get limitations() { return this.#limitations; }
   get limitationsVIZ() { return this.#limitations.toUpperCase(); }
-  set limitations(value) { this.#limitations = value; }
+  set limitations(value) {
+    this.#limitations = new String(value);
+    this.#limitations.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   // CrewLicense MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }

@@ -17,8 +17,15 @@ class TravelDocument {
       throw new RangeError(
         "Document code (typeCode) must be no more than 2 characters."
       );
+    } else {
+      this.#typeCode = new String(value.toString().toUpperCase());
+      this.#typeCode.toMRZ = function() {
+        return TravelDocument.padMRZString(this, 2);
+      }
+      this.#typeCode.toVIZ = function() {
+        return this.toUpperCase();
+      }
     }
-    else { this.#typeCode = value.toString(); }
   }
 
   #authorityCode = ""; // 3 characters
@@ -30,8 +37,7 @@ class TravelDocument {
       throw new RangeError(
         "Issuing state or organization code (authorityCode) must be 3 characters."
       );
-    }
-    else {
+    } else {
       if (TravelDocument.NationalityCodes[value.toString().toUpperCase()] === undefined) {
         console.warn(
           "Issuing state or organization code (authorityCode) " +
@@ -41,7 +47,13 @@ class TravelDocument {
           "AAA-AAZ, QMA-QZZ, XAA-XZZ, and ZZA-ZZZ."
         );
       }
-      this.#authorityCode = value.toString().toUpperCase();
+      this.#authorityCode = new String(value.toString().toUpperCase());
+      this.#authorityCode.toMRZ = function() {
+        return this;
+      }
+      this.#authorityCode.toVIZ = function() {
+        return this;
+      }
     }
   }
 
@@ -54,12 +66,19 @@ class TravelDocument {
       throw new RangeError(
         "Document number (number) must be no more than 9 characters."
       );
+    } else {
+      this.#number = new String(value.toString().toUpperCase());
+      this.#number.toMRZ = function() {
+        return TravelDocument.padMRZString(this, 9);
+      }
+      this.#number.toVIZ = function() {
+        return this.toUpperCase();
+      }
     }
-    else { this.#number = value.toString(); }
   }
 
   #dateOfBirth = new Date();
-  get dateOfBirth() { return this.#dateOfBirth.toISOString().slice(0,10); }
+  get dateOfBirth() { return this.#dateOfBirth; }
   get dateOfBirthMRZ() { return TravelDocument.dateToMRZ(this.#dateOfBirth); }
   get dateOfBirthVIZ() { return TravelDocument.dateToVIZ(this.#dateOfBirth); }
   set dateOfBirth(value) {
@@ -68,13 +87,20 @@ class TravelDocument {
       throw new TypeError(
         "Date of birth (dateOfBirth) must be a valid date string."
       );
+    } else {
+      this.#dateOfBirth = test;
+      this.#dateOfBirth.toMRZ = function() {
+        return TravelDocument.dateToMRZ(this);
+      }
+      this.#dateOfBirth.toVIZ = function() {
+        return TravelDocument.dateToVIZ(this);
+      }
     }
-    else { this.#dateOfBirth = test; }
   }
 
-  #genderMarker = TravelDocument.GenderMarkers.OtherUnspecified;
+  #genderMarker = "X";
   get genderMarker() {
-    return Symbol.keyFor(this.#genderMarker);
+    return this.#genderMarker;
   }
   get genderMarkerMRZ() {
     if (this.genderMarker === "X") { return "<"; }
@@ -82,22 +108,24 @@ class TravelDocument {
   }
   get genderMarkerVIZ() { return this.genderMarker; }
   set genderMarker(value) {
-    switch (value.toUpperCase()) {
-      case "F": this.#genderMarker = TravelDocument.GenderMarkers.Female; break;
-      case "M": this.#genderMarker = TravelDocument.GenderMarkers.Male; break;
-      default:
-        this.#genderMarker = TravelDocument.GenderMarkers.OtherUnspecified;
-        if (!["F", "M", "X"].includes(value)) {
-          throw new RangeError(
-            "Gender marker (genderMarker) must be [F]emale, [M]ale, or Other/Unspecified [X]."
-          );
-        }
-        break;
+    if (!["F", "M", "X"].includes(value.toUpperCase())) {
+      throw new RangeError(
+        "Gender marker (genderMarker) must be [F]emale, [M]ale, or Other/Unspecified [X]."
+      );
+    } else {
+      this.#genderMarker = new String(value.toUpperCase());
+      this.#genderMarker.toMRZ = function() {
+        if (this === "X") { return "<"; }
+        else { return this; }
+      }
+      this.#genderMarker.toVIZ = function() {
+        return this;
+      }
     }
   }
 
   #dateOfExpiration = new Date();
-  get dateOfExpiration() { return this.#dateOfExpiration.toISOString().slice(0,10); }
+  get dateOfExpiration() { return this.#dateOfExpiration; }
   get dateOfExpirationMRZ() { return TravelDocument.dateToMRZ(this.#dateOfExpiration); }
   get dateOfExpirationVIZ() { return TravelDocument.dateToVIZ(this.#dateOfExpiration); }
   set dateOfExpiration(value) {
@@ -106,8 +134,15 @@ class TravelDocument {
       throw new TypeError(
         "Date of expiration (dateOfExpiration) must be a valid date string."
       );
+    } else {
+      this.#dateOfExpiration = test;
+      this.#dateOfExpiration.toMRZ = function() {
+        return TravelDocument.dateToMRZ(this);
+      }
+      this.#dateOfExpiration.toVIZ = function() {
+        return TravelDocument.dateToVIZ(this);
+      }
     }
-    else { this.#dateOfExpiration = test; }
   }
 
   #nationalityCode = ""; // ISO 3166-1 alpha-3; 3 characters
@@ -130,7 +165,13 @@ class TravelDocument {
           "ZZA-ZZZ."
         );
       }
-      this.#nationalityCode = value.toString();
+      this.#nationalityCode = new String(value.toString().toUpperCase());
+      this.#nationalityCode.toMRZ = function() {
+        return this.toUpperCase();
+      }
+      this.#nationalityCode.toVIZ = function() {
+        return this.toUpperCase();
+      }
     }
   }
 
@@ -146,7 +187,12 @@ class TravelDocument {
     return TravelDocument.padMRZString(normalized.substring(0,length), length);
   }
   get fullNameVIZ() { return this.#fullName.toUpperCase(); }
-  set fullName(value) { this.#fullName = value.toString(); }
+  set fullName(value) {
+    this.#fullName = new String(value.toString());
+    this.#fullName.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #optionalData = ""; // Variable characters
   get optionalData() { return this.#optionalData; }
@@ -159,28 +205,18 @@ class TravelDocument {
     }
     return TravelDocument.padMRZString(normalized.substring(0,length), length);
   }
-  set optionalData(value) { this.#optionalData = value.toString(); }
+  set optionalData(value) { this.#optionalData = new String(value.toString()); }
 
   // General Graphical Data
   #picture; // Picture of the document holder
   get picture() { return this.#picture; }
   set picture(value) { this.#picture = value; }
 
-  #logo; // Logo for the issuing state or authority
-  get logo() { return this.#logo; }
-  set logo(value) { this.#logo = value; }
-
   #signature; // Document holder's signature 
   get signature() { return this.#signature; }
   set signature(value) { this.#signature = value; }
 
   // Enumerations
-  static GenderMarkers = Object.freeze({
-    Female: Symbol.for("F"),
-    Male: Symbol.for("M"),
-    OtherUnspecified: Symbol.for("X")
-  });
-
   static NationalityCodes = Object.freeze({
     // Official ISO 3166-1 alpha-3 nationality codes
     ABW: Symbol.for("Aruba"),
@@ -571,7 +607,6 @@ class TravelDocument {
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
-      if (opt.logo) { this.logo = opt.logo; }
       if (opt.signature) { this.signature = opt.signature; }
     }
   }

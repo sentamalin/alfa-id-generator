@@ -11,10 +11,15 @@ class VisaDocument {
   #placeOfIssue;
   get placeOfIssue() { return this.#placeOfIssue; }
   get placeOfIssueVIZ() { return this.#placeOfIssue.toUpperCase(); }
-  set placeOfIssue(value) { this.#placeOfIssue = value; }
+  set placeOfIssue(value) {
+    this.#placeOfIssue = new String(value);
+    this.#placeOfIssue.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
   
   #validFrom;
-  get validFrom() { return this.#validFrom.toISOString().slice(0,10); }
+  get validFrom() { return this.#validFrom; }
   get validFromVIZ() { return TravelDocument.dateToVIZ(this.#validFrom).toUpperCase(); }
   set validFrom(value) {
     let test = new Date(`${value}T00:00:00`);
@@ -22,24 +27,43 @@ class VisaDocument {
       throw new TypeError(
         "Valid From (validFrom) must be a valid date string."
       );
+    } else {
+      this.#validFrom = test;
+      this.#validFrom.toVIZ = function() {
+        return TravelDocument.dateToVIZ(this);
+      }
     }
-    else { this.#validFrom = test; }
   }
 
   #numberOfEntries;
   get numberOfEntries() { return this.#numberOfEntries; }
   get numberOfEntriesVIZ() { return this.#numberOfEntries.toUpperCase(); }
-  set numberOfEntries(value) { this.#numberOfEntries = value; }
+  set numberOfEntries(value) {
+    this.#numberOfEntries = new String(value);
+    this.#numberOfEntries.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #type;
   get type() { return this.#type; }
   get typeVIZ() { return this.#type.toUpperCase(); }
-  set type(value) { this.#type = value; }
+  set type(value) {
+    this.#type = new String(value);
+    this.#type.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #additionalInfo;
   get additionalInfo() { return this.#additionalInfo; }
   get additionalInfoVIZ() { return this.#additionalInfo.toUpperCase(); }
-  set additionalInfo(value) { this.#additionalInfo = value; }
+  set additionalInfo(value) {
+    this.#additionalInfo = new String(value);
+    this.#additionalInfo.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #passportNumber = "";
   get passportNumber() { return this.#passportNumber; }
@@ -50,12 +74,17 @@ class VisaDocument {
       throw new RangeError(
         "Passport number (passportNumber) must be no more than 9 characters."
       );
+    } else {
+      this.#passportNumber = new String(value.toString());
+      this.#passportNumber.toMRZ = function() {
+        return TravelDocument.padMRZString(this, 9);
+      }
+      this.#passportNumber.toVIZ = function() {
+        return this.toUpperCase();
+      }
     }
-    else { this.#passportNumber = value.toString(); }
   }
-  #usePassportInMRZ;
-  get usePassportInMRZ() { return this.#usePassportInMRZ; }
-  set usePassportInMRZ(value) { this.#usePassportInMRZ = value; }
+  usePassportInMRZ;
 }
 
 export { VisaDocument };

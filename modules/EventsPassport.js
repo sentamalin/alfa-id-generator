@@ -86,18 +86,21 @@ class EventsPassport {
   // EventsPassport-specific data
   #url;
   get url() { return this.#url; }
-  set url(value) { this.#url = value; this.qrCode = value; }
+  set url(value) { this.#url = value; }
 
   #placeOfBirth;
   get placeOfBirth() { return this.#placeOfBirth; }
   get placeOfBirthVIZ() { return this.#placeOfBirth.toUpperCase(); }
   set placeOfBirth(value) {
-    this.#placeOfBirth = value;
+    this.#placeOfBirth = new String(value);
+    this.#placeOfBirth.toVIZ = function() {
+      return this.toUpperCase();
+    }
     this.#seal.features.set(0x02, DigitalSeal.c40Encode(value));
   }
   
   #dateOfIssue;
-  get dateOfIssue() { return this.#dateOfIssue.toISOString().slice(0,10); }
+  get dateOfIssue() { return this.#dateOfIssue; }
   get dateOfIssueVIZ() { return TravelDocument.dateToVIZ(this.#dateOfIssue).toUpperCase(); }
   set dateOfIssue(value) {
     let test = new Date(`${value}T00:00:00`);
@@ -108,6 +111,9 @@ class EventsPassport {
     }
     else {
       this.#dateOfIssue = test;
+      this.#dateOfIssue.toVIZ = function() {
+        return TravelDocument.dateToVIZ(this).toUpperCase();
+      }
       this.#seal.issueDate = value;
     }
   }
@@ -115,13 +121,21 @@ class EventsPassport {
   #authority;
   get authority() { return this.#authority; }
   get authorityVIZ() { return this.#authority.toUpperCase(); }
-  set authority(value) { this.#authority = value; }
+  set authority(value) {
+    this.#authority = new String(value);
+    this.#authority.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #endorsements;
   get endorsements() { return this.#endorsements; }
   get endorsementsVIZ() { return this.#endorsements.toUpperCase(); }
   set endorsements(value) {
-    this.#endorsements = value;
+    this.#endorsements = new String(value);
+    this.#endorsements.toVIZ = function() {
+      return this.toUpperCase();
+    }
     this.#seal.features.set(0x04, DigitalSeal.c40Encode(value));
   }
 
@@ -207,7 +221,7 @@ class EventsPassport {
       const dayExpiration = sealMRZ.slice(69, 71);
       this.#document.dateOfExpiration = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
     }
-    this.#dateOfIssue = new Date(`${this.#seal.issueDate}T00:00:00`);
+    this.dateOfIssue = this.#seal.issueDate;
     this.#endorsements = DigitalSeal.c40Decode(this.#seal.features.get(0x04));
   }
   get subauthorityCode() {

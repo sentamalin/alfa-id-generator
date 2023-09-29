@@ -43,14 +43,36 @@ class TD1Document {
   get fullName() { return this.#document.fullName; } // 30 characters
   get fullNameMRZ() { return this.#document.fullNameMRZ(30); }
   get fullNameVIZ() { return this.#document.fullNameVIZ; }
-  set fullName(value) { this.#document.fullName = value; }
+  set fullName(value) {
+    this.#document.fullName = value;
+    this.#document.fullName.toMRZ = function() {
+      const length = 30;
+      const normalized = TravelDocument.normalizeMRZString(this.replace(", ","<<"));
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get optionalData() { return this.#document.optionalData; } // 26 characters
   get optionalDataMRZ() { return this.#document.optionalDataMRZ(26); }
-  set optionalData(value) { this.#document.optionalData = value; }
+  set optionalData(value) {
+    this.#document.optionalData = value;
+    this.#document.optionalData.toMRZ = function() {
+      const length = 26;
+      const normalized = TravelDocument.normalizeMRZString(this);
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
-  get logo() { return this.#document.logo; }
-  set logo(value) { this.#document.logo = value; }
   get signature() { return this.#document.signature; }
   set signature(value) { this.#document.signature = value; }
 
@@ -99,7 +121,6 @@ class TD1Document {
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
-      if (opt.logo) { this.logo = opt.logo; }
       if (opt.signature) { this.signature = opt.signature; }
     }
   }

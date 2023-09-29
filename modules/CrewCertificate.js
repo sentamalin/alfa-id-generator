@@ -91,20 +91,35 @@ class CrewCertificate {
   #employer;
   get employer() { return this.#employer; }
   get employerVIZ() { return this.#employer.toUpperCase(); }
-  set employer(value) { this.#employer = value; }
+  set employer(value) {
+    this.#employer = new String(value);
+    this.#employer.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #occupation;
   get occupation() { return this.#occupation; }
   get occupationVIZ() { return this.#occupation.toUpperCase(); }
-  set occupation(value) { this.#occupation = value; }
+  set occupation(value) {
+    this.#occupation = new String(value);
+    this.#occupation.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #declaration;
   get declaration() { return this.#declaration; }
   get declarationVIZ() { return this.#declaration.toUpperCase(); }
-  set declaration(value) { this.#declaration = value; }
+  set declaration(value) {
+    this.#declaration = new String(value);
+    this.#declaration.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   #dateOfIssue;
-  get dateOfIssue() { return this.#dateOfIssue.toISOString().slice(0,10); }
+  get dateOfIssue() { return this.#dateOfIssue; }
   get dateOfIssueVIZ() { return TravelDocument.dateToVIZ(this.#dateOfIssue).toUpperCase(); }
   set dateOfIssue(value) {
     let test = new Date(`${value}T00:00:00`);
@@ -115,6 +130,9 @@ class CrewCertificate {
     }
     else {
       this.#dateOfIssue = test;
+      this.#dateOfIssue.toVIZ = function() {
+        return TravelDocument.dateToVIZ(this).toUpperCase();
+      }
       this.#seal.issueDate = value;
     }
   }
@@ -122,7 +140,12 @@ class CrewCertificate {
   #placeOfIssue;
   get placeOfIssue() { return this.#placeOfIssue; }
   get placeOfIssueVIZ() { return this.#placeOfIssue.toUpperCase(); }
-  set placeOfIssue(value) { this.#placeOfIssue = value; }
+  set placeOfIssue(value) {
+    this.#placeOfIssue = new String(value);
+    this.#placeOfIssue.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   // CrewCertificate MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }
@@ -209,7 +232,7 @@ class CrewCertificate {
     }
     this.#document.nationalityCode = sealMRZ.slice(30, 33).trimEnd();
     this.#document.fullName = sealMRZ.slice(33).replace("  ", ", ").trimEnd();
-    this.#dateOfIssue = new Date(`${this.#seal.issueDate}T00:00:00`);
+    this.dateOfIssue = this.#seal.issueDate;
   }
   get employerCode() {
     let output = "";

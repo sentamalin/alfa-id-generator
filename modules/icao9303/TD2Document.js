@@ -23,7 +23,19 @@ class TD2Document {
   get fullName() { return this.#document.fullName; } // 31 characters
   get fullNameMRZ() { return this.#document.fullNameMRZ(31); }
   get fullNameVIZ() { return this.#document.fullNameVIZ; }
-  set fullName(value) { this.#document.fullName = value; }
+  set fullName(value) {
+    this.#document.fullName = value;
+    this.#document.fullName.toMRZ = function() {
+      const length = 31;
+      const normalized = TravelDocument.normalizeMRZString(this.replace(", ","<<"));
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get number() { return this.#document.number; }
   get numberMRZ() { return this.#document.numberMRZ; }
   get numberVIZ() { return this.#document.numberVIZ; }
@@ -46,11 +58,21 @@ class TD2Document {
   set dateOfExpiration(value) { this.#document.dateOfExpiration = value; }
   get optionalData() { return this.#document.optionalData; } // 7 characters
   get optionalDataMRZ() { return this.#document.optionalDataMRZ(7); }
-  set optionalData(value) { this.#document.optionalData = value; }
+  set optionalData(value) {
+    this.#document.optionalData = value;
+    this.#document.optionalData.toMRZ = function() {
+      const length = 7;
+      const normalized = TravelDocument.normalizeMRZString(this);
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
-  get logo() { return this.#document.logo; }
-  set logo(value) { this.#document.logo = value; }
   get signature() { return this.#document.signature; }
   set signature(value) { this.#document.signature = value; }
 
@@ -96,7 +118,6 @@ class TD2Document {
       if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
-      if (opt.logo) { this.logo = opt.logo; }
       if (opt.signature) { this.signature = opt.signature; }
     }
   }

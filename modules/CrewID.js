@@ -68,7 +68,12 @@ class CrewID {
   #employer;
   get employer() { return this.#employer; }
   get employerVIZ() { return this.#employer.toUpperCase(); }
-  set employer(value) { this.#employer = value; }
+  set employer(value) {
+    this.#employer = new String(value);
+    this.#employer.toVIZ = function() {
+      return this.toUpperCase();
+    }
+  }
 
   // CrewID MRZ Getters
   get mrzLine1() { return this.#document.mrzLine1; }

@@ -28,7 +28,19 @@ class MRVBDocument {
   get fullName() { return this.#document.fullName; } // 31 characters
   get fullNameMRZ() { return this.#document.fullNameMRZ(31); }
   get fullNameVIZ() { return this.#document.fullNameVIZ; }
-  set fullName(value) { this.#document.fullName = value; }
+  set fullName(value) {
+    this.#document.fullName = value;
+    this.#document.fullName.toMRZ = function() {
+      const length = 31;
+      const normalized = TravelDocument.normalizeMRZString(this.replace(", ","<<"));
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get nationalityCode() { return this.#document.nationalityCode; }
   get nationalityCodeMRZ() { return this.#document.nationalityCodeMRZ; }
   get nationalityCodeVIZ() { return this.#document.nationalityCodeVIZ; }
@@ -47,7 +59,19 @@ class MRVBDocument {
   set validThru(value) { this.#document.dateOfExpiration = value; }
   get optionalData() { return this.#document.optionalData; } // 8 characters
   get optionalDataMRZ() { return this.#document.optionalDataMRZ(8); }
-  set optionalData(value) { this.#document.optionalData = value; }
+  set optionalData(value) {
+    this.#document.optionalData = value;
+    this.#document.optionalData.toMRZ = function() {
+      const length = 8;
+      const normalized = TravelDocument.normalizeMRZString(this);
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
   get signature() { return this.#document.signature; }
