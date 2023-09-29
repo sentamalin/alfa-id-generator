@@ -76,23 +76,23 @@ class MRVBDocument {
 
   // MRVBDocument MRZ Getters
   get mrzLine1() {
-    return this.typeCodeMRZ +
-      this.authorityCodeMRZ +
-      this.fullNameMRZ;    
+    return this.typeCode.toMRZ() +
+      this.authorityCode.toMRZ() +
+      this.fullName.toMRZ();    
   }
   get mrzLine2() {
     let mrzNumber;
-    if (this.usePassportInMRZ) { mrzNumber = this.passportNumberMRZ; }
-    else { mrzNumber = this.numberMRZ; }
+    if (this.usePassportInMRZ) { mrzNumber = this.passportNumber.toMRZ(); }
+    else { mrzNumber = this.number.toMRZ(); }
     return mrzNumber +
       TravelDocument.generateMRZCheckDigit(mrzNumber) +
-      this.nationalityCodeMRZ +
-      this.dateOfBirthMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfBirthMRZ) +
-      this.genderMarkerMRZ +
-      this.validThruMRZ +
-      TravelDocument.generateMRZCheckDigit(this.validThruMRZ) +
-      this.optionalDataMRZ;
+      this.nationalityCode.toMRZ() +
+      this.dateOfBirth.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.dateOfBirth.toMRZ()) +
+      this.genderMarker.toMRZ() +
+      this.validThru.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.validThru.toMRZ()) +
+      this.optionalData.toMRZ();
   }
   get machineReadableZone() {
     return this.mrzLine1 +

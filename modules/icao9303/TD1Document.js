@@ -61,20 +61,20 @@ class TD1Document {
 
   // TD1 MRZ Getters
   get mrzLine1() {
-    return this.typeCodeMRZ +
-      this.authorityCodeMRZ +
-      this.numberMRZ +
-      TravelDocument.generateMRZCheckDigit(this.numberMRZ) +
-      this.optionalDataMRZ.slice(0,15);
+    return this.typeCode.toMRZ() +
+      this.authorityCode.toMRZ() +
+      this.number.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.number.toMRZ()) +
+      this.optionalData.toMRZ().slice(0,15);
   }
   get mrzLine2() {
-    let uncheckedLine = this.dateOfBirthMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfBirthMRZ) +
-      this.genderMarkerMRZ +
-      this.dateOfExpirationMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfExpirationMRZ) +
-      this.nationalityCodeMRZ +
-      this.optionalDataMRZ.slice(15);
+    let uncheckedLine = this.dateOfBirth.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.dateOfBirth.toMRZ()) +
+      this.genderMarker.toMRZ() +
+      this.dateOfExpiration.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.dateOfExpiration.toMRZ()) +
+      this.nationalityCode.toMRZ() +
+      this.optionalData.toMRZ().slice(15);
     return uncheckedLine +
       TravelDocument.generateMRZCheckDigit(
         this.mrzLine1.slice(5) +
@@ -83,7 +83,7 @@ class TD1Document {
         uncheckedLine.slice(18)
       );
   }
-  get mrzLine3() { return this.fullNameMRZ; }
+  get mrzLine3() { return this.fullName.toMRZ(); }
   get machineReadableZone() {
     return this.mrzLine1 +
       "\n" +

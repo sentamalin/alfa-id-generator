@@ -56,19 +56,19 @@ class MRVADocument {
   get mrzLine2() {
     let optionalDataCheckDigit;
     if (this.optionalData === "") { optionalDataCheckDigit = "<"; }
-    else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalDataMRZ); }
+    else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalData.toMRZ()); }
     let mrzNumber;
-    if (this.usePassportInMRZ) { mrzNumber = this.passportNumberMRZ; }
-    else { mrzNumber = this.numberMRZ; }
+    if (this.usePassportInMRZ) { mrzNumber = this.passportNumber.toMRZ(); }
+    else { mrzNumber = this.number.toMRZ(); }
     let uncheckedLine = mrzNumber +
       TravelDocument.generateMRZCheckDigit(mrzNumber) +
-      this.nationalityCodeMRZ +
-      this.dateOfBirthMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfBirthMRZ) +
-      this.genderMarkerMRZ +
-      this.validThruMRZ +
-      TravelDocument.generateMRZCheckDigit(this.validThruMRZ) +
-      this.optionalDataMRZ +
+      this.nationalityCode.toMRZ() +
+      this.dateOfBirth.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.dateOfBirth.toMRZ()) +
+      this.genderMarker.toMRZ() +
+      this.validThru.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.validThru.toMRZ()) +
+      this.optionalData.toMRZ() +
       optionalDataCheckDigit;
     return uncheckedLine +
       TravelDocument.generateMRZCheckDigit(

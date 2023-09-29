@@ -61,23 +61,23 @@ class TD3Document {
 
   // TD3 MRZ Getters
   get mrzLine1() {
-    return this.typeCodeMRZ +
-      this.authorityCodeMRZ +
-      this.fullNameMRZ;
+    return this.typeCode.toMRZ() +
+      this.authorityCode.toMRZ() +
+      this.fullName.toMRZ();
   }
   get mrzLine2() {
     let optionalDataCheckDigit;
     if (this.optionalData === "") { optionalDataCheckDigit = "<"; }
-    else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalDataMRZ); }
-    let uncheckedLine = this.numberMRZ +
-      TravelDocument.generateMRZCheckDigit(this.numberMRZ) +
-      this.nationalityCodeMRZ +
-      this.dateOfBirthMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfBirthMRZ) +
-      this.genderMarkerMRZ +
-      this.dateOfExpirationMRZ +
-      TravelDocument.generateMRZCheckDigit(this.dateOfExpirationMRZ) +
-      this.optionalDataMRZ +
+    else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalData.toMRZ()); }
+    let uncheckedLine = this.number.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.number.toMRZ()) +
+      this.nationalityCode.toMRZ() +
+      this.dateOfBirth.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.dateOfBirth.toMRZ()) +
+      this.genderMarker.toMRZ() +
+      this.dateOfExpiration.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.dateOfExpiration.toMRZ()) +
+      this.optionalData.toMRZ() +
       optionalDataCheckDigit;
     return uncheckedLine +
       TravelDocument.generateMRZCheckDigit(
