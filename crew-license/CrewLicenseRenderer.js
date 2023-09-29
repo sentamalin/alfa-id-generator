@@ -816,6 +816,7 @@ class CrewLicenseRenderer {
       if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
       if (opt.ratingsHeader) { this.ratingsHeader = opt.ratingsHeader; }
       if (opt.limitationsHeader) { this.limitationsHeader = opt.limitationsHeader; }
+      if (opt.useDigitalSeal) { this.useDigitalSeal = opt.useDigitalSeal; }
     }
   }
 }

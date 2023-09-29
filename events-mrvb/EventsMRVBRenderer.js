@@ -783,6 +783,7 @@ class EventsMRVBRenderer {
       if (opt.nationalityHeader) { this.nationalityHeader = opt.nationalityHeader; }
       if (opt.dateOfBirthHeader) { this.dateOfBirthHeader = opt.dateOfBirthHeader; }
       if (opt.genderHeader) { this.genderHeader = opt.genderHeader; }
+      if (opt.useDigitalSeal) { this.useDigitalSeal = opt.useDigitalSeal; }
     }
   }
 }
