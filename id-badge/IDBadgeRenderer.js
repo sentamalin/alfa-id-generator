@@ -295,8 +295,6 @@ class IDBadgeRenderer {
       this.constructor.#numberUnderlayArea[0],
       this.constructor.#numberUnderlayArea[1]
     );
-    console.log("Current Model:");
-    console.log(model);
     let barcode;
     if (this.useDigitalSeal) {
       barcode = [{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }];
