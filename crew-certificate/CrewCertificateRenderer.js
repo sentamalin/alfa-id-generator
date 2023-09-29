@@ -158,9 +158,9 @@ class CrewCertificateRenderer {
       this.constructor.#mainHeaderY[1]
     );
     ctx.font = this.constructor.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCodeVIZ}-${model.authorityCodeVIZ}`).width;
+    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
     ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
       this.constructor.#mainHeaderX - documentHeaderWidth,
       this.constructor.#mainHeaderY[1]
     );
@@ -287,45 +287,45 @@ class CrewCertificateRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
     ctx.fillText(
-      model.fullNameVIZ,
+      model.fullName.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[1],
       this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
-      model.genderMarkerVIZ,
+      model.genderMarker.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.nationalityCodeVIZ,
+      model.nationalityCode.toVIZ(),
       this.constructor.#frontRow2Columns[0],
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.dateOfBirthVIZ,
+      model.dateOfBirth.toVIZ(),
       this.constructor.#frontRow2Columns[1],
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.employerVIZ,
+      model.employer.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[7],
       this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
-      model.occupationVIZ,
+      model.occupation.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[9],
       this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
-      model.numberVIZ,
+      model.number.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[11]
     );
     ctx.fillText(
-      model.dateOfExpirationVIZ,
+      model.dateOfExpiration.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[13]
     );
@@ -451,7 +451,7 @@ class CrewCertificateRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#headerFont;
     ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
       this.constructor.#shortHeaderXY[0],
       this.constructor.#shortHeaderXY[1],
       this.constructor.#smallLogoArea[0]
@@ -499,7 +499,7 @@ class CrewCertificateRenderer {
 
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
-    const splitString = model.declarationVIZ.split(/\r?\n/);
+    const splitString = model.declaration.toVIZ().split(/\r?\n/);
     for (let i = 0; i < splitString.length; i += 1) {
       ctx.fillText(
         splitString[i],
@@ -508,12 +508,12 @@ class CrewCertificateRenderer {
       );
     }
     ctx.fillText(
-      `${model.dateOfIssueVIZ}—${model.placeOfIssueVIZ}`,
+      `${model.dateOfIssue.toVIZ()}—${model.placeOfIssue.toVIZ()}`,
       this.constructor.#backColumns,
       this.constructor.#backRows[6]
     );
     ctx.fillText(
-      model.numberVIZ,
+      model.number.toVIZ(),
       this.constructor.#backNumberXY[0],
       this.constructor.#backNumberXY[1],
       1004 - this.constructor.#backNumberXY[0]

@@ -182,9 +182,9 @@ class EventsPassportRenderer {
       this.constructor.#documentY[1]
     );
     ctx.font = this.constructor.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCodeVIZ}-${model.authorityCodeVIZ}`).width;
+    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
     ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
       this.constructor.#documentX[2] - documentHeaderWidth,
       this.constructor.#documentY[1]
     );
@@ -391,64 +391,64 @@ class EventsPassportRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
     ctx.fillText(
-      model.typeCodeVIZ,
-      this.constructor.#documentX[0] - ctx.measureText(model.typeCodeVIZ).width,
+      model.typeCode.toVIZ(),
+      this.constructor.#documentX[0] - ctx.measureText(model.typeCode.toVIZ()).width,
       this.constructor.#documentY[5]
     );
     ctx.fillText(
-      model.authorityCodeVIZ,
-      this.constructor.#documentX[1] - ctx.measureText(model.authorityCodeVIZ).width,
+      model.authorityCode.toVIZ(),
+      this.constructor.#documentX[1] - ctx.measureText(model.authorityCode.toVIZ()).width,
       this.constructor.#documentY[5]
     );
     ctx.fillText(
-      model.numberVIZ,
-      this.constructor.#documentX[2] - ctx.measureText(model.numberVIZ).width,
+      model.number.toVIZ(),
+      this.constructor.#documentX[2] - ctx.measureText(model.number.toVIZ()).width,
       this.constructor.#documentY[5]
     );
     ctx.fillText(
-      model.fullNameVIZ,
+      model.fullName.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[1],
       this.constructor.#documentX[2] - this.constructor.#dataX[0]
     );
     ctx.fillText(
-      model.nationalityCodeVIZ,
+      model.nationalityCode.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[5]
     );
     ctx.fillText(
-      model.dateOfBirthVIZ,
+      model.dateOfBirth.toVIZ(),
       this.constructor.#dataX[1],
       this.constructor.#dataY[5]
     );
     ctx.fillText(
-      model.genderMarkerVIZ,
+      model.genderMarker.toVIZ(),
       this.constructor.#dataX[2],
       this.constructor.#dataY[5]
     );
     ctx.fillText(
-      model.placeOfBirthVIZ,
+      model.placeOfBirth.toVIZ(),
       this.constructor.#dataX[3],
       this.constructor.#dataY[5]
     );
     ctx.fillText(
-      model.dateOfIssueVIZ,
+      model.dateOfIssue.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[7]
     );
     ctx.fillText(
-      model.authorityVIZ,
+      model.authority.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[9],
       this.constructor.#qrCodeXY[0] - this.constructor.#dataX[0] - 32
     );
     ctx.fillText(
-      model.dateOfExpirationVIZ,
+      model.dateOfExpiration.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[11]
     );
     ctx.fillText(
-      model.endorsementsVIZ,
+      model.endorsements.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[13],
       this.constructor.#qrCodeXY[0] - this.constructor.#dataX[0] - 32

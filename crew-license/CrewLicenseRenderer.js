@@ -158,9 +158,9 @@ class CrewLicenseRenderer {
       this.constructor.#mainHeaderY[1]
     );
     ctx.font = this.constructor.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCodeVIZ}-${model.authorityCodeVIZ}`).width;
+    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
     ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
       this.constructor.#mainHeaderX - documentHeaderWidth,
       this.constructor.#mainHeaderY[1]
     );
@@ -287,45 +287,45 @@ class CrewLicenseRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
     ctx.fillText(
-      model.fullNameVIZ,
+      model.fullName.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[1],
       this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
-      model.genderMarkerVIZ,
+      model.genderMarker.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.nationalityCodeVIZ,
+      model.nationalityCode.toVIZ(),
       this.constructor.#frontRow2Columns[0],
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.dateOfBirthVIZ,
+      model.dateOfBirth.toVIZ(),
       this.constructor.#frontRow2Columns[1],
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.authorityVIZ,
+      model.authority.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[7],
       this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
-      model.privilegeVIZ,
+      model.privilege.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[9],
       this.constructor.#mainHeaderX - this.constructor.#frontColumns
     );
     ctx.fillText(
-      model.numberVIZ,
+      model.number.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[11]
     );
     ctx.fillText(
-      model.dateOfExpirationVIZ,
+      model.dateOfExpiration.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[13]
     );
@@ -451,7 +451,7 @@ class CrewLicenseRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#headerFont;
     ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
       this.constructor.#shortHeaderXY[0],
       this.constructor.#shortHeaderXY[1],
       this.constructor.#smallLogoArea[0]
@@ -487,7 +487,7 @@ class CrewLicenseRenderer {
 
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
-    let splitString = model.ratingsVIZ.split(/\r?\n/);
+    let splitString = model.ratings.toVIZ().split(/\r?\n/);
     for (let i = 0; i < splitString.length; i += 1) {
       ctx.fillText(
         splitString[i],
@@ -495,7 +495,7 @@ class CrewLicenseRenderer {
         this.constructor.#backRows[1] + (i * 30)
       );
     }
-    splitString = model.limitationsVIZ.split(/\r?\n/);
+    splitString = model.limitations.toVIZ().split(/\r?\n/);
     for (let i = 0; i < splitString.length; i += 1) {
       ctx.fillText(
         splitString[i],
@@ -504,7 +504,7 @@ class CrewLicenseRenderer {
       );
     }
     ctx.fillText(
-      model.numberVIZ,
+      model.number.toVIZ(),
       this.constructor.#backNumberXY[0],
       this.constructor.#backNumberXY[1],
       1004 - this.constructor.#backNumberXY[0]

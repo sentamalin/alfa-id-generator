@@ -196,24 +196,24 @@ class IDBadgeRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#dataFont;
     ctx.fillText(
-      model.fullNameVIZ,
+      model.fullName.toVIZ(),
       this.constructor.#frontColumns[0],
       this.constructor.#frontRows[6],
       this.constructor.#cardArea[0] - this.constructor.#frontColumns[0] - 48
     );
     ctx.fillText(
-      model.employerVIZ,
+      model.employer.toVIZ(),
       this.constructor.#frontColumns[0],
       this.constructor.#frontRows[8],
       this.constructor.#cardArea[0] - this.constructor.#frontColumns[0] - 48
     );
     ctx.fillText(
-      model.numberVIZ,
+      model.number.toVIZ(),
       this.constructor.#frontColumns[0],
       this.constructor.#frontRows[10]
     );
     ctx.fillText(
-      model.dateOfExpirationVIZ,
+      model.dateOfExpiration.toVIZ(),
       this.constructor.#frontColumns[0],
       this.constructor.#frontRows[12]
     );
@@ -344,7 +344,7 @@ class IDBadgeRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = this.constructor.#headerFont;
     ctx.fillText(
-      `${model.typeCodeVIZ}-${model.authorityCodeVIZ}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
       this.constructor.#shortHeaderXY[0],
       this.constructor.#shortHeaderXY[1],
       this.constructor.#smallLogoArea[0]
@@ -388,7 +388,7 @@ class IDBadgeRenderer {
       );
     }
     ctx.fillText(
-      model.numberVIZ,
+      model.number.toVIZ(),
       this.constructor.#backNumberXY[0],
       this.constructor.#backNumberXY[1],
       1004 - this.constructor.#backNumberXY[0]
