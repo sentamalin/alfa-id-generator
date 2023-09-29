@@ -186,7 +186,7 @@ class CrewLicenseViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.dateOfBirth;
+    this.#dateOfBirthInput.value = this.#model.dateOfBirth.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
@@ -210,7 +210,7 @@ class CrewLicenseViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfExpirationInput(input) {
     this.#dateOfExpirationInput = input;
-    this.#dateOfExpirationInput.value = this.#model.dateOfExpiration;
+    this.#dateOfExpirationInput.value = this.#model.dateOfExpiration.toISOString().slice(0,10);
     this.#dateOfExpirationInput.addEventListener("change", this, false);
   }
   onDateOfExpirationInputChange() {

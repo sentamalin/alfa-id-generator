@@ -178,7 +178,7 @@ class EventsMRVBViewModel {
   /** @param { HTMLInputElement } input */
   set validFromInput(input) {
     this.#validFromInput = input;
-    this.#validFromInput.value = this.#model.validFrom;
+    this.#validFromInput.value = this.#model.validFrom.toISOString().slice(0,10);
     this.#validFromInput.addEventListener("change", this, false);
   }
   onValidFromInputChange() {
@@ -190,7 +190,7 @@ class EventsMRVBViewModel {
   /** @param { HTMLInputElement } input */
   set validThruInput(input) {
     this.#validThruInput = input;
-    this.#validThruInput.value = this.#model.validThru;
+    this.#validThruInput.value = this.#model.validThru.toISOString().slice(0,10);
     this.#validThruInput.addEventListener("change", this, false);
   }
   onValidThruInputChange() {
@@ -322,7 +322,7 @@ class EventsMRVBViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.dateOfBirth;
+    this.#dateOfBirthInput.value = this.#model.dateOfBirth.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {

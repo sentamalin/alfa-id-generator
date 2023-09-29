@@ -152,7 +152,7 @@ class IDBadgeViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfExpirationInput(input) {
     this.#dateOfExpirationInput = input;
-    this.#dateOfExpirationInput.value = this.#model.dateOfExpiration;
+    this.#dateOfExpirationInput.value = this.#model.dateOfExpiration.toISOString().slice(0,10);
     this.#dateOfExpirationInput.addEventListener("change", this, false);
   }
   onDateOfExpirationInputChange() {

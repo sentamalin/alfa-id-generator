@@ -96,7 +96,7 @@ class EventsSealViewModel {
   /** @param { HTMLInputElement } input */
   set validThruInput(input) {
     this.#validThruInput = input;
-    this.#validThruInput.value = this.#model.validThru;
+    this.#validThruInput.value = this.#model.validThru.toISOString().slice(0,10);
     this.#validThruInput.addEventListener("change", this, false);
   }
   onValidThruInputChange() {
@@ -200,7 +200,7 @@ class EventsSealViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.dateOfBirth;
+    this.#dateOfBirthInput.value = this.#model.dateOfBirth.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
