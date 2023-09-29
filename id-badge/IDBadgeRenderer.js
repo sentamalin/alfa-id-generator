@@ -86,10 +86,8 @@ class IDBadgeRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
-    let barcode;
-    barcode = model.url;
     const images = await Promise.all([
-      qrLite.toCanvas(barcode, {
+      qrLite.toCanvas(model.url, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         margin: 0,
         width: this.constructor.#frontQRCodeArea[0],
@@ -298,10 +296,8 @@ class IDBadgeRenderer {
     );
     console.log("Current Model:");
     console.log(model);
-    let barcode;
-    barcode = model.url;
     const images = await Promise.all([
-      qrLite.toCanvas(barcode, {
+      qrLite.toCanvas([{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }], {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         margin: 0,
         width: this.constructor.#backQRCodeArea[0],
