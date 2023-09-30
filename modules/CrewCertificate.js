@@ -271,9 +271,9 @@ class CrewCertificate {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
+      if (opt.birthDate) { this.birthDate = opt.birthDate; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
+      if (opt.expirationDate) { this.expirationDate = opt.expirationDate; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
@@ -283,9 +283,9 @@ class CrewCertificate {
       if (opt.employer) { this.employer = opt.employer; }
       if (opt.occupation) { this.occupation = opt.occupation; }
       if (opt.declaration) { this.declaration = opt.declaration; }
-      if (opt.dateOfIssue) { this.issueDate = opt.dateOfIssue; }
+      if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
-      if (opt.identifier) { this.identifierCode = opt.identifier; }
+      if (opt.identifierCode) { this.identifierCode = opt.identifierCode; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.sealSignatureDate) { this.sealSignatureDate = opt.sealSignatureDate; }
       if (opt.sealSignature) { this.sealSignature = opt.sealSignature; }

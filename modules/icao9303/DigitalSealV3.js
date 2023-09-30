@@ -157,8 +157,8 @@ class DigitalSealV3 {
 
   constructor(opt) {
     if (opt) {
-      if (opt.authority) { this.authority = opt.authority; }
-      if (opt.identifier) { this.identifierCode = opt.identifier; }
+      if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
+      if (opt.identifierCode) { this.identifierCode = opt.identifierCode; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.signatureDate) { this.signatureDate = opt.signatureDate; }

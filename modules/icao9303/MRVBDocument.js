@@ -113,13 +113,13 @@ class MRVBDocument {
       if (opt.validThru) { this.validThru = opt.validThru; }
       if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.type) { this.visaType = opt.type; }
+      if (opt.visaType) { this.visaType = opt.visaType; }
       if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
       if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
+      if (opt.birthDate) { this.birthDate = opt.birthDate; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }

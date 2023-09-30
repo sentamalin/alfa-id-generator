@@ -186,13 +186,13 @@ class CrewID {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
+      if (opt.expirationDate) { this.expirationDate = opt.expirationDate; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.url) { this.url = opt.url; }
       if (opt.employer) { this.employer = opt.employer; }
-      if (opt.identifier) { this.identifierCode = opt.identifier; }
+      if (opt.identifierCode) { this.identifierCode = opt.identifierCode; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.sealSignatureDate) { this.sealSignatureDate = opt.sealSignatureDate; }

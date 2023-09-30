@@ -99,9 +99,9 @@ class TD2Document {
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.number) { this.number = opt.number; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
+      if (opt.birthDate) { this.birthDate = opt.birthDate; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
+      if (opt.expirationDate) { this.expirationDate = opt.expirationDate; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }

@@ -590,9 +590,9 @@ class TravelDocument {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
+      if (opt.birthDate) { this.birthDate = opt.birthDate; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
+      if (opt.expirationDate) { this.expirationDate = opt.expirationDate; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
