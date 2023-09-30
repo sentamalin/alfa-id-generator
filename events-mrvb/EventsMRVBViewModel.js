@@ -1556,8 +1556,8 @@ class EventsMRVBViewModel {
     this.#frontBlobURL = URL.createObjectURL(blob);
     downloadFront.setAttribute(
       "download",
-      `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
-      `${this.#model.numberVIZ}-front.png`
+      `${this.#model.typeCode.toVIZ()}${this.#model.authorityCode.toVIZ()}` +
+      `${this.#model.number.toVIZ()}-mrvb.png`
     );
     downloadFront.setAttribute("href", this.#frontBlobURL);
   }

@@ -1546,8 +1546,8 @@ class CrewLicenseViewModel {
     this.#frontBlobURL = URL.createObjectURL(blob);
     downloadFront.setAttribute(
       "download",
-      `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
-      `${this.#model.numberVIZ}-front.png`
+      `${this.#model.typeCode.toVIZ()}${this.#model.authorityCode.toVIZ()}` +
+      `${this.#model.number.toVIZ()}-front.png`
     );
     downloadFront.setAttribute("href", this.#frontBlobURL);
   }
@@ -1572,8 +1572,8 @@ class CrewLicenseViewModel {
     this.#backBlobURL = URL.createObjectURL(blob);
     downloadBack.setAttribute(
       "download",
-      `${this.#model.typeCodeVIZ}${this.#model.authorityCodeVIZ}` +
-      `${this.#model.numberVIZ}-back.png`
+      `${this.#model.typeCode.toVIZ()}${this.#model.authorityCode.toVIZ()}` +
+      `${this.#model.number.toVIZ()}-back.png`
     );
     downloadBack.setAttribute("href", this.#backBlobURL);
   }
