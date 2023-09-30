@@ -78,7 +78,6 @@ class EventsPassport {
     this.#placeOfBirth.toVIZ = function() {
       return this.toUpperCase();
     }
-    this.#seal.features.set(0x02, DigitalSeal.c40Encode(value));
   }
   
   #issueDate;
@@ -115,7 +114,6 @@ class EventsPassport {
     this.#endorsements.toVIZ = function() {
       return this.toUpperCase();
     }
-    this.#seal.features.set(0x04, DigitalSeal.c40Encode(value));
   }
 
   // CrewCertificate MRZ Getters
@@ -201,11 +199,10 @@ class EventsPassport {
       this.#document.expirationDate = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
     }
     this.issueDate = this.#seal.issueDate;
-    this.#endorsements = DigitalSeal.c40Decode(this.#seal.features.get(0x04));
   }
   get subauthorityCode() {
     let output = "";
-    const subauthorityCode = this.#seal.features.get(0x03);
+    const subauthorityCode = this.#seal.features.get(0x02);
     for (let i = 0; i < subauthorityCode.length; i += 1) {
       output += subauthorityCode[i].toString(16).padStart(2, "0").toUpperCase();
     }
@@ -224,7 +221,7 @@ class EventsPassport {
       input.push(parseInt(paddedType.slice(i, i + 2), 16));
       previousIsZero = false;
     }
-    this.#seal.features.set(0x03, input);
+    this.#seal.features.set(0x02, input);
   }
 
   // Constructor
