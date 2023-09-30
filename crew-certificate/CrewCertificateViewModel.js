@@ -189,7 +189,7 @@ class CrewCertificateViewModel {
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
-    this.#model.dateOfBirth = this.#dateOfBirthInput.value;
+    this.#model.birthDate = this.#dateOfBirthInput.value;
     this.#generateCard();
   }
 
@@ -213,7 +213,7 @@ class CrewCertificateViewModel {
     this.#dateOfExpirationInput.addEventListener("change", this, false);
   }
   onDateOfExpirationInputChange() {
-    this.#model.dateOfExpiration = this.#dateOfExpirationInput.value;
+    this.#model.expirationDate = this.#dateOfExpirationInput.value;
     this.#generateCard();
   }
 
@@ -422,7 +422,7 @@ class CrewCertificateViewModel {
     this.#dateOfIssueInput.addEventListener("change", this, false);
   }
   onDateOfIssueInputChange() {
-    this.#model.dateOfIssue = this.#dateOfIssueInput.value;
+    this.#model.issueDate = this.#dateOfIssueInput.value;
     this.#generateCardBack();
   }
 
