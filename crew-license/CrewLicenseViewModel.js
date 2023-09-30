@@ -18,7 +18,7 @@ class CrewLicenseViewModel {
     nationalityCode: "UTO",
     fullName: "Millefeuille, Alfalfa",
     optionalData: "",
-    subauthority: "Air Line Furries Association, International",
+    subauthority: "COMMITTEE ON ANTHROPOMORPHIC STATISTICS AND CENSUS",
     privilege: "Airline Transport Pilot",
     ratings: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     limitations: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -51,7 +51,7 @@ class CrewLicenseViewModel {
     smallLogo: "/smallLogos/alfa-bw.svg",
     showGuides: false,
     useDigitalSeal: false,
-    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INT'L",
+    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "CREWMEMBER LICENSE",
     nameHeader: [
       "NAME",

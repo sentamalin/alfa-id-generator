@@ -109,15 +109,15 @@ class IDBadgeRenderer {
     );
     this.constructor.#fillAreaWithImg(
       images[1], ctx,
-      this.constructor.#frontColumns[0],
-      this.constructor.#frontRows[3],
+      this.constructor.#photoXY[0],
+      this.constructor.#photoXY[1],
       this.constructor.#photoArea[0],
       this.constructor.#photoArea[1]
     );
     this.constructor.#fitImgInArea(
       images[2], ctx,
-      this.constructor.#frontColumns[0],
-      this.constructor.#frontRows[4],
+      this.constructor.#logoFrontXY[0],
+      this.constructor.#logoFrontXY[1],
       this.constructor.#logoArea[0],
       this.constructor.#logoArea[1]
     );
@@ -492,13 +492,15 @@ class IDBadgeRenderer {
 
   // Coordinates used in card generation (static)
   static #badgeTypeHeaderY = [48, 85];
-  static #photoUnderlayXY = [32, 0];
+  static #photoUnderlayXY = [48, 0];
+  static #photoXY = [72, 113];
   static #stripeXY = [594, 328];
   static #logoUnderlayXY = [871, 282];
   static #numberUnderlayXY = [871, 193];
   static #mrzUnderlayXY = [0, 379];
   static #shortHeaderXY = [886, 167];
   static #backQRCodeXY = [594, 48];
+  static #logoFrontXY = [72, 588]
   static #logoBackXY = [895, 306];
   static #smallLogoXY = [886, 48];
   static #backNumberXY = [888, 216];
@@ -513,14 +515,14 @@ class IDBadgeRenderer {
     263, // Front QR Code
     113, // Photo
     523, // Logo
-    663, // Name Header
-    690, // Name Data
-    746, // Employer Header
-    773, // Employer Data
-    829, // Number Header
-    856, // Number Data
-    912, // Date of Expiration Header
-    939  // Date of Expiration Data
+    704, // Name Header
+    731, // Name Data
+    780, // Employer Header
+    807, // Employer Data
+    856, // Number Header
+    883, // Number Data
+    932, // Date of Expiration Header
+    959  // Date of Expiration Data
   ];
   static #backRows = [
     48,  // Additional Elements Header
@@ -532,15 +534,15 @@ class IDBadgeRenderer {
   // Areas used in card generation (static)
   static #cardArea = [672, 1052];
   static cutCardArea = [640, 1020];
-  static #photoUnderlayArea = [402, 624];
-  static #photoArea = [370, 370];
+  static #photoUnderlayArea = [386, 673];
+  static #photoArea = [338, 451];
   static #stripeArea = [458, 39];
   static #logoUnderlayArea = [181, 46];
   static #numberUnderlayArea = [181, 65];
   static #mrzUnderlayArea = [1052, 293];
   static #frontQRCodeArea = [158, 158];
   static #backQRCodeArea = [256, 256];
-  static #logoArea = [370, 61];
+  static #logoArea = [338, 61];
   static #backLogoArea = [109, 37];
   static #smallLogoArea = [103, 103];
 

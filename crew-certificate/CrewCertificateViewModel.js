@@ -50,7 +50,7 @@ class CrewCertificateViewModel {
     smallLogo: "/smallLogos/alfa-bw.svg",
     showGuides: false,
     useDigitalSeal: false,
-    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INT'L",
+    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
     fullDocumentName: "CREWMEMBER CERTIFICATE",
     nameHeader: [
       "NAME",

@@ -608,23 +608,23 @@ class CrewLicenseRenderer {
   // Coordinates used in card generation (static)
   static #mainHeaderX = 1004;
   static #mainHeaderY = [48, 85];
-  static #photoUnderlayXY = [32, 0];
-  static #photoXY = [48, 141];
+  static #photoUnderlayXY = [48, 0];
+  static #photoXY = [72, 141];
   static #stripeXY = [594, 328];
   static #logoUnderlayXY = [871, 282];
   static #numberUnderlayXY = [871, 193];
   static #mrzUnderlayXY = [0, 379];
   static #shortHeaderXY = [886, 167];
   static #qrCodeXY = [594, 48];
-  static #logoFrontXY = [48, 48];
+  static #logoFrontXY = [72, 48];
   static #logoBackXY = [895, 306];
   static #smallLogoXY = [886, 48];
-  static #signatureXY = [48, 543];
+  static #signatureXY = [72, 543];
   static #backNumberXY = [888, 216];
   static #mrzX = 71;
   static #mrzY = [451, 501, 551];
   static #mrzSpacing = 30.35;
-  static #frontColumns = 467;
+  static #frontColumns = 391;
   static #backColumns = 48;
   static #frontRows = [
     141, // name Header
@@ -643,8 +643,8 @@ class CrewLicenseRenderer {
     598  // Date of Expiration Data
   ];
   static #frontRow2Columns = [
-    607, // Nationality Column
-    802  // Date of Birth Column
+    540, // Nationality Column
+    740  // Date of Birth Column
   ];
   static #backRows = [
     48,  // Re-Entry Declaration Header
@@ -656,17 +656,17 @@ class CrewLicenseRenderer {
   // Areas used in card generation (static)
   static #cardArea = [1052, 672];
   static cutCardArea = [1020, 640];
-  static #photoUnderlayArea = [402, 527];
-  static #photoArea = [370, 370];
+  static #photoUnderlayArea = [319, 527];
+  static #photoArea = [271, 362];
   static #stripeArea = [458, 39];
   static #logoUnderlayArea = [181, 46];
   static #numberUnderlayArea = [181, 65];
   static #mrzUnderlayArea = [1052, 293];
   static #qrCodeArea = [256, 256];
-  static #logoArea = [370, 61];
+  static #logoArea = [271, 61];
   static #backLogoArea = [109, 37];
   static #smallLogoArea = [103, 103];
-  static #signatureArea = [370, 81];
+  static #signatureArea = [271, 81];
 
   // Methods used in card generation (static)
   static #generateCanvasImg(img) {
