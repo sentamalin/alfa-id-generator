@@ -30,28 +30,14 @@ class TD1Document {
   set fullName(value) {
     this.#document.fullName = value;
     this.#document.fullName.toMRZ = function() {
-      const length = 30;
-      const normalized = TravelDocument.normalizeMRZString(this.replace(", ","<<"));
-      if (normalized.length > length) {
-        console.warn(
-          `Optional data (optionalData) is longer than ${length} and will be truncated.`
-        );
-      }
-      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+      return TravelDocument.fullNameMRZ(this, 30);
     }
   }
   get optionalData() { return this.#document.optionalData; } // 26 characters
   set optionalData(value) {
     this.#document.optionalData = value;
     this.#document.optionalData.toMRZ = function() {
-      const length = 26;
-      const normalized = TravelDocument.normalizeMRZString(this);
-      if (normalized.length > length) {
-        console.warn(
-          `Optional data (optionalData) is longer than ${length} and will be truncated.`
-        );
-      }
-      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+      return TravelDocument.optionalDataMRZ(this, 26);
     }
   }
   get picture() { return this.#document.picture; }

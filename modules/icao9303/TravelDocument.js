@@ -160,26 +160,27 @@ class TravelDocument {
 
   #fullName; // Variable characters; ', ' separates surname from given name
   get fullName() { return this.#fullName; }
-  fullNameMRZ(length) {
-    let normalized = TravelDocument.normalizeMRZString(this.#fullName.replace(", ","<<"));
-    if (normalized.length > length) {
-      console.warn(
-        `Full name (fullName) is longer than ${length} and will be truncated.`
-      );
-    }
-    return TravelDocument.padMRZString(normalized.substring(0,length), length);
-  }
   set fullName(value) {
     this.#fullName = new String(value.toString());
     this.#fullName.toVIZ = function() {
       return this.toUpperCase();
     }
   }
+  static fullNameMRZ(name, length) {
+    const normalized = TravelDocument.normalizeMRZString(name.replace(", ","<<"));
+    if (normalized.length > length) {
+      console.warn(
+        `Name (fullName) is longer than ${length} and will be truncated.`
+      );
+    }
+    return TravelDocument.padMRZString(normalized.substring(0,length), length);
+  }
 
   #optionalData = ""; // Variable characters
   get optionalData() { return this.#optionalData; }
-  optionalDataMRZ(length) {
-    let normalized = TravelDocument.normalizeMRZString(this.#optionalData);
+  set optionalData(value) { this.#optionalData = new String(value.toString()); }
+  static optionalDataMRZ(data, length) {
+    const normalized = TravelDocument.normalizeMRZString(data);
     if (normalized.length > length) {
       console.warn(
         `Optional data (optionalData) is longer than ${length} and will be truncated.`
@@ -187,7 +188,6 @@ class TravelDocument {
     }
     return TravelDocument.padMRZString(normalized.substring(0,length), length);
   }
-  set optionalData(value) { this.#optionalData = new String(value.toString()); }
 
   // General Graphical Data
   #picture; // Picture of the document holder

@@ -23,14 +23,7 @@ class MRVBDocument {
   set fullName(value) {
     this.#document.fullName = value;
     this.#document.fullName.toMRZ = function() {
-      const length = 31;
-      const normalized = TravelDocument.normalizeMRZString(this.replace(", ","<<"));
-      if (normalized.length > length) {
-        console.warn(
-          `Optional data (optionalData) is longer than ${length} and will be truncated.`
-        );
-      }
-      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+      return TravelDocument.fullNameMRZ(this, 31);
     }
   }
   get nationalityCode() { return this.#document.nationalityCode; }
@@ -45,14 +38,7 @@ class MRVBDocument {
   set optionalData(value) {
     this.#document.optionalData = value;
     this.#document.optionalData.toMRZ = function() {
-      const length = 8;
-      const normalized = TravelDocument.normalizeMRZString(this);
-      if (normalized.length > length) {
-        console.warn(
-          `Optional data (optionalData) is longer than ${length} and will be truncated.`
-        );
-      }
-      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+      return TravelDocument.optionalDataMRZ(this, 8);
     }
   }
   get picture() { return this.#document.picture; }

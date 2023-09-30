@@ -20,14 +20,7 @@ class TD2Document {
   set fullName(value) {
     this.#document.fullName = value;
     this.#document.fullName.toMRZ = function() {
-      const length = 31;
-      const normalized = TravelDocument.normalizeMRZString(this.replace(", ","<<"));
-      if (normalized.length > length) {
-        console.warn(
-          `Optional data (optionalData) is longer than ${length} and will be truncated.`
-        );
-      }
-      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+      return TravelDocument.fullNameMRZ(this, 31);
     }
   }
   get number() { return this.#document.number; }
@@ -44,14 +37,7 @@ class TD2Document {
   set optionalData(value) {
     this.#document.optionalData = value;
     this.#document.optionalData.toMRZ = function() {
-      const length = 7;
-      const normalized = TravelDocument.normalizeMRZString(this);
-      if (normalized.length > length) {
-        console.warn(
-          `Optional data (optionalData) is longer than ${length} and will be truncated.`
-        );
-      }
-      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+      return TravelDocument.optionalDataMRZ(this, 7);
     }
   }
   get picture() { return this.#document.picture; }
