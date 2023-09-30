@@ -82,7 +82,6 @@ class CrewCertificateRenderer {
         this.constructor.#cardArea[1]
       );
     }
-    ctx.fillStyle = "#00003300";
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
     ctx.fillRect(
       this.constructor.#photoUnderlayXY[0],
