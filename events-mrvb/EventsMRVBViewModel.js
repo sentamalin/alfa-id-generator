@@ -18,7 +18,7 @@ class EventsMRVBViewModel {
     visaType: "Silver Sponsor—Adult",
     fullName: "Millefeuille, Alfalfa",
     passportNumber: "362142069",
-    usePassportInMRZ: true,
+    usePassportInMRZ: false,
     nationalityCode: "UTO",
     birthDate: "1998-04-17",
     genderMarker: "F",
