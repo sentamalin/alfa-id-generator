@@ -265,12 +265,6 @@ class IDBadgeRenderer {
     }
     ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
     ctx.fillRect(
-      this.constructor.#stripeXY[0],
-      this.constructor.#stripeXY[1],
-      this.constructor.#stripeArea[0],
-      this.constructor.#stripeArea[1]
-    );
-    ctx.fillRect(
       this.constructor.#logoUnderlayXY[0],
       this.constructor.#logoUnderlayXY[1],
       this.constructor.#logoUnderlayArea[0],
@@ -302,8 +296,6 @@ class IDBadgeRenderer {
       this.constructor.#numberUnderlayArea[0],
       this.constructor.#numberUnderlayArea[1]
     );
-    console.log(`Binary Signed Seal: [${model.signedSeal}] (length: ${model.signedSeal.length})`);
-    console.log(`Base-45 Signed Seal: '${b45.encode(model.signedSeal)}' (length: ${b45.encode(model.signedSeal).length})`);
     let barcode;
     if (this.useDigitalSeal) {
       barcode = [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }];
@@ -324,9 +316,7 @@ class IDBadgeRenderer {
       this.constructor.#generateCanvasImg(this.smallLogo)
     ]);
     ctx.drawImage(
-      images[0],
-      this.constructor.#backQRCodeXY[0],
-      this.constructor.#backQRCodeXY[1],
+      images[0], this.constructor.#numberUnderlayXY[0] - 24 - images[0].width, 48
     );
     this.constructor.#fitImgInArea(
       images[1], ctx,
@@ -495,16 +485,14 @@ class IDBadgeRenderer {
   static #badgeTypeHeaderY = [48, 85];
   static #photoUnderlayXY = [48, 0];
   static #photoXY = [72, 113];
-  static #stripeXY = [594, 328];
-  static #logoUnderlayXY = [871, 282];
+  static #logoUnderlayXY = [635, 284];
   static #numberUnderlayXY = [871, 193];
   static #mrzUnderlayXY = [0, 379];
   static #shortHeaderXY = [886, 167];
-  static #backQRCodeXY = [594, 48];
   static #logoFrontXY = [72, 588]
-  static #logoBackXY = [895, 306];
+  static #logoBackXY = [667, 300];
   static #smallLogoXY = [886, 48];
-  static #backNumberXY = [888, 216];
+  static #backNumberXY = [888, 217];
   static #mrzX = 71;
   static #mrzY = [451, 501, 551];
   static #mrzSpacing = 30.35;
@@ -537,14 +525,12 @@ class IDBadgeRenderer {
   static cutCardArea = [640, 1020];
   static #photoUnderlayArea = [386, 673];
   static #photoArea = [338, 451];
-  static #stripeArea = [458, 39];
-  static #logoUnderlayArea = [181, 46];
-  static #numberUnderlayArea = [181, 65];
+  static #logoUnderlayArea = [417, 71];
+  static #numberUnderlayArea = [181, 67];
   static #mrzUnderlayArea = [1052, 293];
   static #frontQRCodeArea = [158, 158];
-  static #backQRCodeArea = [256, 256];
   static #logoArea = [338, 61];
-  static #backLogoArea = [109, 37];
+  static #backLogoArea = [337, 39];
   static #smallLogoArea = [103, 103];
 
   // Methods used in card generation (static)

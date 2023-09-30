@@ -110,28 +110,12 @@ class EventsSealRenderer {
       numberWidth,
       this.constructor.#textY[2]
     );
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillStyle = this.headerColor;
-    numberWidth -= ctx.measureText("NO: ").width;
-    ctx.fillText(
-      "NO: ",
-      numberWidth,
-      this.constructor.#textY[2]
-    );
 
     ctx.font = this.constructor.#dataFont;
     ctx.fillStyle = this.textColor;
     let passportWidth = this.constructor.#cardArea[0] - this.constructor.#safe - ctx.measureText(model.validThru.toISOString().slice(0, 10)).width;
     ctx.fillText(
       model.validThru.toISOString().slice(0, 10),
-      passportWidth,
-      this.constructor.#textY[3]
-    );
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillStyle = this.headerColor;
-    passportWidth -= ctx.measureText("THRU: ").width;
-    ctx.fillText(
-      "THRU: ",
       passportWidth,
       this.constructor.#textY[3]
     );
@@ -189,7 +173,7 @@ class EventsSealRenderer {
   }
 
   // Areas used in card generation (static)
-  static #cardArea = [352, 480];
+  static #cardArea = [308, 436];
   static get cutCardArea() {
     return [
       this.#cardArea[0] - (this.#bleed * 2),
@@ -203,7 +187,7 @@ class EventsSealRenderer {
     this.#cardArea[0] - (this.#safe * 2) - this.#logoArea - 24,
     this.#cardArea[1] - this.#safe - this.#qrCodeArea - 24
   ]; }
-  static #qrCodeArea = 256;
+  static #qrCodeArea = 212;
 
   // Methods used in card generation (static)
   static #generateCanvasImg(img) {

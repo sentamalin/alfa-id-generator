@@ -616,7 +616,7 @@ class EventsSealViewModel {
     ctx.drawImage(pageSpecimen, 0, 0);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "#999999";
-    ctx.fillRect(190, 237, 322, 450);
+    ctx.fillRect(190, 237, 278, 406);
     ctx.drawImage(
       canvas, 16, 16, EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1],
       191, 238, EventsSealRenderer.cutCardArea[0], EventsSealRenderer.cutCardArea[1]
