@@ -35,12 +35,12 @@ class MRVBDocument {
   }
   get nationalityCode() { return this.#document.nationalityCode; }
   set nationalityCode(value) { this.#document.nationalityCode = value; }
-  get dateOfBirth() { return this.#document.dateOfBirth; }
-  set dateOfBirth(value) { this.#document.dateOfBirth = value; }
+  get birthDate() { return this.#document.birthDate; }
+  set birthDate(value) { this.#document.birthDate = value; }
   get genderMarker() { return this.#document.genderMarker; }
   set genderMarker(value) { this.#document.genderMarker = value; }
-  get validThru() { return this.#document.dateOfExpiration; }
-  set validThru(value) { this.#document.dateOfExpiration = value; }
+  get validThru() { return this.#document.expirationDate; }
+  set validThru(value) { this.#document.expirationDate = value; }
   get optionalData() { return this.#document.optionalData; } // 8 characters
   set optionalData(value) {
     this.#document.optionalData = value;
@@ -65,8 +65,8 @@ class MRVBDocument {
   set validFrom(value) { this.#visa.validFrom = value; }
   get numberOfEntries() { return this.#visa.numberOfEntries; }
   set numberOfEntries(value) { this.#visa.numberOfEntries = value; }
-  get type() { return this.#visa.type; }
-  set type(value) { this.#visa.type = value; }
+  get visaType() { return this.#visa.visaType; }
+  set visaType(value) { this.#visa.visaType = value; }
   get additionalInfo() { return this.#visa.additionalInfo; }
   set additionalInfo(value) { this.#visa.additionalInfo = value; }
   get passportNumber() { return this.#visa.passportNumber; }
@@ -87,8 +87,8 @@ class MRVBDocument {
     return mrzNumber +
       TravelDocument.generateMRZCheckDigit(mrzNumber) +
       this.nationalityCode.toMRZ() +
-      this.dateOfBirth.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.dateOfBirth.toMRZ()) +
+      this.birthDate.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.birthDate.toMRZ()) +
       this.genderMarker.toMRZ() +
       this.validThru.toMRZ() +
       TravelDocument.generateMRZCheckDigit(this.validThru.toMRZ()) +
@@ -113,13 +113,13 @@ class MRVBDocument {
       if (opt.validThru) { this.validThru = opt.validThru; }
       if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.type) { this.type = opt.type; }
+      if (opt.type) { this.visaType = opt.type; }
       if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
       if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
+      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }

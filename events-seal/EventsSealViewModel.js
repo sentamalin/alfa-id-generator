@@ -200,11 +200,11 @@ class EventsSealViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.dateOfBirth.toISOString().slice(0,10);
+    this.#dateOfBirthInput.value = this.#model.birthDate.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
-    this.#model.dateOfBirth = this.#dateOfBirthInput.value;
+    this.#model.birthDate = this.#dateOfBirthInput.value;
     this.#generateCard();
   }
 
@@ -255,15 +255,15 @@ class EventsSealViewModel {
     this.#identifierInput = input;
     this.#identifierInput.setAttribute("minlength", 4);
     this.#identifierInput.setAttribute("maxlength", 4);
-    this.#identifierInput.value = this.#model.identifier;
-    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.value = this.#model.identifierCode;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifierCode);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
-    this.#model.identifier !== this.#identifierInput.value) {
-      this.#model.identifier = this.#identifierInput.value;
+    this.#model.identifierCode !== this.#identifierInput.value) {
+      this.#model.identifierCode = this.#identifierInput.value;
       this.#generateCard();
     }
   }

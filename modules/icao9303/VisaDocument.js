@@ -42,11 +42,11 @@ class VisaDocument {
     }
   }
 
-  #type;
-  get type() { return this.#type; }
-  set type(value) {
-    this.#type = new String(value);
-    this.#type.toVIZ = function() {
+  #visaType;
+  get visaType() { return this.#visaType; }
+  set visaType(value) {
+    this.#visaType = new String(value);
+    this.#visaType.toVIZ = function() {
       return this.toUpperCase();
     }
   }
@@ -83,7 +83,7 @@ class VisaDocument {
     this.placeOfIssue = "Zenith, UTO";
     this.validFrom = "2023-09-29";
     this.numberOfEntries = "Multiple";
-    this.type = "Participant";
+    this.visaType = "Participant";
     this.additionalInfo = "None";
     this.passportNumber = "111222333";
   }

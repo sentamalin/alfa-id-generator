@@ -8,10 +8,10 @@ import { DigitalSeal } from "./DigitalSeal.js";
 class DigitalSealV4 {
   #digitalseal = new DigitalSeal();
   get version() { return 0x03; }
-  get authority() { return this.#digitalseal.authority; }
-  set authority(value) { this.#digitalseal.authority = value; }
-  get identifier() { return this.#digitalseal.identifier; }
-  set identifier(value) { this.#digitalseal.identifier = value; }
+  get authorityCode() { return this.#digitalseal.authorityCode; }
+  set authorityCode(value) { this.#digitalseal.authorityCode = value; }
+  get identifierCode() { return this.#digitalseal.identifierCode; }
+  set identifierCode(value) { this.#digitalseal.identifierCode = value; }
   get certReference() { return this.#digitalseal.certReference; }
   set certReference(value) { this.#digitalseal.certReference = value; }
   get issueDate() { return this.#digitalseal.issueDate; }
@@ -31,9 +31,9 @@ class DigitalSealV4 {
     let output = [];
     output.push(DigitalSeal.magic);
     output.push(this.version);
-    output = output.concat(DigitalSeal.c40Encode(this.authority.padEnd(3, "<")));
+    output = output.concat(DigitalSeal.c40Encode(this.authorityCode.padEnd(3, "<")));
     output = output.concat(DigitalSeal.c40Encode(
-        this.identifier +
+        this.identifierCode +
         this.certReference.length.toString(16).padStart(2, "0") +
         this.certReference
     ));
@@ -101,10 +101,10 @@ class DigitalSealV4 {
       );
     }
     start += 2;
-    this.authority = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
+    this.authorityCode = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
     start += 2;
     const idLength = DigitalSeal.c40Decode(value.slice(start, start + 4));
-    this.identifier = idLength.substring(0, 4);
+    this.identifierCode = idLength.substring(0, 4);
     const certRefLength = parseInt(idLength.substring(4, 6), 16);
     let certRefC40Length = Math.floor(certRefLength / 3) * 2;
     const certRefModulus = certRefLength % 3;
@@ -164,8 +164,8 @@ class DigitalSealV4 {
 
   constructor(opt) {
     if (opt) {
-      if (opt.authority) { this.authority = opt.authority; }
-      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.authority) { this.authorityCode = opt.authority; }
+      if (opt.identifier) { this.identifierCode = opt.identifier; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.signatureDate) { this.signatureDate = opt.signatureDate; }

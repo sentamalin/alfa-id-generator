@@ -7,28 +7,28 @@ class DigitalSeal {
   static #c40SHIFT1 = Symbol("c40SHIFT1");
   static get c40SHIFT1() { return this.#c40SHIFT1; }
   static get magic() { return 0xDC; }
-  #authority = "";
-  get authority() { return this.#authority; }
+  #authorityCode = "";
+  get authorityCode() { return this.#authorityCode; }
   /** @param { string } value */
-  set authority(value) {
+  set authorityCode(value) {
     if (value.length > 3) {
       throw new RangeError(
         "Issuing authority must be according to ICAO 9303-3 and be three letters or less."
       );
     } else {
-      this.#authority = value;
+      this.#authorityCode = value;
     }
   }
-  #identifier = "";
-  get identifier() { return this.#identifier; }
+  #identifierCode = "";
+  get identifierCode() { return this.#identifierCode; }
   /** @param { string } value */
-  set identifier(value) {
+  set identifierCode(value) {
     if (value.length !== 4) {
       throw new RangeError(
         "Signer identifier must be a combination of a two-letter code of the issuing authority and of two alphanumeric characters to identify a signer within the defined issuing authority."
       );
     } else {
-      this.#identifier = value;
+      this.#identifierCode = value;
     }
   }
   /** @type { string } */
@@ -770,8 +770,8 @@ class DigitalSeal {
 
   constructor(opt) {
     if (opt) {
-      if (opt.authority) { this.authority = opt.authority; }
-      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.authority) { this.authorityCode = opt.authority; }
+      if (opt.identifier) { this.identifierCode = opt.identifier; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.signatureDate) { this.signatureDate = opt.signatureDate; }

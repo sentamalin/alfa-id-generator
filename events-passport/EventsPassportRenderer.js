@@ -417,7 +417,7 @@ class EventsPassportRenderer {
       this.constructor.#dataY[5]
     );
     ctx.fillText(
-      model.dateOfBirth.toVIZ(),
+      model.birthDate.toVIZ(),
       this.constructor.#dataX[1],
       this.constructor.#dataY[5]
     );
@@ -432,18 +432,18 @@ class EventsPassportRenderer {
       this.constructor.#dataY[5]
     );
     ctx.fillText(
-      model.dateOfIssue.toVIZ(),
+      model.issueDate.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[7]
     );
     ctx.fillText(
-      model.authority.toVIZ(),
+      model.subauthority.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[9],
       this.constructor.#qrCodeXY[0] - this.constructor.#dataX[0] - 32
     );
     ctx.fillText(
-      model.dateOfExpiration.toVIZ(),
+      model.expirationDate.toVIZ(),
       this.constructor.#dataX[0],
       this.constructor.#dataY[11]
     );

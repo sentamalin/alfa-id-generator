@@ -26,7 +26,7 @@ class CrewCertificate {
   get authorityCode() { return this.#document.authorityCode; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
-    this.#seal.authority = value;
+    this.#seal.authorityCode = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
@@ -34,9 +34,9 @@ class CrewCertificate {
     this.#document.number = value;
     this.#setDigitalSealMRZ();
   }
-  get dateOfBirth() { return this.#document.dateOfBirth; }
-  set dateOfBirth(value) {
-    this.#document.dateOfBirth = value;
+  get birthDate() { return this.#document.birthDate; }
+  set birthDate(value) {
+    this.#document.birthDate = value;
     this.#setDigitalSealMRZ();
   }
   get genderMarker() { return this.#document.genderMarker; }
@@ -44,9 +44,9 @@ class CrewCertificate {
     this.#document.genderMarker = value;
     this.#setDigitalSealMRZ();
   }
-  get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  set dateOfExpiration(value) {
-    this.#document.dateOfExpiration = value;
+  get expirationDate() { return this.#document.expirationDate; }
+  set expirationDate(value) {
+    this.#document.expirationDate = value;
     this.#setDigitalSealMRZ();
   }
   get nationalityCode() { return this.#document.nationalityCode; }
@@ -98,9 +98,9 @@ class CrewCertificate {
     }
   }
 
-  #dateOfIssue;
-  get dateOfIssue() { return this.#dateOfIssue; }
-  set dateOfIssue(value) {
+  #issueDate;
+  get issueDate() { return this.#issueDate; }
+  set issueDate(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
@@ -108,8 +108,8 @@ class CrewCertificate {
       );
     }
     else {
-      this.#dateOfIssue = test;
-      this.#dateOfIssue.toVIZ = function() {
+      this.#issueDate = test;
+      this.#issueDate.toVIZ = function() {
         return TravelDocument.dateToVIZ(this).toUpperCase();
       }
       this.#seal.issueDate = value;
@@ -132,8 +132,8 @@ class CrewCertificate {
   get machineReadableZone() { return this.#document.machineReadableZone; }
 
   // Digital Seal properties
-  get identifier() { return this.#seal.identifier; }
-  set identifier(value) { this.#seal.identifier = value; }
+  get identifierCode() { return this.#seal.identifierCode; }
+  set identifierCode(value) { this.#seal.identifierCode = value; }
   get certReference() { return this.#seal.certReference; }
   set certReference(value) { this.#seal.certReference = value; }
   get sealSignatureDate() { return this.#seal.signatureDate; }
@@ -143,7 +143,7 @@ class CrewCertificate {
   get headerZone() { return this.#seal.headerZone; }
   set headerZone(value) {
     this.#seal.headerZone = value;
-    this.#document.authorityCode = this.#seal.authority;
+    this.#document.authorityCode = this.#seal.authorityCode;
   }
   get messageZone() { return this.#seal.messageZone; }
   set messageZone(value) {
@@ -192,9 +192,9 @@ class CrewCertificate {
       const monthOfBirth = sealMRZ.slice(17, 19);
       const dayOfBirth = sealMRZ.slice(19, 21);
       if (parseInt(yearOfBirth, 10) >= twoDigitYearStart) {
-        this.#document.dateOfBirth = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+        this.#document.birthDate = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
       } else {
-        this.#document.dateOfBirth = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+        this.#document.birthDate = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
       }
     }
     this.#document.genderMarker = sealMRZ[22];
@@ -206,11 +206,11 @@ class CrewCertificate {
       const yearExpiration = sealMRZ.slice(23, 25);
       const monthExpiration = sealMRZ.slice(25, 27);
       const dayExpiration = sealMRZ.slice(27, 29);
-      this.#document.dateOfExpiration = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
+      this.#document.expirationDate = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
     }
     this.#document.nationalityCode = sealMRZ.slice(30, 33).trimEnd();
     this.#document.fullName = sealMRZ.slice(33).replace("  ", ", ").trimEnd();
-    this.dateOfIssue = this.#seal.issueDate;
+    this.issueDate = this.#seal.issueDate;
   }
   get employerCode() {
     let output = "";
@@ -264,16 +264,16 @@ class CrewCertificate {
     this.employer = "Unknown";
     this.occupation = "Unknown";
     this.declaration = "Unknown";
-    this.dateOfIssue = "2023-09-29";
+    this.issueDate = "2023-09-29";
     this.placeOfIssue = "Zenith, UTO";
     
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
+      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
+      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
@@ -283,9 +283,9 @@ class CrewCertificate {
       if (opt.employer) { this.employer = opt.employer; }
       if (opt.occupation) { this.occupation = opt.occupation; }
       if (opt.declaration) { this.declaration = opt.declaration; }
-      if (opt.dateOfIssue) { this.dateOfIssue = opt.dateOfIssue; }
+      if (opt.dateOfIssue) { this.issueDate = opt.dateOfIssue; }
       if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
-      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.identifier) { this.identifierCode = opt.identifier; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.sealSignatureDate) { this.sealSignatureDate = opt.sealSignatureDate; }
       if (opt.sealSignature) { this.sealSignature = opt.sealSignature; }

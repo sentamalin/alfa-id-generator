@@ -26,7 +26,7 @@ class EventsPassport {
   get authorityCode() { return this.#document.authorityCode; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
-    this.#seal.authority = value;
+    this.#seal.authorityCode = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
@@ -44,9 +44,9 @@ class EventsPassport {
     this.#document.nationalityCode = value;
     this.#setDigitalSealMRZ();
   }
-  get dateOfBirth() { return this.#document.dateOfBirth; }
-  set dateOfBirth(value) {
-    this.#document.dateOfBirth = value;
+  get birthDate() { return this.#document.birthDate; }
+  set birthDate(value) {
+    this.#document.birthDate = value;
     this.#setDigitalSealMRZ();
   }
   get genderMarker() { return this.#document.genderMarker; }
@@ -54,9 +54,9 @@ class EventsPassport {
     this.#document.genderMarker = value;
     this.#setDigitalSealMRZ();
   }
-  get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  set dateOfExpiration(value) {
-    this.#document.dateOfExpiration = value;
+  get expirationDate() { return this.#document.expirationDate; }
+  set expirationDate(value) {
+    this.#document.expirationDate = value;
     this.#setDigitalSealMRZ();
   }
   get optionalData() { return this.#document.optionalData; }
@@ -81,9 +81,9 @@ class EventsPassport {
     this.#seal.features.set(0x02, DigitalSeal.c40Encode(value));
   }
   
-  #dateOfIssue;
-  get dateOfIssue() { return this.#dateOfIssue; }
-  set dateOfIssue(value) {
+  #issueDate;
+  get issueDate() { return this.#issueDate; }
+  set issueDate(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
@@ -91,19 +91,19 @@ class EventsPassport {
       );
     }
     else {
-      this.#dateOfIssue = test;
-      this.#dateOfIssue.toVIZ = function() {
+      this.#issueDate = test;
+      this.#issueDate.toVIZ = function() {
         return TravelDocument.dateToVIZ(this).toUpperCase();
       }
       this.#seal.issueDate = value;
     }
   }
 
-  #authority;
-  get authority() { return this.#authority; }
-  set authority(value) {
-    this.#authority = new String(value);
-    this.#authority.toVIZ = function() {
+  #subauthority;
+  get subauthority() { return this.#subauthority; }
+  set subauthority(value) {
+    this.#subauthority = new String(value);
+    this.#subauthority.toVIZ = function() {
       return this.toUpperCase();
     }
   }
@@ -124,8 +124,8 @@ class EventsPassport {
   get machineReadableZone() { return this.#document.machineReadableZone; }
 
   // Digital Seal properties
-  get identifier() { return this.#seal.identifier; }
-  set identifier(value) { this.#seal.identifier = value; }
+  get identifierCode() { return this.#seal.identifierCode; }
+  set identifierCode(value) { this.#seal.identifierCode = value; }
   get certReference() { return this.#seal.certReference; }
   set certReference(value) { this.#seal.certReference = value; }
   get sealSignatureDate() { return this.#seal.signatureDate; }
@@ -135,7 +135,7 @@ class EventsPassport {
   get headerZone() { return this.#seal.headerZone; }
   set headerZone(value) {
     this.#seal.headerZone = value;
-    this.#document.authorityCode = this.#seal.authority;
+    this.#document.authorityCode = this.#seal.authorityCode;
   }
   get messageZone() { return this.#seal.messageZone; }
   set messageZone(value) {
@@ -184,9 +184,9 @@ class EventsPassport {
       const monthOfBirth = sealMRZ.slice(59, 61);
       const dayOfBirth = sealMRZ.slice(61, 63);
       if (parseInt(yearOfBirth, 10) >= twoDigitYearStart) {
-        this.#document.dateOfBirth = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+        this.#document.birthDate = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
       } else {
-        this.#document.dateOfBirth = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+        this.#document.birthDate = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
       }
     }
     this.#document.genderMarker = sealMRZ[64];
@@ -198,9 +198,9 @@ class EventsPassport {
       const yearExpiration = sealMRZ.slice(65, 67);
       const monthExpiration = sealMRZ.slice(67, 69);
       const dayExpiration = sealMRZ.slice(69, 71);
-      this.#document.dateOfExpiration = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
+      this.#document.expirationDate = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
     }
-    this.dateOfIssue = this.#seal.issueDate;
+    this.issueDate = this.#seal.issueDate;
     this.#endorsements = DigitalSeal.c40Decode(this.#seal.features.get(0x04));
   }
   get subauthorityCode() {
@@ -230,8 +230,8 @@ class EventsPassport {
   // Constructor
   constructor(opt) {
     this.placeOfBirth = "UTOPIA";
-    this.dateOfIssue = "2023-09-29";
-    this.authority = "Unknown";
+    this.issueDate = "2023-09-29";
+    this.subauthority = "Unknown";
     this.endorsements = "None";
     
     if (opt) {
@@ -240,18 +240,18 @@ class EventsPassport {
       if (opt.number) { this.number = opt.number; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
+      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
       if (opt.placeOfBirth) { this.placeOfBirth = opt.placeOfBirth; }
-      if (opt.dateOfIssue) { this.dateOfIssue = opt.dateOfIssue; }
-      if (opt.authority) { this.authority = opt.authority; }
-      if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
+      if (opt.dateOfIssue) { this.issueDate = opt.dateOfIssue; }
+      if (opt.authority) { this.subauthority = opt.authority; }
+      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
       if (opt.endorsements) { this.endorsements = opt.endorsements; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
       if (opt.url) { this.url = opt.url; }
-      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.identifier) { this.identifierCode = opt.identifier; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.sealSignatureDate) { this.sealSignatureDate = opt.sealSignatureDate; }
       if (opt.sealSignature) { this.sealSignature = opt.sealSignature; }

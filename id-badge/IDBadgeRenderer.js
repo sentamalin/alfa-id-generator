@@ -213,7 +213,7 @@ class IDBadgeRenderer {
       this.constructor.#frontRows[10]
     );
     ctx.fillText(
-      model.dateOfExpiration.toVIZ(),
+      model.expirationDate.toVIZ(),
       this.constructor.#frontColumns[0],
       this.constructor.#frontRows[12]
     );

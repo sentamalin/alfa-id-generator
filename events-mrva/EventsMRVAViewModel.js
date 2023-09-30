@@ -243,14 +243,14 @@ class EventsMRVAViewModel {
   /** @param { HTMLInputElement } input */
   set typeInput(input) {
     this.#typeInput = input;
-    this.#typeInput.value = this.#model.type;
-    this.#typeInput.setAttribute("placeholder", this.#model.type);
+    this.#typeInput.value = this.#model.visaType;
+    this.#typeInput.setAttribute("placeholder", this.#model.visaType);
     this.#typeInput.addEventListener("input", this, false);
     this.#typeInput.addEventListener("change", this, false);
   }
   onTypeInputChange() {
-    if (this.#model.type !== this.#typeInput.value) {
-      this.#model.type = this.#typeInput.value;
+    if (this.#model.visaType !== this.#typeInput.value) {
+      this.#model.visaType = this.#typeInput.value;
       this.#generateCard();
     }
   }
@@ -344,11 +344,11 @@ class EventsMRVAViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.dateOfBirth.toISOString().slice(0,10);
+    this.#dateOfBirthInput.value = this.#model.birthDate.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
-    this.#model.dateOfBirth = this.#dateOfBirthInput.value;
+    this.#model.birthDate = this.#dateOfBirthInput.value;
     this.#generateCard();
   }
 
@@ -400,16 +400,16 @@ class EventsMRVAViewModel {
     this.#identifierInput = input;
     this.#identifierInput.setAttribute("minlength", 4);
     this.#identifierInput.setAttribute("maxlength", 4);
-    this.#identifierInput.value = this.#model.identifier;
-    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.value = this.#model.identifierCode;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifierCode);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
     this.#identifierInput.setAttribute("disabled", "disabled");
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
-    this.#model.identifier !== this.#identifierInput.value) {
-      this.#model.identifier = this.#identifierInput.value;
+    this.#model.identifierCode !== this.#identifierInput.value) {
+      this.#model.identifierCode = this.#identifierInput.value;
       this.#generateCard();
     }
   }

@@ -444,7 +444,7 @@ class EventsMRVARenderer {
       this.constructor.#documentY[5]
     );
     ctx.fillText(
-      model.type.toVIZ(),
+      model.visaType.toVIZ(),
       this.constructor.#documentX[2],
       this.constructor.#documentY[5]
     );
@@ -469,7 +469,7 @@ class EventsMRVARenderer {
       this.constructor.#passportY[7]
     );
     ctx.fillText(
-      model.dateOfBirth.toVIZ(),
+      model.birthDate.toVIZ(),
       this.constructor.#passportX[1],
       this.constructor.#passportY[7]
     );

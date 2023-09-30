@@ -26,7 +26,7 @@ class EventsMRVB {
   get authorityCode() { return this.#document.authorityCode; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
-    this.#seal.authority = value;
+    this.#seal.authorityCode = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
@@ -44,9 +44,9 @@ class EventsMRVB {
     this.#document.nationalityCode = value;
     this.#setDigitalSealMRZ();
   }
-  get dateOfBirth() { return this.#document.dateOfBirth; }
-  set dateOfBirth(value) {
-    this.#document.dateOfBirth = value;
+  get birthDate() { return this.#document.birthDate; }
+  set birthDate(value) {
+    this.#document.birthDate = value;
     this.#setDigitalSealMRZ();
   }
   get genderMarker() { return this.#document.genderMarker; }
@@ -78,8 +78,8 @@ class EventsMRVB {
       this.#seal.features.set(0x03, [parseInt(value)]);
     }
   }
-  get type() { return this.#document.type; }
-  set type(value) { this.#document.type = value; }
+  get visaType() { return this.#document.visaType; }
+  set visaType(value) { this.#document.visaType = value; }
   get passportNumber() { return this.#document.passportNumber; }
   set passportNumber(value) { 
     this.#document.passportNumber = value;
@@ -103,8 +103,8 @@ class EventsMRVB {
   get machineReadableZone() { return this.#document.machineReadableZone; }
 
   // Digital Seal properties
-  get identifier() { return this.#seal.identifier; }
-  set identifier(value) { this.#seal.identifier = value; }
+  get identifierCode() { return this.#seal.identifierCode; }
+  set identifierCode(value) { this.#seal.identifierCode = value; }
   get certReference() { return this.#seal.certReference; }
   set certReference(value) { this.#seal.certReference = value; }
   get issueDate() { return this.#seal.issueDate; }
@@ -116,7 +116,7 @@ class EventsMRVB {
   get headerZone() { return this.#seal.headerZone; }
   set headerZone(value) {
     this.#seal.headerZone = value;
-    this.#document.authorityCode = this.#seal.authority;
+    this.#document.authorityCode = this.#seal.authorityCode;
   }
   get messageZone() { return this.#seal.messageZone; }
   set messageZone(value) {
@@ -165,9 +165,9 @@ class EventsMRVB {
       const monthOfBirth = sealMRZ.slice(51, 53);
       const dayOfBirth = sealMRZ.slice(53, 55);
       if (parseInt(yearOfBirth, 10) >= twoDigitYearStart) {
-        this.#document.dateOfBirth = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+        this.#document.birthDate = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
       } else {
-        this.#document.dateOfBirth = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+        this.#document.birthDate = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
       }
     }
     this.#document.genderMarker = sealMRZ[56];
@@ -238,18 +238,18 @@ class EventsMRVB {
       if (opt.validThru) { this.validThru = opt.validThru; }
       if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.type) { this.type = opt.type; }
+      if (opt.type) { this.visaType = opt.type; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
       if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
+      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
       if (opt.url) { this.url = opt.url; }
-      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.identifier) { this.identifierCode = opt.identifier; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.sealSignatureDate) { this.sealSignatureDate = opt.sealSignatureDate; }

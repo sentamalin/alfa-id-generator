@@ -26,7 +26,7 @@ class CrewID {
   get authorityCode() { return this.#document.authorityCode; }
   set authorityCode(value) {
     this.#document.authorityCode = value;
-    this.#seal.authority = value;
+    this.#seal.authorityCode = value;
     this.#setDigitalSealMRZ();
   }
   get number() { return this.#document.number; }
@@ -34,9 +34,9 @@ class CrewID {
     this.#document.number = value;
     this.#setDigitalSealMRZ();
   }
-  get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  set dateOfExpiration(value) {
-    this.#document.dateOfExpiration = value;
+  get expirationDate() { return this.#document.expirationDate; }
+  set expirationDate(value) {
+    this.#document.expirationDate = value;
     this.#setDigitalSealMRZ();
   }
   get fullName() { return this.#document.fullName; } // 30 characters
@@ -67,8 +67,8 @@ class CrewID {
   get mrzLine1() { return this.#document.mrzLine1; }
   get mrzLine2() {
     let uncheckedLine = "<<<<<<0<" +
-      this.dateOfExpiration.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.dateOfExpiration.toMRZ()) +
+      this.expirationDate.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.expirationDate.toMRZ()) +
       "XXX" +
       this.optionalData.toMRZ().slice(15);
     return uncheckedLine +
@@ -89,8 +89,8 @@ class CrewID {
   }
 
   // Digital Seal properties
-  get identifier() { return this.#seal.identifier; }
-  set identifier(value) { this.#seal.identifier = value; }
+  get identifierCode() { return this.#seal.identifierCode; }
+  set identifierCode(value) { this.#seal.identifierCode = value; }
   get certReference() { return this.#seal.certReference; }
   set certReference(value) { this.#seal.certReference = value; }
   get issueDate() { return this.#seal.issueDate; }
@@ -102,7 +102,7 @@ class CrewID {
   get headerZone() { return this.#seal.headerZone; }
   set headerZone(value) {
     this.#seal.headerZone = value;
-    this.#document.authorityCode = this.#seal.authority;
+    this.#document.authorityCode = this.#seal.authorityCode;
   }
   get messageZone() { return this.#seal.messageZone; }
   set messageZone(value) {
@@ -150,7 +150,7 @@ class CrewID {
       const yearExpiration = sealMRZ.slice(23, 25);
       const monthExpiration = sealMRZ.slice(25, 27);
       const dayExpiration = sealMRZ.slice(27, 29);
-      this.#document.dateOfExpiration = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
+      this.#document.expirationDate = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;
     }
     this.#document.fullName = sealMRZ.slice(33).replace("  ", ", ").trimEnd();
   }
@@ -186,13 +186,13 @@ class CrewID {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
+      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.url) { this.url = opt.url; }
       if (opt.employer) { this.employer = opt.employer; }
-      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.identifier) { this.identifierCode = opt.identifier; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.sealSignatureDate) { this.sealSignatureDate = opt.sealSignatureDate; }

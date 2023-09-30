@@ -303,12 +303,12 @@ class CrewLicenseRenderer {
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.dateOfBirth.toVIZ(),
+      model.birthDate.toVIZ(),
       this.constructor.#frontRow2Columns[1],
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.authority.toVIZ(),
+      model.subauthority.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[7],
       this.constructor.#mainHeaderX - this.constructor.#frontColumns
@@ -325,7 +325,7 @@ class CrewLicenseRenderer {
       this.constructor.#frontRows[11]
     );
     ctx.fillText(
-      model.dateOfExpiration.toVIZ(),
+      model.expirationDate.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[13]
     );

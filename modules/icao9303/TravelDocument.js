@@ -71,20 +71,20 @@ class TravelDocument {
     }
   }
 
-  #dateOfBirth;
-  get dateOfBirth() { return this.#dateOfBirth; }
-  set dateOfBirth(value) {
+  #birthDate;
+  get birthDate() { return this.#birthDate; }
+  set birthDate(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Date of birth (dateOfBirth) must be a valid date string."
       );
     } else {
-      this.#dateOfBirth = test;
-      this.#dateOfBirth.toMRZ = function() {
+      this.#birthDate = test;
+      this.#birthDate.toMRZ = function() {
         return TravelDocument.dateToMRZ(this);
       }
-      this.#dateOfBirth.toVIZ = function() {
+      this.#birthDate.toVIZ = function() {
         return TravelDocument.dateToVIZ(this);
       }
     }
@@ -111,20 +111,20 @@ class TravelDocument {
     }
   }
 
-  #dateOfExpiration;
-  get dateOfExpiration() { return this.#dateOfExpiration; }
-  set dateOfExpiration(value) {
+  #expirationDate;
+  get expirationDate() { return this.#expirationDate; }
+  set expirationDate(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Date of expiration (dateOfExpiration) must be a valid date string."
       );
     } else {
-      this.#dateOfExpiration = test;
-      this.#dateOfExpiration.toMRZ = function() {
+      this.#expirationDate = test;
+      this.#expirationDate.toMRZ = function() {
         return TravelDocument.dateToMRZ(this);
       }
-      this.#dateOfExpiration.toVIZ = function() {
+      this.#expirationDate.toVIZ = function() {
         return TravelDocument.dateToVIZ(this);
       }
     }
@@ -581,18 +581,18 @@ class TravelDocument {
     this.typeCode = "UN";
     this.authorityCode = "UNK";
     this.number = "111222333";
-    this.dateOfBirth = "2023-09-29";
+    this.birthDate = "2023-09-29";
     this.genderMarker = "X";
-    this.dateOfExpiration = "2023-09-29";
+    this.expirationDate = "2023-09-29";
     this.nationalityCode = "UNK";
     
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
+      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
+      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }

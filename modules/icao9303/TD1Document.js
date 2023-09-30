@@ -18,12 +18,12 @@ class TD1Document {
   set authorityCode(value) { this.#document.authorityCode = value; }
   get number() { return this.#document.number; }
   set number(value) { this.#document.number = value; }
-  get dateOfBirth() { return this.#document.dateOfBirth; }
-  set dateOfBirth(value) { this.#document.dateOfBirth = value; }
+  get birthDate() { return this.#document.birthDate; }
+  set birthDate(value) { this.#document.birthDate = value; }
   get genderMarker() { return this.#document.genderMarker; }
   set genderMarker(value) { this.#document.genderMarker = value; }
-  get dateOfExpiration() { return this.#document.dateOfExpiration; }
-  set dateOfExpiration(value) { this.#document.dateOfExpiration = value; }
+  get expirationDate() { return this.#document.expirationDate; }
+  set expirationDate(value) { this.#document.expirationDate = value; }
   get nationalityCode() { return this.#document.nationalityCode; }
   set nationalityCode(value) { this.#document.nationalityCode = value; }
   get fullName() { return this.#document.fullName; } // 30 characters
@@ -68,11 +68,11 @@ class TD1Document {
       this.optionalData.toMRZ().slice(0,15);
   }
   get mrzLine2() {
-    let uncheckedLine = this.dateOfBirth.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.dateOfBirth.toMRZ()) +
+    let uncheckedLine = this.birthDate.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.birthDate.toMRZ()) +
       this.genderMarker.toMRZ() +
-      this.dateOfExpiration.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.dateOfExpiration.toMRZ()) +
+      this.expirationDate.toMRZ() +
+      TravelDocument.generateMRZCheckDigit(this.expirationDate.toMRZ()) +
       this.nationalityCode.toMRZ() +
       this.optionalData.toMRZ().slice(15);
     return uncheckedLine +
@@ -100,9 +100,9 @@ class TD1Document {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
       if (opt.number) { this.number = opt.number; }
-      if (opt.dateOfBirth) { this.dateOfBirth = opt.dateOfBirth; }
+      if (opt.dateOfBirth) { this.birthDate = opt.dateOfBirth; }
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.dateOfExpiration) { this.dateOfExpiration = opt.dateOfExpiration; }
+      if (opt.dateOfExpiration) { this.expirationDate = opt.dateOfExpiration; }
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }

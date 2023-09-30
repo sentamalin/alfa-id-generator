@@ -185,7 +185,7 @@ class CrewCertificateViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.dateOfBirth.toISOString().slice(0,10);
+    this.#dateOfBirthInput.value = this.#model.birthDate.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
@@ -209,7 +209,7 @@ class CrewCertificateViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfExpirationInput(input) {
     this.#dateOfExpirationInput = input;
-    this.#dateOfExpirationInput.value = this.#model.dateOfExpiration.toISOString().slice(0,10);
+    this.#dateOfExpirationInput.value = this.#model.expirationDate.toISOString().slice(0,10);
     this.#dateOfExpirationInput.addEventListener("change", this, false);
   }
   onDateOfExpirationInputChange() {
@@ -278,16 +278,16 @@ class CrewCertificateViewModel {
     this.#identifierInput = input;
     this.#identifierInput.setAttribute("minlength", 4);
     this.#identifierInput.setAttribute("maxlength", 4);
-    this.#identifierInput.value = this.#model.identifier;
-    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.value = this.#model.identifierCode;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifierCode);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
     this.#identifierInput.setAttribute("disabled", "disabled");
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
-    this.#model.identifier !== this.#identifierInput.value) {
-      this.#model.identifier = this.#identifierInput.value;
+    this.#model.identifierCode !== this.#identifierInput.value) {
+      this.#model.identifierCode = this.#identifierInput.value;
       this.#generateCard();
     }
   }
@@ -418,7 +418,7 @@ class CrewCertificateViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfIssueInput(input) {
     this.#dateOfIssueInput = input;
-    this.#dateOfIssueInput.value = this.#model.dateOfIssue.toISOString().slice(0,10);
+    this.#dateOfIssueInput.value = this.#model.issueDate.toISOString().slice(0,10);
     this.#dateOfIssueInput.addEventListener("change", this, false);
   }
   onDateOfIssueInputChange() {

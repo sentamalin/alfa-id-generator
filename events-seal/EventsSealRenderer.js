@@ -124,9 +124,9 @@ class EventsSealRenderer {
 
     ctx.font = this.constructor.#dataFont;
     ctx.fillStyle = this.textColor;
-    let passportWidth = this.constructor.#cardArea[0] - this.constructor.#safe - ctx.measureText(model.validThru).width;
+    let passportWidth = this.constructor.#cardArea[0] - this.constructor.#safe - ctx.measureText(model.validThru.toISOString().slice(0, 10)).width;
     ctx.fillText(
-      model.validThru,
+      model.validThru.toISOString().slice(0, 10),
       passportWidth,
       this.constructor.#textY[3]
     );

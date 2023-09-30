@@ -186,11 +186,11 @@ class CrewLicenseViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.dateOfBirth.toISOString().slice(0,10);
+    this.#dateOfBirthInput.value = this.#model.birthDate.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
-    this.#model.dateOfBirth = this.#dateOfBirthInput.value;
+    this.#model.birthDate = this.#dateOfBirthInput.value;
     this.#generateCard();
   }
 
@@ -210,11 +210,11 @@ class CrewLicenseViewModel {
   /** @param { HTMLInputElement } input */
   set dateOfExpirationInput(input) {
     this.#dateOfExpirationInput = input;
-    this.#dateOfExpirationInput.value = this.#model.dateOfExpiration.toISOString().slice(0,10);
+    this.#dateOfExpirationInput.value = this.#model.expirationDate.toISOString().slice(0,10);
     this.#dateOfExpirationInput.addEventListener("change", this, false);
   }
   onDateOfExpirationInputChange() {
-    this.#model.dateOfExpiration = this.#dateOfExpirationInput.value;
+    this.#model.expirationDate = this.#dateOfExpirationInput.value;
     this.#generateCard();
   }
 
@@ -292,16 +292,16 @@ class CrewLicenseViewModel {
     this.#identifierInput = input;
     this.#identifierInput.setAttribute("minlength", 4);
     this.#identifierInput.setAttribute("maxlength", 4);
-    this.#identifierInput.value = this.#model.identifier;
-    this.#identifierInput.setAttribute("placeholder", this.#model.identifier);
+    this.#identifierInput.value = this.#model.identifierCode;
+    this.#identifierInput.setAttribute("placeholder", this.#model.identifierCode);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
     this.#identifierInput.setAttribute("disabled", "disabled");
   }
   onIdentifierInputChange() {
     if (this.#identifierInput.checkValidity() &&
-    this.#model.identifier !== this.#identifierInput.value) {
-      this.#model.identifier = this.#identifierInput.value;
+    this.#model.identifierCode !== this.#identifierInput.value) {
+      this.#model.identifierCode = this.#identifierInput.value;
       this.#generateCard();
     }
   }
@@ -381,14 +381,14 @@ class CrewLicenseViewModel {
   /** @param { HTMLInputElement } input */
   set authorityInput(input) {
     this.#authorityInput = input;
-    this.#authorityInput.value = this.#model.authority;
-    this.#authorityInput.setAttribute("placeholder", this.#model.authority);
+    this.#authorityInput.value = this.#model.subauthority;
+    this.#authorityInput.setAttribute("placeholder", this.#model.subauthority);
     this.#authorityInput.addEventListener("input", this, false);
     this.#authorityInput.addEventListener("change", this, false);
   }
   onAuthorityInputChange() {
-    if (this.#model.authority !== this.#authorityInput.value) {
-      this.#model.authority = this.#authorityInput.value;
+    if (this.#model.subauthority !== this.#authorityInput.value) {
+      this.#model.subauthority = this.#authorityInput.value;
       this.#generateCardFront();
     }
   }

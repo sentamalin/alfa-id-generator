@@ -303,7 +303,7 @@ class CrewCertificateRenderer {
       this.constructor.#frontRows[5]
     );
     ctx.fillText(
-      model.dateOfBirth.toVIZ(),
+      model.birthDate.toVIZ(),
       this.constructor.#frontRow2Columns[1],
       this.constructor.#frontRows[5]
     );
@@ -325,7 +325,7 @@ class CrewCertificateRenderer {
       this.constructor.#frontRows[11]
     );
     ctx.fillText(
-      model.dateOfExpiration.toVIZ(),
+      model.expirationDate.toVIZ(),
       this.constructor.#frontColumns,
       this.constructor.#frontRows[13]
     );
@@ -508,7 +508,7 @@ class CrewCertificateRenderer {
       );
     }
     ctx.fillText(
-      `${model.dateOfIssue.toVIZ()}—${model.placeOfIssue.toVIZ()}`,
+      `${model.issueDate.toVIZ()}—${model.placeOfIssue.toVIZ()}`,
       this.constructor.#backColumns,
       this.constructor.#backRows[6]
     );

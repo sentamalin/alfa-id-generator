@@ -8,10 +8,10 @@ import { DigitalSeal } from "./DigitalSeal.js";
 class DigitalSealV3 {
   #digitalseal = new DigitalSeal();
   get version() { return 0x02; }
-  get authority() { return this.#digitalseal.authority; }
-  set authority(value) { this.#digitalseal.authority = value; }
-  get identifier() { return this.#digitalseal.identifier; }
-  set identifier(value) { this.#digitalseal.identifier = value; }
+  get authorityCode() { return this.#digitalseal.authorityCode; }
+  set authorityCode(value) { this.#digitalseal.authorityCode = value; }
+  get identifierCode() { return this.#digitalseal.identifierCode; }
+  set identifierCode(value) { this.#digitalseal.identifierCode = value; }
   get certReference() { return this.#digitalseal.certReference; }
   set certReference(value) {
     if (value.length !== 5) {
@@ -39,9 +39,9 @@ class DigitalSealV3 {
     let output = [];
     output.push(DigitalSeal.magic);
     output.push(this.version);
-    output = output.concat(DigitalSeal.c40Encode(this.authority.padEnd(3, "<")));
+    output = output.concat(DigitalSeal.c40Encode(this.authorityCode.padEnd(3, "<")));
     output = output.concat(DigitalSeal.c40Encode(
-      this.identifier +
+      this.identifierCode +
       this.certReference
     ));
     output = output.concat(DigitalSeal.dateToBytes(this.issueDate));
@@ -111,7 +111,7 @@ class DigitalSealV3 {
     this.authority = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
     start += 2;
     const idCertRef = DigitalSeal.c40Decode(value.slice(start, start + 6));
-    this.identifier = idCertRef.substring(0, 4);
+    this.identifierCode = idCertRef.substring(0, 4);
     this.certReference = idCertRef.substring(4);
     start += 6;
     this.issueDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
@@ -158,7 +158,7 @@ class DigitalSealV3 {
   constructor(opt) {
     if (opt) {
       if (opt.authority) { this.authority = opt.authority; }
-      if (opt.identifier) { this.identifier = opt.identifier; }
+      if (opt.identifier) { this.identifierCode = opt.identifier; }
       if (opt.certReference) { this.certReference = opt.certReference; }
       if (opt.issueDate) { this.issueDate = opt.issueDate; }
       if (opt.signatureDate) { this.signatureDate = opt.signatureDate; }
