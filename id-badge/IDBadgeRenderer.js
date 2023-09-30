@@ -14,7 +14,8 @@ class IDBadgeRenderer {
   mrzColor;
   barcodeDarkColor = "#000000ff";
   barcodeLightColor = "#00000000";
-  barcodeErrorCorrection = "L";
+  frontBarcodeErrorCorrection = "L";
+  backBarcodeErrorCorrection = "M";
   frontBackgroundColor; // Defines a solid color when no front image is used
   frontBackgroundImage; // Defines a front image to use for a background
   backBackgroundColor; // Defines a solid color when no back image is used
@@ -89,7 +90,7 @@ class IDBadgeRenderer {
     );
     const images = await Promise.all([
       qrLite.toCanvas(model.url, {
-        errorCorrectionLevel: this.barcodeErrorCorrection,
+        errorCorrectionLevel: this.frontBarcodeErrorCorrection,
         margin: 0,
         width: this.constructor.#frontQRCodeArea[0],
         color: {
@@ -301,17 +302,19 @@ class IDBadgeRenderer {
       this.constructor.#numberUnderlayArea[0],
       this.constructor.#numberUnderlayArea[1]
     );
+    console.log(`Binary Signed Seal: [${model.signedSeal}] (length: ${model.signedSeal.length})`);
+    console.log(`Base-45 Signed Seal: '${b45.encode(model.signedSeal)}' (length: ${b45.encode(model.signedSeal).length})`);
     let barcode;
     if (this.useDigitalSeal) {
-      barcode = [{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }];
+      barcode = [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }];
     } else {
       barcode = model.url;
     }
     const images = await Promise.all([
       qrLite.toCanvas(barcode, {
-        errorCorrectionLevel: this.barcodeErrorCorrection,
+        errorCorrectionLevel: this.backBarcodeErrorCorrection,
+        version: 9,
         margin: 0,
-        width: this.constructor.#backQRCodeArea[0],
         color: {
           dark: this.barcodeDarkColor,
           light: this.barcodeLightColor
@@ -324,8 +327,6 @@ class IDBadgeRenderer {
       images[0],
       this.constructor.#backQRCodeXY[0],
       this.constructor.#backQRCodeXY[1],
-      this.constructor.#backQRCodeArea[0],
-      this.constructor.#backQRCodeArea[1]
     );
     this.constructor.#fitImgInArea(
       images[1], ctx,

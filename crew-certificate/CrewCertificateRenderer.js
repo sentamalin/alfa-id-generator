@@ -14,7 +14,7 @@ class CrewCertificateRenderer {
   mrzColor;
   barcodeDarkColor = "#000000ff";
   barcodeLightColor = "#00000000";
-  barcodeErrorCorrection = "L";
+  barcodeErrorCorrection = "M";
   frontBackgroundColor; // Defines a solid color when no front image is used
   frontBackgroundImage; // Defines a front image to use for a background
   backBackgroundColor; // Defines a solid color when no back image is used
@@ -407,17 +407,19 @@ class CrewCertificateRenderer {
       this.constructor.#numberUnderlayArea[0],
       this.constructor.#numberUnderlayArea[1]
     );
+    console.log(`Binary Signed Seal: [${model.signedSeal}] (length: ${model.signedSeal.length})`);
+    console.log(`Base-45 Signed Seal: '${b45.encode(model.signedSeal)}' (length: ${b45.encode(model.signedSeal).length})`);
     let barcode;
     if (this.useDigitalSeal) {
-      barcode = [{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }];
+      barcode = [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }];
     } else {
       barcode = model.url;
     }
     const images = await Promise.all([
       qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
+        version: 9,
         margin: 0,
-        width: this.constructor.#qrCodeArea,
         color: {
           dark: this.barcodeDarkColor,
           light: this.barcodeLightColor
@@ -430,8 +432,6 @@ class CrewCertificateRenderer {
       images[0],
       this.constructor.#qrCodeXY[0],
       this.constructor.#qrCodeXY[1],
-      this.constructor.#qrCodeArea[0],
-      this.constructor.#qrCodeArea[1]
     );
     this.constructor.#fitImgInArea(
       images[1], ctx,

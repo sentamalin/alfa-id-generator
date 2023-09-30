@@ -11,7 +11,7 @@ class EventsSealRenderer {
   // Customizable Presentation Data
   barcodeDarkColor = "#000000ff";
   barcodeLightColor = "#00000000";
-  barcodeErrorCorrection = "L";
+  barcodeErrorCorrection = "M";
   headerColor; // Defines background color around picture and header text color
   textColor; // Defines data text color
   frontBackgroundColor; // Defines a solid color when no front image is used
@@ -55,15 +55,14 @@ class EventsSealRenderer {
         this.constructor.#cardArea[1]
       );
     }
-    const sealDataB45 = `VDS:/${b45.encode(model.signedSeal)}`;
     const images = await Promise.all([
       this.constructor.#generateCanvasImg(this.logo),
       qrLite.toCanvas([
-        { data: sealDataB45, mode: "alphanumeric" }
+        { data: b45.encode(model.signedSeal), mode: "alphanumeric" }
       ],{
         errorCorrectionLevel: this.barcodeErrorCorrection,
+        version: 9,
         margin: 0,
-        width: this.constructor.#qrCodeArea,
         color: {
           dark: this.barcodeDarkColor,
           light: this.barcodeLightColor
@@ -81,8 +80,6 @@ class EventsSealRenderer {
       images[1],
       this.constructor.#qrCodeXY[0],
       this.constructor.#qrCodeXY[1],
-      this.constructor.#qrCodeArea,
-      this.constructor.#qrCodeArea
     );
 
     ctx.fillStyle = this.headerColor;

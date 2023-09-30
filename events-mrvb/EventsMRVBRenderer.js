@@ -14,7 +14,7 @@ class EventsMRVBRenderer {
   mrzColor;
   barcodeDarkColor = "#000000ff";
   barcodeLightColor = "#00000000";
-  barcodeErrorCorrection = "L";
+  barcodeErrorCorrection = "M";
   frontBackgroundColor; // Defines a solid color when no front image is used
   frontBackgroundImage; // Defines a front image to use for a background
   mrzBackgroundColor; // Defines a solid color when no MRZ underlay is used
@@ -99,9 +99,11 @@ class EventsMRVBRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
+    console.log(`Binary Signed Seal: [${model.signedSeal}] (length: ${model.signedSeal.length})`);
+    console.log(`Base-45 Signed Seal: '${b45.encode(model.signedSeal)}' (length: ${b45.encode(model.signedSeal).length})`);
     let barcode;
     if (this.useDigitalSeal) {
-      barcode = [{ data: `VDS:/${b45.encode(model.signedSeal)}`, mode: "alphanumeric" }];
+      barcode = [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }];
     } else {
       barcode = model.url;
     }
@@ -110,6 +112,7 @@ class EventsMRVBRenderer {
       this.constructor.#generateCanvasImg(this.logo),
       qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
+        version: 9,
         margin: 0,
         color: {
           dark: this.barcodeDarkColor,
