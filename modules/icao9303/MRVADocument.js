@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { TD3Document } from "./TD3Document.js";
 import { TravelDocument } from "./TravelDocument.js";
 import { VisaDocument } from "./VisaDocument.js";
 
 class MRVADocument {
   /* This defines properties for an ICAO 9303 MRV-A Visa */
 
-  #document = new TD3Document();
+  #document = new TravelDocument();
   #visa = new VisaDocument();
   
   // General Text and Graphical Data (Forwards/Calls TD3Document)
@@ -21,7 +20,19 @@ class MRVADocument {
   get number() { return this.#document.number; }
   set number(value) { this.#document.number = value; }
   get fullName() { return this.#document.fullName; }
-  set fullName(value) { this.#document.fullName = value; }
+  set fullName(value) {
+    this.#document.fullName = value;
+    this.#document.fullName.toMRZ = function() {
+      const length = 39;
+      const normalized = TravelDocument.normalizeMRZString(this.replace(", ","<<"));
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get nationalityCode() { return this.#document.nationalityCode; }
   set nationalityCode(value) { this.#document.nationalityCode = value; }
   get birthDate() { return this.#document.birthDate; }
@@ -31,7 +42,19 @@ class MRVADocument {
   get validThru() { return this.#document.expirationDate; }
   set validThru(value) { this.#document.expirationDate = value; }
   get optionalData() { return this.#document.optionalData; }
-  set optionalData(value) { this.#document.optionalData = value; }
+  set optionalData(value) {
+    this.#document.optionalData = value;
+    this.#document.optionalData.toMRZ = function() {
+      const length = 16;
+      const normalized = TravelDocument.normalizeMRZString(this);
+      if (normalized.length > length) {
+        console.warn(
+          `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        );
+      }
+      return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    }
+  }
   get picture() { return this.#document.picture; }
   set picture(value) { this.#document.picture = value; }
   get signature() { return this.#document.signature; }
@@ -52,15 +75,16 @@ class MRVADocument {
   set usePassportInMRZ(value) { this.#visa.usePassportInMRZ = value; }
 
   // MRVADocument MRZ Getters
-  get mrzLine1() { return this.#document.mrzLine1; }
+  get mrzLine1() {
+    return this.typeCode.toMRZ() +
+      this.authorityCode.toMRZ() +
+      this.fullName.toMRZ();
+  }
   get mrzLine2() {
-    let optionalDataCheckDigit;
-    if (`${this.optionalData}` === "") { optionalDataCheckDigit = "<"; }
-    else { optionalDataCheckDigit = TravelDocument.generateMRZCheckDigit(this.optionalData.toMRZ()); }
     let mrzNumber;
     if (this.usePassportInMRZ) { mrzNumber = this.passportNumber.toMRZ(); }
     else { mrzNumber = this.number.toMRZ(); }
-    let uncheckedLine = mrzNumber +
+    return mrzNumber +
       TravelDocument.generateMRZCheckDigit(mrzNumber) +
       this.nationalityCode.toMRZ() +
       this.birthDate.toMRZ() +
@@ -68,14 +92,7 @@ class MRVADocument {
       this.genderMarker.toMRZ() +
       this.validThru.toMRZ() +
       TravelDocument.generateMRZCheckDigit(this.validThru.toMRZ()) +
-      this.optionalData.toMRZ() +
-      optionalDataCheckDigit;
-    return uncheckedLine +
-      TravelDocument.generateMRZCheckDigit(
-        uncheckedLine.slice(0,10) +
-        uncheckedLine.slice(13,20) +
-        uncheckedLine.slice(21)
-      );
+      this.optionalData.toMRZ();
   }
   get machineReadableZone() {
     return this.mrzLine1 +
@@ -85,6 +102,9 @@ class MRVADocument {
 
   // Constructor
   constructor(opt) {
+    this.fullName = "Mann, Mister";
+    this.optionalData = "";
+
     if (opt) {
       if (opt.typeCode) { this.typeCode = opt.typeCode; }
       if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
