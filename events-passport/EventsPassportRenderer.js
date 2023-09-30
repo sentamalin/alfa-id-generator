@@ -104,8 +104,6 @@ class EventsPassportRenderer {
       this.constructor.#photoUnderlayArea[0],
       this.constructor.#photoUnderlayArea[1]
     );
-    console.log(`Binary Signed Seal: [${model.signedSeal}] (length: ${model.signedSeal.length})`);
-    console.log(`Base-45 Signed Seal: '${b45.encode(model.signedSeal)}' (length: ${b45.encode(model.signedSeal).length})`);
     let barcode;
     if (this.useDigitalSeal) {
       barcode = [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }];
