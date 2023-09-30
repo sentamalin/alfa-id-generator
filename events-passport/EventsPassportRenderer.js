@@ -116,7 +116,6 @@ class EventsPassportRenderer {
       qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         margin: 0,
-        width: this.constructor.#qrCodeArea,
         color: {
           dark: this.barcodeDarkColor,
           light: this.barcodeLightColor
@@ -139,10 +138,8 @@ class EventsPassportRenderer {
     );
     ctx.drawImage(
       images[2],
-      this.constructor.#qrCodeXY[0],
-      this.constructor.#qrCodeXY[1],
-      this.constructor.#qrCodeArea,
-      this.constructor.#qrCodeArea
+      this.constructor.#cardArea[0] - 48 - images[2].width,
+      this.constructor.#mrzUnderlayXY[1] - 32 - images[2].height
     );
 
     ctx.fillStyle = this.passportHeaderColor;

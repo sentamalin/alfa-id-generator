@@ -105,23 +105,19 @@ class EventsMRVBRenderer {
     } else {
       barcode = model.url;
     }
-    const imagePromises = [
+    const images = await Promise.all([
       this.constructor.#generateCanvasImg(model.picture),
       this.constructor.#generateCanvasImg(this.logo),
       qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         margin: 0,
-        width: this.constructor.#qrCodeArea,
         color: {
           dark: this.barcodeDarkColor,
           light: this.barcodeLightColor
         }
-      })
-    ];
-    if (typeof model.signature !== typeof canvas) {
-      imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
-    }
-    const images = await Promise.all(imagePromises);
+      }),
+      this.constructor.#generateCanvasImg(model.signature)
+    ]);
     this.constructor.#fillAreaWithImg(
       images[0], ctx,
       this.constructor.#photoXY[0],
@@ -138,29 +134,16 @@ class EventsMRVBRenderer {
     );
     ctx.drawImage(
       images[2],
-      this.constructor.#qrCodeXY[0],
-      this.constructor.#qrCodeXY[1],
-      this.constructor.#qrCodeArea,
-      this.constructor.#qrCodeArea
+      this.constructor.#cardArea[0] - 48 - images[2].width,
+      this.constructor.#mrzUnderlayXY[1] - 32 - images[2].height
     );
-    if (typeof model.signature !== typeof canvas) {
-      this.constructor.#fitImgInArea(
-        images[3], ctx,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea,
-        this.constructor.#signatureArea
-      );
-    }
-    else {
-      ctx.drawImage(
-        model.signature,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea,
-        this.constructor.#signatureArea
-      );
-    }
+    this.constructor.#fitImgInArea(
+      images[3], ctx,
+      this.constructor.#cardArea[0] - 48 - images[2].width - 24 - this.constructor.#signatureArea,
+      this.constructor.#mrzUnderlayXY[1] - 32 - this.constructor.#signatureArea,
+      this.constructor.#signatureArea,
+      this.constructor.#signatureArea
+    );
 
     ctx.fillStyle = this.headerColor;
     ctx.font = this.constructor.#mainHeaderFont;
@@ -619,7 +602,7 @@ class EventsMRVBRenderer {
   static #photoUnderlayArea = [268, 520];
   static #photoArea = [220, 283];
   static #logoArea = [220, 145];
-  static get #signatureArea() { return this.#qrCodeArea / 2; }
+  static #signatureArea = 100
   static #qrCodeArea = 256;
   static get #mrzUnderlayArea() {
     return [
