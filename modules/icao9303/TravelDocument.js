@@ -274,6 +274,13 @@ class TravelDocument {
   /** A cutoff year in a two-digit year after which the year being parsed is interpreted as referring to the current century. */
   static cutoffYear = 60;
 
+  /** Given a two-digit year string, get a four-digit year string.
+   * @param { string } year - A two-digit year string.
+   */
+  static getFullYear(year) {
+    return parseInt(year, 10) > this.cutoffYear ? `19${year}` : `20${year}`;
+  }
+
   /** A list of 3-digit nationality codes available in ISO 3166-1 and ICAO 9303-3.
    * @readonly
    * @enum { Symbol }
