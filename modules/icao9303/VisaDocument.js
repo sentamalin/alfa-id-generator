@@ -5,11 +5,20 @@
 
 import { TravelDocument } from "./TravelDocument.js";
 
+/** Stores properties specific to machine-readable visa documents.
+ * 
+ *     `VisaDocument` is intended to be used to compose different kinds
+ *     of machine-readable visa documents and not intended to be used directly.
+ * 
+ * @mixin
+ */
 class VisaDocument {
-  /* This stores properties specific to Visa Documents to compose on other objects. */
-
   #placeOfIssue;
+  /** Location where the visa was issued.
+   * @type { String }
+   */
   get placeOfIssue() { return this.#placeOfIssue; }
+  /** @param { string } value - Location where the visa was issued. */
   set placeOfIssue(value) {
     this.#placeOfIssue = new String(value);
     this.#placeOfIssue.toVIZ = function() {
@@ -18,7 +27,11 @@ class VisaDocument {
   }
   
   #validFrom;
+  /** Starting date on which the visa is valid.
+   * @type { Date }
+   */
   get validFrom() { return this.#validFrom; }
+  /** @param { string } value - A calendar date string in YYYY-MM-DD format. */
   set validFrom(value) {
     let test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
@@ -34,7 +47,11 @@ class VisaDocument {
   }
 
   #numberOfEntries;
+  /** Maximum number of entries this visa allows.
+   * @type { String }
+   */
   get numberOfEntries() { return this.#numberOfEntries; }
+  /** @param { string | number } value - Number of entries. 0 or any string denotes an unlimited number of entries. */
   set numberOfEntries(value) {
     this.#numberOfEntries = new String(value);
     this.#numberOfEntries.toVIZ = function() {
@@ -43,7 +60,11 @@ class VisaDocument {
   }
 
   #visaType;
+  /** The textual type/name/description for this visa.
+   * @type { String }
+  */
   get visaType() { return this.#visaType; }
+  /** @param { string } value - A type/name/description for this visa. */
   set visaType(value) {
     this.#visaType = new String(value);
     this.#visaType.toVIZ = function() {
@@ -52,7 +73,11 @@ class VisaDocument {
   }
 
   #additionalInfo;
+  /** Additional textual information to include with this visa.
+   * @type { String }
+   */
   get additionalInfo() { return this.#additionalInfo; }
+  /** @param { string } value - Additional textual information. */
   set additionalInfo(value) {
     this.#additionalInfo = new String(value);
     this.#additionalInfo.toVIZ = function() {
@@ -60,8 +85,12 @@ class VisaDocument {
     }
   }
 
-  #passportNumber = "";
+  #passportNumber;
+  /** The identity document number for which this visa is issued.
+   * @type { String }
+   */
   get passportNumber() { return this.#passportNumber; }
+  /** @param { string } value - A string no longer than 9 characters consisting of the characters 0-9 and A-Z. */
   set passportNumber(value) {
     if (value.toString().length > 9) {
       throw new RangeError(
@@ -77,15 +106,39 @@ class VisaDocument {
       }
     }
   }
+
+  /** Whether the visa's Machine-Readable Zone (MRZ) should use 'passportNumber' instead of 'number'.
+   * @type { boolean }
+   */
   usePassportInMRZ;
 
-  constructor() {
+  /** Create a new VisaDocument.
+   * @param { Object } [opt] - An options object.
+   * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
+   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
+   * @param { string | number } [opt.numberOfEntries] - Number of entries. 0 or any string denotes an unlimited number of entries.
+   * @param { string } [opt.visaType] - A type/name/description for this visa.
+   * @param { string } [opt.additionalInfo] - Additional textual information.
+   * @param { string } [opt.passportNumber] - A string no longer than 9 characters.
+   * @param { boolean } [opt.usePassportInMRZ] - Whether the visa's Machine-Readable Zone (MRZ) should use 'passportNumber' instead of 'number'.
+   */
+  constructor(opt) {
     this.placeOfIssue = "Zenith, UTO";
     this.validFrom = "2023-09-29";
     this.numberOfEntries = "Multiple";
     this.visaType = "Participant";
     this.additionalInfo = "None";
     this.passportNumber = "111222333";
+
+    if (opt) {
+      if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
+      if (opt.validFrom) { this.validFrom = opt.validFrom; }
+      if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
+      if (opt.visaType) { this.visaType = opt.visaType; }
+      if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
+      if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
+      if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }
+    }
   }
 }
 
