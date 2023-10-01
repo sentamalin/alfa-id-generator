@@ -271,6 +271,9 @@ class TravelDocument {
     );
   }
 
+  /** A cutoff year in a two-digit year after which the year being parsed is interpreted as referring to the current century. */
+  static cutoffYear = 60;
+
   /** A list of 3-digit nationality codes available in ISO 3166-1 and ICAO 9303-3.
    * @readonly
    * @enum { Symbol }
@@ -604,7 +607,7 @@ class TravelDocument {
    * TravelDocument.padMRZString("ALFALFA", 9);
    */
   static padMRZString(string, length) {
-    return string.padEnd(length, "<");
+    return string.padEnd(length, "<").toUpperCase();
   }
 
   /** Remove diacritics and punctuation from a Machine-Readable Zone (MRZ) string.
@@ -615,7 +618,7 @@ class TravelDocument {
    */
   static normalizeMRZString(string) {
     let normalized = string.normalize("NFD").replace(/\p{Diacritic}/gu,"");
-    return normalized.replace(/'/gi,"").replace(/-/gi,"<").replace(/ /gi,"<").replace(/,/gi,"");
+    return normalized.replace(/'/gi,"").replace(/-/gi,"<").replace(/ /gi,"<").replace(/,/gi,"").toUpperCase();
   }
 
   /** Generate a check digit for a Machine-Readable Zone (MRZ) string
