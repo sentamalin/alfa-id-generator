@@ -115,6 +115,22 @@ class TD1Document {
       TravelDocument.generateMRZCheckDigit(this.number.toMRZ()) +
       this.optionalData.toMRZ().slice(0,15);
   }
+  /** @param { string } value */
+  set mrzLine1(value) {
+    if (value.length !== 30) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD1-sized Machine-Readable Zone (MRZ) line.`
+      );
+    }
+    if (value[14] !== TravelDocument.generateMRZCheckDigit(value.slice(5, 14))) {
+      throw new EvalError(
+        `Check digit '${value[14]}' does not match for the check digit on the document number.`
+      );
+    }
+    this.typeCode = value.slice(0, 2).replace(/</gi, "");
+    this.authorityCode = value.slice(2, 5).replace(/</gi, "");
+    this.number = value.slice(5, 14).replace(/</gi, "");
+  }
 
   /** The second line of the Machine-Readable Zone (MRZ).
    * @type { string }
@@ -135,17 +151,71 @@ class TD1Document {
         uncheckedLine.slice(18)
       );
   }
+  /** @param { string } value */
+  set mrzLine2(value) {
+    if (value.length !== 30) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD1-sized Machine Readable-Zone (MRZ) line.`
+      );
+    }
+    if (value[6] !== TravelDocument.generateMRZCheckDigit(value.slice(0, 6))) {
+      throw new EvalError(
+        `Check digit '${value[6]} does not match for the check digit on the date of birth.`
+      );
+    }
+    if (value[14] !== TravelDocument.generateMRZCheckDigit(value.slice(8, 14))) {
+      throw new EvalError(
+        `Check digit '${value[14]}' does not match for the check digit on the date of expiration.`
+      );
+    }
+    this.birthDate = `${TravelDocument.getFullYear(value.slice(0, 2))}-${value.slice(2, 4)}-${value.slice(4, 6)}`;
+    this.genderMarker = value[7] === "<" ? "X" : value[7];
+    this.expirationDate = `${TravelDocument.getFullYear(value.slice(8, 10))}-${value.slice(10, 12)}-${value.slice(12, 14)}`;
+    this.nationalityCode = value.slice(15, 18).replace(/</gi, "");
+  }
 
   /** The third line of the Machine-Readable Zone (MRZ).
    * @type { string }
    */
   get mrzLine3() { return this.fullName.toMRZ(); }
+  /** @param { string } value */
+  set mrzLine3(value) {
+    if (value.length !== 30) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD1-sized Machine-Readable Zone (MRZ) line.`
+      );
+    }
+    this.fullName = value.replace("<<", ", ").replace(/</gi, " ").trimEnd();
+  }
 
   /** The full Machine-Readable Zone (MRZ).
    * @type { string }
    */
   get machineReadableZone() {
     return this.mrzLine1 + this.mrzLine2 + this.mrzLine3;
+  }
+  /** @param { string } value */
+  set machineReadableZone(value) {
+    if (value.length !== 90) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD1-sized Machine-Readable Zone (MRZ).`
+      );
+    }
+    const lineCheckDigit = TravelDocument.generateMRZCheckDigit(
+      value.slice(5, 30) +
+      value.slice(30, 37) +
+      value.slice(38, 45) +
+      value.slice(48, 59)
+    );
+    if (value[59] !== lineCheckDigit) {
+      throw new EvalError(
+        `Check digit '${value[59]}' does not match for the check digit on the Machine-Readable Zone (MRZ) lines 1 and 2.`
+      );
+    }
+    this.mrzLine1 = value.slice(0, 30);
+    this.mrzLine2 = value.slice(30, 60);
+    this.mrzLine3 = value.slice(60);
+    this.optionalData = (value.slice(15, 30) + value.slice(48, 59)).replace(/</gi, " ").trimEnd();
   }
 
   /** Create a new TD1Document.
@@ -159,6 +229,10 @@ class TD1Document {
    * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.fullName] - The document holder's full name. A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
    * @param { string } [opt.optionalData] - Optional data to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
+   * @param { string } [opt.mrzLine1] - The first line of the Machine-Readable Zone (MRZ).
+   * @param { string } [opt.mrzLine2] - The second line of the Machine-Readable Zone (MRZ).
+   * @param { string } [opt.mrzLine3] - The third line of the Machine-Readable Zone (MRZ).
+   * @param { string } [opt.machineReadableZone] - The full Machine-Readable Zone (MRZ).
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the document holder.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
    */
@@ -176,6 +250,10 @@ class TD1Document {
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
+      if (opt.mrzLine1) { this.mrzLine1 = opt.mrzLine1; }
+      if (opt.mrzLine2) { this.mrzLine2 = opt.mrzLine2; }
+      if (opt.mrzLine3) { this.mrzLine3 = opt.mrzLine3; }
+      if (opt.machineReadableZone) { this.machineReadableZone = opt.machineReadableZone; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
     }

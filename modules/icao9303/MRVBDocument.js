@@ -167,14 +167,23 @@ class MRVBDocument {
       this.authorityCode.toMRZ() +
       this.fullName.toMRZ();    
   }
+  /** @param { string } value */
+  set mrzLine1(value) {
+    if (value.length !== 36) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a MRV-B Machine Readable Zone (MRZ) line.`
+      );
+    }
+    this.typeCode = value.slice(0, 2).replace(/</gi, "");
+    this.authorityCode = value.slice(2, 5).replace(/</gi, "");
+    this.fullName = value.slice(5).replace("<<", ", ").replace(/</gi, " ").trimEnd();
+  }
 
   /** The second line of the Machine-Readable Zone (MRZ).
    * @type { string }
    */
   get mrzLine2() {
-    let mrzNumber;
-    if (this.usePassportInMRZ) { mrzNumber = this.passportNumber.toMRZ(); }
-    else { mrzNumber = this.number.toMRZ(); }
+    const mrzNumber = this.usePassportInMRZ ? this.passportNumber.toMRZ() : this.number.toMRZ();
     return mrzNumber +
       TravelDocument.generateMRZCheckDigit(mrzNumber) +
       this.nationalityCode.toMRZ() +
@@ -185,12 +194,51 @@ class MRVBDocument {
       TravelDocument.generateMRZCheckDigit(this.validThru.toMRZ()) +
       this.optionalData.toMRZ();
   }
+  /** @param { string } value */
+  set mrzLine2(value) {
+    if (value.length !== 36) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a MRV-B Machine Readable Zone (MRZ) line.`
+      );
+    }
+    if (value[9] !== TravelDocument.generateMRZCheckDigit(value.slice(0, 9))) {
+      throw new EvalError(
+        `Check digit '${value[9]}' does not match for the check digit on the document number.`
+      );
+    }
+    if (value[19] !== TravelDocument.generateMRZCheckDigit(value.slice(13, 19))) {
+      throw new EvalError(
+        `Check digit '${value[19]}' does not match for the check digit on the date of birth.`
+      );
+    }
+    if (value[27] !== TravelDocument.generateMRZCheckDigit(value.slice(21, 27))) {
+      throw new EvalError(
+        `Check digit '${value[27]}' does not match for the check digit on the valid thru date.`
+      );
+    }
+    this.number = value.slice(0, 9).replace(/</gi, "");
+    this.nationalityCode = value.slice(10, 13).replace(/</gi, "");
+    this.birthDate = `${TravelDocument.getFullYear(value.slice(13, 15))}-${value.slice(15, 17)}-${value.slice(17, 19)}`;
+    this.genderMarker = value[20] === "<" ? "X" : value[20];
+    this.validThru = `${TravelDocument.getFullYear(value.slice(21, 23))}-${value.slice(23, 25)}-${value.slice(25, 27)}`;
+    this.optionalData = value.slice(28).replace(/</gi, " ").trimEnd();
+  }
 
   /** The full Machine-Readable Zone (MRZ).
    * @type { string }
    */
   get machineReadableZone() {
     return this.mrzLine1 + this.mrzLine2;
+  }
+  /** @param { string } value */
+  set machineReadableZone(value) {
+    if (value.length !== 72) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a MRV-B Machine-Readable Zone (MRZ).`
+      );
+    }
+    this.mrzLine1 = value.slice(0, 36);
+    this.mrzLine2 = value.slice(36);
   }
 
   /** Create a new MRVBDocument.
@@ -204,6 +252,9 @@ class MRVBDocument {
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
    * @param { string } [opt.validThru] - A calendar date string in YYYY-MM-DD format.
    * @param { string } [opt.optionalData] - Up to 8 characters to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
+   * @param { string } [opt.mrzLine1] - The first line of the Machine-Readable Zone (MRZ).
+   * @param { string } [opt.mrzLine2] - The second line of the Machine-Readable Zone (MRZ).
+   * @param { string } [opt.machineReadableZone] - The full Machine-Readable Zone (MRZ).
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the visa issuer.
    * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
@@ -228,6 +279,9 @@ class MRVBDocument {
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
       if (opt.validThru) { this.validThru = opt.validThru; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
+      if (opt.mrzLine1) { this.mrzLine1 = opt.mrzLine1; }
+      if (opt.mrzLine2) { this.mrzLine2 = opt.mrzLine2; }
+      if (opt.machineReadableZone) { this.machineReadableZone = opt.machineReadableZone; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
       if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }

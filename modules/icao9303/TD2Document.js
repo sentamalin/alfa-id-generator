@@ -113,6 +113,17 @@ class TD2Document {
       this.authorityCode.toMRZ() +
       this.fullName.toMRZ();
   }
+  /** @param { string } value */
+  set mrzLine1(value) {
+    if (value.length !== 36) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD2-sized Machine Readable Zone (MRZ) line.`
+      );
+    }
+    this.typeCode = value.slice(0, 2).replace(/</gi, "");
+    this.authorityCode = value.slice(2, 5).replace(/</gi, "");
+    this.fullName = value.slice(5).replace("<<", ", ").replace(/</gi, " ").trimEnd();
+  }
 
   /** The second line of the Machine-Readable Zone (MRZ).
    * @type { string }
@@ -134,12 +145,61 @@ class TD2Document {
         uncheckedLine.slice(21)
       );
   }
+  /** @param { string } value */
+  set mrzLine2(value) {
+    if (value.length !== 36) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD2-sized Machine Readable Zone (MRZ) line.`
+      );
+    }
+    const lineCheckDigit = TravelDocument.generateMRZCheckDigit(
+      value.slice(0, 10) +
+      value.slice(13, 20) +
+      value.slice(21, 35)
+    );
+    if (value[35] !== lineCheckDigit) {
+      throw new EvalError(
+        `Check digit '${value[43]}' does not match for the check digit on the entire Machine-Readable Zone (MRZ) line 2.`
+      );
+    }
+    if (value[9] !== TravelDocument.generateMRZCheckDigit(value.slice(0, 9))) {
+      throw new EvalError(
+        `Check digit '${value[9]}' does not match for the check digit on the document number.`
+      );
+    }
+    if (value[19] !== TravelDocument.generateMRZCheckDigit(value.slice(13, 19))) {
+      throw new EvalError(
+        `Check digit '${value[19]}' does not match for the check digit on the date of birth.`
+      );
+    }
+    if (value[27] !== TravelDocument.generateMRZCheckDigit(value.slice(21, 27))) {
+      throw new EvalError(
+        `Check digit '${value[27]}' does not match for the check digit on the date of expiration.`
+      );
+    }
+    this.number = value.slice(0, 9).replace(/</gi, "");
+    this.nationalityCode = value.slice(10, 13).replace(/</gi, "");
+    this.birthDate = `${TravelDocument.getFullYear(value.slice(13, 15))}-${value.slice(15, 17)}-${value.slice(17, 19)}`;
+    this.genderMarker = value[20] === "<" ? "X" : value[20];
+    this.expirationDate = `${TravelDocument.getFullYear(value.slice(21, 23))}-${value.slice(23, 25)}-${value.slice(25, 27)}`;
+    this.optionalData = value.slice(28, 35).replace(/</gi, " ").trimEnd();
+  }
 
   /** The full Machine-Readable Zone (MRZ).
    * @type { string }
    */
   get machineReadableZone() {
     return this.mrzLine1 + this.mrzLine2;
+  }
+  /** @param { string } value */
+  set machineReadableZone(value) {
+    if (value.length !== 72) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD2-sized Machine-Readable Zone (MRZ).`
+      );
+    }
+    this.mrzLine1 = value.slice(0, 36);
+    this.mrzLine2 = value.slice(36);
   }
 
   /** Create a new TD2Document.
@@ -153,6 +213,9 @@ class TD2Document {
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
    * @param { string } [opt.expirationDate] - A calendar date string in YYYY-MM-DD format.
    * @param { string } [opt.optionalData] - Optional data to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
+   * @param { string } [opt.mrzLine1] - The first line of the Machine-Readable Zone (MRZ).
+   * @param { string } [opt.mrzLine2] - The second line of the Machine-Readable Zone (MRZ).
+   * @param { string } [opt.machineReadableZone] - The full Machine-Readable Zone (MRZ).
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the document holder.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
    */
@@ -170,6 +233,9 @@ class TD2Document {
       if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
       if (opt.expirationDate) { this.expirationDate = opt.expirationDate; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
+      if (opt.mrzLine1) { this.mrzLine1 = opt.mrzLine1; }
+      if (opt.mrzLine2) { this.mrzLine2 = opt.mrzLine2; }
+      if (opt.machineReadableZone) { this.machineReadableZone = opt.machineReadableZone; }
       if (opt.picture) { this.picture = opt.picture; }
       if (opt.signature) { this.signature = opt.signature; }
     }
