@@ -223,7 +223,7 @@ class DigitalSealV3 {
     let start = 0;
     start = this.#setHeader(start, value);
     start = this.#setMessage(start, value);
-    this.#digitalseal.setSignature(start, value);
+    this.signature = DigitalSeal.setSignature(start, value);
   }
 
   /** Create a new DigitalSealV3.

@@ -186,13 +186,13 @@ class DigitalSeal {
   }
   /** @param { number[] } value */
   set signatureZone(value) {
-    this.setSignature(0, value);
+    this.signature = DigitalSeal.setSignature(0, value);
   }
-  /** Given a point 'start' in an array 'value', extract and set the raw signature data.
+  /** Given a point 'start' in an array 'value', extract the raw signature data.
    * @param { number } start 
    * @param { number[] } value
-   * @ignore */
-  setSignature(start, value) {
+   */
+  static setSignature(start, value) {
     if (value[start] !== DigitalSeal.signatureMarker) {
       throw new TypeError(
         `Value '${value[start].toString(16).padStart(2, "0").toUpperCase()}' does not match signature marker (${DigitalSeal.signatureMarker.toString(16).padStart(2, "0").toUpperCase()}).`
@@ -206,7 +206,7 @@ class DigitalSeal {
         `Length '${length}' of signature does not match the actual length (${value.slice(start).length}).`
       );
     }
-    this.signature = value.slice(start);
+    return value.slice(start);
   }
 
   /** A concatenation of the header zone and the message zone of the VDS.
