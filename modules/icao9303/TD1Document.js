@@ -12,6 +12,7 @@ import { TravelDocument } from "./TravelDocument.js";
  *  `TD1Document` may be used on its own or may be used to compose different
  *  kinds of MRTDs.
  * 
+ * @implements { TravelDocument }
  * @mixes TravelDocument
  * @mixin
  */
