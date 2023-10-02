@@ -7,13 +7,13 @@ import { TravelDocument } from "./TravelDocument.js";
 import { VisaDocument } from "./VisaDocument.js";
 
 /** Stores properties and methods for smaller machine-redable visas (MRV-B) with
- *     machine-readable zones. These visas are used for when a clear zone is
- *     needed along the visa sticker to keep a perforated or printed document
- *     number visible on a passport page, or when a seal will be placed in a
- *     way that will overlap on the visa sticker and the passport page.
+ *  machine-readable zones. These visas are used for when a clear zone is
+ *  needed along the visa sticker to keep a perforated or printed document
+ *  number visible on a passport page, or when a seal will be placed in a
+ *  way that will overlap on the visa sticker and the passport page.
  * 
- *     `MRVBDocument` may be used on its own or may be used to compose different
- *     kinds of MRTDs.
+ *  `MRVBDocument` may be used on its own or may be used to compose different
+ *  kinds of MRTDs.
  * 
  * @mixes TravelDocument
  * @mixes VisaDocument
@@ -48,7 +48,7 @@ class MRVBDocument {
    * @type { String }
    */
   get fullName() { return this.#document.fullName; }
-  /** @param { string } value - The visa holder's full name. A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
+  /** @param { string } value - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
   set fullName(value) {
     this.#document.fullName = value;
     this.#document.fullName.toMRZ = function() {
@@ -88,7 +88,7 @@ class MRVBDocument {
    * @type { String }
    */
   get optionalData() { return this.#document.optionalData; }
-  /** @param { string } value - Up to 8 characters to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z. */
+  /** @param { string } value - Up to 8 characters. Valid characters are from the ranges 0-9 and A-Z. */
   set optionalData(value) {
     this.#document.optionalData = value;
     this.#document.optionalData.toMRZ = function() {
@@ -114,7 +114,7 @@ class MRVBDocument {
    * @type { String }
    */
   get placeOfIssue() { return this.#visa.placeOfIssue; }
-  /** @param { string } value - Location where the visa was issued. */
+  /** @param { string } value */
   set placeOfIssue(value) { this.#visa.placeOfIssue = value; }
 
   /** Starting date on which the visa is valid.
@@ -128,21 +128,21 @@ class MRVBDocument {
    * @type { String }
    */
   get numberOfEntries() { return this.#visa.numberOfEntries; }
-  /** @param { string | number } value - Number of entries. 0 or any string denotes an unlimited number of entries. */
+  /** @param { string | number } value - 0 or any string denotes an unlimited number of entries. */
   set numberOfEntries(value) { this.#visa.numberOfEntries = value; }
 
   /** The textual type/name/description for this visa.
    * @type { String }
    */
   get visaType() { return this.#visa.visaType; }
-  /** @param { string } value - A type/name/description for this visa. */
+  /** @param { string } value */
   set visaType(value) { this.#visa.visaType = value; }
 
   /** Additional textual information to include with this visa.
    * @type { String }
    */
   get additionalInfo() { return this.#visa.additionalInfo; }
-  /** @param { string } value - Additional textual information. */
+  /** @param { string } value */
   set additionalInfo(value) { this.#visa.additionalInfo = value; }
 
   /** The identity document number for which this visa is issued.
@@ -152,7 +152,7 @@ class MRVBDocument {
   /** @param { string } value - A string no longer than 9 characters consisting of the characters 0-9 and A-Z. */
   set passportNumber(value) { this.#visa.passportNumber = value; }
 
-  /** Whether the visa's Machine-Readable Zone (MRZ) should use 'passportNumber' instead of 'number'.
+  /** Use 'passportNumber' instead of 'number' in the Machine-Readable Zone (MRZ).
    * @type { boolean }
    */
   get usePassportInMRZ() { return this.#visa.usePassportInMRZ; }
@@ -167,7 +167,7 @@ class MRVBDocument {
       this.authorityCode.toMRZ() +
       this.fullName.toMRZ();    
   }
-  /** @param { string } value */
+  /** @param { string } value - A MRZ line string of a 36-character length. */
   set mrzLine1(value) {
     if (value.length !== 36) {
       throw new RangeError(
@@ -194,7 +194,7 @@ class MRVBDocument {
       TravelDocument.generateMRZCheckDigit(this.validThru.toMRZ()) +
       this.optionalData.toMRZ();
   }
-  /** @param { string } value */
+  /** @param { string } value - A MRZ line string of a 36-character length. */
   set mrzLine2(value) {
     if (value.length !== 36) {
       throw new RangeError(
@@ -230,7 +230,7 @@ class MRVBDocument {
   get machineReadableZone() {
     return this.mrzLine1 + this.mrzLine2;
   }
-  /** @param { string } value */
+  /** @param { string } value - A MRZ string of a 72-character length. */
   set machineReadableZone(value) {
     if (value.length !== 72) {
       throw new RangeError(
@@ -246,24 +246,24 @@ class MRVBDocument {
    * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.number] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.fullName] - The visa holder's full name. A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
+   * @param { string } [opt.fullName] - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
    * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD format.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
    * @param { string } [opt.validThru] - A calendar date string in YYYY-MM-DD format.
-   * @param { string } [opt.optionalData] - Up to 8 characters to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
-   * @param { string } [opt.mrzLine1] - The first line of the Machine-Readable Zone (MRZ).
-   * @param { string } [opt.mrzLine2] - The second line of the Machine-Readable Zone (MRZ).
-   * @param { string } [opt.machineReadableZone] - The full Machine-Readable Zone (MRZ).
+   * @param { string } [opt.optionalData] - Up to 8 characters. Valid characters are from the ranges 0-9 and A-Z.
+   * @param { string } [opt.mrzLine1] - A MRZ line string of a 36-character length.
+   * @param { string } [opt.mrzLine2] - A MRZ line string of a 36-character length.
+   * @param { string } [opt.machineReadableZone] - A MRZ string of a 72-character length.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the visa issuer.
    * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
    * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
-   * @param { string | number } [opt.numberOfEntries] - Number of entries. 0 or any string denotes an unlimited number of entries.
+   * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes an unlimited number of entries.
    * @param { string } [opt.visaType] - A type/name/description for this visa.
    * @param { string } [opt.additionalInfo] - Additional textual information.
    * @param { string } [opt.passportNumber] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
-   * @param { boolean } [opt.usePassportInMRZ] - Whether the visa's Machine-Readable Zone (MRZ) should use 'passportNumber' instead of 'number'.
+   * @param { boolean } [opt.usePassportInMRZ] - Use 'passportNumber' instead of 'number' in the Machine-Readable Zone (MRZ).
    */
   constructor(opt) {
     this.fullName = "Mann, Mister";

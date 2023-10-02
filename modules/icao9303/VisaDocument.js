@@ -7,8 +7,8 @@ import { TravelDocument } from "./TravelDocument.js";
 
 /** Stores properties specific to machine-readable visa documents.
  * 
- *     `VisaDocument` is intended to be used to compose different kinds
- *     of machine-readable visa documents and not intended to be used directly.
+ *  `VisaDocument` is intended to be used to compose different kinds
+ *  of machine-readable visa documents and not intended to be used directly.
  * 
  * @mixin
  */
@@ -18,7 +18,7 @@ class VisaDocument {
    * @type { String }
    */
   get placeOfIssue() { return this.#placeOfIssue; }
-  /** @param { string } value - Location where the visa was issued. */
+  /** @param { string } value */
   set placeOfIssue(value) {
     this.#placeOfIssue = new String(value);
     this.#placeOfIssue.toVIZ = function() {
@@ -51,7 +51,7 @@ class VisaDocument {
    * @type { String }
    */
   get numberOfEntries() { return this.#numberOfEntries; }
-  /** @param { string | number } value - Number of entries. 0 or any string denotes an unlimited number of entries. */
+  /** @param { string | number } value - 0 or any string denotes an unlimited number of entries. */
   set numberOfEntries(value) {
     this.#numberOfEntries = new String(value);
     this.#numberOfEntries.toVIZ = function() {
@@ -64,7 +64,7 @@ class VisaDocument {
    * @type { String }
   */
   get visaType() { return this.#visaType; }
-  /** @param { string } value - A type/name/description for this visa. */
+  /** @param { string } value */
   set visaType(value) {
     this.#visaType = new String(value);
     this.#visaType.toVIZ = function() {
@@ -77,7 +77,7 @@ class VisaDocument {
    * @type { String }
    */
   get additionalInfo() { return this.#additionalInfo; }
-  /** @param { string } value - Additional textual information. */
+  /** @param { string } value */
   set additionalInfo(value) {
     this.#additionalInfo = new String(value);
     this.#additionalInfo.toVIZ = function() {
@@ -107,7 +107,7 @@ class VisaDocument {
     }
   }
 
-  /** Whether the visa's Machine-Readable Zone (MRZ) should use 'passportNumber' instead of 'number'.
+  /** Use `this.passportNumber` instead of `this.number` in the Machine-Readable Zone (MRZ).
    * @type { boolean }
    */
   usePassportInMRZ;
@@ -116,11 +116,11 @@ class VisaDocument {
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
    * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
-   * @param { string | number } [opt.numberOfEntries] - Number of entries. 0 or any string denotes an unlimited number of entries.
+   * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes an unlimited number of entries.
    * @param { string } [opt.visaType] - A type/name/description for this visa.
    * @param { string } [opt.additionalInfo] - Additional textual information.
-   * @param { string } [opt.passportNumber] - A string no longer than 9 characters.
-   * @param { boolean } [opt.usePassportInMRZ] - Whether the visa's Machine-Readable Zone (MRZ) should use 'passportNumber' instead of 'number'.
+   * @param { string } [opt.passportNumber] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
+   * @param { boolean } [opt.usePassportInMRZ] - Use `this.passportNumber` instead of `this.number` in the Machine-Readable Zone (MRZ).
    */
   constructor(opt) {
     this.placeOfIssue = "Zenith, UTO";

@@ -6,11 +6,11 @@
 import { TravelDocument } from "./TravelDocument.js";
 
 /** Stores properties and methods for TD1-sized machine-readable travel documents
- *     (MRTDs) with machine-readable zones. The US Passport Card is an example
- *     of this type of document.
+ *  (MRTDs) with machine-readable zones. The US Passport Card is an example of this
+ *  type of document.
  * 
- *     `TD1Document` may be used on its own or may be used to compose different
- *     kinds of MRTDs.
+ *  `TD1Document` may be used on its own or may be used to compose different
+ *  kinds of MRTDs.
  * 
  * @mixes TravelDocument
  * @mixin
@@ -71,7 +71,7 @@ class TD1Document {
    * @type { String }
    */
   get fullName() { return this.#document.fullName; }
-  /** @param { string } value - The document holder's full name. A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
+  /** @param { string } value - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
   set fullName(value) {
     this.#document.fullName = value;
     this.#document.fullName.toMRZ = function() {
@@ -83,7 +83,7 @@ class TD1Document {
    * @type { String }
    */
   get optionalData() { return this.#document.optionalData; }
-  /** @param { string } value - Up to 26 characters to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z. */
+  /** @param { string } value - Up to 26 characters. Valid characters are from the ranges 0-9 and A-Z. */
   set optionalData(value) {
     this.#document.optionalData = value;
     this.#document.optionalData.toMRZ = function() {
@@ -115,7 +115,7 @@ class TD1Document {
       TravelDocument.generateMRZCheckDigit(this.number.toMRZ()) +
       this.optionalData.toMRZ().slice(0,15);
   }
-  /** @param { string } value */
+  /** @param { string } value - A MRZ line string of a 30-character length. */
   set mrzLine1(value) {
     if (value.length !== 30) {
       throw new RangeError(
@@ -151,7 +151,7 @@ class TD1Document {
         uncheckedLine.slice(18)
       );
   }
-  /** @param { string } value */
+  /** @param { string } value - A MRZ line string of a 30-character length. */
   set mrzLine2(value) {
     if (value.length !== 30) {
       throw new RangeError(
@@ -178,7 +178,7 @@ class TD1Document {
    * @type { string }
    */
   get mrzLine3() { return this.fullName.toMRZ(); }
-  /** @param { string } value */
+  /** @param { string } value - A MRZ line string of a 30-character length. */
   set mrzLine3(value) {
     if (value.length !== 30) {
       throw new RangeError(
@@ -194,7 +194,7 @@ class TD1Document {
   get machineReadableZone() {
     return this.mrzLine1 + this.mrzLine2 + this.mrzLine3;
   }
-  /** @param { string } value */
+  /** @param { string } value - A MRZ string of a 90-character length. */
   set machineReadableZone(value) {
     if (value.length !== 90) {
       throw new RangeError(
@@ -227,12 +227,12 @@ class TD1Document {
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
    * @param { string } [opt.expirationDate] - A calendar date string in YYYY-MM-DD format.
    * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
-   * @param { string } [opt.fullName] - The document holder's full name. A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
-   * @param { string } [opt.optionalData] - Optional data to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
-   * @param { string } [opt.mrzLine1] - The first line of the Machine-Readable Zone (MRZ).
-   * @param { string } [opt.mrzLine2] - The second line of the Machine-Readable Zone (MRZ).
-   * @param { string } [opt.mrzLine3] - The third line of the Machine-Readable Zone (MRZ).
-   * @param { string } [opt.machineReadableZone] - The full Machine-Readable Zone (MRZ).
+   * @param { string } [opt.fullName] - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
+   * @param { string } [opt.optionalData] - Up to 26 characters. Valid characters are from the ranges 0-9 and A-Z.
+   * @param { string } [opt.mrzLine1] - A MRZ line string of a 30-character length.
+   * @param { string } [opt.mrzLine2] - A MRZ line string of a 30-character length.
+   * @param { string } [opt.mrzLine3] - A MRZ line string of a 30-character length.
+   * @param { string } [opt.machineReadableZone] - A MRZ string of a 90-character length.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the document holder.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
    */
