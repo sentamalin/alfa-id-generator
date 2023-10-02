@@ -7,8 +7,9 @@
  *  seals (VDSs).
  * 
  *  While `DigitalSeal` provides useful utility methods, the actual class
- *  is intended to be used to compose different VDS versions and not
- *  intended to be used directly.
+ *  is intended to be used to compose different VDS versions and to describe
+ *  the shape of objects that implement the `DigitalSeal` interface. It is
+ *  not intended to be instantiated directly.
  * 
  * @interface
  * @mixin

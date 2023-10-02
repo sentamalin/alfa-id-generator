@@ -11,7 +11,9 @@ import { DigitalSeal } from "./DigitalSeal.js";
  *  3 VDSs are discouraged but may still be encountered in the wild.
  * 
  *  `DigitalSealV3` is intended to be used to compose different kinds
- *  of MRTDs and not intended to be used directly.
+ *  of machine-readable travel documents (MRTDs) with attached VDSs
+ *  containing different document features. It is not intended to be
+ *  instantiated directly.
  * 
  * @implements { DigitalSeal }
  * @mixes DigitalSeal

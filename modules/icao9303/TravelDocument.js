@@ -7,8 +7,9 @@
  *  travel documents (MRTDs) with machine-readable zones.
  * 
  *  While `TravelDocument` provides useful utility methods, the actual class
- *  is intended to be used to compose different kinds of MRTDs and not
- *  intended to be used directly.
+ *  is intended to be used to compose different kinds of MRTDs and to describe
+ *  the shape of objects that implement the `TravelDocument` interface. It is
+ *  not intended to be instantiated directly.
  * 
  * @interface
  * @mixin

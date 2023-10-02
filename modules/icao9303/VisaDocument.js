@@ -8,7 +8,9 @@ import { TravelDocument } from "./TravelDocument.js";
 /** Stores properties specific to machine-readable visa documents.
  * 
  *  `VisaDocument` is intended to be used to compose different kinds
- *  of machine-readable visa documents and not intended to be used directly.
+ *  of machine-readable visa documents and to describe the shape of
+ *  objects that implement the `VisaDocument` interface. It is not
+ *  intended to be instantiated directly.
  * 
  * @interface
  * @mixin
