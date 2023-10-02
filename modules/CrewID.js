@@ -191,7 +191,19 @@ class CrewID {
       );
   }
   /** @param { string } value - A MRZ line string of a 30-character length. */
-  set mrzLine2(value) {}
+  set mrzLine2(value) {
+    if (value.length !== 30) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD1-sized Machine Readable-Zone (MRZ) line.`
+      );
+    }
+    if (value[14] !== TravelDocument.generateMRZCheckDigit(value.slice(8, 14))) {
+      throw new EvalError(
+        `Check digit '${value[14]}' does not match for the check digit on the date of expiration.`
+      );
+    }
+    this.expirationDate = `${TravelDocument.getFullYear(value.slice(8, 10))}-${value.slice(10, 12)}-${value.slice(12, 14)}`;
+  }
 
   /** The third line of the Machine-Readable Zone (MRZ).
    * @type { string }
@@ -211,7 +223,28 @@ class CrewID {
       this.mrzLine3;
   }
   /** @param { string } value - A MRZ string of a 90-character length. */
-  set machineReadableZone(value) {}
+  set machineReadableZone(value) {
+    if (value.length !== 90) {
+      throw new RangeError(
+        `Length '${value.length}' does not match the length of a TD1-sized Machine-Readable Zone (MRZ).`
+      );
+    }
+    const lineCheckDigit = TravelDocument.generateMRZCheckDigit(
+      value.slice(5, 30) +
+      value.slice(30, 37) +
+      value.slice(38, 45) +
+      value.slice(48, 59)
+    );
+    if (value[59] !== lineCheckDigit) {
+      throw new EvalError(
+        `Check digit '${value[59]}' does not match for the check digit on the Machine-Readable Zone (MRZ) lines 1 and 2.`
+      );
+    }
+    this.mrzLine1 = value.slice(0, 30);
+    this.mrzLine2 = value.slice(30, 60);
+    this.mrzLine3 = value.slice(60);
+    this.optionalData = (value.slice(15, 30) + value.slice(48, 59)).replace(/</gi, " ").trimEnd();
+  }
 
   /** A combination of a two-letter authority code and of two alphanumeric characters to identify a signer within the issuing authority.
    * @type { string }
