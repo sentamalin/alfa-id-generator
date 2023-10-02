@@ -251,7 +251,7 @@ class MRVBDocument {
    * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.number] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.fullName] - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
+   * @param { string } [opt.fullName] - A ', ' separates the visa holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
    * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD format.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
