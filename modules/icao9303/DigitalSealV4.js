@@ -109,58 +109,6 @@ class DigitalSealV4 {
   set headerZone(value) {
     this.#setHeader(0, value);
   }
-
-  /** The message zone of the VDS; a binary TLV representation of all key-values set in `this.features`.
-   * @type { number[] }
-   */
-  get messageZone() {
-    let output = [];
-    for (const [tag, value] of this.features) {
-      output.push(tag);
-      output = output.concat(DigitalSeal.lengthToDERLength(value.length));
-      output = output.concat(value);
-    }
-    return output;
-  }
-  /** @param { number[] } value */
-  set messageZone(value) {
-    this.#setMessage(0, value);
-  }
-
-  /** The signature zone of the VDS as a TLV of the signature marker, its length in BER/DER definite length form, and the raw signature data.
-   * @type { number[] }
-   */
-  get signatureZone() { return this.#digitalseal.signatureZone; }
-  /** @param { number[] } value */
-  set signatureZone(value) { this.#digitalseal.signatureZone = value; }
-
-  /** A concatenation of the header zone and the message zone of the VDS.
-   * @type { number[] }
-   */
-  get unsignedSeal() {
-    return this.headerZone.concat(this.messageZone);
-  }
-  /** @param { number[] } value */
-  set unsignedSeal(value) {
-    let start = 0;
-    start = this.#setHeader(start, value);
-    this.#setMessage(start, value);
-  }
-
-  /** A concatenation of the header zone, the message zone, and the signature zone of the VDS.
-   * @type { number[] }
-   */
-  get signedSeal() {
-    return this.headerZone.concat(this.messageZone.concat(this.signatureZone));
-  }
-  /** @param { number[] } value */
-  set signedSeal(value) {
-    let start = 0;
-    start = this.#setHeader(start, value);
-    start = this.#setMessage(start, value);
-    this.#digitalseal.setSignature(start, value);
-  }
-
   /** Given a point 'start' in an array 'value', extract the header data.
    * @param { number } start
    * @param { number[] } value
@@ -208,6 +156,22 @@ class DigitalSealV4 {
     return start;
   }
 
+  /** The message zone of the VDS; a binary TLV representation of all key-values set in `this.features`.
+   * @type { number[] }
+   */
+  get messageZone() {
+    let output = [];
+    for (const [tag, value] of this.features) {
+      output.push(tag);
+      output = output.concat(DigitalSeal.lengthToDERLength(value.length));
+      output = output.concat(value);
+    }
+    return output;
+  }
+  /** @param { number[] } value */
+  set messageZone(value) {
+    this.#setMessage(0, value);
+  }
   /** Given a point 'start' in an array 'value', extract the document feature data.
    * @param { number } start
    * @param { number[] } value
@@ -232,6 +196,40 @@ class DigitalSealV4 {
       start += length;
     }
     return start;
+  }
+
+  /** The signature zone of the VDS as a TLV of the signature marker, its length in BER/DER definite length form, and the raw signature data.
+   * @type { number[] }
+   */
+  get signatureZone() { return this.#digitalseal.signatureZone; }
+  /** @param { number[] } value */
+  set signatureZone(value) { this.#digitalseal.signatureZone = value; }
+
+  /** A concatenation of the header zone and the message zone of the VDS.
+   * @type { number[] }
+   */
+  get unsignedSeal() {
+    return this.headerZone.concat(this.messageZone);
+  }
+  /** @param { number[] } value */
+  set unsignedSeal(value) {
+    let start = 0;
+    start = this.#setHeader(start, value);
+    this.#setMessage(start, value);
+  }
+
+  /** A concatenation of the header zone, the message zone, and the signature zone of the VDS.
+   * @type { number[] }
+   */
+  get signedSeal() {
+    return this.headerZone.concat(this.messageZone.concat(this.signatureZone));
+  }
+  /** @param { number[] } value */
+  set signedSeal(value) {
+    let start = 0;
+    start = this.#setHeader(start, value);
+    start = this.#setMessage(start, value);
+    this.#digitalseal.setSignature(start, value);
   }
 
   /** Create a new DigitalSealV4.

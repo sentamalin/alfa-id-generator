@@ -117,6 +117,38 @@ class DigitalSealV3 {
   set headerZone(value) {
     this.#setHeader(0, value);
   }
+  /** Given a point 'start' in an array 'value', extract the header data.
+   * @param { number } start 
+   * @param { number[] } value
+   * @returns { number } The point in the array where the method stopped reading. */
+  #setHeader(start, value) {
+    if (value[0] !== DigitalSeal.magic) {
+      throw new TypeError(
+        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
+      );
+    }
+    if (value[1] !== this.constructor.version) {
+      throw new TypeError(
+        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not version 3 of an ICAO Digital Seal (${this.constructor.version.toString(16).padStart(2, "0").toUpperCase()}).`
+      );
+    }
+    start += 2;
+    this.authority = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
+    start += 2;
+    const idCertRef = DigitalSeal.c40Decode(value.slice(start, start + 6));
+    this.identifierCode = idCertRef.substring(0, 4);
+    this.certReference = idCertRef.substring(4);
+    start += 6;
+    this.issueDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
+    start += 3;
+    this.signatureDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
+    start += 3;
+    this.featureDefinition = value[start];
+    start += 1;
+    this.typeCategory = value[start];
+    start += 1;
+    return start;
+  }
 
   /** The message zone of the VDS; a binary TLV representation of all key-values set in `this.features`.
    * @type { number[] }
@@ -133,6 +165,31 @@ class DigitalSealV3 {
   /** @param { number[] } value */
   set messageZone(value) {
     this.#setMessage(0, value);
+  }
+  /** Given a point 'start' in an array 'value', extract the document feature data.
+   * @param { number } start 
+   * @param { number[] } value
+   * @returns { number } The point in the array where the method stopped reading. */
+  #setMessage(start, value) {
+    this.features.clear();
+    while (start < value.length) {
+      if (value[start] === DigitalSeal.signatureMarker) {
+        break;
+      }
+      const tag = value[start];
+      start += 1;
+      const length = value[start];
+      start += 1;
+      const slicedValue = value.slice(start, start + length);
+      if (slicedValue.length !== length) {
+        throw new RangeError(
+          `Length '${length}' of document feature does not match the actual length (${slicedValue.length}).`
+        );
+      }
+      this.features.set(tag, slicedValue);
+      start += length;
+    }
+    return start;
   }
 
   /** The signature zone of the VDS as a TLV of the signature marker, its length in BER/DER definite length form, and the raw signature data.
@@ -167,65 +224,6 @@ class DigitalSealV3 {
     start = this.#setHeader(start, value);
     start = this.#setMessage(start, value);
     this.#digitalseal.setSignature(start, value);
-  }
-
-  /** Given a point 'start' in an array 'value', extract the header data.
-   * @param { number } start 
-   * @param { number[] } value
-   * @returns { number } The point in the array where the method stopped reading. */
-  #setHeader(start, value) {
-    if (value[0] !== DigitalSeal.magic) {
-      throw new TypeError(
-        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not an ICAO Digital Seal (${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
-      );
-    }
-    if (value[1] !== this.constructor.version) {
-      throw new TypeError(
-        `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is not version 3 of an ICAO Digital Seal (${this.constructor.version.toString(16).padStart(2, "0").toUpperCase()}).`
-      );
-    }
-    start += 2;
-    this.authority = DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
-    start += 2;
-    const idCertRef = DigitalSeal.c40Decode(value.slice(start, start + 6));
-    this.identifierCode = idCertRef.substring(0, 4);
-    this.certReference = idCertRef.substring(4);
-    start += 6;
-    this.issueDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
-    start += 3;
-    this.signatureDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
-    start += 3;
-    this.featureDefinition = value[start];
-    start += 1;
-    this.typeCategory = value[start];
-    start += 1;
-    return start;
-  }
-
-  /** Given a point 'start' in an array 'value', extract the document feature data.
-   * @param { number } start 
-   * @param { number[] } value
-   * @returns { number } The point in the array where the method stopped reading. */
-  #setMessage(start, value) {
-    this.features.clear();
-    while (start < value.length) {
-      if (value[start] === DigitalSeal.signatureMarker) {
-        break;
-      }
-      const tag = value[start];
-      start += 1;
-      const length = value[start];
-      start += 1;
-      const slicedValue = value.slice(start, start + length);
-      if (slicedValue.length !== length) {
-        throw new RangeError(
-          `Length '${length}' of document feature does not match the actual length (${slicedValue.length}).`
-        );
-      }
-      this.features.set(tag, slicedValue);
-      start += length;
-    }
-    return start;
   }
 
   /** Create a new DigitalSealV3.
