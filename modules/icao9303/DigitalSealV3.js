@@ -166,7 +166,7 @@ class DigitalSealV3 {
     let start = 0;
     start = this.#setHeader(start, value);
     start = this.#setMessage(start, value);
-    this.#setSignature(start, value);
+    this.#digitalseal.setSignature(start, value);
   }
 
   /** Given a point 'start' in an array 'value', extract the header data.
@@ -226,13 +226,6 @@ class DigitalSealV3 {
       start += length;
     }
     return start;
-  }
-
-  /** Given a point 'start' in an array 'value', extract the raw signature data.
-   * @param { number } start 
-   * @param { number[] } value */
-  #setSignature(start, value) {
-    this.#digitalseal.setSignature(start, value);
   }
 
   /** Create a new DigitalSealV3.
