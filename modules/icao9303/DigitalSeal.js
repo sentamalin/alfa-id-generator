@@ -190,7 +190,8 @@ class DigitalSeal {
   }
   /** Given a point 'start' in an array 'value', extract and set the raw signature data.
    * @param { number } start 
-   * @param { number[] } value */
+   * @param { number[] } value
+   * @ignore */
   setSignature(start, value) {
     if (value[start] !== DigitalSeal.signatureMarker) {
       throw new TypeError(
