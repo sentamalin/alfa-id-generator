@@ -10,6 +10,7 @@ import { TravelDocument } from "./TravelDocument.js";
  *  `VisaDocument` is intended to be used to compose different kinds
  *  of machine-readable visa documents and not intended to be used directly.
  * 
+ * @interface
  * @mixin
  */
 class VisaDocument {

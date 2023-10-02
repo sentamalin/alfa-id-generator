@@ -10,6 +10,7 @@
  *  is intended to be used to compose different kinds of MRTDs and not
  *  intended to be used directly.
  * 
+ * @interface
  * @mixin
  */
 class TravelDocument {
@@ -274,7 +275,7 @@ class TravelDocument {
    * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.fullName] - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
    * @param { string } [opt.optionalData] - Valid characters are from the ranges 0-9 and A-Z.
-   * @param { string } [opt.machineReadableZone] - The full Machine-Readable Zone (MRZ).
+   * @param { string } [opt.machineReadableZone] - A MRZ string of a full Machine-Readable Zone (MRZ).
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the document holder.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
    */

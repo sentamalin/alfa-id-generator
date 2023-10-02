@@ -10,6 +10,7 @@
  *  is intended to be used to compose different VDS versions and not
  *  intended to be used directly.
  * 
+ * @interface
  * @mixin
  */
 class DigitalSeal {
