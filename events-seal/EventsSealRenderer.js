@@ -10,7 +10,7 @@ import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
 import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
 import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-lines.js";
 
-/** `EventsSealRenderer` takes an `EventsMRVB` object and returns an
+/** `EventsSealRenderer` takes an `EventsMRVB` object and returns a
  *  `HTMLCanvasElement` or an `OffscreenCanvas` element representation
  *  of the travel document as a small sticker.
  * 
@@ -20,7 +20,7 @@ import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-
  * 
  *  Renderers are scenario-specific and this was created to be used
  *  for a demo on a web page. Ergo, multiple properties are able to be
- *  set. In real-world use less (or no) properties may want to be set.
+ *  set. In real-world use less (or no) properties may want to be settable.
  */
 class EventsSealRenderer {
   /** Create an `EventsSealRenderer`.
