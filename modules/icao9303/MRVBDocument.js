@@ -15,6 +15,7 @@ import { VisaDocument } from "./VisaDocument.js";
  *  `MRVBDocument` may be used on its own or may be used to compose different
  *  kinds of MRTDs.
  * 
+ * @implements { VisaDocument }
  * @mixes TravelDocument
  * @mixes VisaDocument
  * @mixin
