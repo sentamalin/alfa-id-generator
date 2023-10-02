@@ -20,6 +20,60 @@ import { VisaDocument } from "./VisaDocument.js";
  * @mixin
  */
 class MRVBDocument {
+  /** Create a new `MRVBDocument`.
+   * @param { Object } [opt] - An options object.
+   * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
+   * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
+   * @param { string } [opt.number] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
+   * @param { string } [opt.fullName] - A ', ' separates the visa holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
+   * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
+   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD format.
+   * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
+   * @param { string } [opt.validThru] - A calendar date string in YYYY-MM-DD format.
+   * @param { string } [opt.optionalData] - Up to 8 characters. Valid characters are from the ranges 0-9 and A-Z.
+   * @param { string } [opt.mrzLine1] - A MRZ line string of a 36-character length.
+   * @param { string } [opt.mrzLine2] - A MRZ line string of a 36-character length.
+   * @param { string } [opt.machineReadableZone] - A MRZ string of a 72-character length.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the visa issuer.
+   * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
+   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
+   * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes an unlimited number of entries.
+   * @param { string } [opt.visaType] - A type/name/description for this visa.
+   * @param { string } [opt.additionalInfo] - Additional textual information.
+   * @param { string } [opt.passportNumber] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
+   * @param { boolean } [opt.usePassportInMRZ] - Use 'passportNumber' instead of 'number' in the Machine-Readable Zone (MRZ).
+   */
+  constructor(opt) {
+    this.fullName = "Mann, Mister";
+    this.optionalData = "";
+    
+    if (opt) {
+      if (opt.typeCode) { this.typeCode = opt.typeCode; }
+      if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
+      if (opt.number) { this.number = opt.number; }
+      if (opt.fullName) { this.fullName = opt.fullName; }
+      if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
+      if (opt.birthDate) { this.birthDate = opt.birthDate; }
+      if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
+      if (opt.validThru) { this.validThru = opt.validThru; }
+      if (opt.optionalData) { this.optionalData = opt.optionalData; }
+      if (opt.mrzLine1) { this.mrzLine1 = opt.mrzLine1; }
+      if (opt.mrzLine2) { this.mrzLine2 = opt.mrzLine2; }
+      if (opt.machineReadableZone) { this.machineReadableZone = opt.machineReadableZone; }
+      if (opt.picture) { this.picture = opt.picture; }
+      if (opt.signature) { this.signature = opt.signature; }
+      if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
+      if (opt.validFrom) { this.validFrom = opt.validFrom; }
+      if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
+      if (opt.visaType) { this.visaType = opt.visaType; }
+      if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
+      if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
+      if (opt.usePassportInMRZ !== undefined) { this.usePassportInMRZ = opt.usePassportInMRZ; }
+    }
+  }
+
+  /* The mixins `MRVBDocument` mixes. */
   #document = new TravelDocument();
   #visa = new VisaDocument();
   
@@ -243,59 +297,6 @@ class MRVBDocument {
   }
   static #optionalDataToMRZ = function() {
     return TravelDocument.optionalDataMRZ(this, 8);
-  }
-
-  /** Create a new `MRVBDocument`.
-   * @param { Object } [opt] - An options object.
-   * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
-   * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
-   * @param { string } [opt.number] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.fullName] - A ', ' separates the visa holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
-   * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
-   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD format.
-   * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
-   * @param { string } [opt.validThru] - A calendar date string in YYYY-MM-DD format.
-   * @param { string } [opt.optionalData] - Up to 8 characters. Valid characters are from the ranges 0-9 and A-Z.
-   * @param { string } [opt.mrzLine1] - A MRZ line string of a 36-character length.
-   * @param { string } [opt.mrzLine2] - A MRZ line string of a 36-character length.
-   * @param { string } [opt.machineReadableZone] - A MRZ string of a 72-character length.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the visa issuer.
-   * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
-   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
-   * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes an unlimited number of entries.
-   * @param { string } [opt.visaType] - A type/name/description for this visa.
-   * @param { string } [opt.additionalInfo] - Additional textual information.
-   * @param { string } [opt.passportNumber] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
-   * @param { boolean } [opt.usePassportInMRZ] - Use 'passportNumber' instead of 'number' in the Machine-Readable Zone (MRZ).
-   */
-  constructor(opt) {
-    this.fullName = "Mann, Mister";
-    this.optionalData = "";
-    
-    if (opt) {
-      if (opt.typeCode) { this.typeCode = opt.typeCode; }
-      if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
-      if (opt.number) { this.number = opt.number; }
-      if (opt.fullName) { this.fullName = opt.fullName; }
-      if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.birthDate) { this.birthDate = opt.birthDate; }
-      if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.validThru) { this.validThru = opt.validThru; }
-      if (opt.optionalData) { this.optionalData = opt.optionalData; }
-      if (opt.mrzLine1) { this.mrzLine1 = opt.mrzLine1; }
-      if (opt.mrzLine2) { this.mrzLine2 = opt.mrzLine2; }
-      if (opt.machineReadableZone) { this.machineReadableZone = opt.machineReadableZone; }
-      if (opt.picture) { this.picture = opt.picture; }
-      if (opt.signature) { this.signature = opt.signature; }
-      if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
-      if (opt.validFrom) { this.validFrom = opt.validFrom; }
-      if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
-      if (opt.visaType) { this.visaType = opt.visaType; }
-      if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
-      if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
-      if (opt.usePassportInMRZ !== undefined) { this.usePassportInMRZ = opt.usePassportInMRZ; }
-    }
   }
 }
 

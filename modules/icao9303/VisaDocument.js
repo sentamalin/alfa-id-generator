@@ -14,6 +14,35 @@ import { TravelDocument } from "./TravelDocument.js";
  * @mixin
  */
 class VisaDocument {
+  /** Create a new `VisaDocument`.
+   * @param { Object } [opt] - An options object.
+   * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
+   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
+   * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes an unlimited number of entries.
+   * @param { string } [opt.visaType] - A type/name/description for this visa.
+   * @param { string } [opt.additionalInfo] - Additional textual information.
+   * @param { string } [opt.passportNumber] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
+   * @param { boolean } [opt.usePassportInMRZ] - Use `this.passportNumber` instead of `this.number` in the Machine-Readable Zone (MRZ).
+   */
+  constructor(opt) {
+    this.placeOfIssue = "Zenith, UTO";
+    this.validFrom = "2023-09-29";
+    this.numberOfEntries = "Multiple";
+    this.visaType = "Participant";
+    this.additionalInfo = "None";
+    this.passportNumber = "111222333";
+
+    if (opt) {
+      if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
+      if (opt.validFrom) { this.validFrom = opt.validFrom; }
+      if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
+      if (opt.visaType) { this.visaType = opt.visaType; }
+      if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
+      if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
+      if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }
+    }
+  }
+  
   #placeOfIssue;
   /** Location where the visa was issued.
    * @type { String }
@@ -108,35 +137,6 @@ class VisaDocument {
   }
   static #validFromToVIZ = function() {
     return TravelDocument.dateToVIZ(this);
-  }
-
-  /** Create a new `VisaDocument`.
-   * @param { Object } [opt] - An options object.
-   * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
-   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
-   * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes an unlimited number of entries.
-   * @param { string } [opt.visaType] - A type/name/description for this visa.
-   * @param { string } [opt.additionalInfo] - Additional textual information.
-   * @param { string } [opt.passportNumber] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
-   * @param { boolean } [opt.usePassportInMRZ] - Use `this.passportNumber` instead of `this.number` in the Machine-Readable Zone (MRZ).
-   */
-  constructor(opt) {
-    this.placeOfIssue = "Zenith, UTO";
-    this.validFrom = "2023-09-29";
-    this.numberOfEntries = "Multiple";
-    this.visaType = "Participant";
-    this.additionalInfo = "None";
-    this.passportNumber = "111222333";
-
-    if (opt) {
-      if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
-      if (opt.validFrom) { this.validFrom = opt.validFrom; }
-      if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
-      if (opt.visaType) { this.visaType = opt.visaType; }
-      if (opt.additionalInfo) { this.additionalInfo = opt.additionalInfo; }
-      if (opt.passportNumber) { this.passportNumber = opt.passportNumber; }
-      if (opt.usePassportInMRZ) { this.usePassportInMRZ = opt.usePassportInMRZ; }
-    }
   }
 }
 
