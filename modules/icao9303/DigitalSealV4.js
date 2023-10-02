@@ -12,6 +12,7 @@ import { DigitalSeal } from "./DigitalSeal.js";
  *  `DigitalSealV4` is intended to be used to compose different kinds
  *  of MRTDs and not intended to be used directly.
  * 
+ * @implements { DigitalSeal }
  * @mixes DigitalSeal
  * @mixin
  */
