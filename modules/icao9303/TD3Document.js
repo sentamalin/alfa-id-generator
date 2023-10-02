@@ -39,9 +39,7 @@ class TD3Document {
   /** @param { string } value - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
   set fullName(value) {
     this.#document.fullName = value;
-    this.#document.fullName.toMRZ = function() {
-      return TravelDocument.fullNameMRZ(this, 39);
-    }
+    this.#document.fullName.toMRZ = TD3Document.#fullNameToMRZ;
   }
 
   /** An identity document number unique for this document.
@@ -86,9 +84,7 @@ class TD3Document {
   /** @param { string } value - Up to 14 characters. Valid characters are from the ranges 0-9 and A-Z. */
   set optionalData(value) {
     this.#document.optionalData = value;
-    this.#document.optionalData.toMRZ = function() {
-      return TravelDocument.optionalDataMRZ(this, 14);
-    }
+    this.#document.optionalData.toMRZ = TD3Document.#optionalDataToMRZ;
   }
 
   /** A path/URL to an image, or an image object, representing a photo of the document holder.
@@ -208,6 +204,14 @@ class TD3Document {
     }
     this.mrzLine1 = value.slice(0, 44);
     this.mrzLine2 = value.slice(44);
+  }
+
+  /* Functions to be assigned to properties `toMRZ` and `toVIZ` when set. */
+  static #fullNameToMRZ = function() {
+    return TravelDocument.fullNameMRZ(this, 39);
+  }
+  static #optionalDataToMRZ = function() {
+    return TravelDocument.optionalDataMRZ(this, 14);
   }
 
   /** Create a new TD3Document.

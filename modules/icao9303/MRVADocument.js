@@ -50,9 +50,7 @@ class MRVADocument {
   /** @param { string } value - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
   set fullName(value) {
     this.#document.fullName = value;
-    this.#document.fullName.toMRZ = function() {
-      return TravelDocument.fullNameMRZ(this, 39);
-    }
+    this.#document.fullName.toMRZ = MRVADocument.#fullNameToMRZ;
   }
 
   /** A code identifying the visa holder's nationality (or lack thereof).
@@ -90,9 +88,7 @@ class MRVADocument {
   /** @param { string } value - Up to 16 characters. Valid characters are from the ranges 0-9 and A-Z. */
   set optionalData(value) {
     this.#document.optionalData = value;
-    this.#document.optionalData.toMRZ = function() {
-      return TravelDocument.optionalDataMRZ(this, 16);
-    }
+    this.#document.optionalData.toMRZ = MRVADocument.#optionalDataToMRZ;
   }
 
   /** A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
@@ -238,6 +234,14 @@ class MRVADocument {
     }
     this.mrzLine1 = value.slice(0, 44);
     this.mrzLine2 = value.slice(44);
+  }
+
+  /* Functions to be assigned to properties `toMRZ` and `toVIZ` when set. */
+  static #fullNameToMRZ = function() {
+    return TravelDocument.fullNameMRZ(this, 39);
+  }
+  static #optionalDataToMRZ = function() {
+    return TravelDocument.optionalDataMRZ(this, 16);
   }
 
   /** Create a new MRVADocument.

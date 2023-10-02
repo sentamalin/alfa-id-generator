@@ -21,9 +21,7 @@ class VisaDocument {
   /** @param { string } value */
   set placeOfIssue(value) {
     this.#placeOfIssue = new String(value);
-    this.#placeOfIssue.toVIZ = function() {
-      return this.toUpperCase();
-    }
+    this.#placeOfIssue.toVIZ = VisaDocument.#setThisToUppercase;
   }
   
   #validFrom;
@@ -40,9 +38,7 @@ class VisaDocument {
       );
     } else {
       this.#validFrom = test;
-      this.#validFrom.toVIZ = function() {
-        return TravelDocument.dateToVIZ(this);
-      }
+      this.#validFrom.toVIZ = VisaDocument.#validFromToVIZ;
     }
   }
 
@@ -54,9 +50,7 @@ class VisaDocument {
   /** @param { string | number } value - 0 or any string denotes an unlimited number of entries. */
   set numberOfEntries(value) {
     this.#numberOfEntries = new String(value);
-    this.#numberOfEntries.toVIZ = function() {
-      return this.toUpperCase();
-    }
+    this.#numberOfEntries.toVIZ = VisaDocument.#setThisToUppercase;
   }
 
   #visaType;
@@ -67,9 +61,7 @@ class VisaDocument {
   /** @param { string } value */
   set visaType(value) {
     this.#visaType = new String(value);
-    this.#visaType.toVIZ = function() {
-      return this.toUpperCase();
-    }
+    this.#visaType.toVIZ = VisaDocument.#setThisToUppercase;
   }
 
   #additionalInfo;
@@ -80,9 +72,7 @@ class VisaDocument {
   /** @param { string } value */
   set additionalInfo(value) {
     this.#additionalInfo = new String(value);
-    this.#additionalInfo.toVIZ = function() {
-      return this.toUpperCase();
-    }
+    this.#additionalInfo.toVIZ = VisaDocument.#setThisToUppercase;
   }
 
   #passportNumber;
@@ -98,12 +88,8 @@ class VisaDocument {
       );
     } else {
       this.#passportNumber = new String(value.toString());
-      this.#passportNumber.toMRZ = function() {
-        return TravelDocument.padMRZString(this, 9);
-      }
-      this.#passportNumber.toVIZ = function() {
-        return this.toUpperCase();
-      }
+      this.#passportNumber.toMRZ = VisaDocument.#passportNumberToMRZ;
+      this.#passportNumber.toVIZ = VisaDocument.#setThisToUppercase;
     }
   }
 
@@ -111,6 +97,17 @@ class VisaDocument {
    * @type { boolean }
    */
   usePassportInMRZ;
+
+  /* Functions to be assigned to properties `toMRZ` and `toVIZ` when set. */
+  static #setThisToUppercase = function() {
+    return this.toUpperCase();
+  }
+  static #passportNumberToMRZ = function() {
+    return TravelDocument.padMRZString(this, 9);
+  }
+  static #validFromToVIZ = function() {
+    return TravelDocument.dateToVIZ(this);
+  }
 
   /** Create a new VisaDocument.
    * @param { Object } [opt] - An options object.

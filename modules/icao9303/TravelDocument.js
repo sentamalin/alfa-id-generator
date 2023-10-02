@@ -26,12 +26,8 @@ class TravelDocument {
       );
     } else {
       this.#typeCode = new String(value.toString().toUpperCase());
-      this.#typeCode.toMRZ = function() {
-        return TravelDocument.padMRZString(this, 2);
-      }
-      this.#typeCode.toVIZ = function() {
-        return this.toUpperCase();
-      }
+      this.#typeCode.toMRZ = TravelDocument.#typeCodeToMRZ;
+      this.#typeCode.toVIZ = TravelDocument.#setThisToUppercase;
     }
   }
 
@@ -57,12 +53,8 @@ class TravelDocument {
         );
       }
       this.#authorityCode = new String(value.toString().toUpperCase());
-      this.#authorityCode.toMRZ = function() {
-        return this;
-      }
-      this.#authorityCode.toVIZ = function() {
-        return this;
-      }
+      this.#authorityCode.toMRZ = TravelDocument.#doNothingWithThis;
+      this.#authorityCode.toVIZ = TravelDocument.#doNothingWithThis;
     }
   }
 
@@ -79,12 +71,8 @@ class TravelDocument {
       );
     } else {
       this.#number = new String(value.toString().toUpperCase());
-      this.#number.toMRZ = function() {
-        return TravelDocument.padMRZString(this, 9);
-      }
-      this.#number.toVIZ = function() {
-        return this.toUpperCase();
-      }
+      this.#number.toMRZ = TravelDocument.#numberToMRZ;
+      this.#number.toVIZ = TravelDocument.#setThisToUppercase;
     }
   }
 
@@ -102,12 +90,8 @@ class TravelDocument {
       );
     } else {
       this.#birthDate = test;
-      this.#birthDate.toMRZ = function() {
-        return TravelDocument.dateToMRZ(this);
-      }
-      this.#birthDate.toVIZ = function() {
-        return TravelDocument.dateToVIZ(this);
-      }
+      this.#birthDate.toMRZ = TravelDocument.#thisDateToMRZ;
+      this.#birthDate.toVIZ = TravelDocument.#thisDateToVIZ;
     }
   }
 
@@ -124,13 +108,8 @@ class TravelDocument {
       );
     } else {
       this.#genderMarker = new String(value.toUpperCase());
-      this.#genderMarker.toMRZ = function() {
-        if (`${this}` === "X") { return "<"; }
-        else { return this; }
-      }
-      this.#genderMarker.toVIZ = function() {
-        return this;
-      }
+      this.#genderMarker.toMRZ = TravelDocument.#genderMarkerToMRZ;
+      this.#genderMarker.toVIZ = TravelDocument.#doNothingWithThis;
     }
   }
 
@@ -148,12 +127,8 @@ class TravelDocument {
       );
     } else {
       this.#expirationDate = test;
-      this.#expirationDate.toMRZ = function() {
-        return TravelDocument.dateToMRZ(this);
-      }
-      this.#expirationDate.toVIZ = function() {
-        return TravelDocument.dateToVIZ(this);
-      }
+      this.#expirationDate.toMRZ = TravelDocument.#thisDateToMRZ;
+      this.#expirationDate.toVIZ = TravelDocument.#thisDateToVIZ;
     }
   }
 
@@ -180,12 +155,8 @@ class TravelDocument {
         );
       }
       this.#nationalityCode = new String(value.toString().toUpperCase());
-      this.#nationalityCode.toMRZ = function() {
-        return this.toUpperCase();
-      }
-      this.#nationalityCode.toVIZ = function() {
-        return this.toUpperCase();
-      }
+      this.#nationalityCode.toMRZ = TravelDocument.#setThisToUppercase;
+      this.#nationalityCode.toVIZ = TravelDocument.#setThisToUppercase;
     }
   }
 
@@ -197,9 +168,7 @@ class TravelDocument {
   /** @param { string } value - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
   set fullName(value) {
     this.#fullName = new String(value.toString());
-    this.#fullName.toVIZ = function() {
-      return this.toUpperCase();
-    }
+    this.#fullName.toVIZ = TravelDocument.#setThisToUppercase;
   }
   /** Normalize and pad a document holder's name for the name area of a Machine-Readable Zone (MRZ) of a given character length.
    * @param { string } name - The document holder's full name in the Latin characters A-Z, or a transcription/transliteration of their full name in Latin characters. A ', ' separates the document holder's primary identifier from their secondary identifiers.
@@ -269,6 +238,29 @@ class TravelDocument {
     throw new TypeError(
       "TravelDocument.machineReadableZone must be implemented by a subclass."
     );
+  }
+
+  /* Functions to be assigned to properties `toMRZ` and `toVIZ` when set. */
+  static #doNothingWithThis = function() {
+    return this;
+  }
+  static #setThisToUppercase = function() {
+    return this.toUpperCase();
+  }
+  static #thisDateToMRZ = function() {
+    return TravelDocument.dateToMRZ(this);
+  }
+  static #thisDateToVIZ = function() {
+    return TravelDocument.dateToVIZ(this);
+  }
+  static #typeCodeToMRZ = function() {
+    return TravelDocument.padMRZString(this, 2);
+  }
+  static #numberToMRZ = function() {
+    return TravelDocument.padMRZString(this, 9);
+  }
+  static #genderMarkerToMRZ = function() {
+    return `${this}` === "X" ? "<" : this;
   }
 
   /** Create a new TravelDocument.

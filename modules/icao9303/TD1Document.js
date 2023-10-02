@@ -74,9 +74,7 @@ class TD1Document {
   /** @param { string } value - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
   set fullName(value) {
     this.#document.fullName = value;
-    this.#document.fullName.toMRZ = function() {
-      return TravelDocument.fullNameMRZ(this, 30);
-    }
+    this.#document.fullName.toMRZ = TD1Document.#fullNameToMRZ;
   }
 
   /** Optional data to include in the Machine-Readable Zone (MRZ).
@@ -86,9 +84,7 @@ class TD1Document {
   /** @param { string } value - Up to 26 characters. Valid characters are from the ranges 0-9 and A-Z. */
   set optionalData(value) {
     this.#document.optionalData = value;
-    this.#document.optionalData.toMRZ = function() {
-      return TravelDocument.optionalDataMRZ(this, 26);
-    }
+    this.#document.optionalData.toMRZ = TD1Document.#optionalDataToMRZ;
   }
 
   /** A path/URL to an image, or an image object, representing a photo of the document holder.
@@ -216,6 +212,14 @@ class TD1Document {
     this.mrzLine2 = value.slice(30, 60);
     this.mrzLine3 = value.slice(60);
     this.optionalData = (value.slice(15, 30) + value.slice(48, 59)).replace(/</gi, " ").trimEnd();
+  }
+
+  /* Functions to be assigned to properties `toMRZ` and `toVIZ` when set. */
+  static #fullNameToMRZ = function() {
+    return TravelDocument.fullNameMRZ(this, 30);
+  }
+  static #optionalDataToMRZ = function() {
+    return TravelDocument.optionalDataMRZ(this, 26);
   }
 
   /** Create a new TD1Document.
