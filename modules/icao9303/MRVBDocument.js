@@ -15,7 +15,6 @@ import { VisaDocument } from "./VisaDocument.js";
  *  `MRVBDocument` may be used on its own or may be used to compose different
  *  kinds of MRTDs.
  * 
- * @implements { VisaDocument }
  * @mixes TravelDocument
  * @mixes VisaDocument
  * @mixin
@@ -246,7 +245,7 @@ class MRVBDocument {
     return TravelDocument.optionalDataMRZ(this, 8);
   }
 
-  /** Create a new MRVBDocument.
+  /** Create a new `MRVBDocument`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.

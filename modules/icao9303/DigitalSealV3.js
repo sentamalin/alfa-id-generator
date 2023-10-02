@@ -15,7 +15,6 @@ import { DigitalSeal } from "./DigitalSeal.js";
  *  containing different document features. It is not intended to be
  *  instantiated directly.
  * 
- * @implements { DigitalSeal }
  * @mixes DigitalSeal
  * @mixin
  */
@@ -229,7 +228,7 @@ class DigitalSealV3 {
     this.signature = DigitalSeal.setSignature(start, value);
   }
 
-  /** Create a new DigitalSealV3.
+  /** Create a new `DigitalSealV3`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.identifierCode] - A 4-character string consisting of the characters 0-9 and A-Z.

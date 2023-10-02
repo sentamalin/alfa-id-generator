@@ -7,11 +7,9 @@
  *  travel documents (MRTDs) with machine-readable zones.
  * 
  *  While `TravelDocument` provides useful utility methods, the actual class
- *  is intended to be used to compose different kinds of MRTDs and to describe
- *  the shape of objects that implement the `TravelDocument` interface. It is
- *  not intended to be instantiated directly.
+ *  is intended to be used to compose different kinds of MRTDs. It is not
+ *  intended to be instantiated directly.
  * 
- * @interface
  * @mixin
  */
 class TravelDocument {
@@ -265,7 +263,7 @@ class TravelDocument {
     return `${this}` === "X" ? "<" : this;
   }
 
-  /** Create a new TravelDocument.
+  /** Create a new `TravelDocument`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.

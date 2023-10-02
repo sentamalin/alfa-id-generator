@@ -7,11 +7,9 @@
  *  seals (VDSs).
  * 
  *  While `DigitalSeal` provides useful utility methods, the actual class
- *  is intended to be used to compose different VDS versions and to describe
- *  the shape of objects that implement the `DigitalSeal` interface. It is
- *  not intended to be instantiated directly.
+ *  is intended to be used to compose different VDS versions. It is not
+ *  intended to be instantiated directly.
  * 
- * @interface
  * @mixin
  */
 class DigitalSeal {
@@ -249,7 +247,7 @@ class DigitalSeal {
     );
   }
 
-  /** Create a new DigitalSeal.
+  /** Create a new `DigitalSeal`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.identifierCode] - A 4-character string consisting of the characters 0-9 and A-Z.

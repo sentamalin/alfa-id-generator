@@ -8,11 +8,9 @@ import { TravelDocument } from "./TravelDocument.js";
 /** Stores properties specific to machine-readable visa documents.
  * 
  *  `VisaDocument` is intended to be used to compose different kinds
- *  of machine-readable visa documents and to describe the shape of
- *  objects that implement the `VisaDocument` interface. It is not
- *  intended to be instantiated directly.
+ *  of machine-readable visa documents. It is not intended to be
+ *  instantiated directly.
  * 
- * @interface
  * @mixin
  */
 class VisaDocument {
@@ -340,7 +338,7 @@ class VisaDocument {
     return TravelDocument.dateToVIZ(this);
   }
 
-  /** Create a new VisaDocument.
+  /** Create a new `VisaDocument`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.

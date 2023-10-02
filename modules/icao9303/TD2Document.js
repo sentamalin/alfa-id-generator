@@ -12,7 +12,6 @@ import { TravelDocument } from "./TravelDocument.js";
  *  `TD2Document` may be used on its own or may be used to compose different
  *  kinds of MRTDs.
  * 
- * @implements { TravelDocument }
  * @mixes TravelDocument
  * @mixin
  */
@@ -207,7 +206,7 @@ class TD2Document {
     return TravelDocument.optionalDataMRZ(this, 7);
   }
 
-  /** Create a new TD2Document.
+  /** Create a new `TD2Document`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
    * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
