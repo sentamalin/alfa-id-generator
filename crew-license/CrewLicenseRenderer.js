@@ -3,550 +3,273 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { CrewLicense  } from "/modules/CrewLicense.js";
-import * as b45 from "/modules/base45-ts/base45.js";
-import * as qrLite from "/modules/qrcode-lite/qrcode.mjs";
+import { CrewLicense } from "../modules/CrewLicense.js";
+import * as b45 from "../modules/base45-ts/base45.js";
+import * as qrLite from "../modules/qrcode-lite/qrcode.mjs";
+import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
+import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
+import { fillAreaWithImage } from "../modules/utilities/fill-area-with-image.js";
+import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-lines.js";
 
+/** `CrewLicenseRenderer` takes a `CrewLicense` object and returns a `HTMLCanvasElement`
+ *  or an `OffscreenCanvas` element representation of the travel document as a
+ *  two-sided TD1-sized crewmember license.
+ * 
+ *  The renderer generates images appropriate for web use and for print use with
+ *  300-dpi printers. A bleed area surrounds the cut and safe areas to allow
+ *  borderless printing.
+ * 
+ *  Renderers are scenario-specific and this was created to be used for a demo
+ *  on a web page. Ergo, multiple properties are able to be set. In real-world
+ *  use less (or no) properties may want to be settable.
+ */
 class CrewLicenseRenderer {
-  // Customizable Presentation Data
-  headerColor; // Defines background color around picture and header text color
-  textColor; // Defines data text color
+  /** Create a `CrewLicenseRenderer`.
+   * @param { Object } [opt] - An options object.
+   * @param { string } [opt.barcodeDarkColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
+   * @param { string } [opt.barcodeLightColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
+   * @param { string } [opt.barcodeErrorCorrection] - The character 'L', 'M', 'Q', or 'H'.
+   * @param { string } [opt.headerColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string } [opt.textColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string } [opt.mrzColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an image file.
+   * @param { string } [opt.backBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string | null } [opt.backBackgroundImage] - A path/URL to an image file.
+   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an image file.
+   * @param { string } [opt.numberUnderlayColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { number } [opt.numberUnderlayAlpha] - A number in the range of 0-255.
+   * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { number } [opt.logoUnderlayAlpha] - A number in the range of 0-255.
+   * @param { string | null } [opt.logo] - A path/URL to an image file.
+   * @param { string | null } [opt.smallLogo] - A path/URL to an image file.
+   * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue) lines on the rendered canvas.
+   * @param { boolean } [opt.useDigitalSeal] - Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
+   * @param { string } [opt.fullAuthority] - The full name of the authority who issued this document.
+   * @param { string } [opt.fullDocumentName] - The full name of this document's type.
+   * @param { string[] } [opt.nameHeader] - Header text for the name property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.genderHeader] - Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.nationalityHeader] - Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.dateOfBirthHeader] - Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.authorityHeader] - Header text for the subauthority property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.privilegeHeader] - Header text for the privilege property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.numberHeader] - Header text for the number property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.dateOfExpirationHeader] - Header text for the expirationDate property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.ratingsHeader] - Header text for the ratings property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.limitationsHeader] - Header text for the limitations property: ['primary', 'language 1', 'language 2'].
+   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one available from `window.document`.
+   */
+  constructor(opt) {
+    this.barcodeDarkColor = opt.barcodeDarkColor ?? "#000000ff";
+    this.barcodeLightColor = opt.barcodeLightColor ?? "#00000000";
+    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ?? "M";
+    this.headerColor = opt.headerColor ?? "#4090ba";
+    this.textColor = opt.textColor ?? "#000000";
+    this.mrzColor = opt.mrzColor ?? "#000000";
+    this.frontBackgroundColor = opt.frontBackgroundColor ?? "#eeeeee";
+    this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
+    this.backBackgroundColor = opt.backBackgroundColor ?? "#eeeeee";
+    this.backBackgroundImage = opt.backBackgroundImage ?? null;
+    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? "#ffffff";
+    this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
+    this.numberUnderlayColor = opt.numberUnderlayColor ?? "#ffffff";
+    this.numberUnderlayAlpha = opt.numberUnderlayAlpha ?? 255;
+    this.logoUnderlayColor = opt.logoUnderlayColor ?? "#4090ba";
+    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? 255;
+    this.logo = opt.logo ?? null;
+    this.smallLogo = opt.smallLogo ?? null;
+    this.showGuides = opt.showGuides ?? false;
+    this.useDigitalSeal = opt.useDigitalSeal ?? false;
+    this.fullAuthority = opt.fullAuthority ?? "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL";
+    this.fullDocumentName = opt.fullDocumentName ?? "CREWMEMBER LICENSE";
+    this.nameHeader = opt.nameHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.genderHeader = opt.genderHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.nationalityHeader = opt.nationalityHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.authorityHeader = opt.authorityHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.privilegeHeader = opt.privilegeHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.numberHeader = opt.numberHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.ratingsHeader = opt.ratingsHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.limitationsHeader = opt.limitationsHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.fonts = opt.fonts ?? null;
+  }
+
+  /** The RGBA color for the dark (black) areas for the rendered barcode: '#RRGGBBAA'.
+   * @type { string }
+   */
+  barcodeDarkColor;
+
+  /** The RGBA color for the light (white) areas for the rendered barcode: '#RRGGBBAA'.
+   * @type { string }
+   */
+  barcodeLightColor;
+
+  /** The error correction level used for generating the barcode: 'L', 'M', 'Q', or 'H'.
+   * @type { string }
+   */
+  barcodeErrorCorrection;
+
+  /** The RGB color for header text: '#RRGGBB'.
+   * @type { string }
+   */
+  headerColor;
+
+  /** The RGB color for non-header text: '#RRGGBB'.
+   * @type { string }
+   */
+  textColor;
+
+  /** The RGB color for Machine-Readable Zone (MRZ) text: '#RRGGBB'.
+   * @type { string }
+   */
   mrzColor;
-  barcodeDarkColor = "#000000ff";
-  barcodeLightColor = "#00000000";
-  barcodeErrorCorrection = "M";
-  frontBackgroundColor; // Defines a solid color when no front image is used
-  frontBackgroundImage; // Defines a front image to use for a background
-  backBackgroundColor; // Defines a solid color when no back image is used
-  backBackgroundImage; // Defines a back image to use for a background
-  mrzBackgroundColor; // Defines a solid color when no MRZ underlay is used
-  mrzBackgroundImage; // Defines an image to use for the MRZ underlay
-  numberUnderlayColor; // Defines a solid color when no number underlay image is used
-  numberUnderlayAlpha = 255;
+
+  /** The RGB color for the background when no front background image is set: '#RRGGBB'.
+   * @type { string }
+   */
+  frontBackgroundColor;
+
+  /** A path/URL to an image to use for the front background, or `null` for no background image.
+   * @type { string | null }
+   */
+  frontBackgroundImage;
+
+  /** The RGB color for the background when no back background image is set: '#RRGGBB'.
+   * @type { string }
+   */
+  backBackgroundColor;
+
+  /** A path/URL to an image to use for the back background, or `null` for no background image.
+   * @type { string | null }
+   */
+  backBackgroundImage;
+
+  /** The RGB color for the background when no Machine-Readable Zone (MRZ) background image is set: '#RRGGBB'.
+   * @type { string }
+   */
+  mrzBackgroundColor;
+
+  /** A path/URL to an image to use for the Machine-Readable Zone (MRZ) background, or `null` for no background image.
+   * @type { string | null }
+   */
+  mrzBackgroundImage;
+
+  /** The RGB color for the underlay under the document number on the back of the card: '#RRGGBB'.
+   * @type { string }
+   */
+  numberUnderlayColor;
+
+  /** The opacity of the number underlay color: 0-255.
+   * @type { number }
+   */
+  numberUnderlayAlpha;
   get #numberUnderlayColorWithAlpha() {
-    return `${this.numberUnderlayColor}${this.numberUnderlayAlpha.toString(16).padStart(2, "0")}`;
+    return this.numberUnderlayColor +
+      this.numberUnderlayAlpha.toString(16).padStart(2, "0");
   }
+
+  /** The RGB color for the underlay under photo/logo areas: '#RRGGBB'.
+   * @type { string }
+   */
   logoUnderlayColor;
-  logoUnderlayAlpha = 255;
+
+  /** The opacity of the number underlay color: 0-255.
+   * @type { number }
+   */
+  logoUnderlayAlpha;
   get #logoUnderlayColorWithAlpha() {
-    return `${this.logoUnderlayColor}${this.logoUnderlayAlpha.toString(16).padStart(2, "0")}`;
+    return this.logoUnderlayColor +
+      this.logoUnderlayAlpha.toString(16).padStart(2, "0");
   }
-  logo; // Defines the authority logo
-  smallLogo; // Defines the small authority logo
+
+  /** A path/URL to an image to use for the logo, or `null` for no logo.
+   * @type { string | null }
+   */
+  logo;
+
+  /** A path/URL to an image to use for the small logo, or `null` for no small logo.
+   * @type { string | null }
+   */
+  smallLogo;
+
+  /** Toggles bleed (red) and safe (blue) lines on the rendered canvas.
+   * @type { boolean }
+   */
   showGuides;
+
+  /** Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
+   * @type { boolean }
+   */
+  useDigitalSeal;
+
+  /** The full name of the authority who issued this document.
+   * @type { string }
+   */
   fullAuthority;
+
+  /** The full name of this document's type.
+   * @type { string }
+   */
   fullDocumentName;
+
+  /** Header text for the name property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   nameHeader;
+
+  /** Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   genderHeader;
+
+  /** Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   nationalityHeader;
+
+  /** Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   dateOfBirthHeader;
+
+  /** Header text for the subauthority property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   authorityHeader;
+
+  /** Header text for the privilege property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   privilegeHeader;
+
+  /** Header text for the number property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   numberHeader;
+
+  /** Header text for the expirationDate property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   dateOfExpirationHeader;
+
+  /** Header text for the ratings property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   ratingsHeader;
+
+  /** Header text for the limitations property: ['primary', 'language 1', 'language 2'].
+   * @type { string[] }
+   */
   limitationsHeader;
+
+  /** A `FontFaceSet`, like the one available from `window.document`.
+   * @type { FontFaceSet }
+   */
   fonts;
-  useDigitalSeal = true;
 
-  // Public Methods
-  /** @param { CrewLicense } model */
-  /** @param { HTMLCanvasElement } fallback */
-  async generateCardFront(model, fallback) {
-    let canvas;
-    if (typeof OffscreenCanvas === "undefined") {
-      canvas = fallback;
-      canvas.setAttribute("width", this.constructor.#cardArea[0]);
-      canvas.setAttribute("height", this.constructor.#cardArea[1]);
-    }
-    else {
-      canvas = new OffscreenCanvas(this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
-    }
-    const ctx = canvas.getContext("2d");
-    ctx.textBaseline = "top";
-
-    ctx.fillStyle = this.frontBackgroundColor;
-    ctx.fillRect(
-      0, 0,
-      this.constructor.#cardArea[0],
-      this.constructor.#cardArea[1]
-    );
-    if (this.frontBackgroundImage) {
-      const cardBackground = await this.constructor.#generateCanvasImg(
-        this.frontBackgroundImage
-      );
-      ctx.drawImage(
-        cardBackground,
-        0, 0,
-        this.constructor.#cardArea[0],
-        this.constructor.#cardArea[1]
-      );
-    }
-    ctx.fillStyle = "#00003300";
-    ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
-    ctx.fillRect(
-      this.constructor.#photoUnderlayXY[0],
-      this.constructor.#photoUnderlayXY[1],
-      this.constructor.#photoUnderlayArea[0],
-      this.constructor.#photoUnderlayArea[1]
-    );
-    const imagePromises = [
-      this.constructor.#generateCanvasImg(model.picture),
-      this.constructor.#generateCanvasImg(this.logo)
-    ];
-    if (typeof model.signature !== typeof canvas) {
-      imagePromises.push(this.constructor.#generateCanvasImg(model.signature));
-    }
-    const images = await Promise.all(imagePromises);
-    this.constructor.#fillAreaWithImg(
-      images[0], ctx,
-      this.constructor.#photoXY[0],
-      this.constructor.#photoXY[1],
-      this.constructor.#photoArea[0],
-      this.constructor.#photoArea[1]
-    );
-    this.constructor.#fitImgInArea(
-      images[1], ctx,
-      this.constructor.#logoFrontXY[0],
-      this.constructor.#logoFrontXY[1],
-      this.constructor.#logoArea[0],
-      this.constructor.#logoArea[1]
-    );
-    if (typeof model.signature !== typeof canvas) {
-      this.constructor.#fitImgInArea(
-        images[2], ctx,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1],
-      );
-    }
-    else {
-      ctx.drawImage(
-        model.signature,
-        this.constructor.#signatureXY[0],
-        this.constructor.#signatureXY[1],
-        this.constructor.#signatureArea[0],
-        this.constructor.#signatureArea[1]
-      );
-    }
-
-    ctx.fillStyle = this.headerColor;
-    ctx.font = this.constructor.#mainHeaderFont;
-    ctx.fillText(
-      this.fullAuthority,
-      Math.max(
-        this.constructor.#mainHeaderX -
-          ctx.measureText(this.fullAuthority).width,
-        this.constructor.#frontColumns
-      ),
-      this.constructor.#mainHeaderY[0],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
-    );
-    ctx.font = this.constructor.#documentHeaderFont;
-    let documentHeaderWidth = ctx.measureText(this.fullDocumentName).width;
-    ctx.fillText(
-      this.fullDocumentName,
-      this.constructor.#mainHeaderX - documentHeaderWidth,
-      this.constructor.#mainHeaderY[1]
-    );
-    ctx.font = this.constructor.#separatorHeaderFont;
-    documentHeaderWidth += ctx.measureText(this.constructor.#headerSeparator).width;
-    ctx.fillText(
-      this.constructor.#headerSeparator,
-      this.constructor.#mainHeaderX - documentHeaderWidth,
-      this.constructor.#mainHeaderY[1]
-    );
-    ctx.font = this.constructor.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
-    ctx.fillText(
-      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
-      this.constructor.#mainHeaderX - documentHeaderWidth,
-      this.constructor.#mainHeaderY[1]
-    );
-
-    ctx.fillStyle = this.headerColor;
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillText(
-      this.nameHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[0]
-    );
-    ctx.fillText(
-      this.genderHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[2]
-    );
-    ctx.fillText(
-      this.nationalityHeader[0],
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[2]
-    );
-    ctx.fillText(
-      this.dateOfBirthHeader[0],
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[2]
-    );
-    ctx.fillText(
-      this.authorityHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[6]
-    );
-    ctx.fillText(
-      this.privilegeHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[8]
-    );
-    ctx.fillText(
-      this.numberHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[10]
-    );
-    ctx.fillText(
-      this.dateOfExpirationHeader[0],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[12]
-    );
-    const nameWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.nameHeader[0]).width;
-    const genderWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.genderHeader[0]).width;
-    const nationalityWidth = this.constructor.#frontRow2Columns[0] +
-      ctx.measureText(this.nationalityHeader[0]).width;
-    const dateOfBirthWidth = this.constructor.#frontRow2Columns[1] +
-      ctx.measureText(this.dateOfBirthHeader[0]).width;
-    const employerWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.authorityHeader[0]).width;
-    const occupationWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.privilegeHeader[0]).width;
-    const numberWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.numberHeader[0]).width;
-    const dateOfExpirationWidth = this.constructor.#frontColumns +
-      ctx.measureText(this.dateOfExpirationHeader[0]).width;
-    
-    ctx.font = this.constructor.#intlFont;
-    ctx.fillText(
-      `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
-      nameWidth,
-      this.constructor.#frontRows[0]
-    );
-    ctx.fillText("/", genderWidth, this.constructor.#frontRows[2]);
-    ctx.fillText(
-      `${this.genderHeader[1]}/`,
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[3]
-    );
-    ctx.fillText(
-      this.genderHeader[2],
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[4]
-    );
-    ctx.fillText("/", nationalityWidth, this.constructor.#frontRows[2]);
-    ctx.fillText(
-      `${this.nationalityHeader[1]}/`,
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[3]
-    );
-    ctx.fillText(
-      this.nationalityHeader[2],
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[4]
-    );
-    ctx.fillText("/", dateOfBirthWidth, this.constructor.#frontRows[2]);
-    ctx.fillText(
-      `${this.dateOfBirthHeader[1]}/`,
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[3]
-    );
-    ctx.fillText(
-      this.dateOfBirthHeader[2],
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[4]
-    );
-    ctx.fillText(
-      `/ ${this.authorityHeader[1]}/ ${this.authorityHeader[2]}`,
-      employerWidth,
-      this.constructor.#frontRows[6]
-    );
-    ctx.fillText(
-      `/ ${this.privilegeHeader[1]}/ ${this.privilegeHeader[2]}`,
-      occupationWidth,
-      this.constructor.#frontRows[8]
-    );
-    ctx.fillText(
-      `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
-      numberWidth,
-      this.constructor.#frontRows[10]
-    );
-    ctx.fillText(
-      `/ ${this.dateOfExpirationHeader[1]}/ ${this.dateOfExpirationHeader[2]}`,
-      dateOfExpirationWidth,
-      this.constructor.#frontRows[12]
-    );
-
-    ctx.fillStyle = this.textColor;
-    ctx.font = this.constructor.#dataFont;
-    ctx.fillText(
-      model.fullName.toVIZ(),
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[1],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
-    );
-    ctx.fillText(
-      model.genderMarker.toVIZ(),
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[5]
-    );
-    ctx.fillText(
-      model.nationalityCode.toVIZ(),
-      this.constructor.#frontRow2Columns[0],
-      this.constructor.#frontRows[5]
-    );
-    ctx.fillText(
-      model.birthDate.toVIZ(),
-      this.constructor.#frontRow2Columns[1],
-      this.constructor.#frontRows[5]
-    );
-    ctx.fillText(
-      model.subauthority.toVIZ(),
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[7],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
-    );
-    ctx.fillText(
-      model.privilege.toVIZ(),
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[9],
-      this.constructor.#mainHeaderX - this.constructor.#frontColumns
-    );
-    ctx.fillText(
-      model.number.toVIZ(),
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[11]
-    );
-    ctx.fillText(
-      model.expirationDate.toVIZ(),
-      this.constructor.#frontColumns,
-      this.constructor.#frontRows[13]
-    );
-
-    if (this.showGuides) {
-      this.constructor.#drawBleedAndSafeLines(ctx);
-    }
-
-    return canvas;
-  }
-
-  /** @param { CrewLicense } model */
-  /** @param { HTMLCanvasElement } fallback */
-  async generateCardBack(model, fallback) {
-    let canvas;
-    if (typeof OffscreenCanvas === "undefined") {
-      canvas = fallback;
-      canvas.setAttribute("width", this.constructor.#cardArea[0]);
-      canvas.setAttribute("height", this.constructor.#cardArea[1]);
-    }
-    else {
-      canvas = new OffscreenCanvas(this.constructor.#cardArea[0], this.constructor.#cardArea[1]);
-    }
-    const ctx = canvas.getContext("2d");
-    ctx.textBaseline = "top";
-
-    ctx.fillStyle = this.backBackgroundColor;
-    ctx.fillRect(
-      0, 0,
-      this.constructor.#cardArea[0],
-      this.constructor.#cardArea[1]
-    );
-    if (this.backBackgroundImage) {
-      const cardBackground = await this.constructor.#generateCanvasImg(
-        this.backBackgroundImage
-      );
-      ctx.drawImage(
-        cardBackground,
-        0, 0,
-        this.constructor.#cardArea[0],
-        this.constructor.#cardArea[1]
-      );
-    }
-    ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
-    ctx.fillRect(
-      this.constructor.#logoUnderlayXY[0],
-      this.constructor.#logoUnderlayXY[1],
-      this.constructor.#logoUnderlayArea[0],
-      this.constructor.#logoUnderlayArea[1]
-    );
-    ctx.fillStyle = this.mrzBackgroundColor;
-    ctx.fillRect(
-      this.constructor.#mrzUnderlayXY[0],
-      this.constructor.#mrzUnderlayXY[1],
-      this.constructor.#mrzUnderlayArea[0],
-      this.constructor.#mrzUnderlayArea[1]
-    );
-    if (this.mrzBackgroundImage) {
-      const mrzBackground = await this.constructor.#generateCanvasImg(
-        this.mrzBackgroundImage
-      );
-      ctx.drawImage(
-        mrzBackground,
-        this.constructor.#mrzUnderlayXY[0],
-        this.constructor.#mrzUnderlayXY[1],
-        this.constructor.#mrzUnderlayArea[0],
-        this.constructor.#mrzUnderlayArea[1]
-      );
-    }
-    ctx.fillStyle = this.#numberUnderlayColorWithAlpha;
-    ctx.fillRect(
-      this.constructor.#numberUnderlayXY[0],
-      this.constructor.#numberUnderlayXY[1],
-      this.constructor.#numberUnderlayArea[0],
-      this.constructor.#numberUnderlayArea[1]
-    );
-    let barcode;
-    if (this.useDigitalSeal) {
-      barcode = [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }];
-    } else {
-      barcode = model.url;
-    }
-    const images = await Promise.all([
-      qrLite.toCanvas(barcode, {
-        errorCorrectionLevel: this.barcodeErrorCorrection,
-        version: 9,
-        margin: 0,
-        color: {
-          dark: this.barcodeDarkColor,
-          light: this.barcodeLightColor
-        }
-      }),
-      this.constructor.#generateCanvasImg(this.logo),
-      this.constructor.#generateCanvasImg(this.smallLogo)
-    ]);
-    ctx.drawImage(
-      images[0], this.constructor.#numberUnderlayXY[0] - 24 - images[0].width, 48
-    );
-    this.constructor.#fitImgInArea(
-      images[1], ctx,
-      this.constructor.#logoBackXY[0],
-      this.constructor.#logoBackXY[1],
-      this.constructor.#backLogoArea[0],
-      this.constructor.#backLogoArea[1]
-    );
-    ctx.drawImage(
-      images[2],
-      this.constructor.#smallLogoXY[0],
-      this.constructor.#smallLogoXY[1],
-      this.constructor.#smallLogoArea[0],
-      this.constructor.#smallLogoArea[1]
-    );
-    ctx.fillStyle = this.textColor;
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillText(
-      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}${this.constructor.#headerSeparator}${this.constructor.#documentSize}`,
-      this.constructor.#shortHeaderXY[0],
-      this.constructor.#shortHeaderXY[1],
-      this.constructor.#smallLogoArea[0]
-    );
-
-    ctx.fillStyle = this.headerColor;
-    ctx.font = this.constructor.#headerFont;
-    ctx.fillText(
-      this.ratingsHeader[0],
-      this.constructor.#backColumns,
-      this.constructor.#backRows[0]
-    );
-    ctx.fillText(
-      this.limitationsHeader[0],
-      this.constructor.#backColumns,
-      this.constructor.#backRows[2]
-    );
-    const declarationWidth = this.constructor.#backColumns +
-      ctx.measureText(this.ratingsHeader[0]).width;
-    const issueWidth = this.constructor.#backColumns +
-      ctx.measureText(this.limitationsHeader[0]).width;
-
-    ctx.font = this.constructor.#intlFont;
-    ctx.fillText(
-      `/ ${this.ratingsHeader[1]}/ ${this.ratingsHeader[2]}`,
-      declarationWidth,
-      this.constructor.#backRows[0]
-    );
-    ctx.fillText(
-      `/ ${this.limitationsHeader[1]}/ ${this.limitationsHeader[2]}`,
-      issueWidth,
-      this.constructor.#backRows[2]);
-
-    ctx.fillStyle = this.textColor;
-    ctx.font = this.constructor.#dataFont;
-    let splitString = model.ratings.toVIZ().split(/\r?\n/);
-    for (let i = 0; i < splitString.length; i += 1) {
-      ctx.fillText(
-        splitString[i],
-        this.constructor.#backColumns,
-        this.constructor.#backRows[1] + (i * 30)
-      );
-    }
-    splitString = model.limitations.toVIZ().split(/\r?\n/);
-    for (let i = 0; i < splitString.length; i += 1) {
-      ctx.fillText(
-        splitString[i],
-        this.constructor.#backColumns,
-        this.constructor.#backRows[3] + (i * 30)
-      );
-    }
-    ctx.fillText(
-      model.number.toVIZ(),
-      this.constructor.#backNumberXY[0],
-      this.constructor.#backNumberXY[1],
-      1004 - this.constructor.#backNumberXY[0]
-    );
-
-    ctx.fillStyle = this.mrzColor;
-    ctx.font = this.constructor.#mrzFont;
-    for (let i = 0; i < model.mrzLine1.length; i += 1) {
-      ctx.fillText(
-        model.mrzLine1[i],
-        this.constructor.#mrzX + (i * this.constructor.#mrzSpacing),
-        this.constructor.#mrzY[0]
-      );
-      ctx.fillText(
-        model.mrzLine2[i],
-        this.constructor.#mrzX + (i * this.constructor.#mrzSpacing),
-        this.constructor.#mrzY[1]
-      );
-      ctx.fillText(
-        model.mrzLine3[i],
-        this.constructor.#mrzX + (i * this.constructor.#mrzSpacing),
-        this.constructor.#mrzY[2]
-      );
-    }
-
-    if (this.showGuides) {
-      this.constructor.#drawBleedAndSafeLines(ctx);
-    }
-
-    return canvas;
-  }
-
-  async loadCanvasFonts() {
-    this.fonts.add(this.constructor.#mrzFontFace);
-    this.fonts.add(this.constructor.#vizFontFace);
-    this.fonts.add(this.constructor.#vizBoldFontFace);
-    this.fonts.add(this.constructor.#vizItalicFontFace);
-    this.fonts.add(this.constructor.#signatureFontFace);
-    await Promise.all([
-      this.constructor.#mrzFontFace.load(),
-      this.constructor.#vizFontFace.load(),
-      this.constructor.#vizBoldFontFace.load(),
-      this.constructor.#vizItalicFontFace.load(),
-      this.constructor.#signatureFontFace.load()
-    ]);
-  }
-
-  // Text constants used in image generation (static)
-  static #headerSeparator = " · ";
-  static #documentSize = "TD1";
-
-  // Font information used in card generation (static)
+  /* Font information used in card generation. */
   static #mrzFontFace = new FontFace(
     "OCR-B",
     "url('/fonts/OCR-B-regular-web.woff2') format('woff2')," +
@@ -591,11 +314,15 @@ class CrewLicenseRenderer {
   static get #mrzFont() {
     return `44px ${this.#mrzFontFace.family}`;
   }
-  static get #signatureFont() {
+  static get signatureFont() {
     return `61px ${this.#signatureFontFace.family}`;
   }
 
-  // Coordinates used in card generation (static)
+  /* Text constants used in image generation. */
+  static #headerSeparator = " · ";
+  static #documentSize = "TD1";
+
+  /* Coordinates, widths, and heights used in card generation. */
   static #mainHeaderX = 1004;
   static #mainHeaderY = [48, 85];
   static #photoUnderlayXY = [48, 0];
@@ -640,10 +367,11 @@ class CrewLicenseRenderer {
     221, // Date/Place of Issue Header
     248, // Date/Place of Issue Header (Alternate Language 1)
   ];
-
-  // Areas used in card generation (static)
   static #cardArea = [1052, 672];
-  static cutCardArea = [1020, 640];
+  static get cutCardArea() { return [1020, 640]; }
+  static get signatureArea() { return [271, 81]; }
+  static #bleed = 16;
+  static #safe = 48;
   static #photoUnderlayArea = [319, 527];
   static #photoArea = [271, 362];
   static #logoUnderlayArea = [417, 71];
@@ -652,167 +380,510 @@ class CrewLicenseRenderer {
   static #logoArea = [271, 61];
   static #backLogoArea = [337, 39];
   static #smallLogoArea = [103, 103];
-  static #signatureArea = [271, 81];
 
-  // Methods used in card generation (static)
-  static #generateCanvasImg(img) {
-    return new Promise((resolve, reject) => {
-      const imgNode = new Image();
-      imgNode.addEventListener(
-        "load",
-        () => { resolve(imgNode); },
-        false
-      );
-      imgNode.src = img;
-    });
+  /** Load the fonts used by this renderer. */
+  async loadCanvasFonts() {
+    this.fonts.add(CrewLicenseRenderer.#mrzFontFace);
+    this.fonts.add(CrewLicenseRenderer.#vizFontFace);
+    this.fonts.add(CrewLicenseRenderer.#vizBoldFontFace);
+    this.fonts.add(CrewLicenseRenderer.#vizItalicFontFace);
+    this.fonts.add(CrewLicenseRenderer.#signatureFontFace);
+    await Promise.all([
+      CrewLicenseRenderer.#mrzFontFace.load(),
+      CrewLicenseRenderer.#vizFontFace.load(),
+      CrewLicenseRenderer.#vizBoldFontFace.load(),
+      CrewLicenseRenderer.#vizItalicFontFace.load(),
+      CrewLicenseRenderer.#signatureFontFace.load()
+    ]);
   }
-  static #fitImgInArea(img, ctx, x, y, width, height) {
-    const hRatio = width / img.width;
-    const vRatio = height / img.height;
-    const ratio = Math.min(hRatio, vRatio);
-    const centerShiftX = (width - img.width * ratio) / 2;
-    const centerShiftY = (height - img.height * ratio) / 2;
-    ctx.drawImage(
-      img, 0, 0, img.width, img.height,
-      x + centerShiftX, y + centerShiftY,
-      img.width * ratio, img.height * ratio
-    );
-  }
-  static #fillAreaWithImg(img, ctx, x, y, width, height) {
-    const hRatio = width / img.width;
-    const vRatio = height / img.height;
-    const ratio = Math.max(hRatio, vRatio);
-    const centerShiftX = (width - img.width * ratio) / 2;
-    const centerShiftY = (height - img.height * ratio) / 2;
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + width, y);
-    ctx.lineTo(x + width, y + height);
-    ctx.lineTo(x, y + height);
-    ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(
-      img, 0, 0, img.width, img.height,
-      x + centerShiftX, y + centerShiftY,
-      img.width * ratio, img.height * ratio
-    );
-    ctx.restore();
-  }
-  static #drawBleedAndSafeLines(ctx) {
-    ctx.strokeStyle = "#ff0000";
-    ctx.lineWidth = 1;
-    ctx.lineCap = "butt";
-    const bleed = 16;
-    ctx.beginPath();
-    ctx.moveTo(0, bleed);
-    ctx.lineTo(this.#cardArea[0], bleed);
-    ctx.closePath(); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, this.#cardArea[1] - bleed);
-    ctx.lineTo(this.#cardArea[0], this.#cardArea[1] - bleed);
-    ctx.closePath(); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(bleed, 0);
-    ctx.lineTo(bleed, this.#cardArea[1]);
-    ctx.closePath(); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(this.#cardArea[0] - bleed, 0);
-    ctx.lineTo(this.#cardArea[0] - bleed, this.#cardArea[1]);
-    ctx.closePath(); ctx.stroke();
 
-    ctx.strokeStyle = "#0000ff";
-    const safe = 48;
-    ctx.beginPath();
-    ctx.moveTo(0, safe);
-    ctx.lineTo(this.#cardArea[0], safe);
-    ctx.closePath(); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, this.#cardArea[1] - safe);
-    ctx.lineTo(this.#cardArea[0], this.#cardArea[1] - safe);
-    ctx.closePath(); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(safe, 0);
-    ctx.lineTo(safe, this.#cardArea[1]);
-    ctx.closePath(); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(this.#cardArea[0] - safe, 0);
-    ctx.lineTo(this.#cardArea[0] - safe, this.#cardArea[1]);
-    ctx.closePath(); ctx.stroke();
-  }
-  * generateNewSignatureFromText(canvasFallback) {
-    let oldSignature = "";
-    let signature = "";
+  /** Generate the front image and return the canvas.
+   * @param { CrewID } model
+   * @param { HTMLCanvasElement } fallback
+   */
+  async generateCardFront(model, fallback) {
     let canvas;
-
-    while (true) {
-      signature = yield;
-      if (oldSignature === signature) {
-        yield { newSignature: false, signature: canvas };
-      }
-      else {
-        oldSignature = signature;
-        canvas = this.#generateSignatureFromText(signature, canvasFallback);
-        yield { newSignature: true, signature: canvas };
-      }
-    }
-  }
-  #generateSignatureFromText(signature, canvasFallback) {
-    let canvas;
-    let ctx;
     if (typeof OffscreenCanvas === "undefined") {
-      canvas = canvasFallback;
-      canvas.width = this.constructor.#signatureArea[0];
-      canvas.height = this.constructor.#signatureArea[1];
+      canvas = fallback;
+      canvas.width = CrewLicenseRenderer.#cardArea[0];
+      canvas.height = CrewLicenseRenderer.#cardArea[1];
     }
     else {
-      canvas = new OffscreenCanvas(this.constructor.#signatureArea[0], this.constructor.#signatureArea[1]);
+      canvas = new OffscreenCanvas(
+        CrewLicenseRenderer.#cardArea[0],
+        CrewLicenseRenderer.#cardArea[1]
+      );
     }
-    ctx = canvas.getContext("2d");
-    ctx.fillStyle = this.textColor;
-    ctx.font = this.constructor.#signatureFont;
+    const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
-    const centerShift = (canvas.width - ctx.measureText(signature).width) / 2;
-    ctx.fillText(
-      signature, Math.max(centerShift, 0), 8,
-      this.constructor.#signatureArea[0] - 6
+
+    const images = await Promise.all([
+      this.frontBackgroundImage ? loadImageFromURL(this.frontBackgroundImage) : null,
+      loadImageFromURL(model.picture),
+      this.logo ? loadImageFromURL(this.logo) : null,
+      typeof model.signature !== typeof canvas ? loadImageFromURL(model.signature) : null
+    ]);
+
+    ctx.fillStyle = this.frontBackgroundColor;
+    ctx.fillRect(
+      0, 0,
+      CrewLicenseRenderer.#cardArea[0],
+      CrewLicenseRenderer.#cardArea[1]
     );
+    if (images[0]) {
+      ctx.drawImage(
+        images[0],
+        0, 0,
+        CrewLicenseRenderer.#cardArea[0],
+        CrewLicenseRenderer.#cardArea[1]
+      );
+    }
+    ctx.fillStyle = "#00003300";
+    ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
+    ctx.fillRect(
+      CrewLicenseRenderer.#photoUnderlayXY[0],
+      CrewLicenseRenderer.#photoUnderlayXY[1],
+      CrewLicenseRenderer.#photoUnderlayArea[0],
+      CrewLicenseRenderer.#photoUnderlayArea[1]
+    );
+    fillAreaWithImage(
+      images[1], ctx,
+      CrewLicenseRenderer.#photoXY[0],
+      CrewLicenseRenderer.#photoXY[1],
+      CrewLicenseRenderer.#photoArea[0],
+      CrewLicenseRenderer.#photoArea[1]
+    );
+    if (images[2]) {
+      fitImageInArea(
+        images[2], ctx,
+        CrewLicenseRenderer.#logoFrontXY[0],
+        CrewLicenseRenderer.#logoFrontXY[1],
+        CrewLicenseRenderer.#logoArea[0],
+        CrewLicenseRenderer.#logoArea[1]
+      );
+    }
+    if (typeof model.signature !== typeof canvas) {
+      fitImageInArea(
+        images[3], ctx,
+        CrewLicenseRenderer.#signatureXY[0],
+        CrewLicenseRenderer.#signatureXY[1],
+        CrewLicenseRenderer.signatureArea[0],
+        CrewLicenseRenderer.signatureArea[1],
+      );
+    }
+    else {
+      ctx.drawImage(
+        model.signature,
+        CrewLicenseRenderer.#signatureXY[0],
+        CrewLicenseRenderer.#signatureXY[1],
+        CrewLicenseRenderer.signatureArea[0],
+        CrewLicenseRenderer.signatureArea[1]
+      );
+    }
+
+    ctx.fillStyle = this.headerColor;
+    ctx.font = CrewLicenseRenderer.#mainHeaderFont;
+    ctx.fillText(
+      this.fullAuthority,
+      Math.max(
+        CrewLicenseRenderer.#mainHeaderX -
+          ctx.measureText(this.fullAuthority).width,
+        CrewLicenseRenderer.#frontColumns
+      ),
+      CrewLicenseRenderer.#mainHeaderY[0],
+      CrewLicenseRenderer.#mainHeaderX - CrewLicenseRenderer.#frontColumns
+    );
+    ctx.font = CrewLicenseRenderer.#documentHeaderFont;
+    let documentHeaderWidth = ctx.measureText(this.fullDocumentName).width;
+    ctx.fillText(
+      this.fullDocumentName,
+      CrewLicenseRenderer.#mainHeaderX - documentHeaderWidth,
+      CrewLicenseRenderer.#mainHeaderY[1]
+    );
+    ctx.font = CrewLicenseRenderer.#separatorHeaderFont;
+    documentHeaderWidth += ctx.measureText(CrewLicenseRenderer.#headerSeparator).width;
+    ctx.fillText(
+      CrewLicenseRenderer.#headerSeparator,
+      CrewLicenseRenderer.#mainHeaderX - documentHeaderWidth,
+      CrewLicenseRenderer.#mainHeaderY[1]
+    );
+    ctx.font = CrewLicenseRenderer.#documentHeaderFont;
+    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
+    ctx.fillText(
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
+      CrewLicenseRenderer.#mainHeaderX - documentHeaderWidth,
+      CrewLicenseRenderer.#mainHeaderY[1]
+    );
+
+    ctx.fillStyle = this.headerColor;
+    ctx.font = CrewLicenseRenderer.#headerFont;
+    ctx.fillText(
+      this.nameHeader[0],
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[0]
+    );
+    ctx.fillText(
+      this.genderHeader[0],
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[2]
+    );
+    ctx.fillText(
+      this.nationalityHeader[0],
+      CrewLicenseRenderer.#frontRow2Columns[0],
+      CrewLicenseRenderer.#frontRows[2]
+    );
+    ctx.fillText(
+      this.dateOfBirthHeader[0],
+      CrewLicenseRenderer.#frontRow2Columns[1],
+      CrewLicenseRenderer.#frontRows[2]
+    );
+    ctx.fillText(
+      this.authorityHeader[0],
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[6]
+    );
+    ctx.fillText(
+      this.privilegeHeader[0],
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[8]
+    );
+    ctx.fillText(
+      this.numberHeader[0],
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[10]
+    );
+    ctx.fillText(
+      this.dateOfExpirationHeader[0],
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[12]
+    );
+    const nameWidth = CrewLicenseRenderer.#frontColumns +
+      ctx.measureText(this.nameHeader[0]).width;
+    const genderWidth = CrewLicenseRenderer.#frontColumns +
+      ctx.measureText(this.genderHeader[0]).width;
+    const nationalityWidth = CrewLicenseRenderer.#frontRow2Columns[0] +
+      ctx.measureText(this.nationalityHeader[0]).width;
+    const dateOfBirthWidth = CrewLicenseRenderer.#frontRow2Columns[1] +
+      ctx.measureText(this.dateOfBirthHeader[0]).width;
+    const employerWidth = CrewLicenseRenderer.#frontColumns +
+      ctx.measureText(this.authorityHeader[0]).width;
+    const occupationWidth = CrewLicenseRenderer.#frontColumns +
+      ctx.measureText(this.privilegeHeader[0]).width;
+    const numberWidth = CrewLicenseRenderer.#frontColumns +
+      ctx.measureText(this.numberHeader[0]).width;
+    const dateOfExpirationWidth = CrewLicenseRenderer.#frontColumns +
+      ctx.measureText(this.dateOfExpirationHeader[0]).width;
+    
+    ctx.font = CrewLicenseRenderer.#intlFont;
+    ctx.fillText(
+      `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
+      nameWidth,
+      CrewLicenseRenderer.#frontRows[0]
+    );
+    ctx.fillText("/", genderWidth, CrewLicenseRenderer.#frontRows[2]);
+    ctx.fillText(
+      `${this.genderHeader[1]}/`,
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[3]
+    );
+    ctx.fillText(
+      this.genderHeader[2],
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[4]
+    );
+    ctx.fillText("/", nationalityWidth, CrewLicenseRenderer.#frontRows[2]);
+    ctx.fillText(
+      `${this.nationalityHeader[1]}/`,
+      CrewLicenseRenderer.#frontRow2Columns[0],
+      CrewLicenseRenderer.#frontRows[3]
+    );
+    ctx.fillText(
+      this.nationalityHeader[2],
+      CrewLicenseRenderer.#frontRow2Columns[0],
+      CrewLicenseRenderer.#frontRows[4]
+    );
+    ctx.fillText("/", dateOfBirthWidth, CrewLicenseRenderer.#frontRows[2]);
+    ctx.fillText(
+      `${this.dateOfBirthHeader[1]}/`,
+      CrewLicenseRenderer.#frontRow2Columns[1],
+      CrewLicenseRenderer.#frontRows[3]
+    );
+    ctx.fillText(
+      this.dateOfBirthHeader[2],
+      CrewLicenseRenderer.#frontRow2Columns[1],
+      CrewLicenseRenderer.#frontRows[4]
+    );
+    ctx.fillText(
+      `/ ${this.authorityHeader[1]}/ ${this.authorityHeader[2]}`,
+      employerWidth,
+      CrewLicenseRenderer.#frontRows[6]
+    );
+    ctx.fillText(
+      `/ ${this.privilegeHeader[1]}/ ${this.privilegeHeader[2]}`,
+      occupationWidth,
+      CrewLicenseRenderer.#frontRows[8]
+    );
+    ctx.fillText(
+      `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
+      numberWidth,
+      CrewLicenseRenderer.#frontRows[10]
+    );
+    ctx.fillText(
+      `/ ${this.dateOfExpirationHeader[1]}/ ${this.dateOfExpirationHeader[2]}`,
+      dateOfExpirationWidth,
+      CrewLicenseRenderer.#frontRows[12]
+    );
+
+    ctx.fillStyle = this.textColor;
+    ctx.font = CrewLicenseRenderer.#dataFont;
+    ctx.fillText(
+      model.fullName.toVIZ(),
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[1],
+      CrewLicenseRenderer.#mainHeaderX - CrewLicenseRenderer.#frontColumns
+    );
+    ctx.fillText(
+      model.genderMarker.toVIZ(),
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[5]
+    );
+    ctx.fillText(
+      model.nationalityCode.toVIZ(),
+      CrewLicenseRenderer.#frontRow2Columns[0],
+      CrewLicenseRenderer.#frontRows[5]
+    );
+    ctx.fillText(
+      model.birthDate.toVIZ(),
+      CrewLicenseRenderer.#frontRow2Columns[1],
+      CrewLicenseRenderer.#frontRows[5]
+    );
+    ctx.fillText(
+      model.subauthority.toVIZ(),
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[7],
+      CrewLicenseRenderer.#mainHeaderX - CrewLicenseRenderer.#frontColumns
+    );
+    ctx.fillText(
+      model.privilege.toVIZ(),
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[9],
+      CrewLicenseRenderer.#mainHeaderX - CrewLicenseRenderer.#frontColumns
+    );
+    ctx.fillText(
+      model.number.toVIZ(),
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[11]
+    );
+    ctx.fillText(
+      model.expirationDate.toVIZ(),
+      CrewLicenseRenderer.#frontColumns,
+      CrewLicenseRenderer.#frontRows[13]
+    );
+
+    if (this.showGuides) {
+      drawBleedAndSafeLines(
+        ctx,
+        CrewLicenseRenderer.#cardArea,
+        CrewLicenseRenderer.#bleed,
+        CrewLicenseRenderer.#safe
+      );
+    }
+
     return canvas;
   }
 
-  // Constructor
-  constructor(opt) {
-    if (opt) {
-      if (opt.headerColor) { this.headerColor = opt.headerColor; }
-      if (opt.textColor) { this.textColor = opt.textColor; }
-      if (opt.mrzColor) { this.mrzColor = opt.mrzColor; }
-      if (opt.frontBackgroundColor) { this.frontBackgroundColor = opt.frontBackgroundColor; }
-      if (opt.frontBackgroundImage) { this.frontBackgroundImage = opt.frontBackgroundImage; }
-      if (opt.backBackgroundColor) { this.backBackgroundColor = opt.backBackgroundColor; }
-      if (opt.backBackgroundImage) { this.backBackgroundImage = opt.backBackgroundImage; }
-      if (opt.mrzBackgroundColor) { this.mrzBackgroundColor = opt.mrzBackgroundColor; }
-      if (opt.mrzBackgroundImage) { this.mrzBackgroundImage = opt.mrzBackgroundImage; }
-      if (opt.numberUnderlayColor) { this.numberUnderlayColor = opt.numberUnderlayColor; }
-      if (opt.numberUnderlayAlpha) { this.numberUnderlayAlpha = opt.numberUnderlayAlpha; }
-      if (opt.logoUnderlayColor) { this.logoUnderlayColor = opt.logoUnderlayColor; }
-      if (opt.logoUnderlayAlpha) { this.logoUnderlayAlpha = opt.logoUnderlayAlpha; }
-      if (opt.logo) { this.logo = opt.logo; }
-      if (opt.smallLogo) { this.smallLogo = opt.smallLogo; }
-      if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
-      if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
-      if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }
-      if (opt.nameHeader) { this.nameHeader = opt.nameHeader; }
-      if (opt.genderHeader) { this.genderHeader = opt.genderHeader; }
-      if (opt.nationalityHeader) { this.nationalityHeader = opt.nationalityHeader; }
-      if (opt.dateOfBirthHeader) { this.dateOfBirthHeader = opt.dateOfBirthHeader; }
-      if (opt.authorityHeader) { this.authorityHeader = opt.authorityHeader; }
-      if (opt.privilegeHeader) { this.privilegeHeader = opt.privilegeHeader; }
-      if (opt.numberHeader) { this.numberHeader = opt.numberHeader; }
-      if (opt.dateOfExpirationHeader) { this.dateOfExpirationHeader = opt.dateOfExpirationHeader; }
-      if (opt.ratingsHeader) { this.ratingsHeader = opt.ratingsHeader; }
-      if (opt.limitationsHeader) { this.limitationsHeader = opt.limitationsHeader; }
-      if (opt.useDigitalSeal !== undefined) { this.useDigitalSeal = opt.useDigitalSeal; }
+  /** Generate the back image and return the canvas.
+   * @param { CrewID } model
+   * @param { HTMLCanvasElement } fallback
+   */
+  async generateCardBack(model, fallback) {
+    let canvas;
+    if (typeof OffscreenCanvas === "undefined") {
+      canvas = fallback;
+      canvas.setAttribute("width", CrewLicenseRenderer.#cardArea[0]);
+      canvas.setAttribute("height", CrewLicenseRenderer.#cardArea[1]);
     }
+    else {
+      canvas = new OffscreenCanvas(CrewLicenseRenderer.#cardArea[0], CrewLicenseRenderer.#cardArea[1]);
+    }
+    const ctx = canvas.getContext("2d");
+    ctx.textBaseline = "top";
+    const barcode = this.useDigitalSeal ? [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }] : model.url;
+
+    const images = await Promise.all([
+      this.backBackgroundImage ? loadImageFromURL(this.backBackgroundImage) : null,
+      this.mrzBackgroundImage ? loadImageFromURL(this.mrzBackgroundImage) : null,
+      qrLite.toCanvas(barcode, {
+        errorCorrectionLevel: this.barcodeErrorCorrection,
+        version: 9,
+        margin: 0,
+        color: {
+          dark: this.barcodeDarkColor,
+          light: this.barcodeLightColor
+        }
+      }),
+      this.logo ? loadImageFromURL(this.logo) : null,
+      this.smallLogo ? loadImageFromURL(this.smallLogo) : null
+    ]);
+
+    ctx.fillStyle = this.backBackgroundColor;
+    ctx.fillRect(
+      0, 0,
+      CrewLicenseRenderer.#cardArea[0],
+      CrewLicenseRenderer.#cardArea[1]
+    );
+    if (images[0]) {
+      ctx.drawImage(
+        images[0],
+        0, 0,
+        CrewLicenseRenderer.#cardArea[0],
+        CrewLicenseRenderer.#cardArea[1]
+      );
+    }
+    ctx.fillStyle = this.#logoUnderlayColorWithAlpha;
+    ctx.fillRect(
+      CrewLicenseRenderer.#logoUnderlayXY[0],
+      CrewLicenseRenderer.#logoUnderlayXY[1],
+      CrewLicenseRenderer.#logoUnderlayArea[0],
+      CrewLicenseRenderer.#logoUnderlayArea[1]
+    );
+    ctx.fillStyle = this.mrzBackgroundColor;
+    ctx.fillRect(
+      CrewLicenseRenderer.#mrzUnderlayXY[0],
+      CrewLicenseRenderer.#mrzUnderlayXY[1],
+      CrewLicenseRenderer.#mrzUnderlayArea[0],
+      CrewLicenseRenderer.#mrzUnderlayArea[1]
+    );
+    if (images[1]) {
+      ctx.drawImage(
+        images[1],
+        CrewLicenseRenderer.#mrzUnderlayXY[0],
+        CrewLicenseRenderer.#mrzUnderlayXY[1],
+        CrewLicenseRenderer.#mrzUnderlayArea[0],
+        CrewLicenseRenderer.#mrzUnderlayArea[1]
+      );
+    }
+    ctx.fillStyle = this.#numberUnderlayColorWithAlpha;
+    ctx.fillRect(
+      CrewLicenseRenderer.#numberUnderlayXY[0],
+      CrewLicenseRenderer.#numberUnderlayXY[1],
+      CrewLicenseRenderer.#numberUnderlayArea[0],
+      CrewLicenseRenderer.#numberUnderlayArea[1]
+    );
+    ctx.drawImage(
+      images[2], CrewLicenseRenderer.#numberUnderlayXY[0] - 24 - images[2].width, 48
+    );
+    if (images[3]) {
+      fitImageInArea(
+        images[3], ctx,
+        CrewLicenseRenderer.#logoBackXY[0],
+        CrewLicenseRenderer.#logoBackXY[1],
+        CrewLicenseRenderer.#backLogoArea[0],
+        CrewLicenseRenderer.#backLogoArea[1]
+      );
+    }
+    if (images[4]) {
+      ctx.drawImage(
+        images[4],
+        CrewLicenseRenderer.#smallLogoXY[0],
+        CrewLicenseRenderer.#smallLogoXY[1],
+        CrewLicenseRenderer.#smallLogoArea[0],
+        CrewLicenseRenderer.#smallLogoArea[1]
+      );
+    }
+
+    ctx.fillStyle = this.textColor;
+    ctx.font = CrewLicenseRenderer.#headerFont;
+    ctx.fillText(
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}${CrewLicenseRenderer.#headerSeparator}${CrewLicenseRenderer.#documentSize}`,
+      CrewLicenseRenderer.#shortHeaderXY[0],
+      CrewLicenseRenderer.#shortHeaderXY[1],
+      CrewLicenseRenderer.#smallLogoArea[0]
+    );
+
+    ctx.fillStyle = this.headerColor;
+    ctx.font = CrewLicenseRenderer.#headerFont;
+    ctx.fillText(
+      this.ratingsHeader[0],
+      CrewLicenseRenderer.#backColumns,
+      CrewLicenseRenderer.#backRows[0]
+    );
+    ctx.fillText(
+      this.limitationsHeader[0],
+      CrewLicenseRenderer.#backColumns,
+      CrewLicenseRenderer.#backRows[2]
+    );
+    const declarationWidth = CrewLicenseRenderer.#backColumns +
+      ctx.measureText(this.ratingsHeader[0]).width;
+    const issueWidth = CrewLicenseRenderer.#backColumns +
+      ctx.measureText(this.limitationsHeader[0]).width;
+
+    ctx.font = CrewLicenseRenderer.#intlFont;
+    ctx.fillText(
+      `/ ${this.ratingsHeader[1]}/ ${this.ratingsHeader[2]}`,
+      declarationWidth,
+      CrewLicenseRenderer.#backRows[0]
+    );
+    ctx.fillText(
+      `/ ${this.limitationsHeader[1]}/ ${this.limitationsHeader[2]}`,
+      issueWidth,
+      CrewLicenseRenderer.#backRows[2]);
+
+    ctx.fillStyle = this.textColor;
+    ctx.font = CrewLicenseRenderer.#dataFont;
+    let splitString = model.ratings.toVIZ().split(/\r?\n/);
+    for (let i = 0; i < splitString.length; i += 1) {
+      ctx.fillText(
+        splitString[i],
+        CrewLicenseRenderer.#backColumns,
+        CrewLicenseRenderer.#backRows[1] + (i * 30)
+      );
+    }
+    splitString = model.limitations.toVIZ().split(/\r?\n/);
+    for (let i = 0; i < splitString.length; i += 1) {
+      ctx.fillText(
+        splitString[i],
+        CrewLicenseRenderer.#backColumns,
+        CrewLicenseRenderer.#backRows[3] + (i * 30)
+      );
+    }
+    ctx.fillText(
+      model.number.toVIZ(),
+      CrewLicenseRenderer.#backNumberXY[0],
+      CrewLicenseRenderer.#backNumberXY[1],
+      1004 - CrewLicenseRenderer.#backNumberXY[0]
+    );
+
+    ctx.fillStyle = this.mrzColor;
+    ctx.font = CrewLicenseRenderer.#mrzFont;
+    for (let i = 0; i < model.mrzLine1.length; i += 1) {
+      ctx.fillText(
+        model.mrzLine1[i],
+        CrewLicenseRenderer.#mrzX + (i * CrewLicenseRenderer.#mrzSpacing),
+        CrewLicenseRenderer.#mrzY[0]
+      );
+      ctx.fillText(
+        model.mrzLine2[i],
+        CrewLicenseRenderer.#mrzX + (i * CrewLicenseRenderer.#mrzSpacing),
+        CrewLicenseRenderer.#mrzY[1]
+      );
+      ctx.fillText(
+        model.mrzLine3[i],
+        CrewLicenseRenderer.#mrzX + (i * CrewLicenseRenderer.#mrzSpacing),
+        CrewLicenseRenderer.#mrzY[2]
+      );
+    }
+
+    if (this.showGuides) {
+      drawBleedAndSafeLines(
+        ctx,
+        CrewLicenseRenderer.#cardArea,
+        CrewLicenseRenderer.#bleed,
+        CrewLicenseRenderer.#safe
+      );
+    }
+
+    return canvas;
   }
 }
 

@@ -6,6 +6,7 @@
 import { CrewLicense } from "/modules/CrewLicense.js";
 import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
 import { CrewCertificateRenderer } from "../crew-certificate/CrewCertificateRenderer.js";
+import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 
 class CrewLicenseViewModel {
   #model = new CrewLicense({
@@ -508,8 +509,11 @@ class CrewLicenseViewModel {
   }
   onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
-        this.#signatureFallback
+      this.#signatureGenerator = ifNewGenerateSignatureFromText(
+        this.#signatureFallback,
+        CrewLicenseRenderer.signatureArea,
+        this.#renderer.textColor,
+        CrewLicenseRenderer.signatureFont
       );
     }
     this.#signatureGenerator.next();

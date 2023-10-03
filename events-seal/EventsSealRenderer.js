@@ -131,8 +131,8 @@ class EventsSealRenderer {
   }
 
   /* Coordinates, widths, and heights used in card generation. */
-  static get cutCardArea() { return [276, 404]; }
   static #cardArea = [308, 436];
+  static get cutCardArea() { return [276, 404]; }
   static #bleed = 16;
   static #safe = 48;
   static #textX = 168;

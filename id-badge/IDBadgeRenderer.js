@@ -56,6 +56,7 @@ class IDBadgeRenderer {
    * @param { string[] } [opt.numberHeader] - Header text for the document number property: ['primary', 'language 1', 'language 2'].
    * @param { string[] } [opt.dateOfExpirationHeader] - Header text for the date of expiration property: ['primary', 'language 1', 'language 2'].
    * @param { string[] } [opt.additionalElementsHeader] - Header text for the additional elements property: ['primary', 'language 1', 'language 2'].
+   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one available from `window.document`.
    */
   constructor(opt) {
     this.barcodeDarkColor = opt.barcodeDarkColor ?? "#000000ff";
@@ -88,6 +89,7 @@ class IDBadgeRenderer {
     this.numberHeader = opt.numberHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
     this.dateOfExpirationHeader = opt.dateOfExpirationHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
     this.additionalElementsHeader = opt.additionalElementsHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.fonts = opt.fonts ?? null;
   }
 
   /** The RGBA color for the dark (black) areas for rendered barcodes: '#RRGGBBAA'.
@@ -334,7 +336,7 @@ class IDBadgeRenderer {
     125  // Additional Elements Data
   ];
   static #cardArea = [672, 1052];
-  static cutCardArea = [640, 1020];
+  static get cutCardArea() { return [640, 1020]; }
   static #bleed = 16;
   static #safe = 48;
   static #photoUnderlayArea = [386, 673];
