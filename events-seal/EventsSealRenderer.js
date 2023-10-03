@@ -39,32 +39,18 @@ class EventsSealRenderer {
    * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = "#000000ff";
-    this.barcodeLightColor = "00000000";
-    this.barcodeErrorCorrection = "M";
-    this.headerColor = "#000000";
-    this.frontBackgroundColor = "#eeeeee";
-    this.frontBackgroundImage = null;
-    this.logo = null;
-    this.showGuides = false;
-    this.fullAuthority = "Main Header";
-    this.fullDocumentName = "Secondary Header";
-    this.fonts = null;
-
-    if (opt) {
-      if (opt.barcodeDarkColor) { this.barcodeDarkColor = opt.barcodeDarkColor; }
-      if (opt.barcodeLightColor) { this.barcodeLightColor = opt.barcodeLightColor; }
-      if (opt.barcodeErrorCorrection) { this.barcodeErrorCorrection = opt.barcodeErrorCorrection; }
-      if (opt.headerColor) { this.headerColor = opt.headerColor; }
-      if (opt.textColor) { this.textColor = opt.textColor; }
-      if (opt.frontBackgroundColor) { this.frontBackgroundColor = opt.frontBackgroundColor; }
-      if (opt.frontBackgroundImage) { this.frontBackgroundImage = opt.frontBackgroundImage; }
-      if (opt.logo) { this.logo = opt.logo; }
-      if (opt.showGuides !== undefined) { this.showGuides = opt.showGuides; }
-      if (opt.fullAuthority) { this.fullAuthority = opt.fullAuthority; }
-      if (opt.fullDocumentName) { this.fullDocumentName = opt.fullDocumentName; }
-      if (opt.fonts) { this.fonts = opt.fonts; }
-    }
+    this.barcodeDarkColor = opt?.barcodeDarkColor ?? "#000000ff";
+    this.barcodeLightColor = opt?.barcodeLightColor ?? "00000000";
+    this.barcodeErrorCorrection = opt?.barcodeErrorCorrection ?? "M";
+    this.headerColor = opt?.headerColor ?? "#000000";
+    this.textColor = opt?.textColor ?? "#000000";
+    this.frontBackgroundColor = opt?.frontBackgroundColor ?? "#eeeeee";
+    this.frontBackgroundImage = opt?.frontBackgroundImage ?? null;
+    this.logo = opt?.logo ?? null;
+    this.showGuides = opt?.showGuides ?? false;
+    this.fullAuthority = opt?.fullAuthority ?? "Main Header";
+    this.fullDocumentName = opt?.fullDocumentName ?? "Secondary Header";
+    this.fonts = opt?.fonts ?? null;
   }
 
   /** The RGBA color for the dark (black) areas for rendered barcodes: '#RRGGBBAA'.
@@ -87,7 +73,7 @@ class EventsSealRenderer {
    */
   headerColor;
 
-  /** The RGB color for non-header text: '#RRGGBB'
+  /** The RGB color for non-header text: '#RRGGBB'.
    * @type { string }
    */
   textColor;
