@@ -39,18 +39,18 @@ class EventsSealRenderer {
    * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt?.barcodeDarkColor ?? "#000000ff";
-    this.barcodeLightColor = opt?.barcodeLightColor ?? "00000000";
-    this.barcodeErrorCorrection = opt?.barcodeErrorCorrection ?? "M";
-    this.headerColor = opt?.headerColor ?? "#000000";
-    this.textColor = opt?.textColor ?? "#000000";
-    this.frontBackgroundColor = opt?.frontBackgroundColor ?? "#eeeeee";
-    this.frontBackgroundImage = opt?.frontBackgroundImage ?? null;
-    this.logo = opt?.logo ?? null;
-    this.showGuides = opt?.showGuides ?? false;
-    this.fullAuthority = opt?.fullAuthority ?? "Main Header";
-    this.fullDocumentName = opt?.fullDocumentName ?? "Secondary Header";
-    this.fonts = opt?.fonts ?? null;
+    this.barcodeDarkColor = opt.barcodeDarkColor ?? "#000000ff";
+    this.barcodeLightColor = opt.barcodeLightColor ?? "00000000";
+    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ?? "M";
+    this.headerColor = opt.headerColor ?? "#000000";
+    this.textColor = opt.textColor ?? "#000000";
+    this.frontBackgroundColor = opt.frontBackgroundColor ?? "#eeeeee";
+    this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
+    this.logo = opt.logo ?? null;
+    this.showGuides = opt.showGuides ?? false;
+    this.fullAuthority = opt.fullAuthority ?? "Main Header";
+    this.fullDocumentName = opt.fullDocumentName ?? "Secondary Header";
+    this.fonts = opt.fonts ?? null;
   }
 
   /** The RGBA color for the dark (black) areas for rendered barcodes: '#RRGGBBAA'.
@@ -113,7 +113,7 @@ class EventsSealRenderer {
    */
   fonts;
 
-  /* Font information used in card generation (static) */
+  /* Font information used in card generation. */
   static #vizFontFace = new FontFace(
     "Open Sans",
     "url('/fonts/OpenSans-Regular.woff') format('woff')"
@@ -130,7 +130,7 @@ class EventsSealRenderer {
     return `18px ${this.#vizFontFace.family}`;
   }
 
-  /* Coordinates, widths, and heights used in card generation */
+  /* Coordinates, widths, and heights used in card generation. */
   static get cutCardArea() { return [276, 404]; }
   static #cardArea = [308, 436];
   static #bleed = 16;
