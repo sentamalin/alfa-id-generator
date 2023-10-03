@@ -462,7 +462,7 @@ class CrewLicenseRenderer {
         CrewLicenseRenderer.#logoArea[1]
       );
     }
-    if (typeof model.signature !== typeof canvas) {
+    if (images[3]) {
       fitImageInArea(
         images[3], ctx,
         CrewLicenseRenderer.#signatureXY[0],
@@ -704,7 +704,10 @@ class CrewLicenseRenderer {
       canvas.setAttribute("height", CrewLicenseRenderer.#cardArea[1]);
     }
     else {
-      canvas = new OffscreenCanvas(CrewLicenseRenderer.#cardArea[0], CrewLicenseRenderer.#cardArea[1]);
+      canvas = new OffscreenCanvas(
+        CrewLicenseRenderer.#cardArea[0],
+        CrewLicenseRenderer.#cardArea[1]
+      );
     }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";

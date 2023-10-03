@@ -5,6 +5,7 @@
 
 import { CrewCertificate } from "/modules/CrewCertificate.js";
 import { CrewCertificateRenderer } from "./CrewCertificateRenderer.js";
+import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 
 class CrewCertificateViewModel {
   #model = new CrewCertificate({
@@ -503,8 +504,11 @@ class CrewCertificateViewModel {
   }
   onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
-        this.#signatureFallback
+      this.#signatureGenerator = ifNewGenerateSignatureFromText(
+        this.#signatureFallback,
+        CrewCertificateRenderer.signatureArea,
+        this.#renderer.textColor,
+        CrewCertificateRenderer.signatureFont
       );
     }
     this.#signatureGenerator.next();
