@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { CrewLicense } from "/modules/CrewLicense.js";
+import { CrewLicense } from "../modules/CrewLicense.js";
 import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
-import { CrewCertificateRenderer } from "../crew-certificate/CrewCertificateRenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 
 class CrewLicenseViewModel {
@@ -1559,8 +1558,8 @@ class CrewLicenseViewModel {
   async #generateCardBack() {
     await this.#signSeal();
     const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
-    this.#cardBackElement.width = CrewCertificateRenderer.cutCardArea[0];
-    this.#cardBackElement.height = CrewCertificateRenderer.cutCardArea[1];
+    this.#cardBackElement.width = CrewLicenseRenderer.cutCardArea[0];
+    this.#cardBackElement.height = CrewLicenseRenderer.cutCardArea[1];
     const ctx = this.#cardBackElement.getContext("2d");
     ctx.drawImage(
       canvas, 16, 16, this.#cardBackElement.width, this.#cardBackElement.height,

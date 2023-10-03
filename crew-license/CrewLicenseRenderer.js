@@ -398,7 +398,7 @@ class CrewLicenseRenderer {
   }
 
   /** Generate the front image and return the canvas.
-   * @param { CrewID } model
+   * @param { CrewLicense } model
    * @param { HTMLCanvasElement } fallback
    */
   async generateCardFront(model, fallback) {
@@ -693,7 +693,7 @@ class CrewLicenseRenderer {
   }
 
   /** Generate the back image and return the canvas.
-   * @param { CrewID } model
+   * @param { CrewLicense } model
    * @param { HTMLCanvasElement } fallback
    */
   async generateCardBack(model, fallback) {
