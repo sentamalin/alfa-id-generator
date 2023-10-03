@@ -11,7 +11,7 @@
  * @param { number } width - The width of the area in which the image should fill.
  * @param { number } height - The height of the area in which the image should fill.
  */
-function fillAreaWithImg(img, ctx, x, y, width, height) {
+function fillAreaWithImage(img, ctx, x, y, width, height) {
   const hRatio = width / img.width;
   const vRatio = height / img.height;
   const ratio = Math.max(hRatio, vRatio);
@@ -33,4 +33,4 @@ function fillAreaWithImg(img, ctx, x, y, width, height) {
   ctx.restore();
 }
 
-export { fillAreaWithImg };
+export { fillAreaWithImage };
