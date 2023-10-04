@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { CrewCertificate  } from "../modules/CrewCertificate.js";
 import * as b45 from "../modules/base45-ts/base45.js";
@@ -10,266 +8,363 @@ import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
 import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
 import { fillAreaWithImage } from "../modules/utilities/fill-area-with-image.js";
 import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-lines.js";
+import { BACKGROUND_COLOR, BARCODE_DARK_COLOR, BARCODE_ERROR_CORRECTION, BARCODE_LIGHT_COLOR, sharedBirthDateHeader, sharedEmployerHeader, sharedExpirationDateHeader, FULL_AUTHORITY, sharedGenderHeader, HEADER_COLOR, MRZ_BACKGROUND_COLOR, sharedNameHeader, sharedNationalityHeader, sharedCertificateNoHeader, sharedOccupationHeader, TEXT_COLOR, UNDERLAY_OPACITY, TD1_MRZ_LINE_LENGTH } from "../modules/utilities/renderer-constants.js";
 
-/** `CrewCertificateRenderer` takes a `CrewCertificate` object and returns a `HTMLCanvasElement`
- * or an `OffscreenCanvas` element representation of the travel document as a two-sided
- * TD1-sized crewmember certificate.
+/**
+ * `CrewCertificateRenderer` takes a `CrewCertificate` object and returns a
+ *     `HTMLCanvasElement` or an `OffscreenCanvas` element representation of
+ *     the travel document as a two-sided TD1-sized crewmember certificate.
  * 
  * The renderer generates images appropriate for web use and for print use with
- * 300-dpi printers. A bleed area surrounds the cut and safe areas to allow
- * borderless printing.
+ *     300-dpi printers. A bleed area surrounds the cut and safe areas to allow
+ *     borderless printing.
  * 
- * Renderers are scenario-specific and this was created to be used for a demo
- * on a web page. Ergo, multiple properties are able to be set. In real-world
- * use less (or no) properties may want to be settable.
+ * Renderers are scenario-specific and this was created to be used for a demo on
+ *     a web page. Ergo, multiple properties are able to be set. In real-world
+ *     use less (or no) properties may want to be settable.
  */
 class CrewCertificateRenderer {
-  /** Create a `CrewCertificateRenderer`.
+  /**
+   * Create a `CrewCertificateRenderer`.
    * @param { Object } [opt] - An options object.
-   * @param { string } [opt.barcodeDarkColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
-   * @param { string } [opt.barcodeLightColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
-   * @param { string } [opt.barcodeErrorCorrection] - The character 'L', 'M', 'Q', or 'H'.
-   * @param { string } [opt.headerColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.textColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.mrzColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.backBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.backBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.numberUnderlayColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { number } [opt.numberUnderlayAlpha] - A number in the range of 0-255.
-   * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { number } [opt.logoUnderlayAlpha] - A number in the range of 0-255.
+   * @param { string } [opt.barcodeDarkColor] - A RGBA hex string, formatted as
+   *     '#RRGGBBAA'.
+   * @param { string } [opt.barcodeLightColor] - A RGBA hex string, formatted
+   *     as '#RRGGBBAA'.
+   * @param { string } [opt.barcodeErrorCorrection] - The character 'L', 'M',
+   *     'Q', or 'H'.
+   * @param { string } [opt.headerColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.textColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.mrzColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an
+   *     image file.
+   * @param { string } [opt.backBackgroundColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
+   * @param { string | null } [opt.backBackgroundImage] - A path/URL to an
+   *     image file.
+   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
+   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an
+   *     image file.
+   * @param { string } [opt.numberUnderlayColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
+   * @param { number } [opt.numberUnderlayAlpha] - A number in the range of
+   *     0-255.
+   * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { number } [opt.logoUnderlayAlpha] - A number in the range of
+   *     0-255.
    * @param { string | null } [opt.logo] - A path/URL to an image file.
    * @param { string | null } [opt.smallLogo] - A path/URL to an image file.
-   * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue) lines on the rendered canvas.
-   * @param { boolean } [opt.useDigitalSeal] - Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
-   * @param { string } [opt.fullAuthority] - The full name of the authority who issued this document.
-   * @param { string } [opt.fullDocumentName] - The full name of this document's type.
-   * @param { string[] } [opt.nameHeader] - Header text for the name property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.genderHeader] - Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.nationalityHeader] - Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.dateOfBirthHeader] - Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.employerHeader] - Header text for the employer property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.occupationHeader] - Header text for the occupation property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.numberHeader] - Header text for the number property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.dateOfExpirationHeader] - Header text for the expirationDate property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.declarationHeader] - Header text for the declaration property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.issueHeader] - Header text for the issueDate and placeOfIssue property: ['primary', 'language 1', 'language 2'].
-   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one available from `window.document`.
+   * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue)
+   *     lines on the rendered canvas.
+   * @param { boolean } [opt.useDigitalSeal] - Toggles storing a visible digital
+   *     seal (VDS) on the barcode in place of a URL.
+   * @param { string } [opt.fullAuthority] - The full name of the authority who
+   *     issued this document.
+   * @param { string } [opt.fullDocumentName] - The full name of this document's
+   *     type.
+   * @param { string[] } [opt.nameHeader] - Header text for the name property:
+   *     ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.genderHeader] - Header text for the genderMarker
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.nationalityHeader] - Header text for the
+   *     nationalityCode property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.dateOfBirthHeader] - Header text for the birthDate
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.employerHeader] - Header text for the employer
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.occupationHeader] - Header text for the occupation
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.numberHeader] - Header text for the number
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.dateOfExpirationHeader] - Header text for the
+   *     expirationDate property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.declarationHeader] - Header text for the
+   *     declaration property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.issueHeader] - Header text for the issueDate and
+   *     placeOfIssue property: ['primary', 'language 1', 'language 2'].
+   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one
+   *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? "#000000ff";
-    this.barcodeLightColor = opt.barcodeLightColor ?? "#00000000";
-    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ?? "M";
-    this.headerColor = opt.headerColor ?? "#4090ba";
-    this.textColor = opt.textColor ?? "#000000";
-    this.mrzColor = opt.mrzColor ?? "#000000";
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? "#eeeeee";
+    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ??
+        BARCODE_ERROR_CORRECTION;
+    this.headerColor = opt.headerColor ?? HEADER_COLOR;
+    this.textColor = opt.textColor ?? TEXT_COLOR;
+    this.mrzColor = opt.mrzColor ?? TEXT_COLOR;
+    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
     this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.backBackgroundColor = opt.backBackgroundColor ?? "#eeeeee";
+    this.backBackgroundColor = opt.backBackgroundColor ?? BACKGROUND_COLOR;
     this.backBackgroundImage = opt.backBackgroundImage ?? null;
-    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? "#ffffff";
+    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
     this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
-    this.numberUnderlayColor = opt.numberUnderlayColor ?? "#ffffff";
-    this.numberUnderlayAlpha = opt.numberUnderlayAlpha ?? 255;
-    this.logoUnderlayColor = opt.logoUnderlayColor ?? "#4090ba";
-    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? 255;
+    this.numberUnderlayColor = opt.numberUnderlayColor ?? MRZ_BACKGROUND_COLOR;
+    this.numberUnderlayAlpha = opt.numberUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logoUnderlayColor = opt.logoUnderlayColor ?? HEADER_COLOR;
+    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
     this.logo = opt.logo ?? null;
     this.smallLogo = opt.smallLogo ?? null;
     this.showGuides = opt.showGuides ?? false;
     this.useDigitalSeal = opt.useDigitalSeal ?? false;
-    this.fullAuthority = opt.fullAuthority ?? "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL";
-    this.fullDocumentName = opt.fullDocumentName ?? "CREWMEMBER LICENSE";
-    this.nameHeader = opt.nameHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.genderHeader = opt.genderHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.nationalityHeader = opt.nationalityHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.employerHeader = opt.employerHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.occupationHeader = opt.occupationHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.numberHeader = opt.numberHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.declarationHeader = opt.declarationHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.issueHeader = opt.issueHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.fullAuthority = opt.fullAuthority ?? FULL_AUTHORITY;
+    this.fullDocumentName = opt.fullDocumentName ?? "CREWMEMBER CERTIFICATE";
+    this.nameHeader = opt.nameHeader ?? sharedNameHeader;
+    this.genderHeader = opt.genderHeader ?? sharedGenderHeader;
+    this.nationalityHeader = opt.nationalityHeader ?? sharedNationalityHeader;
+    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? sharedBirthDateHeader;
+    this.employerHeader = opt.employerHeader ?? sharedEmployerHeader;
+    this.occupationHeader = opt.occupationHeader ?? sharedOccupationHeader;
+    this.numberHeader = opt.numberHeader ?? sharedCertificateNoHeader;
+    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ??
+        sharedExpirationDateHeader;
+    this.declarationHeader = opt.declarationHeader ?? [
+      "RE-ENTRY DECLARATION",
+      "DÉCLARATION DE RENTRÉE",
+      "DECLARACIÓN DE REINGRESO"
+    ];
+    this.issueHeader = opt.issueHeader ?? [
+      "DATE OF ISSUE—PLACE OF ISSUE",
+      "DATE DE DÉLIVERANCE—LIEU DE DÉLIVERANCE",
+      "FECHA DE EXPEDICIÓN—LUGAR DE EXPEDICIÓN"];
     this.fonts = opt.fonts ?? null;
   }
   
-  /** The RGBA color for the dark (black) areas for the rendered barcode: '#RRGGBBAA'.
+  /**
+   * The RGBA color for the dark (black) areas for the rendered barcode:
+   *     '#RRGGBBAA'.
    * @type { string }
    */
   barcodeDarkColor;
 
-  /** The RGBA color for the light (white) areas for the rendered barcode: '#RRGGBBAA'.
+  /**
+   * The RGBA color for the light (white) areas for the rendered barcode:
+   *     '#RRGGBBAA'.
    * @type { string }
    */
   barcodeLightColor;
 
-  /** The error correction level used for generating the barcode: 'L', 'M', 'Q', or 'H'.
+  /**
+   * The error correction level used for generating the barcode: 'L', 'M', 'Q',
+   *     or 'H'.
    * @type { string }
    */
   barcodeErrorCorrection;
 
-  /** The RGB color for header text: '#RRGGBB'.
+  /**
+   * The RGB color for header text: '#RRGGBB'.
    * @type { string }
    */
   headerColor;
 
-  /** The RGB color for non-header text: '#RRGGBB'.
+  /**
+   * The RGB color for non-header text: '#RRGGBB'.
    * @type { string }
    */
   textColor;
 
-  /** The RGB color for Machine-Readable Zone (MRZ) text: '#RRGGBB'.
+  /**
+   * The RGB color for Machine-Readable Zone (MRZ) text: '#RRGGBB'.
    * @type { string }
    */
   mrzColor;
 
-  /** The RGB color for the background when no front background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no front background image is set:
+   *     '#RRGGBB'.
    * @type { string }
    */
   frontBackgroundColor;
 
-  /** A path/URL to an image to use for the front background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the front background, or `null` for no
+   *     background image.
    * @type { string | null }
    */
   frontBackgroundImage;
 
-  /** The RGB color for the background when no back background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no back background image is set:
+   *     '#RRGGBB'.
    * @type { string }
    */
   backBackgroundColor;
 
-  /** A path/URL to an image to use for the back background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the back background, or `null` for no
+   *     background image.
    * @type { string | null }
    */
   backBackgroundImage;
 
-  /** The RGB color for the background when no Machine-Readable Zone (MRZ) background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no Machine-Readable Zone (MRZ)
+   *     background image is set: '#RRGGBB'.
    * @type { string }
    */
   mrzBackgroundColor;
 
-  /** A path/URL to an image to use for the Machine-Readable Zone (MRZ) background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the Machine-Readable Zone (MRZ)
+   *     background, or `null` for no background image.
    * @type { string | null }
    */
   mrzBackgroundImage;
 
-  /** The RGB color for the underlay under the document number on the back of the card: '#RRGGBB'.
+  /**
+   * The RGB color for the underlay under the document number on the back of
+   *     the card: '#RRGGBB'.
    * @type { string }
    */
   numberUnderlayColor;
 
-  /** The opacity of the number underlay color: 0-255.
+  /**
+   * The opacity of the number underlay color: 0-255.
    * @type { number }
    */
   numberUnderlayAlpha;
   get #numberUnderlayColorWithAlpha() {
     return this.numberUnderlayColor +
-      this.numberUnderlayAlpha.toString(16).padStart(2, "0");
+        this.numberUnderlayAlpha.toString(16).padStart(2, "0");
   }
 
-  /** The RGB color for the underlay under photo/logo areas: '#RRGGBB'.
+  /**
+   * The RGB color for the underlay under photo/logo areas: '#RRGGBB'.
    * @type { string }
    */
   logoUnderlayColor;
 
-  /** The opacity of the number underlay color: 0-255.
+  /**
+   * The opacity of the number underlay color: 0-255.
    * @type { number }
    */
   logoUnderlayAlpha;
   get #logoUnderlayColorWithAlpha() {
     return this.logoUnderlayColor +
-      this.logoUnderlayAlpha.toString(16).padStart(2, "0");
+        this.logoUnderlayAlpha.toString(16).padStart(2, "0");
   }
 
-  /** A path/URL to an image to use for the logo, or `null` for no logo.
+  /**
+   * A path/URL to an image to use for the logo, or `null` for no logo.
    * @type { string | null }
    */
   logo;
 
-  /** A path/URL to an image to use for the small logo, or `null` for no small logo.
+  /**
+   * A path/URL to an image to use for the small logo, or `null` for no small
+   *     logo.
    * @type { string | null }
    */
   smallLogo;
 
-  /** Toggles bleed (red) and safe (blue) lines on the rendered canvas.
+  /**
+   * Toggles bleed (red) and safe (blue) lines on the rendered canvas.
    * @type { boolean }
    */
   showGuides;
 
-  /** Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
+  /**
+   * Toggles storing a visible digital seal (VDS) on the barcode in place of a
+   *     URL.
    * @type { boolean }
    */
   useDigitalSeal;
 
-  /** The full name of the authority who issued this document.
+  /**
+   * The full name of the authority who issued this document.
    * @type { string }
    */
   fullAuthority;
 
-  /** The full name of this document's type.
+  /**
+   * The full name of this document's type.
    * @type { string }
    */
   fullDocumentName;
 
-  /** Header text for the name property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the name property: ['primary', 'language 1', 'language 2'].
    * @type { string[] }
    */
   nameHeader;
 
-  /** Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the genderMarker property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   genderHeader;
 
-  /** Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the nationalityCode property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   nationalityHeader;
 
-  /** Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the birthDate property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   dateOfBirthHeader;
 
-  /** Header text for the employer property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the employer property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   employerHeader;
 
-  /** Header text for the occupation property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the occupation property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   occupationHeader;
 
-  /** Header text for the number property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the number property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   numberHeader;
 
-  /** Header text for the expirationDate property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the expirationDate property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   dateOfExpirationHeader;
 
-  /** Header text for the declaration property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the declaration property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   declarationHeader;
 
-  /** Header text for the issueDate and placeOfIssue property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the issueDate and placeOfIssue property: ['primary',
+   *     'language 1', 'language 2'].
    * @type { string[] }
    */
   issueHeader;
 
-  /** A `FontFaceSet`, like the one available from `window.document`.
+  /**
+   * A `FontFaceSet`, like the one available from `window.document`.
    * @type { FontFaceSet }
    */
   fonts;
 
-  /* Font information used in card generation. */
+  // Font information used in card generation.
   static #mrzFontFace = new FontFace(
     "OCR-B",
     "url('/fonts/OCR-B-regular-web.woff2') format('woff2')," +
@@ -318,11 +413,11 @@ class CrewCertificateRenderer {
     return `61px ${this.#signatureFontFace.family}`;
   }
 
-  /* Text constants used in image generation. */
+  // Text constants used in image generation.
   static #headerSeparator = " · ";
   static #documentSize = "TD1";
 
-  // Coordinates, widths, and heights used in card generation. */
+  // Coordinates, widths, and heights used in card generation.
   static #mainHeaderX = 1004;
   static #mainHeaderY = [48, 85];
   static #photoUnderlayXY = [48, 0];
@@ -400,7 +495,8 @@ class CrewCertificateRenderer {
     ]);
   }
 
-  /** Generate the front image and return the canvas.
+  /**
+   * Generate the front image and return the canvas.
    * @param { CrewCertificate } model
    * @param { HTMLCanvasElement } fallback
    */
@@ -421,10 +517,12 @@ class CrewCertificateRenderer {
     ctx.textBaseline = "top";
 
     const images = await Promise.all([
-      this.frontBackgroundImage ? loadImageFromURL(this.frontBackgroundImage) : null,
+      this.frontBackgroundImage ?
+          loadImageFromURL(this.frontBackgroundImage) : null,
       loadImageFromURL(model.picture),
       this.logo ? loadImageFromURL(this.logo) : null,
-      typeof model.signature !== typeof canvas ? loadImageFromURL(model.signature) : null
+      typeof model.signature !== typeof canvas ?
+          loadImageFromURL(model.signature) : null
     ]);
 
     ctx.fillStyle = this.frontBackgroundColor;
@@ -489,11 +587,12 @@ class CrewCertificateRenderer {
       this.fullAuthority,
       Math.max(
         CrewCertificateRenderer.#mainHeaderX -
-          ctx.measureText(this.fullAuthority).width,
+            ctx.measureText(this.fullAuthority).width,
         CrewCertificateRenderer.#frontColumns
       ),
       CrewCertificateRenderer.#mainHeaderY[0],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      CrewCertificateRenderer.#mainHeaderX -
+          CrewCertificateRenderer.#frontColumns
     );
     ctx.font = CrewCertificateRenderer.#documentHeaderFont;
     let documentHeaderWidth = ctx.measureText(this.fullDocumentName).width;
@@ -503,14 +602,18 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#mainHeaderY[1]
     );
     ctx.font = CrewCertificateRenderer.#separatorHeaderFont;
-    documentHeaderWidth += ctx.measureText(CrewCertificateRenderer.#headerSeparator).width;
+    documentHeaderWidth += ctx.measureText(
+      CrewCertificateRenderer.#headerSeparator
+    ).width;
     ctx.fillText(
       CrewCertificateRenderer.#headerSeparator,
       CrewCertificateRenderer.#mainHeaderX - documentHeaderWidth,
       CrewCertificateRenderer.#mainHeaderY[1]
     );
     ctx.font = CrewCertificateRenderer.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
+    documentHeaderWidth += ctx.measureText(
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`
+    ).width;
     ctx.fillText(
       `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
       CrewCertificateRenderer.#mainHeaderX - documentHeaderWidth,
@@ -559,30 +662,30 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#frontColumns,
       CrewCertificateRenderer.#frontRows[12]
     );
-    const nameWidth = CrewCertificateRenderer.#frontColumns +
+    const NAME_WIDTH = CrewCertificateRenderer.#frontColumns +
       ctx.measureText(this.nameHeader[0]).width;
-    const genderWidth = CrewCertificateRenderer.#frontColumns +
+    const GENDER_WIDTH = CrewCertificateRenderer.#frontColumns +
       ctx.measureText(this.genderHeader[0]).width;
-    const nationalityWidth = CrewCertificateRenderer.#frontRow2Columns[0] +
+    const NATIONALITY_WIDTH = CrewCertificateRenderer.#frontRow2Columns[0] +
       ctx.measureText(this.nationalityHeader[0]).width;
-    const dateOfBirthWidth = CrewCertificateRenderer.#frontRow2Columns[1] +
+    const DATE_OF_BIRTH_WIDTH = CrewCertificateRenderer.#frontRow2Columns[1] +
       ctx.measureText(this.dateOfBirthHeader[0]).width;
-    const employerWidth = CrewCertificateRenderer.#frontColumns +
+    const EMPLOYER_WIDTH = CrewCertificateRenderer.#frontColumns +
       ctx.measureText(this.employerHeader[0]).width;
-    const occupationWidth = CrewCertificateRenderer.#frontColumns +
+    const OCCUPATION_WIDTH = CrewCertificateRenderer.#frontColumns +
       ctx.measureText(this.occupationHeader[0]).width;
-    const numberWidth = CrewCertificateRenderer.#frontColumns +
+    const NUMBER_WIDTH = CrewCertificateRenderer.#frontColumns +
       ctx.measureText(this.numberHeader[0]).width;
-    const dateOfExpirationWidth = CrewCertificateRenderer.#frontColumns +
+    const DATE_OF_EXPIRATION_WIDTH = CrewCertificateRenderer.#frontColumns +
       ctx.measureText(this.dateOfExpirationHeader[0]).width;
     
     ctx.font = CrewCertificateRenderer.#intlFont;
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
-      nameWidth,
+      NAME_WIDTH,
       CrewCertificateRenderer.#frontRows[0]
     );
-    ctx.fillText("/", genderWidth, CrewCertificateRenderer.#frontRows[2]);
+    ctx.fillText("/", GENDER_WIDTH, CrewCertificateRenderer.#frontRows[2]);
     ctx.fillText(
       `${this.genderHeader[1]}/`,
       CrewCertificateRenderer.#frontColumns,
@@ -593,7 +696,7 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#frontColumns,
       CrewCertificateRenderer.#frontRows[4]
     );
-    ctx.fillText("/", nationalityWidth, CrewCertificateRenderer.#frontRows[2]);
+    ctx.fillText("/", NATIONALITY_WIDTH, CrewCertificateRenderer.#frontRows[2]);
     ctx.fillText(
       `${this.nationalityHeader[1]}/`,
       CrewCertificateRenderer.#frontRow2Columns[0],
@@ -604,7 +707,7 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#frontRow2Columns[0],
       CrewCertificateRenderer.#frontRows[4]
     );
-    ctx.fillText("/", dateOfBirthWidth, CrewCertificateRenderer.#frontRows[2]);
+    ctx.fillText("/", DATE_OF_BIRTH_WIDTH, CrewCertificateRenderer.#frontRows[2]);
     ctx.fillText(
       `${this.dateOfBirthHeader[1]}/`,
       CrewCertificateRenderer.#frontRow2Columns[1],
@@ -617,22 +720,22 @@ class CrewCertificateRenderer {
     );
     ctx.fillText(
       `/ ${this.employerHeader[1]}/ ${this.employerHeader[2]}`,
-      employerWidth,
+      EMPLOYER_WIDTH,
       CrewCertificateRenderer.#frontRows[6]
     );
     ctx.fillText(
       `/ ${this.occupationHeader[1]}/ ${this.occupationHeader[2]}`,
-      occupationWidth,
+      OCCUPATION_WIDTH,
       CrewCertificateRenderer.#frontRows[8]
     );
     ctx.fillText(
       `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
-      numberWidth,
+      NUMBER_WIDTH,
       CrewCertificateRenderer.#frontRows[10]
     );
     ctx.fillText(
       `/ ${this.dateOfExpirationHeader[1]}/ ${this.dateOfExpirationHeader[2]}`,
-      dateOfExpirationWidth,
+      DATE_OF_EXPIRATION_WIDTH,
       CrewCertificateRenderer.#frontRows[12]
     );
 
@@ -642,7 +745,8 @@ class CrewCertificateRenderer {
       model.fullName.toVIZ(),
       CrewCertificateRenderer.#frontColumns,
       CrewCertificateRenderer.#frontRows[1],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      CrewCertificateRenderer.#mainHeaderX -
+          CrewCertificateRenderer.#frontColumns
     );
     ctx.fillText(
       model.genderMarker.toVIZ(),
@@ -663,13 +767,15 @@ class CrewCertificateRenderer {
       model.employer.toVIZ(),
       CrewCertificateRenderer.#frontColumns,
       CrewCertificateRenderer.#frontRows[7],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      CrewCertificateRenderer.#mainHeaderX -
+          CrewCertificateRenderer.#frontColumns
     );
     ctx.fillText(
       model.occupation.toVIZ(),
       CrewCertificateRenderer.#frontColumns,
       CrewCertificateRenderer.#frontRows[9],
-      CrewCertificateRenderer.#mainHeaderX - CrewCertificateRenderer.#frontColumns
+      CrewCertificateRenderer.#mainHeaderX -
+          CrewCertificateRenderer.#frontColumns
     );
     ctx.fillText(
       model.number.toVIZ(),
@@ -694,7 +800,8 @@ class CrewCertificateRenderer {
     return canvas;
   }
 
-  /** Generate the back image and return the canvas.
+  /**
+   * Generate the back image and return the canvas.
    * @param { CrewCertificate } model
    * @param { HTMLCanvasElement } fallback
    */
@@ -713,11 +820,15 @@ class CrewCertificateRenderer {
     }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
-    const barcode = this.useDigitalSeal ? [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }] : model.url;
+    const barcode = this.useDigitalSeal ?
+        [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }]
+        : model.url;
 
     const images = await Promise.all([
-      this.backBackgroundImage ? loadImageFromURL(this.backBackgroundImage) : null,
-      this.mrzBackgroundImage ? loadImageFromURL(this.mrzBackgroundImage) : null,
+      this.backBackgroundImage ?
+          loadImageFromURL(this.backBackgroundImage) : null,
+      this.mrzBackgroundImage ?
+          loadImageFromURL(this.mrzBackgroundImage) : null,
       qrLite.toCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         version: 9,
@@ -776,7 +887,9 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#numberUnderlayArea[1]
     );
     ctx.drawImage(
-      images[2], CrewCertificateRenderer.#numberUnderlayXY[0] - 24 - images[2].width, 48
+      images[2],
+      CrewCertificateRenderer.#numberUnderlayXY[0] - 24 - images[2].width,
+      48
     );
     if (images[3]) {
       fitImageInArea(
@@ -799,7 +912,9 @@ class CrewCertificateRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = CrewCertificateRenderer.#headerFont;
     ctx.fillText(
-      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}${CrewCertificateRenderer.#headerSeparator}${CrewCertificateRenderer.#documentSize}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}` +
+          `${CrewCertificateRenderer.#headerSeparator}` +
+          `${CrewCertificateRenderer.#documentSize}`,
       CrewCertificateRenderer.#shortHeaderXY[0],
       CrewCertificateRenderer.#shortHeaderXY[1],
       CrewCertificateRenderer.#smallLogoArea[0]
@@ -817,15 +932,15 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#backColumns,
       CrewCertificateRenderer.#backRows[3]
     );
-    const declarationWidth = CrewCertificateRenderer.#backColumns +
+    const DECLARATION_WIDTH = CrewCertificateRenderer.#backColumns +
       ctx.measureText(this.declarationHeader[0]).width;
-    const issueWidth = CrewCertificateRenderer.#backColumns +
+    const ISSUE_WIDTH = CrewCertificateRenderer.#backColumns +
       ctx.measureText(this.issueHeader[0]).width;
 
     ctx.font = CrewCertificateRenderer.#intlFont;
     ctx.fillText(
       `/ ${this.declarationHeader[1]}/`,
-      declarationWidth,
+      DECLARATION_WIDTH,
       CrewCertificateRenderer.#backRows[0]
     );
     ctx.fillText(
@@ -833,7 +948,7 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#backColumns,
       CrewCertificateRenderer.#backRows[1]
     );
-    ctx.fillText("/", issueWidth, CrewCertificateRenderer.#backRows[3]);
+    ctx.fillText("/", ISSUE_WIDTH, CrewCertificateRenderer.#backRows[3]);
     ctx.fillText(
       `${this.issueHeader[1]}/`,
       CrewCertificateRenderer.#backColumns,
@@ -847,14 +962,13 @@ class CrewCertificateRenderer {
 
     ctx.fillStyle = this.textColor;
     ctx.font = CrewCertificateRenderer.#dataFont;
-    const splitString = model.declaration.toVIZ().split(/\r?\n/);
-    for (let i = 0; i < splitString.length; i += 1) {
+    model.declaration.toVIZ().split(/\r?\n/).forEach((line, i) => {
       ctx.fillText(
-        splitString[i],
+        line,
         CrewCertificateRenderer.#backColumns,
         CrewCertificateRenderer.#backRows[2] + (i * 33)
       );
-    }
+    });
     ctx.fillText(
       `${model.issueDate.toVIZ()}—${model.placeOfIssue.toVIZ()}`,
       CrewCertificateRenderer.#backColumns,
@@ -869,23 +983,14 @@ class CrewCertificateRenderer {
 
     ctx.fillStyle = this.mrzColor;
     ctx.font = CrewCertificateRenderer.#mrzFont;
-    for (let i = 0; i < model.mrzLine1.length; i += 1) {
+    [...model.machineReadableZone].forEach((character, i) => {
       ctx.fillText(
-        model.mrzLine1[i],
-        CrewCertificateRenderer.#mrzX + (i * CrewCertificateRenderer.#mrzSpacing),
-        CrewCertificateRenderer.#mrzY[0]
+        character,
+        CrewCertificateRenderer.#mrzX +
+            ((i % TD1_MRZ_LINE_LENGTH) * CrewCertificateRenderer.#mrzSpacing),
+        CrewCertificateRenderer.#mrzY[Math.floor(i / TD1_MRZ_LINE_LENGTH)]
       );
-      ctx.fillText(
-        model.mrzLine2[i],
-        CrewCertificateRenderer.#mrzX + (i * CrewCertificateRenderer.#mrzSpacing),
-        CrewCertificateRenderer.#mrzY[1]
-      );
-      ctx.fillText(
-        model.mrzLine3[i],
-        CrewCertificateRenderer.#mrzX + (i * CrewCertificateRenderer.#mrzSpacing),
-        CrewCertificateRenderer.#mrzY[2]
-      );
-    }
+    });
 
     if (this.showGuides) {
       drawBleedAndSafeLines(
