@@ -8,7 +8,7 @@ import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
 import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
 import { fillAreaWithImage } from "../modules/utilities/fill-area-with-image.js";
 import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-lines.js";
-import { BACKGROUND_COLOR, BARCODE_DARK_COLOR, BARCODE_ERROR_CORRECTION, BARCODE_LIGHT_COLOR, sharedBirthDateHeader, sharedEmployerHeader, sharedExpirationDateHeader, FULL_AUTHORITY, sharedGenderHeader, HEADER_COLOR, MRZ_BACKGROUND_COLOR, sharedNameHeader, sharedNationalityHeader, sharedCertificateNoHeader, sharedOccupationHeader, TEXT_COLOR, UNDERLAY_OPACITY, TD1_MRZ_LINE_LENGTH } from "../modules/utilities/renderer-constants.js";
+import { BACKGROUND_COLOR, BARCODE_DARK_COLOR, BARCODE_ERROR_CORRECTION, BARCODE_LIGHT_COLOR, sharedBirthDateHeader, sharedEmployerHeader, sharedExpirationDateHeader, FULL_AUTHORITY, sharedGenderHeader, HEADER_COLOR, MRZ_BACKGROUND_COLOR, sharedNameHeader, sharedNationalityHeader, sharedCertificateNoHeader, sharedOccupationHeader, TEXT_COLOR, UNDERLAY_OPACITY, TD1_MRZ_LINE_LENGTH } from "../modules/utilities/renderer-variables.js";
 
 /**
  * `CrewCertificateRenderer` takes a `CrewCertificate` object and returns a
