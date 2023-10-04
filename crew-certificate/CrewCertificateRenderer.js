@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { CrewCertificate  } from "../modules/CrewCertificate.js";
-import * as b45 from "../modules/base45-ts/base45.js";
-import * as qrLite from "../modules/qrcode-lite/qrcode.mjs";
+import { CrewCertificate } from "../modules/CrewCertificate.js";
+import { encode as toBase45 } from "../modules/base45-ts/base45.js";
+import { toCanvas as toQRCanvas } from "../modules/qrcode-lite/qrcode.mjs";
 import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
 import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
 import { fillAreaWithImage } from "../modules/utilities/fill-area-with-image.js";
@@ -821,7 +821,7 @@ class CrewCertificateRenderer {
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
     const barcode = this.useDigitalSeal ?
-        [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }]
+        [{ data: toBase45(model.signedSeal), mode: "alphanumeric" }]
         : model.url;
 
     const images = await Promise.all([
@@ -829,7 +829,7 @@ class CrewCertificateRenderer {
           loadImageFromURL(this.backBackgroundImage) : null,
       this.mrzBackgroundImage ?
           loadImageFromURL(this.mrzBackgroundImage) : null,
-      qrLite.toCanvas(barcode, {
+      toQRCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         version: 9,
         margin: 0,
