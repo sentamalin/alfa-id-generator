@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 export const BARCODE_DARK_COLOR = "#000000ff";
 export const BARCODE_LIGHT_COLOR = "#00000000";
