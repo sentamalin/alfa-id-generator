@@ -5,6 +5,7 @@
 
 import { EventsPassport } from "/modules/EventsPassport.js";
 import { EventsPassportRenderer } from "./EventsPassportRenderer.js";
+import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 
 class EventsPassportViewModel {
   #model = new EventsPassport({
@@ -475,8 +476,11 @@ class EventsPassportViewModel {
   }
   onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
-        this.#signatureFallback
+      this.#signatureGenerator = ifNewGenerateSignatureFromText(
+        this.#signatureFallback,
+        EventsPassportRenderer.signatureArea,
+        this.#renderer.textColor,
+        EventsPassportRenderer.signatureFont
       );
     }
     this.#signatureGenerator.next();

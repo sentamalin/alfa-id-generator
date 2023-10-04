@@ -5,6 +5,8 @@
 
 import { EventsMRVB } from "/modules/EventsMRVB.js";
 import { EventsMRVBRenderer } from "./EventsMRVBRenderer.js";
+import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
+import { EventsMRVARenderer } from "../events-mrva/EventsMRVARenderer.js";
 
 class EventsMRVBViewModel {
   #model = new EventsMRVB({
@@ -567,8 +569,14 @@ class EventsMRVBViewModel {
   }
   onSignatureTextInputChange() {
     if (this.#signatureGenerator === null) {
-      this.#signatureGenerator = this.#renderer.generateNewSignatureFromText(
-        this.#signatureFallback
+      this.#signatureGenerator = ifNewGenerateSignatureFromText(
+        this.#signatureFallback,
+        [
+          EventsMRVBRenderer.signatureArea,
+          EventsMRVBRenderer.signatureArea
+        ],
+        this.#renderer.textColor,
+        EventsMRVARenderer.signatureFont
       );
     }
     this.#signatureGenerator.next();

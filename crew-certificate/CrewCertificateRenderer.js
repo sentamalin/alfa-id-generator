@@ -99,17 +99,17 @@ class CrewCertificateRenderer {
   /** The RGBA color for the dark (black) areas for the rendered barcode: '#RRGGBBAA'.
    * @type { string }
    */
-  barcodeDarkColor = "#000000ff";
+  barcodeDarkColor;
 
   /** The RGBA color for the light (white) areas for the rendered barcode: '#RRGGBBAA'.
    * @type { string }
    */
-  barcodeLightColor = "#00000000";
+  barcodeLightColor;
 
   /** The error correction level used for generating the barcode: 'L', 'M', 'Q', or 'H'.
    * @type { string }
    */
-  barcodeErrorCorrection = "M";
+  barcodeErrorCorrection;
 
   /** The RGB color for header text: '#RRGGBB'.
    * @type { string }
