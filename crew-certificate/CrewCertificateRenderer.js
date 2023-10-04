@@ -8,7 +8,7 @@ import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
 import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
 import { fillAreaWithImage } from "../modules/utilities/fill-area-with-image.js";
 import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-lines.js";
-import { BACKGROUND_COLOR, BARCODE_DARK_COLOR, BARCODE_ERROR_CORRECTION, BARCODE_LIGHT_COLOR, sharedBirthDateHeader, sharedEmployerHeader, sharedExpirationDateHeader, FULL_AUTHORITY, sharedGenderHeader, HEADER_COLOR, MRZ_BACKGROUND_COLOR, sharedNameHeader, sharedNationalityHeader, sharedCertificateNoHeader, sharedOccupationHeader, TEXT_COLOR, UNDERLAY_OPACITY, TD1_MRZ_LINE_LENGTH } from "../modules/utilities/renderer-variables.js";
+import { BACKGROUND_COLOR, BARCODE_DARK_COLOR, BARCODE_ERROR_CORRECTION, BARCODE_LIGHT_COLOR, birthDateHeader, employerHeader, expirationDateHeader, FULL_AUTHORITY, genderHeader, HEADER_COLOR, MRZ_BACKGROUND_COLOR, nameHeader, nationalityHeader, certificateNoHeader, occupationHeader, TEXT_COLOR, UNDERLAY_OPACITY, TD1_MRZ_LINE_LENGTH } from "../modules/utilities/renderer-variables.js";
 
 /**
  * `CrewCertificateRenderer` takes a `CrewCertificate` object and returns a
@@ -39,26 +39,25 @@ class CrewCertificateRenderer {
    *     '#RRGGBB'.
    * @param { string } [opt.mrzColor] - A RGB hex string, formatted as
    *     '#RRGGBB'.
-   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted as
-   *     '#RRGGBB'.
+   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
    * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an
    *     image file.
    * @param { string } [opt.backBackgroundColor] - A RGB hex string, formatted
    *     as '#RRGGBB'.
-   * @param { string | null } [opt.backBackgroundImage] - A path/URL to an
-   *     image file.
-   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted
-   *     as '#RRGGBB'.
-   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an
-   *     image file.
+   * @param { string | null } [opt.backBackgroundImage] - A path/URL to an image
+   *     file.
+   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an image
+   *     file.
    * @param { string } [opt.numberUnderlayColor] - A RGB hex string, formatted
    *     as '#RRGGBB'.
    * @param { number } [opt.numberUnderlayAlpha] - A number in the range of
    *     0-255.
    * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as
    *     '#RRGGBB'.
-   * @param { number } [opt.logoUnderlayAlpha] - A number in the range of
-   *     0-255.
+   * @param { number } [opt.logoUnderlayAlpha] - A number in the range of 0-255.
    * @param { string | null } [opt.logo] - A path/URL to an image file.
    * @param { string | null } [opt.smallLogo] - A path/URL to an image file.
    * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue)
@@ -116,15 +115,15 @@ class CrewCertificateRenderer {
     this.useDigitalSeal = opt.useDigitalSeal ?? false;
     this.fullAuthority = opt.fullAuthority ?? FULL_AUTHORITY;
     this.fullDocumentName = opt.fullDocumentName ?? "CREWMEMBER CERTIFICATE";
-    this.nameHeader = opt.nameHeader ?? sharedNameHeader;
-    this.genderHeader = opt.genderHeader ?? sharedGenderHeader;
-    this.nationalityHeader = opt.nationalityHeader ?? sharedNationalityHeader;
-    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? sharedBirthDateHeader;
-    this.employerHeader = opt.employerHeader ?? sharedEmployerHeader;
-    this.occupationHeader = opt.occupationHeader ?? sharedOccupationHeader;
-    this.numberHeader = opt.numberHeader ?? sharedCertificateNoHeader;
+    this.nameHeader = opt.nameHeader ?? nameHeader;
+    this.genderHeader = opt.genderHeader ?? genderHeader;
+    this.nationalityHeader = opt.nationalityHeader ?? nationalityHeader;
+    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? birthDateHeader;
+    this.employerHeader = opt.employerHeader ?? employerHeader;
+    this.occupationHeader = opt.occupationHeader ?? occupationHeader;
+    this.numberHeader = opt.numberHeader ?? certificateNoHeader;
     this.dateOfExpirationHeader = opt.dateOfExpirationHeader ??
-        sharedExpirationDateHeader;
+        expirationDateHeader;
     this.declarationHeader = opt.declarationHeader ?? [
       "RE-ENTRY DECLARATION",
       "DÉCLARATION DE RENTRÉE",
@@ -219,8 +218,8 @@ class CrewCertificateRenderer {
   mrzBackgroundImage;
 
   /**
-   * The RGB color for the underlay under the document number on the back of
-   *     the card: '#RRGGBB'.
+   * The RGB color for the underlay under the document number on the back of the
+   *     card: '#RRGGBB'.
    * @type { string }
    */
   numberUnderlayColor;
@@ -707,7 +706,8 @@ class CrewCertificateRenderer {
       CrewCertificateRenderer.#frontRow2Columns[0],
       CrewCertificateRenderer.#frontRows[4]
     );
-    ctx.fillText("/", DATE_OF_BIRTH_WIDTH, CrewCertificateRenderer.#frontRows[2]);
+    ctx.fillText("/", DATE_OF_BIRTH_WIDTH,
+        CrewCertificateRenderer.#frontRows[2]);
     ctx.fillText(
       `${this.dateOfBirthHeader[1]}/`,
       CrewCertificateRenderer.#frontRow2Columns[1],
@@ -909,6 +909,7 @@ class CrewCertificateRenderer {
         CrewCertificateRenderer.#smallLogoArea[1]
       );
     }
+
     ctx.fillStyle = this.textColor;
     ctx.font = CrewCertificateRenderer.#headerFont;
     ctx.fillText(
@@ -966,7 +967,7 @@ class CrewCertificateRenderer {
       ctx.fillText(
         line,
         CrewCertificateRenderer.#backColumns,
-        CrewCertificateRenderer.#backRows[2] + (i * 33)
+        CrewCertificateRenderer.#backRows[2] + (i * 30)
       );
     });
     ctx.fillText(

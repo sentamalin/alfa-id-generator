@@ -43,7 +43,7 @@ class IDBadgeViewModel {
     showPunchSlot: false,
     showGuides: false,
     useDigitalSeal: false,
-    additionalElements: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n",
+    additionalElements: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     badgeType: "CREW",
     badgeSubtype: "FURRY",
     nameHeader: [
@@ -661,7 +661,7 @@ class IDBadgeViewModel {
   set additionalElementsInput(input) {
     this.#additionalElementsInput = input;
     this.#additionalElementsInput.setAttribute("cols", 37);
-    this.#additionalElementsInput.setAttribute("rows", 7);
+    this.#additionalElementsInput.setAttribute("rows", 8);
     this.#additionalElementsInput.setAttribute("wrap", "off");
     this.#additionalElementsInput.value = this.#renderer.additionalElements;
     this.#additionalElementsInput.setAttribute("placeholder", this.#renderer.additionalElements);

@@ -1,247 +1,326 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { EventsMRVA } from "../modules/EventsMRVA.js";
-import * as b45 from "../modules/base45-ts/base45.js";
-import * as qrLite from "../modules/qrcode-lite/qrcode.mjs";
+import { encode as toBase45 } from "../modules/base45-ts/base45.js";
+import { toCanvas as toQRCanvas } from "../modules/qrcode-lite/qrcode.mjs";
 import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
 import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
 import { fillAreaWithImage } from "../modules/utilities/fill-area-with-image.js";
 import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-lines.js";
+import { BACKGROUND_COLOR, BARCODE_DARK_COLOR, BARCODE_ERROR_CORRECTION, BARCODE_LIGHT_COLOR, FULL_AUTHORITY, HEADER_COLOR, MRZ_BACKGROUND_COLOR, TD3_MRZ_LINE_LENGTH, TEXT_COLOR, UNDERLAY_OPACITY, VISA_NAME, additionalInfoHeader, birthDateHeader, documentNoHeader, genderHeader, nameHeader, nationalityHeader, numberOfEntriesHeader, passportNoHeader, placeOfIssueHeader, validFromHeader, validThruHeader, visaTypeHeader } from "../modules/utilities/renderer-variables.js";
 
 /**
- * `EventsMRVARenderer` takes an `EventsMRVA` object and returns a `HTMLCanvasElement`
- * or an `OffscreenCanvas` element representation of the travel document as a machine-readable
- * visa sticker size A (MRV-A).
+ * `EventsMRVARenderer` takes an `EventsMRVA` object and returns a
+ *     `HTMLCanvasElement` or an `OffscreenCanvas` element representation of the
+ *     travel document as a machine-readable visa sticker size A (MRV-A).
  * 
  * The renderer generates images appropriate for web use and for print use with
- * 300-dpi printers. A bleed area surrounds the cut and safe areas to allow
- * borderless printing.
+ *     300-dpi printers. A bleed area surrounds the cut and safe areas to allow
+ *     borderless printing.
  * 
- * Renderers are scenario-specific and this was created to be used for a demo
- * on a web page. Ergo, multiple properties are able to be set. In real-world
- * use less (or no) properties may want to be settable.
+ * Renderers are scenario-specific and this was created to be used for a demo on
+ *     a web page. Ergo, multiple properties are able to be set. In real-world
+ *     use less (or no) properties may want to be settable.
  */
 class EventsMRVARenderer {
   /**
    * Create an `EventsMRVARenderer`.
    * @param { Object } [opt] - An options object.
-   * @param { string } [opt.barcodeDarkColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
-   * @param { string } [opt.barcodeLightColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
-   * @param { string } [opt.barcodeErrorCorrection] - The character 'L', 'M', 'Q', or 'H'.
-   * @param { string } [opt.headerColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.textColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.mrzColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string } [opt.barcodeDarkColor] - A RGBA hex string, formatted as
+   *     '#RRGGBBAA'.
+   * @param { string } [opt.barcodeLightColor] - A RGBA hex string, formatted as
+   *     '#RRGGBBAA'.
+   * @param { string } [opt.barcodeErrorCorrection] - The character 'L', 'M',
+   *     'Q', or 'H'.
+   * @param { string } [opt.headerColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.textColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.mrzColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
+   * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an
+   *     image file.
+   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an image
+   *     file.
+   * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
    * @param { number } [opt.logoUnderlayAlpha] - A number in the range of 0-255.
    * @param { string | null } [opt.logo] - A path/URL to an image file.
-   * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue) lines on the rendered canvas.
-   * @param { boolean } [opt.useDigitalSeal] - Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
-   * @param { string } [opt.fullAuthority] - The full name of the authority who issued this visa.
+   * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue)
+   *     lines on the rendered canvas.
+   * @param { boolean } [opt.useDigitalSeal] - Toggles storing a visible digital
+   *     seal (VDS) on the barcode in place of a URL.
+   * @param { string } [opt.fullAuthority] - The full name of the authority who
+   *     issued this visa.
    * @param { string } [opt.fullDocumentName] - The full name of this visa type.
-   * @param { string[] } [opt.placeOfIssueHeader] - Header text for the placeOfIssue property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.validFromHeader] - Header text for the validFrom property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.validThruHeader] - Header text for the validThru property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.numberOfEntriesHeader] - Header text for the numberOfEntries property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.numberHeader] - Header text for the number property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.typeHeader] - Header text for the visaType property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.additionalInfoHeader] - Header text for the additionalInfo property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.nameHeader] - Header text for the name property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.passportNumberHeader] - Header text for the passportNumber property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.nationalityHeader] - Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.dateOfBirthHeader] - Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.genderHeader] - Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
-   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one available from `window.document`.
+   * @param { string[] } [opt.placeOfIssueHeader] - Header text for the
+   *     placeOfIssue property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.validFromHeader] - Header text for the validFrom
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.validThruHeader] - Header text for the validThru
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.numberOfEntriesHeader] - Header text for the
+   *     numberOfEntries property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.numberHeader] - Header text for the number
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.typeHeader] - Header text for the visaType
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.additionalInfoHeader] - Header text for the
+   *     additionalInfo property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.nameHeader] - Header text for the name property:
+   *     ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.passportNumberHeader] - Header text for the
+   *     passportNumber property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.nationalityHeader] - Header text for the
+   *     nationalityCode property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.dateOfBirthHeader] - Header text for the birthDate
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.genderHeader] - Header text for the genderMarker
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one
+   *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? "#000000ff";
-    this.barcodeLightColor = opt.barcodeLightColor ?? "#00000000";
-    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ?? "M";
-    this.headerColor = opt.headerColor ?? "#4090ba";
-    this.textColor = opt.textColor ?? "#000000";
-    this.mrzColor = opt.mrzColor ?? "#000000";
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? "#eeeeee";
+    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ??
+        BARCODE_ERROR_CORRECTION;
+    this.headerColor = opt.headerColor ?? HEADER_COLOR;
+    this.textColor = opt.textColor ?? TEXT_COLOR;
+    this.mrzColor = opt.mrzColor ?? TEXT_COLOR;
+    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
     this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? "#ffffff";
+    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
     this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
-    this.logoUnderlayColor = opt.logoUnderlayColor ?? "#4090ba";
-    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? 255;
+    this.logoUnderlayColor = opt.logoUnderlayColor ?? HEADER_COLOR;
+    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
     this.logo = opt.logo ?? null;
     this.showGuides = opt.showGuides ?? false;
     this.useDigitalSeal = opt.useDigitalSeal ?? false;
-    this.fullAuthority = opt.fullAuthority ?? "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL";
-    this.fullDocumentName = opt.fullDocumentName ?? "FURRY EVENTS VISA";
-    this.placeOfIssueHeader = opt.placeOfIssueHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.validFromHeader = opt.validFromHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.validThruHeader = opt.validThruHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.numberOfEntriesHeader = opt.numberOfEntriesHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.numberHeader = opt.numberHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.typeHeader = opt.typeHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.additionalInfoHeader = opt.additionalInfoHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.nameHeader = opt.nameHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.passportNumberHeader = opt.passportNumberHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.nationalityHeader = opt.nationalityHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.genderHeader = opt.genderHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.fullAuthority = opt.fullAuthority ?? FULL_AUTHORITY;
+    this.fullDocumentName = opt.fullDocumentName ?? VISA_NAME;
+    this.placeOfIssueHeader = opt.placeOfIssueHeader ?? placeOfIssueHeader;
+    this.validFromHeader = opt.validFromHeader ?? validFromHeader;
+    this.validThruHeader = opt.validThruHeader ?? validThruHeader;
+    this.numberOfEntriesHeader = opt.numberOfEntriesHeader ??
+        numberOfEntriesHeader;
+    this.numberHeader = opt.numberHeader ?? documentNoHeader;
+    this.typeHeader = opt.typeHeader ?? visaTypeHeader;
+    this.additionalInfoHeader = opt.additionalInfoHeader ??
+        additionalInfoHeader;
+    this.nameHeader = opt.nameHeader ?? nameHeader;
+    this.passportNumberHeader = opt.passportNumberHeader ??
+        passportNoHeader;
+    this.nationalityHeader = opt.nationalityHeader ?? nationalityHeader;
+    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? birthDateHeader;
+    this.genderHeader = opt.genderHeader ?? genderHeader;
     this.fonts = opt.fonts ?? null;
   }
 
-  /** The RGBA color for the dark (black) areas for the rendered barcode: '#RRGGBBAA'.
+  /**
+   * The RGBA color for the dark (black) areas for the rendered barcode:
+   *     '#RRGGBBAA'.
    * @type { string }
    */
   barcodeDarkColor;
 
-  /** The RGBA color for the light (white) areas for the rendered barcode: '#RRGGBBAA'.
+  /**
+   * The RGBA color for the light (white) areas for the rendered barcode:
+   *     '#RRGGBBAA'.
    * @type { string }
    */
   barcodeLightColor;
 
-  /** The error correction level used for generating the barcode: 'L', 'M', 'Q', or 'H'.
+  /**
+   * The error correction level used for generating the barcode: 'L', 'M', 'Q',
+   *     or 'H'.
    * @type { string }
    */
   barcodeErrorCorrection;
 
-  /** The RGB color for header text: '#RRGGBB'.
+  /**
+   * The RGB color for header text: '#RRGGBB'.
    * @type { string }
    */
   headerColor;
 
-  /** The RGB color for non-header text: '#RRGGBB'.
+  /**
+   * The RGB color for non-header text: '#RRGGBB'.
    * @type { string }
    */
   textColor;
 
-  /** The RGB color for Machine-Readable Zone (MRZ) text: '#RRGGBB'.
+  /**
+   * The RGB color for Machine-Readable Zone (MRZ) text: '#RRGGBB'.
    * @type { string }
    */
   mrzColor;
 
-  /** The RGB color for the background when no front background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no front background image is set:
+   *     '#RRGGBB'.
    * @type { string }
    */
   frontBackgroundColor;
 
-  /** A path/URL to an image to use for the front background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the front background, or `null` for no
+   *     background image.
    * @type { string | null }
    */
   frontBackgroundImage;
 
-  /** The RGB color for the background when no Machine-Readable Zone (MRZ) background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no Machine-Readable Zone (MRZ)
+   *     background image is set: '#RRGGBB'.
    * @type { string }
    */
   mrzBackgroundColor;
 
-  /** A path/URL to an image to use for the Machine-Readable Zone (MRZ) background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the Machine-Readable Zone (MRZ)
+   *     background, or `null` for no background image.
    * @type { string | null }
    */
   mrzBackgroundImage;
 
-  /** The RGB color for the underlay under photo/logo areas: '#RRGGBB'.
+  /**
+   * The RGB color for the underlay under photo/logo areas: '#RRGGBB'.
    * @type { string }
    */
   logoUnderlayColor;
 
-  /** The opacity of the number underlay color: 0-255.
+  /**
+   * The opacity of the number underlay color: 0-255.
    * @type { number }
    */
   logoUnderlayAlpha;
   get #logoUnderlayColorWithAlpha() {
     return this.logoUnderlayColor +
-      this.logoUnderlayAlpha.toString(16).padStart(2, "0");
+        this.logoUnderlayAlpha.toString(16).padStart(2, "0");
   }
 
-  /** A path/URL to an image to use for the logo, or `null` for no logo.
+  /**
+   * A path/URL to an image to use for the logo, or `null` for no logo.
    * @type { string | null }
    */
   logo;
 
-  /** Toggles bleed (red) and safe (blue) lines on the rendered canvas.
+  /**
+   * Toggles bleed (red) and safe (blue) lines on the rendered canvas.
    * @type { boolean }
    */
   showGuides;
 
-  /** Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
+  /**
+   * Toggles storing a visible digital seal (VDS) on the barcode in place of a
+   *     URL.
    * @type { boolean }
    */
   useDigitalSeal;
 
-  /** The full name of the authority who issued this visa.
+  /**
+   * The full name of the authority who issued this visa.
    * @type { string }
    */
   fullAuthority;
 
-  /** The full name of this visa type.
+  /**
+   * The full name of this visa type.
    * @type { string }
    */
   fullDocumentName;
 
-  /** Header text for the placeOfIssue property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the placeOfIssue property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   placeOfIssueHeader;
 
-  /** Header text for the validFrom property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the validFrom property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   validFromHeader;
 
-  /** Header text for the validThru property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the validThru property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   validThruHeader;
 
-  /** Header text for the numberOfEntries property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the numberOfEntries property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   numberOfEntriesHeader;
 
-  /** Header text for the number property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the number property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   numberHeader;
 
-  /** Header text for the visaType property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the visaType property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   typeHeader;
 
-  /** Header text for the additionalInfo property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the additionalInfo property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   additionalInfoHeader;
 
-  /** Header text for the name property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the name property: ['primary', 'language 1', 'language 2'].
    * @type { string[] }
    */
   nameHeader;
 
-  /** Header text for the passportNumber property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the passportNumber property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   passportNumberHeader;
 
-  /** Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the nationalityCode property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   nationalityHeader;
 
-  /** Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the birthDate property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   dateOfBirthHeader;
 
-  /** Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the genderMarker property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   genderHeader;
 
-  /** A `FontFaceSet`, like the one available from `window.document`.
+  /**
+   * A `FontFaceSet`, like the one available from `window.document`.
    * @type { FontFaceSet }
    */
   fonts;
@@ -365,7 +444,8 @@ class EventsMRVARenderer {
     ]);
   }
 
-  /** Generate the front image and return the canvas.
+  /**
+   * Generate the front image and return the canvas.
    * @param { EventsMRVA } model
    * @param { HTMLCanvasElement } fallback
    */
@@ -383,14 +463,18 @@ class EventsMRVARenderer {
     }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
-    const barcode = this.useDigitalSeal ? [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }] : model.url;
+    const barcode = this.useDigitalSeal ?
+        [{ data: toBase45(model.signedSeal), mode: "alphanumeric" }]
+        : model.url;
 
     const images = await Promise.all([
-      this.frontBackgroundImage ? loadImageFromURL(this.frontBackgroundImage) : null,
-      this.mrzBackgroundImage ? loadImageFromURL(this.mrzBackgroundImage) : null,
+      this.frontBackgroundImage ?
+          loadImageFromURL(this.frontBackgroundImage) : null,
+      this.mrzBackgroundImage ?
+          loadImageFromURL(this.mrzBackgroundImage) : null,
       loadImageFromURL(model.picture),
       this.logo ? loadImageFromURL(this.logo) : null,
-      qrLite.toCanvas(barcode, {
+      toQRCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         version: 9,
         margin: 0,
@@ -399,7 +483,8 @@ class EventsMRVARenderer {
           light: this.barcodeLightColor
         }
       }),
-      typeof model.signature !== typeof canvas ? loadImageFromURL(model.signature) : null
+      typeof model.signature !== typeof canvas ?
+          loadImageFromURL(model.signature) : null
     ]);
 
     ctx.fillStyle = this.frontBackgroundColor;
@@ -503,14 +588,18 @@ class EventsMRVARenderer {
       EventsMRVARenderer.#documentHeaderXY[1]
     );
     ctx.font = EventsMRVARenderer.#separatorHeaderFont;
-    documentHeaderWidth += ctx.measureText(EventsMRVARenderer.#headerSeparator).width;
+    documentHeaderWidth += ctx.measureText(
+      EventsMRVARenderer.#headerSeparator
+    ).width;
     ctx.fillText(
       EventsMRVARenderer.#headerSeparator,
       EventsMRVARenderer.#documentHeaderXY[0] - documentHeaderWidth,
       EventsMRVARenderer.#documentHeaderXY[1]
     );
     ctx.font = EventsMRVARenderer.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
+    documentHeaderWidth += ctx.measureText(
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`
+    ).width;
     ctx.fillText(
       `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
       EventsMRVARenderer.#documentHeaderXY[0] - documentHeaderWidth,
@@ -579,35 +668,35 @@ class EventsMRVARenderer {
       EventsMRVARenderer.#passportX[2],
       EventsMRVARenderer.#passportY[4]
     );
-    const placeOfIssueWidth = EventsMRVARenderer.#documentX[0] +
+    const PLACE_OF_ISSUE_WIDTH = EventsMRVARenderer.#documentX[0] +
       ctx.measureText(this.placeOfIssueHeader[0]).width;
-    const validFromWidth = EventsMRVARenderer.#documentX[1] +
+    const VALID_FROM_WIDTH = EventsMRVARenderer.#documentX[1] +
       ctx.measureText(this.validFromHeader[0]).width;
-    const validThruWidth = EventsMRVARenderer.#documentX[2] +
+    const VALID_THRU_WIDTH = EventsMRVARenderer.#documentX[2] +
       ctx.measureText(this.validThruHeader[0]).width;
-    const numberOfEntriesWidth = EventsMRVARenderer.#documentX[3] +
+    const NUMBER_OF_ENTRIES_WIDTH = EventsMRVARenderer.#documentX[3] +
       ctx.measureText(this.numberOfEntriesHeader[0]).width;
-    const numberWidth = EventsMRVARenderer.#documentX[0] +
+    const NUMBER_WIDTH = EventsMRVARenderer.#documentX[0] +
       ctx.measureText(this.numberHeader[0]).width;
-    const typeWidth = EventsMRVARenderer.#documentX[2] +
+    const TYPE_WIDTH = EventsMRVARenderer.#documentX[2] +
       ctx.measureText(this.typeHeader[0]).width;
-    const additionalInfoWidth = EventsMRVARenderer.#documentX[0] +
+    const ADDITIONAL_INFO_WIDTH = EventsMRVARenderer.#documentX[0] +
       ctx.measureText(this.additionalInfoHeader[0]).width;
-    const nameWidth = EventsMRVARenderer.#passportX[0] +
+    const NAME_WIDTH = EventsMRVARenderer.#passportX[0] +
       ctx.measureText(this.nameHeader[0]).width;
-    const passportNumberWidth = EventsMRVARenderer.#passportX[0] +
+    const PASSPORT_NUMBER_WIDTH = EventsMRVARenderer.#passportX[0] +
       ctx.measureText(this.passportNumberHeader[0]).width;
-    const nationalityWidth = EventsMRVARenderer.#passportX[0] +
+    const NATIONALITY_WIDTH = EventsMRVARenderer.#passportX[0] +
       ctx.measureText(this.nationalityHeader[0]).width;
-    const dateOfBirthWidth = EventsMRVARenderer.#passportX[1] +
+    const DATE_OF_BIRTH_WIDTH = EventsMRVARenderer.#passportX[1] +
       ctx.measureText(this.dateOfBirthHeader[0]).width;
-    const genderWidth = EventsMRVARenderer.#passportX[2] +
+    const GENDER_WIDTH = EventsMRVARenderer.#passportX[2] +
       ctx.measureText(this.genderHeader[0]).width;
     
     ctx.font = EventsMRVARenderer.#intlFont;
     ctx.fillText(
       "/",
-      placeOfIssueWidth,
+      PLACE_OF_ISSUE_WIDTH,
       EventsMRVARenderer.#documentY[0]
     );
     ctx.fillText(
@@ -622,7 +711,7 @@ class EventsMRVARenderer {
     );
     ctx.fillText(
       "/",
-      validFromWidth,
+      VALID_FROM_WIDTH,
       EventsMRVARenderer.#documentY[0]
     );
     ctx.fillText(
@@ -637,7 +726,7 @@ class EventsMRVARenderer {
     );
     ctx.fillText(
       "/",
-      validThruWidth,
+      VALID_THRU_WIDTH,
       EventsMRVARenderer.#documentY[0]
     );
     ctx.fillText(
@@ -652,7 +741,7 @@ class EventsMRVARenderer {
     );
     ctx.fillText(
       "/",
-      numberOfEntriesWidth,
+      NUMBER_OF_ENTRIES_WIDTH,
       EventsMRVARenderer.#documentY[0],
     );
     ctx.fillText(
@@ -667,32 +756,32 @@ class EventsMRVARenderer {
     );
     ctx.fillText(
       `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
-      numberWidth,
+      NUMBER_WIDTH,
       EventsMRVARenderer.#documentY[4]
     );
     ctx.fillText(
       `/ ${this.typeHeader[1]}/ ${this.typeHeader[2]}`,
-      typeWidth,
+      TYPE_WIDTH,
       EventsMRVARenderer.#documentY[4]
     );
     ctx.fillText(
       `/ ${this.additionalInfoHeader[1]}/ ${this.additionalInfoHeader[2]}`,
-      additionalInfoWidth,
+      ADDITIONAL_INFO_WIDTH,
       EventsMRVARenderer.#documentY[6]
     );
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
-      nameWidth,
+      NAME_WIDTH,
       EventsMRVARenderer.#passportY[0]
     );
     ctx.fillText(
       `/ ${this.passportNumberHeader[1]}/ ${this.passportNumberHeader[2]}`,
-      passportNumberWidth,
+      PASSPORT_NUMBER_WIDTH,
       EventsMRVARenderer.#passportY[2]
     );
     ctx.fillText(
       "/",
-      nationalityWidth,
+      NATIONALITY_WIDTH,
       EventsMRVARenderer.#passportY[4]
     );
     ctx.fillText(
@@ -707,7 +796,7 @@ class EventsMRVARenderer {
     );
     ctx.fillText(
       "/",
-      dateOfBirthWidth,
+      DATE_OF_BIRTH_WIDTH,
       EventsMRVARenderer.#passportY[4]
     );
     ctx.fillText(
@@ -722,7 +811,7 @@ class EventsMRVARenderer {
     );
     ctx.fillText(
       "/",
-      genderWidth,
+      GENDER_WIDTH,
       EventsMRVARenderer.#passportY[4]
     );
     ctx.fillText(
@@ -801,18 +890,14 @@ class EventsMRVARenderer {
 
     ctx.fillStyle = this.mrzColor;
     ctx.font = EventsMRVARenderer.#mrzFont;
-    for (let i = 0; i < model.mrzLine1.length; i += 1) {
+    [...model.machineReadableZone].forEach((character, i) => {
       ctx.fillText(
-        model.mrzLine1[i],
-        EventsMRVARenderer.#mrzX + (i * EventsMRVARenderer.#mrzSpacing),
-        EventsMRVARenderer.#mrzY[0]
+        character,
+        EventsMRVARenderer.#mrzX +
+            ((i % TD3_MRZ_LINE_LENGTH) * EventsMRVARenderer.#mrzSpacing),
+        EventsMRVARenderer.#mrzY[Math.floor(i / TD3_MRZ_LINE_LENGTH)]
       );
-      ctx.fillText(
-        model.mrzLine2[i],
-        EventsMRVARenderer.#mrzX + (i * EventsMRVARenderer.#mrzSpacing),
-        EventsMRVARenderer.#mrzY[1]
-      );
-    }
+    });
 
     if (this.showGuides) {
       drawBleedAndSafeLines(

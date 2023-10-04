@@ -1,275 +1,374 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { CrewLicense } from "../modules/CrewLicense.js";
-import * as b45 from "../modules/base45-ts/base45.js";
-import * as qrLite from "../modules/qrcode-lite/qrcode.mjs";
+import { encode as toBase45 } from "../modules/base45-ts/base45.js";
+import { toCanvas as toQRCanvas } from "../modules/qrcode-lite/qrcode.mjs";
 import { loadImageFromURL } from "../modules/utilities/load-image-from-url.js";
 import { fitImageInArea } from "../modules/utilities/fit-image-in-area.js";
 import { fillAreaWithImage } from "../modules/utilities/fill-area-with-image.js";
 import { drawBleedAndSafeLines } from "../modules/utilities/draw-bleed-and-safe-lines.js";
+import { BACKGROUND_COLOR, BARCODE_DARK_COLOR, BARCODE_ERROR_CORRECTION, BARCODE_LIGHT_COLOR, FULL_AUTHORITY, HEADER_COLOR, MRZ_BACKGROUND_COLOR, TD1_MRZ_LINE_LENGTH, TEXT_COLOR, UNDERLAY_OPACITY, authorityHeader, birthDateHeader, certificateNoHeader, expirationDateHeader, genderHeader, nameHeader, nationalityHeader } from "../modules/utilities/renderer-variables.js";
 
-/** `CrewLicenseRenderer` takes a `CrewLicense` object and returns a `HTMLCanvasElement`
- *  or an `OffscreenCanvas` element representation of the travel document as a
- *  two-sided TD1-sized crewmember license.
+/**
+ * `CrewLicenseRenderer` takes a `CrewLicense` object and returns a
+ *     `HTMLCanvasElement` or an `OffscreenCanvas` element representation of the
+ *     travel document as a two-sided TD1-sized crewmember license.
  * 
- *  The renderer generates images appropriate for web use and for print use with
- *  300-dpi printers. A bleed area surrounds the cut and safe areas to allow
- *  borderless printing.
+ * The renderer generates images appropriate for web use and for print use with
+ *     300-dpi printers. A bleed area surrounds the cut and safe areas to allow
+ *     borderless printing.
  * 
- *  Renderers are scenario-specific and this was created to be used for a demo
- *  on a web page. Ergo, multiple properties are able to be set. In real-world
- *  use less (or no) properties may want to be settable.
+ * Renderers are scenario-specific and this was created to be used for a demo
+ *     on a web page. Ergo, multiple properties are able to be set. In
+ *     real-world use less (or no) properties may want to be settable.
  */
 class CrewLicenseRenderer {
-  /** Create a `CrewLicenseRenderer`.
+  /**
+   * Create a `CrewLicenseRenderer`.
    * @param { Object } [opt] - An options object.
-   * @param { string } [opt.barcodeDarkColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
-   * @param { string } [opt.barcodeLightColor] - A RGBA hex string, formatted as '#RRGGBBAA'.
-   * @param { string } [opt.barcodeErrorCorrection] - The character 'L', 'M', 'Q', or 'H'.
-   * @param { string } [opt.headerColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.textColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.mrzColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.backBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.backBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an image file.
-   * @param { string } [opt.numberUnderlayColor] - A RGB hex string, formatted as '#RRGGBB'.
-   * @param { number } [opt.numberUnderlayAlpha] - A number in the range of 0-255.
-   * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as '#RRGGBB'.
+   * @param { string } [opt.barcodeDarkColor] - A RGBA hex string, formatted as
+   *     '#RRGGBBAA'.
+   * @param { string } [opt.barcodeLightColor] - A RGBA hex string, formatted
+   *     as '#RRGGBBAA'.
+   * @param { string } [opt.barcodeErrorCorrection] - The character 'L', 'M',
+   *     'Q', or 'H'.
+   * @param { string } [opt.headerColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.textColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.mrzColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string } [opt.frontBackgroundColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
+   * @param { string | null } [opt.frontBackgroundImage] - A path/URL to an
+   *     image file.
+   * @param { string } [opt.backBackgroundColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
+   * @param { string | null } [opt.backBackgroundImage] - A path/URL to an image
+   *     file.
+   * @param { string } [opt.mrzBackgroundColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
+   * @param { string | null } [opt.mrzBackgroundImage] - A path/URL to an image
+   *     file.
+   * @param { string } [opt.numberUnderlayColor] - A RGB hex string, formatted
+   *     as '#RRGGBB'.
+   * @param { number } [opt.numberUnderlayAlpha] - A number in the range of
+   *     0-255.
+   * @param { string } [opt.logoUnderlayColor] - A RGB hex string, formatted as
+   *     '#RRGGBB'.
    * @param { number } [opt.logoUnderlayAlpha] - A number in the range of 0-255.
    * @param { string | null } [opt.logo] - A path/URL to an image file.
    * @param { string | null } [opt.smallLogo] - A path/URL to an image file.
-   * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue) lines on the rendered canvas.
-   * @param { boolean } [opt.useDigitalSeal] - Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
-   * @param { string } [opt.fullAuthority] - The full name of the authority who issued this document.
-   * @param { string } [opt.fullDocumentName] - The full name of this document's type.
-   * @param { string[] } [opt.nameHeader] - Header text for the name property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.genderHeader] - Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.nationalityHeader] - Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.dateOfBirthHeader] - Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.authorityHeader] - Header text for the subauthority property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.privilegeHeader] - Header text for the privilege property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.numberHeader] - Header text for the number property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.dateOfExpirationHeader] - Header text for the expirationDate property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.ratingsHeader] - Header text for the ratings property: ['primary', 'language 1', 'language 2'].
-   * @param { string[] } [opt.limitationsHeader] - Header text for the limitations property: ['primary', 'language 1', 'language 2'].
-   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one available from `window.document`.
+   * @param { boolean } [opt.showGuides] - Toggles bleed (red) and safe (blue)
+   *     lines on the rendered canvas.
+   * @param { boolean } [opt.useDigitalSeal] - Toggles storing a visible digital
+   *     seal (VDS) on the barcode in place of a URL.
+   * @param { string } [opt.fullAuthority] - The full name of the authority who
+   *     issued this document.
+   * @param { string } [opt.fullDocumentName] - The full name of this document's
+   *     type.
+   * @param { string[] } [opt.nameHeader] - Header text for the name property:
+   *     ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.genderHeader] - Header text for the genderMarker
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.nationalityHeader] - Header text for the
+   *     nationalityCode property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.dateOfBirthHeader] - Header text for the birthDate
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.authorityHeader] - Header text for the
+   *     subauthority property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.privilegeHeader] - Header text for the privilege
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.numberHeader] - Header text for the number
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.dateOfExpirationHeader] - Header text for the
+   *     expirationDate property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.ratingsHeader] - Header text for the ratings
+   *     property: ['primary', 'language 1', 'language 2'].
+   * @param { string[] } [opt.limitationsHeader] - Header text for the
+   *     limitations property: ['primary', 'language 1', 'language 2'].
+   * @param { FontFaceSet } [opt.fonts] - A `FontFaceSet`, like the one
+   *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? "#000000ff";
-    this.barcodeLightColor = opt.barcodeLightColor ?? "#00000000";
-    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ?? "M";
-    this.headerColor = opt.headerColor ?? "#4090ba";
-    this.textColor = opt.textColor ?? "#000000";
-    this.mrzColor = opt.mrzColor ?? "#000000";
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? "#eeeeee";
+    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ??
+        BARCODE_ERROR_CORRECTION;
+    this.headerColor = opt.headerColor ?? HEADER_COLOR;
+    this.textColor = opt.textColor ?? TEXT_COLOR;
+    this.mrzColor = opt.mrzColor ?? TEXT_COLOR;
+    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
     this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.backBackgroundColor = opt.backBackgroundColor ?? "#eeeeee";
+    this.backBackgroundColor = opt.backBackgroundColor ?? BACKGROUND_COLOR;
     this.backBackgroundImage = opt.backBackgroundImage ?? null;
-    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? "#ffffff";
+    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
     this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
-    this.numberUnderlayColor = opt.numberUnderlayColor ?? "#ffffff";
-    this.numberUnderlayAlpha = opt.numberUnderlayAlpha ?? 255;
-    this.logoUnderlayColor = opt.logoUnderlayColor ?? "#4090ba";
-    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? 255;
+    this.numberUnderlayColor = opt.numberUnderlayColor ?? MRZ_BACKGROUND_COLOR;
+    this.numberUnderlayAlpha = opt.numberUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logoUnderlayColor = opt.logoUnderlayColor ?? HEADER_COLOR;
+    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
     this.logo = opt.logo ?? null;
     this.smallLogo = opt.smallLogo ?? null;
     this.showGuides = opt.showGuides ?? false;
     this.useDigitalSeal = opt.useDigitalSeal ?? false;
-    this.fullAuthority = opt.fullAuthority ?? "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL";
+    this.fullAuthority = opt.fullAuthority ?? FULL_AUTHORITY;
     this.fullDocumentName = opt.fullDocumentName ?? "CREWMEMBER LICENSE";
-    this.nameHeader = opt.nameHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.genderHeader = opt.genderHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.nationalityHeader = opt.nationalityHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.authorityHeader = opt.authorityHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.privilegeHeader = opt.privilegeHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.numberHeader = opt.numberHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.ratingsHeader = opt.ratingsHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
-    this.limitationsHeader = opt.limitationsHeader ?? ["HEADER", "EN-TÊTE", "ENCABEZADO"];
+    this.nameHeader = opt.nameHeader ?? nameHeader;
+    this.genderHeader = opt.genderHeader ?? genderHeader;
+    this.nationalityHeader = opt.nationalityHeader ?? nationalityHeader;
+    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? birthDateHeader;
+    this.authorityHeader = opt.authorityHeader ?? authorityHeader;
+    this.privilegeHeader = opt.privilegeHeader ?? [
+      "PRIVILEGE",
+      "PRIVILÈGE",
+      "PRIVILEGIO"
+    ];
+    this.numberHeader = opt.numberHeader ?? certificateNoHeader;
+    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ??
+        expirationDateHeader;
+    this.ratingsHeader = opt.ratingsHeader ?? [
+      "RATINGS",
+      "QUALIFICATIONS",
+      "CLASIFICACIONES"
+    ];
+    this.limitationsHeader = opt.limitationsHeader ?? [
+      "LIMITATIONS",
+      "LIMITATIONS",
+      "LIMITACIONES"
+    ];
     this.fonts = opt.fonts ?? null;
   }
 
-  /** The RGBA color for the dark (black) areas for the rendered barcode: '#RRGGBBAA'.
+  /**
+   * The RGBA color for the dark (black) areas for the rendered barcode:
+   *     '#RRGGBBAA'.
    * @type { string }
    */
   barcodeDarkColor;
 
-  /** The RGBA color for the light (white) areas for the rendered barcode: '#RRGGBBAA'.
+  /**
+   * The RGBA color for the light (white) areas for the rendered barcode:
+   *     '#RRGGBBAA'.
    * @type { string }
    */
   barcodeLightColor;
 
-  /** The error correction level used for generating the barcode: 'L', 'M', 'Q', or 'H'.
+  /**
+   * The error correction level used for generating the barcode: 'L', 'M', 'Q',
+   *     or 'H'.
    * @type { string }
    */
   barcodeErrorCorrection;
 
-  /** The RGB color for header text: '#RRGGBB'.
+  /**
+   * The RGB color for header text: '#RRGGBB'.
    * @type { string }
    */
   headerColor;
 
-  /** The RGB color for non-header text: '#RRGGBB'.
+  /**
+   * The RGB color for non-header text: '#RRGGBB'.
    * @type { string }
    */
   textColor;
 
-  /** The RGB color for Machine-Readable Zone (MRZ) text: '#RRGGBB'.
+  /**
+   * The RGB color for Machine-Readable Zone (MRZ) text: '#RRGGBB'.
    * @type { string }
    */
   mrzColor;
 
-  /** The RGB color for the background when no front background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no front background image is set:
+   *     '#RRGGBB'.
    * @type { string }
    */
   frontBackgroundColor;
 
-  /** A path/URL to an image to use for the front background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the front background, or `null` for no
+   *     background image.
    * @type { string | null }
    */
   frontBackgroundImage;
 
-  /** The RGB color for the background when no back background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no back background image is set:
+   *     '#RRGGBB'.
    * @type { string }
    */
   backBackgroundColor;
 
-  /** A path/URL to an image to use for the back background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the back background, or `null` for no
+   *     background image.
    * @type { string | null }
    */
   backBackgroundImage;
 
-  /** The RGB color for the background when no Machine-Readable Zone (MRZ) background image is set: '#RRGGBB'.
+  /**
+   * The RGB color for the background when no Machine-Readable Zone (MRZ)
+   *     background image is set: '#RRGGBB'.
    * @type { string }
    */
   mrzBackgroundColor;
 
-  /** A path/URL to an image to use for the Machine-Readable Zone (MRZ) background, or `null` for no background image.
+  /**
+   * A path/URL to an image to use for the Machine-Readable Zone (MRZ)
+   *     background, or `null` for no background image.
    * @type { string | null }
    */
   mrzBackgroundImage;
 
-  /** The RGB color for the underlay under the document number on the back of the card: '#RRGGBB'.
+  /**
+   * The RGB color for the underlay under the document number on the back of the
+   *     card: '#RRGGBB'.
    * @type { string }
    */
   numberUnderlayColor;
 
-  /** The opacity of the number underlay color: 0-255.
+  /**
+   * The opacity of the number underlay color: 0-255.
    * @type { number }
    */
   numberUnderlayAlpha;
   get #numberUnderlayColorWithAlpha() {
     return this.numberUnderlayColor +
-      this.numberUnderlayAlpha.toString(16).padStart(2, "0");
+        this.numberUnderlayAlpha.toString(16).padStart(2, "0");
   }
 
-  /** The RGB color for the underlay under photo/logo areas: '#RRGGBB'.
+  /**
+   * The RGB color for the underlay under photo/logo areas: '#RRGGBB'.
    * @type { string }
    */
   logoUnderlayColor;
 
-  /** The opacity of the number underlay color: 0-255.
+  /**
+   * The opacity of the number underlay color: 0-255.
    * @type { number }
    */
   logoUnderlayAlpha;
   get #logoUnderlayColorWithAlpha() {
     return this.logoUnderlayColor +
-      this.logoUnderlayAlpha.toString(16).padStart(2, "0");
+        this.logoUnderlayAlpha.toString(16).padStart(2, "0");
   }
 
-  /** A path/URL to an image to use for the logo, or `null` for no logo.
+  /**
+   * A path/URL to an image to use for the logo, or `null` for no logo.
    * @type { string | null }
    */
   logo;
 
-  /** A path/URL to an image to use for the small logo, or `null` for no small logo.
+  /**
+   * A path/URL to an image to use for the small logo, or `null` for no small
+   *     logo.
    * @type { string | null }
    */
   smallLogo;
 
-  /** Toggles bleed (red) and safe (blue) lines on the rendered canvas.
+  /**
+   * Toggles bleed (red) and safe (blue) lines on the rendered canvas.
    * @type { boolean }
    */
   showGuides;
 
-  /** Toggles storing a visible digital seal (VDS) on the barcode in place of a URL.
+  /**
+   * Toggles storing a visible digital seal (VDS) on the barcode in place of a
+   *     URL.
    * @type { boolean }
    */
   useDigitalSeal;
 
-  /** The full name of the authority who issued this document.
+  /**
+   * The full name of the authority who issued this document.
    * @type { string }
    */
   fullAuthority;
 
-  /** The full name of this document's type.
+  /**
+   * The full name of this document's type.
    * @type { string }
    */
   fullDocumentName;
 
-  /** Header text for the name property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the name property: ['primary', 'language 1', 'language 2'].
    * @type { string[] }
    */
   nameHeader;
 
-  /** Header text for the genderMarker property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the genderMarker property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   genderHeader;
 
-  /** Header text for the nationalityCode property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the nationalityCode property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   nationalityHeader;
 
-  /** Header text for the birthDate property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the birthDate property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   dateOfBirthHeader;
 
-  /** Header text for the subauthority property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the subauthority property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   authorityHeader;
 
-  /** Header text for the privilege property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the privilege property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   privilegeHeader;
 
-  /** Header text for the number property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the number property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   numberHeader;
 
-  /** Header text for the expirationDate property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the expirationDate property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   dateOfExpirationHeader;
 
-  /** Header text for the ratings property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the ratings property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   ratingsHeader;
 
-  /** Header text for the limitations property: ['primary', 'language 1', 'language 2'].
+  /**
+   * Header text for the limitations property: ['primary', 'language 1',
+   *     'language 2'].
    * @type { string[] }
    */
   limitationsHeader;
 
-  /** A `FontFaceSet`, like the one available from `window.document`.
+  /**
+   * A `FontFaceSet`, like the one available from `window.document`.
    * @type { FontFaceSet }
    */
   fonts;
 
-  /* Font information used in card generation. */
+  // Font information used in card generation.
   static #mrzFontFace = new FontFace(
     "OCR-B",
     "url('/fonts/OCR-B-regular-web.woff2') format('woff2')," +
@@ -318,11 +417,11 @@ class CrewLicenseRenderer {
     return `61px ${this.#signatureFontFace.family}`;
   }
 
-  /* Text constants used in image generation. */
+  // Text constants used in image generation.
   static #headerSeparator = " · ";
   static #documentSize = "TD1";
 
-  /* Coordinates, widths, and heights used in card generation. */
+  // Coordinates, widths, and heights used in card generation.
   static #mainHeaderX = 1004;
   static #mainHeaderY = [48, 85];
   static #photoUnderlayXY = [48, 0];
@@ -397,7 +496,8 @@ class CrewLicenseRenderer {
     ]);
   }
 
-  /** Generate the front image and return the canvas.
+  /**
+   * Generate the front image and return the canvas.
    * @param { CrewLicense } model
    * @param { HTMLCanvasElement } fallback
    */
@@ -418,10 +518,12 @@ class CrewLicenseRenderer {
     ctx.textBaseline = "top";
 
     const images = await Promise.all([
-      this.frontBackgroundImage ? loadImageFromURL(this.frontBackgroundImage) : null,
+      this.frontBackgroundImage ?
+          loadImageFromURL(this.frontBackgroundImage) : null,
       loadImageFromURL(model.picture),
       this.logo ? loadImageFromURL(this.logo) : null,
-      typeof model.signature !== typeof canvas ? loadImageFromURL(model.signature) : null
+      typeof model.signature !== typeof canvas ?
+          loadImageFromURL(model.signature) : null
     ]);
 
     ctx.fillStyle = this.frontBackgroundColor;
@@ -501,14 +603,18 @@ class CrewLicenseRenderer {
       CrewLicenseRenderer.#mainHeaderY[1]
     );
     ctx.font = CrewLicenseRenderer.#separatorHeaderFont;
-    documentHeaderWidth += ctx.measureText(CrewLicenseRenderer.#headerSeparator).width;
+    documentHeaderWidth += ctx.measureText(
+      CrewLicenseRenderer.#headerSeparator
+    ).width;
     ctx.fillText(
       CrewLicenseRenderer.#headerSeparator,
       CrewLicenseRenderer.#mainHeaderX - documentHeaderWidth,
       CrewLicenseRenderer.#mainHeaderY[1]
     );
     ctx.font = CrewLicenseRenderer.#documentHeaderFont;
-    documentHeaderWidth += ctx.measureText(`${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`).width;
+    documentHeaderWidth += ctx.measureText(
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`
+    ).width;
     ctx.fillText(
       `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}`,
       CrewLicenseRenderer.#mainHeaderX - documentHeaderWidth,
@@ -557,30 +663,30 @@ class CrewLicenseRenderer {
       CrewLicenseRenderer.#frontColumns,
       CrewLicenseRenderer.#frontRows[12]
     );
-    const nameWidth = CrewLicenseRenderer.#frontColumns +
+    const NAME_WIDTH = CrewLicenseRenderer.#frontColumns +
       ctx.measureText(this.nameHeader[0]).width;
-    const genderWidth = CrewLicenseRenderer.#frontColumns +
+    const GENDER_WIDTH = CrewLicenseRenderer.#frontColumns +
       ctx.measureText(this.genderHeader[0]).width;
-    const nationalityWidth = CrewLicenseRenderer.#frontRow2Columns[0] +
+    const NATIONALITY_WIDTH = CrewLicenseRenderer.#frontRow2Columns[0] +
       ctx.measureText(this.nationalityHeader[0]).width;
-    const dateOfBirthWidth = CrewLicenseRenderer.#frontRow2Columns[1] +
+    const DATE_OF_BIRTH_WIDTH = CrewLicenseRenderer.#frontRow2Columns[1] +
       ctx.measureText(this.dateOfBirthHeader[0]).width;
-    const employerWidth = CrewLicenseRenderer.#frontColumns +
+    const EMPLOYER_WIDTH = CrewLicenseRenderer.#frontColumns +
       ctx.measureText(this.authorityHeader[0]).width;
-    const occupationWidth = CrewLicenseRenderer.#frontColumns +
+    const OCCUPATION_WIDTH = CrewLicenseRenderer.#frontColumns +
       ctx.measureText(this.privilegeHeader[0]).width;
-    const numberWidth = CrewLicenseRenderer.#frontColumns +
+    const NUMBER_WIDTH = CrewLicenseRenderer.#frontColumns +
       ctx.measureText(this.numberHeader[0]).width;
-    const dateOfExpirationWidth = CrewLicenseRenderer.#frontColumns +
+    const DATE_OF_EXPIRATION_WIDTH = CrewLicenseRenderer.#frontColumns +
       ctx.measureText(this.dateOfExpirationHeader[0]).width;
     
     ctx.font = CrewLicenseRenderer.#intlFont;
     ctx.fillText(
       `/ ${this.nameHeader[1]}/ ${this.nameHeader[2]}`,
-      nameWidth,
+      NAME_WIDTH,
       CrewLicenseRenderer.#frontRows[0]
     );
-    ctx.fillText("/", genderWidth, CrewLicenseRenderer.#frontRows[2]);
+    ctx.fillText("/", GENDER_WIDTH, CrewLicenseRenderer.#frontRows[2]);
     ctx.fillText(
       `${this.genderHeader[1]}/`,
       CrewLicenseRenderer.#frontColumns,
@@ -591,7 +697,7 @@ class CrewLicenseRenderer {
       CrewLicenseRenderer.#frontColumns,
       CrewLicenseRenderer.#frontRows[4]
     );
-    ctx.fillText("/", nationalityWidth, CrewLicenseRenderer.#frontRows[2]);
+    ctx.fillText("/", NATIONALITY_WIDTH, CrewLicenseRenderer.#frontRows[2]);
     ctx.fillText(
       `${this.nationalityHeader[1]}/`,
       CrewLicenseRenderer.#frontRow2Columns[0],
@@ -602,7 +708,7 @@ class CrewLicenseRenderer {
       CrewLicenseRenderer.#frontRow2Columns[0],
       CrewLicenseRenderer.#frontRows[4]
     );
-    ctx.fillText("/", dateOfBirthWidth, CrewLicenseRenderer.#frontRows[2]);
+    ctx.fillText("/", DATE_OF_BIRTH_WIDTH, CrewLicenseRenderer.#frontRows[2]);
     ctx.fillText(
       `${this.dateOfBirthHeader[1]}/`,
       CrewLicenseRenderer.#frontRow2Columns[1],
@@ -615,22 +721,22 @@ class CrewLicenseRenderer {
     );
     ctx.fillText(
       `/ ${this.authorityHeader[1]}/ ${this.authorityHeader[2]}`,
-      employerWidth,
+      EMPLOYER_WIDTH,
       CrewLicenseRenderer.#frontRows[6]
     );
     ctx.fillText(
       `/ ${this.privilegeHeader[1]}/ ${this.privilegeHeader[2]}`,
-      occupationWidth,
+      OCCUPATION_WIDTH,
       CrewLicenseRenderer.#frontRows[8]
     );
     ctx.fillText(
       `/ ${this.numberHeader[1]}/ ${this.numberHeader[2]}`,
-      numberWidth,
+      NUMBER_WIDTH,
       CrewLicenseRenderer.#frontRows[10]
     );
     ctx.fillText(
       `/ ${this.dateOfExpirationHeader[1]}/ ${this.dateOfExpirationHeader[2]}`,
-      dateOfExpirationWidth,
+      DATE_OF_EXPIRATION_WIDTH,
       CrewLicenseRenderer.#frontRows[12]
     );
 
@@ -692,7 +798,8 @@ class CrewLicenseRenderer {
     return canvas;
   }
 
-  /** Generate the back image and return the canvas.
+  /**
+   * Generate the back image and return the canvas.
    * @param { CrewLicense } model
    * @param { HTMLCanvasElement } fallback
    */
@@ -711,12 +818,16 @@ class CrewLicenseRenderer {
     }
     const ctx = canvas.getContext("2d");
     ctx.textBaseline = "top";
-    const barcode = this.useDigitalSeal ? [{ data: b45.encode(model.signedSeal), mode: "alphanumeric" }] : model.url;
+    const barcode = this.useDigitalSeal ?
+        [{ data: toBase45(model.signedSeal), mode: "alphanumeric" }]
+        : model.url;
 
     const images = await Promise.all([
-      this.backBackgroundImage ? loadImageFromURL(this.backBackgroundImage) : null,
-      this.mrzBackgroundImage ? loadImageFromURL(this.mrzBackgroundImage) : null,
-      qrLite.toCanvas(barcode, {
+      this.backBackgroundImage ?
+          loadImageFromURL(this.backBackgroundImage) : null,
+      this.mrzBackgroundImage ?
+          loadImageFromURL(this.mrzBackgroundImage) : null,
+      toQRCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
         version: 9,
         margin: 0,
@@ -774,7 +885,9 @@ class CrewLicenseRenderer {
       CrewLicenseRenderer.#numberUnderlayArea[1]
     );
     ctx.drawImage(
-      images[2], CrewLicenseRenderer.#numberUnderlayXY[0] - 24 - images[2].width, 48
+      images[2],
+      CrewLicenseRenderer.#numberUnderlayXY[0] - 24 - images[2].width,
+      48
     );
     if (images[3]) {
       fitImageInArea(
@@ -798,7 +911,9 @@ class CrewLicenseRenderer {
     ctx.fillStyle = this.textColor;
     ctx.font = CrewLicenseRenderer.#headerFont;
     ctx.fillText(
-      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}${CrewLicenseRenderer.#headerSeparator}${CrewLicenseRenderer.#documentSize}`,
+      `${model.typeCode.toVIZ()}-${model.authorityCode.toVIZ()}` +
+          `${CrewLicenseRenderer.#headerSeparator}` +
+          `${CrewLicenseRenderer.#documentSize}`,
       CrewLicenseRenderer.#shortHeaderXY[0],
       CrewLicenseRenderer.#shortHeaderXY[1],
       CrewLicenseRenderer.#smallLogoArea[0]
@@ -816,40 +931,38 @@ class CrewLicenseRenderer {
       CrewLicenseRenderer.#backColumns,
       CrewLicenseRenderer.#backRows[2]
     );
-    const declarationWidth = CrewLicenseRenderer.#backColumns +
+    const DECLARATION_WIDTH = CrewLicenseRenderer.#backColumns +
       ctx.measureText(this.ratingsHeader[0]).width;
-    const issueWidth = CrewLicenseRenderer.#backColumns +
+    const ISSUE_WIDTH = CrewLicenseRenderer.#backColumns +
       ctx.measureText(this.limitationsHeader[0]).width;
 
     ctx.font = CrewLicenseRenderer.#intlFont;
     ctx.fillText(
       `/ ${this.ratingsHeader[1]}/ ${this.ratingsHeader[2]}`,
-      declarationWidth,
+      DECLARATION_WIDTH,
       CrewLicenseRenderer.#backRows[0]
     );
     ctx.fillText(
       `/ ${this.limitationsHeader[1]}/ ${this.limitationsHeader[2]}`,
-      issueWidth,
+      ISSUE_WIDTH,
       CrewLicenseRenderer.#backRows[2]);
 
     ctx.fillStyle = this.textColor;
     ctx.font = CrewLicenseRenderer.#dataFont;
-    let splitString = model.ratings.toVIZ().split(/\r?\n/);
-    for (let i = 0; i < splitString.length; i += 1) {
+    model.ratings.toVIZ().split(/\r?\n/).forEach((line, i) => {
       ctx.fillText(
-        splitString[i],
+        line,
         CrewLicenseRenderer.#backColumns,
         CrewLicenseRenderer.#backRows[1] + (i * 30)
       );
-    }
-    splitString = model.limitations.toVIZ().split(/\r?\n/);
-    for (let i = 0; i < splitString.length; i += 1) {
+    });
+    model.limitations.toVIZ().split(/\r?\n/).forEach((line, i) => {
       ctx.fillText(
-        splitString[i],
+        line,
         CrewLicenseRenderer.#backColumns,
         CrewLicenseRenderer.#backRows[3] + (i * 30)
       );
-    }
+    });
     ctx.fillText(
       model.number.toVIZ(),
       CrewLicenseRenderer.#backNumberXY[0],
@@ -859,23 +972,14 @@ class CrewLicenseRenderer {
 
     ctx.fillStyle = this.mrzColor;
     ctx.font = CrewLicenseRenderer.#mrzFont;
-    for (let i = 0; i < model.mrzLine1.length; i += 1) {
+    [...model.machineReadableZone].forEach((character, i) => {
       ctx.fillText(
-        model.mrzLine1[i],
-        CrewLicenseRenderer.#mrzX + (i * CrewLicenseRenderer.#mrzSpacing),
-        CrewLicenseRenderer.#mrzY[0]
+        character,
+        CrewLicenseRenderer.#mrzX +
+            ((i % TD1_MRZ_LINE_LENGTH) * CrewLicenseRenderer.#mrzSpacing),
+        CrewLicenseRenderer.#mrzY[Math.floor(i / TD1_MRZ_LINE_LENGTH)]
       );
-      ctx.fillText(
-        model.mrzLine2[i],
-        CrewLicenseRenderer.#mrzX + (i * CrewLicenseRenderer.#mrzSpacing),
-        CrewLicenseRenderer.#mrzY[1]
-      );
-      ctx.fillText(
-        model.mrzLine3[i],
-        CrewLicenseRenderer.#mrzX + (i * CrewLicenseRenderer.#mrzSpacing),
-        CrewLicenseRenderer.#mrzY[2]
-      );
-    }
+    });
 
     if (this.showGuides) {
       drawBleedAndSafeLines(

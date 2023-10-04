@@ -217,10 +217,8 @@ class CrewID {
    */
   get machineReadableZone() {
     return this.mrzLine1 +
-      "\n" +
-      this.mrzLine2 +
-      "\n" +
-      this.mrzLine3;
+        this.mrzLine2 +
+        this.mrzLine3;
   }
   /** @param { string } value - A MRZ string of a 90-character length. */
   set machineReadableZone(value) {
