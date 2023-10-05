@@ -1,13 +1,17 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { CrewID } from "../modules/CrewID.js";
 import { IDBadgeRenderer } from "./IDBadgeRenderer.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
+/**
+ * While not a proper "ViewModel", this loads the initial state of the model,
+ *     sets the initial data as the values and placeholders of the web page,
+ *     and whenever values are updated on the HTML form the generated images
+ *     of the document are updated.
+ */
 class IDBadgeViewModel {
   #model = new CrewID({
     typeCode: "IC",
@@ -28,51 +32,11 @@ class IDBadgeViewModel {
 
   #renderer = new IDBadgeRenderer({
     headerColor: "#770077",
-    textColor: "#000000",
-    mrzColor: "#000000",
-    frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/idbadge-lofiGrey-front.png",
-    backBackgroundColor: "#efefef",
     backBackgroundImage: "/cardBackgrounds/lofiGrey.png",
-    mrzBackgroundColor: "#ffffff",
-    mrzBackgroundImage: null,
-    numberUnderlayColor: "#ffffff",
-    numberUnderlayAlpha: 255,
     logoUnderlayColor: "#dddddd",
-    logoUnderlayAlpha: 255,
     logo: "/logos/peets.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
-    showPunchSlot: false,
-    showGuides: false,
-    useDigitalSeal: false,
-    additionalElements: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    badgeType: "CREW",
-    badgeSubtype: "FURRY",
-    nameHeader: [
-      "NAME",
-      "NOM",
-      "APELLIDOS"
-    ],
-    employerHeader: [
-      "EMPLOYER",
-      "EMPLOYEUR",
-      "EMPLEADOR"
-    ],
-    numberHeader: [
-      "ID NO",
-      "NO DU ID",
-      "NO DEL ID"
-    ],
-    dateOfExpirationHeader: [
-      "EXPIRY",
-      "EXPIRATION",
-      "EXPIRACIÓN"
-    ],
-    additionalElementsHeader: [
-      "OPTIONAL ADDITIONAL ELEMENTS",
-      "ÉLÉMENTS SUPPLÉMENTAIRES FACULTATIFS",
-      "ELEMENTOS ADICIONALES OPCIONALES"
-    ],
   });
 
   #inputTimeout = null;

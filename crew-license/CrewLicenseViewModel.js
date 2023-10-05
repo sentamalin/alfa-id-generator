@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { CrewLicense } from "../modules/CrewLicense.js";
 import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
@@ -9,6 +7,12 @@ import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-gene
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
+/**
+ * While not a proper "ViewModel", this loads the initial state of the model,
+ *     sets the initial data as the values and placeholders of the web page,
+ *     and whenever values are updated on the HTML form the generated images
+ *     of the document are updated.
+ */
 class CrewLicenseViewModel {
   #model = new CrewLicense({
     typeCode: "AL",
@@ -36,75 +40,10 @@ class CrewLicenseViewModel {
   });
 
   #renderer = new CrewLicenseRenderer({
-    headerColor: "#4090ba",
-    textColor: "#000000",
-    mrzColor: "#000000",
-    frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/lofiGrey.png",
-    backBackgroundColor: "#efefef",
     backBackgroundImage: "/cardBackgrounds/lofiGrey.png",
-    mrzBackgroundColor: "#ffffff",
-    mrzBackgroundImage: null,
-    numberUnderlayColor: "#ffffff",
-    numberUnderlayAlpha: 255,
-    logoUnderlayColor: "#4090ba",
-    logoUnderlayAlpha: 255,
     logo: "/logos/alfa.png",
     smallLogo: "/smallLogos/alfa-bw.svg",
-    showGuides: false,
-    useDigitalSeal: false,
-    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
-    fullDocumentName: "CREWMEMBER LICENSE",
-    nameHeader: [
-      "NAME",
-      "NOM",
-      "APELLIDOS"
-    ],
-    genderHeader: [
-      "GENDER",
-      "GENRE",
-      "GENÉRO"
-    ],
-    nationalityHeader: [
-      "NATIONALITY",
-      "NATIONALITÉ",
-      "NACIONALIDAD"
-    ],
-    dateOfBirthHeader: [
-      "DATE OF BIRTH",
-      "DATE DE NAISSANCE",
-      "FECHA DE NACIMIENTO"
-    ],
-    authorityHeader: [
-      "AUTHORITY",
-      "AUTORITÉ",
-      "AUTORIDAD"
-    ],
-    privilegeHeader: [
-      "PRIVILEGE",
-      "PRIVILÈGE",
-      "PRIVILEGIO"
-    ],
-    numberHeader: [
-      "CERTIFICATE NO",
-      "NO DU CERTIFICAT",
-      "NO DEL CERTIFICADO"
-    ],
-    dateOfExpirationHeader: [
-      "EXPIRY",
-      "EXPIRATION",
-      "EXPIRACIÓN"
-    ],
-    ratingsHeader: [
-      "RATINGS",
-      "QUALIFICATIONS",
-      "CLASIFICACIONES"
-    ],
-    limitationsHeader: [
-      "LIMITATIONS",
-      "LIMITATIONS",
-      "LIMITACIONES"
-    ]
   });
 
   #inputTimeout = null;

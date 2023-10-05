@@ -1,13 +1,17 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { EventsMRVB } from "../modules/EventsMRVB.js";
 import { EventsSealRenderer } from "./EventsSealRenderer.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
+/**
+ * While not a proper "ViewModel", this loads the initial state of the model,
+ *     sets the initial data as the values and placeholders of the web page,
+ *     and whenever values are updated on the HTML form the generated images
+ *     of the document are updated.
+ */
 class EventsSealViewModel {
   #model = new EventsMRVB({
     typeCode: "V",
@@ -34,14 +38,8 @@ class EventsSealViewModel {
   });
 
   #renderer = new EventsSealRenderer({
-    headerColor: "#000000",
-    textColor: "#000000",
-    frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/passport-mrva-lofiGrey.png",
     logo: "/smallLogos/alfa-bw.svg",
-    showGuides: false,
-    fullAuthority: "ALFACON 2023",
-    fullDocumentName: "PARTICIPANT"
   });
 
   #inputTimeout = null;

@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { EventsMRVB } from "../modules/EventsMRVB.js";
 import { EventsMRVBRenderer } from "./EventsMRVBRenderer.js";
@@ -9,6 +7,12 @@ import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-gene
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
+/**
+ * While not a proper "ViewModel", this loads the initial state of the model,
+ *     sets the initial data as the values and placeholders of the web page,
+ *     and whenever values are updated on the HTML form the generated images
+ *     of the document are updated.
+ */
 class EventsMRVBViewModel {
   #model = new EventsMRVB({
     typeCode: "V",
@@ -38,75 +42,8 @@ class EventsMRVBViewModel {
   });
 
   #renderer = new EventsMRVBRenderer({
-    headerColor: "#4090ba",
-    textColor: "#000000",
-    mrzColor: "#000000",
-    frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/passport-mrva-lofiGrey.png",
-    mrzBackgroundColor: "#ffffff",
-    mrzBackgroundImage: null,
-    logoUnderlayColor: "#4090ba",
-    logoUnderlayAlpha: 255,
     logo: "/smallLogos/alfa.svg",
-    showGuides: false,
-    useDigitalSeal: false,
-    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
-    fullDocumentName: "FURRY EVENTS ENTRY VISA",
-    placeOfIssueHeader: [
-      "PLACE OF ISSUE",
-      "LIEU DE DÉLIVRANCE",
-      "LUGAR DE EMISIÓN"
-    ],
-    validFromHeader: [
-      "VALID FROM",
-      "VALABLE À PARTIR DU",
-      "VÁLIDO DESDE EL"
-    ],
-    validThruHeader: [
-      "VALID THRU",
-      "VALABLE JUSQU'AU",
-      "VÁLIDO HASTA"
-    ],
-    numberOfEntriesHeader: [
-      "NUMBER OF ENTRIES",
-      "NOMBRE D'ENTRÉES",
-      "NÚMERO DE ENTRADAS"
-    ],
-    numberHeader: [
-      "DOCUMENT NO",
-      "NO DU DOCUMENT",
-      "NO DEL DOCUMENTO"
-    ],
-    typeHeader: [
-      "TYPE",
-      "TYPE",
-      "TIPO"
-    ],
-    nameHeader: [
-      "NAME",
-      "NOM",
-      "APELLIDOS"
-    ],
-    passportNumberHeader: [
-      "PASSPORT NO",
-      "NO DE PASSEPORT",
-      "NO DE PASAPORTE"
-    ],
-    nationalityHeader: [
-      "NATIONALITY",
-      "NATIONALITÉ",
-      "NACIONALIDAD"
-    ],
-    dateOfBirthHeader: [
-      "DATE OF BIRTH",
-      "DATE DE NAISSANCE",
-      "FECHA DE NACIMIENTO"
-    ],
-    genderHeader: [
-      "GENDER",
-      "GENRE",
-      "GENÉRO"
-    ],
   });
 
   #inputTimeout = null;
