@@ -6,6 +6,7 @@
 import { CrewID } from "../modules/CrewID.js";
 import { IDBadgeRenderer } from "./IDBadgeRenderer.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
+import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
 class IDBadgeViewModel {
   #model = new CrewID({

@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { EventsMRVB } from "/modules/EventsMRVB.js";
+import { EventsMRVB } from "../modules/EventsMRVB.js";
 import { EventsSealRenderer } from "./EventsSealRenderer.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
+import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
 class EventsSealViewModel {
   #model = new EventsMRVB({

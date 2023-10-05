@@ -7,6 +7,7 @@ import { EventsPassport } from "../modules/EventsPassport.js";
 import { EventsPassportRenderer } from "./EventsPassportRenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
+import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
 class EventsPassportViewModel {
   #model = new EventsPassport({

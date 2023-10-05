@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { EventsMRVA } from "/modules/EventsMRVA.js";
+import { EventsMRVA } from "../modules/EventsMRVA.js";
 import { EventsMRVARenderer } from "./EventsMRVARenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
+import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
 class EventsMRVAViewModel {
   #model = new EventsMRVA({

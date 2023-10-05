@@ -7,6 +7,7 @@ import { EventsMRVB } from "../modules/EventsMRVB.js";
 import { EventsMRVBRenderer } from "./EventsMRVBRenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
+import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
 class EventsMRVBViewModel {
   #model = new EventsMRVB({

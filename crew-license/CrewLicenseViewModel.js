@@ -7,6 +7,7 @@ import { CrewLicense } from "../modules/CrewLicense.js";
 import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
+import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
 class CrewLicenseViewModel {
   #model = new CrewLicense({
