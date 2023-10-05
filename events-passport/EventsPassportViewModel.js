@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { EventsPassport } from "/modules/EventsPassport.js";
+import { EventsPassport } from "../modules/EventsPassport.js";
 import { EventsPassportRenderer } from "./EventsPassportRenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
+import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 
 class EventsPassportViewModel {
   #model = new EventsPassport({
@@ -424,7 +425,7 @@ class EventsPassportViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture = await this.constructor.#getFileData(this.#pictureInput.files[0]);
+      this.#model.picture = await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -461,7 +462,7 @@ class EventsPassportViewModel {
   }
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
-      this.#model.signature = await this.constructor.#getFileData(this.#signatureFileInput.files[0]);
+      this.#model.signature = await loadFileFromUpload(this.#signatureFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -606,7 +607,7 @@ class EventsPassportViewModel {
   }
   async onFrontBackgroundImageFileInputChange() {
     if (this.#frontBackgroundImageFileInput.files[0]) {
-      this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
+      this.#renderer.frontBackgroundImage = await loadFileFromUpload(this.#frontBackgroundImageFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -659,7 +660,7 @@ class EventsPassportViewModel {
   }
   async onBackBackgroundImageFileInputChange() {
     if (this.#backBackgroundImageFileInput.files[0]) {
-      this.#renderer.backBackgroundImage = await this.constructor.#getFileData(this.#backBackgroundImageFileInput.files[0]);
+      this.#renderer.backBackgroundImage = await loadFileFromUpload(this.#backBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -712,7 +713,7 @@ class EventsPassportViewModel {
   }
   async onMrzBackgroundImageFileInputChange() {
     if (this.#mrzBackgroundImageFileInput.files[0]) {
-      this.#renderer.mrzBackgroundImage = await this.constructor.#getFileData(this.#mrzBackgroundImageFileInput.files[0]);
+      this.#renderer.mrzBackgroundImage = await loadFileFromUpload(this.#mrzBackgroundImageFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -773,7 +774,7 @@ class EventsPassportViewModel {
   }
   async onLogoFileInputChange() {
     if (this.#logoFileInput.files[0]) {
-      this.#renderer.logo = await this.constructor.#getFileData(this.#logoFileInput.files[0]);
+      this.#renderer.logo = await loadFileFromUpload(this.#logoFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -1654,19 +1655,6 @@ class EventsPassportViewModel {
       this.#generateCardFront(),
       this.#generateCardBack()
     ]);
-  }
-
-  // Static private methods
-  static #getFileData(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        (e) => { resolve(e.target.result); },
-        false
-      );
-      reader.readAsDataURL(file);
-    });
   }
 }
 

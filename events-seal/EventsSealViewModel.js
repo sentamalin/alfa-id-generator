@@ -5,6 +5,7 @@
 
 import { EventsMRVB } from "/modules/EventsMRVB.js";
 import { EventsSealRenderer } from "./EventsSealRenderer.js";
+import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 
 class EventsSealViewModel {
   #model = new EventsMRVB({
@@ -448,7 +449,7 @@ class EventsSealViewModel {
   }
   async onFrontBackgroundImageFileInputChange() {
     if (this.#frontBackgroundImageFileInput.files[0]) {
-      this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
+      this.#renderer.frontBackgroundImage = await loadFileFromUpload(this.#frontBackgroundImageFileInput.files[0]);
       this.#generateCard();
     }
   }
@@ -483,7 +484,7 @@ class EventsSealViewModel {
   }
   async onLogoFileInputChange() {
     if (this.#logoFileInput.files[0]) {
-      this.#renderer.logo = await this.constructor.#getFileData(this.#logoFileInput.files[0]);
+      this.#renderer.logo = await loadFileFromUpload(this.#logoFileInput.files[0]);
       this.#generateCard();
     }
   }
@@ -635,19 +636,6 @@ class EventsSealViewModel {
       `${this.#model.number.toVIZ()}-seal.png`
     );
     downloadFront.setAttribute("href", this.#frontBlobURL);
-  }
-
-  // Static private methods
-  static #getFileData(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        (e) => { resolve(e.target.result); },
-        false
-      );
-      reader.readAsDataURL(file);
-    });
   }
 }
 

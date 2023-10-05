@@ -6,6 +6,7 @@
 import { CrewLicense } from "../modules/CrewLicense.js";
 import { CrewLicenseRenderer } from "./CrewLicenseRenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
+import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 
 class CrewLicenseViewModel {
   #model = new CrewLicense({
@@ -456,7 +457,7 @@ class CrewLicenseViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture = await this.constructor.#getFileData(this.#pictureInput.files[0]);
+      this.#model.picture = await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -493,7 +494,7 @@ class CrewLicenseViewModel {
   }
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
-      this.#model.signature = await this.constructor.#getFileData(this.#signatureFileInput.files[0]);
+      this.#model.signature = await loadFileFromUpload(this.#signatureFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -626,7 +627,7 @@ class CrewLicenseViewModel {
   }
   async onFrontBackgroundImageFileInputChange() {
     if (this.#frontBackgroundImageFileInput.files[0]) {
-      this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
+      this.#renderer.frontBackgroundImage = await loadFileFromUpload(this.#frontBackgroundImageFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -679,7 +680,7 @@ class CrewLicenseViewModel {
   }
   async onBackBackgroundImageFileInputChange() {
     if (this.#backBackgroundImageFileInput.files[0]) {
-      this.#renderer.backBackgroundImage = await this.constructor.#getFileData(this.#backBackgroundImageFileInput.files[0]);
+      this.#renderer.backBackgroundImage = await loadFileFromUpload(this.#backBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -732,7 +733,7 @@ class CrewLicenseViewModel {
   }
   async onMrzBackgroundImageFileInputChange() {
     if (this.#mrzBackgroundImageFileInput.files[0]) {
-      this.#renderer.mrzBackgroundImage = await this.constructor.#getFileData(this.#mrzBackgroundImageFileInput.files[0]);
+      this.#renderer.mrzBackgroundImage = await loadFileFromUpload(this.#mrzBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -819,7 +820,7 @@ class CrewLicenseViewModel {
   }
   async onLogoFileInputChange() {
     if (this.#logoFileInput.files[0]) {
-      this.#renderer.logo = await this.constructor.#getFileData(this.#logoFileInput.files[0]);
+      this.#renderer.logo = await loadFileFromUpload(this.#logoFileInput.files[0]);
       this.#generateCard();
     }
   }
@@ -854,7 +855,7 @@ class CrewLicenseViewModel {
   }
   async onSmallLogoFileInputChange() {
     if (this.#smallLogoFileInput.files[0]) {
-      this.#renderer.smallLogo = await this.constructor.#getFileData(this.#smallLogoFileInput.files[0]);
+      this.#renderer.smallLogo = await loadFileFromUpload(this.#smallLogoFileInput.files[0]);
     this.#generateCardBack();
     }
   }
@@ -1586,19 +1587,6 @@ class CrewLicenseViewModel {
       this.#generateCardFront(),
       this.#generateCardBack()
     ]);
-  }
-
-  // Static private methods
-  static #getFileData(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        (e) => { resolve(e.target.result); },
-        false
-      );
-      reader.readAsDataURL(file);
-    });
   }
 }
 

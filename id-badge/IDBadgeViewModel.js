@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { CrewID } from "/modules/CrewID.js";
+import { CrewID } from "../modules/CrewID.js";
 import { IDBadgeRenderer } from "./IDBadgeRenderer.js";
+import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
 
 class IDBadgeViewModel {
   #model = new CrewID({
@@ -305,7 +306,7 @@ class IDBadgeViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture = await this.constructor.#getFileData(this.#pictureInput.files[0]);
+      this.#model.picture = await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -411,7 +412,7 @@ class IDBadgeViewModel {
   }
   async onFrontBackgroundImageFileInputChange() {
     if (this.#frontBackgroundImageFileInput.files[0]) {
-      this.#renderer.frontBackgroundImage = await this.constructor.#getFileData(this.#frontBackgroundImageFileInput.files[0]);
+      this.#renderer.frontBackgroundImage = await loadFileFromUpload(this.#frontBackgroundImageFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -464,7 +465,7 @@ class IDBadgeViewModel {
   }
   async onBackBackgroundImageFileInputChange() {
     if (this.#backBackgroundImageFileInput.files[0]) {
-      this.#renderer.backBackgroundImage = await this.constructor.#getFileData(this.#backBackgroundImageFileInput.files[0]);
+      this.#renderer.backBackgroundImage = await loadFileFromUpload(this.#backBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -517,7 +518,7 @@ class IDBadgeViewModel {
   }
   async onMrzBackgroundImageFileInputChange() {
     if (this.#mrzBackgroundImageFileInput.files[0]) {
-      this.#renderer.mrzBackgroundImage = await this.constructor.#getFileData(this.#mrzBackgroundImageFileInput.files[0]);
+      this.#renderer.mrzBackgroundImage = await loadFileFromUpload(this.#mrzBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -604,7 +605,7 @@ class IDBadgeViewModel {
   }
   async onLogoFileInputChange() {
     if (this.#logoFileInput.files[0]) {
-      this.#renderer.logo = await this.constructor.#getFileData(this.#logoFileInput.files[0]);
+      this.#renderer.logo = await loadFileFromUpload(this.#logoFileInput.files[0]);
       this.#generateCard();
     }
   }
@@ -639,7 +640,7 @@ class IDBadgeViewModel {
   }
   async onSmallLogoFileInputChange() {
     if (this.#smallLogoFileInput.files[0]) {
-      this.#renderer.smallLogo = await this.constructor.#getFileData(this.#smallLogoFileInput.files[0]);
+      this.#renderer.smallLogo = await loadFileFromUpload(this.#smallLogoFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -1134,19 +1135,6 @@ class IDBadgeViewModel {
       this.#generateCardFront(),
       this.#generateCardBack()
     ]);
-  }
-
-  // Static private methods
-  static #getFileData(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        (e) => { resolve(e.target.result); },
-        false
-      );
-      reader.readAsDataURL(file);
-    });
   }
 }
 
