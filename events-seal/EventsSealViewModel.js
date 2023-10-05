@@ -591,14 +591,8 @@ class EventsSealViewModel {
   }
 
   // Private methods
-  async #signSeal() {
-    this.#model.sealSignature = [];
-    for (let i = 0; i < 64; i += 1) {
-      this.#model.sealSignature.push(Math.floor(Math.random() * 256));
-    }
-  }
   async #generateCard() {
-    await this.#signSeal();
+    await signSealUsingRNG(this.#model);
     const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
     this.#cardFrontElement.width = 1055;
     this.#cardFrontElement.height = 1492;
