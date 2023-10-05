@@ -88,52 +88,52 @@ class IDBadgeRenderer {
    *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
-    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
-    this.frontBarcodeErrorCorrection = opt.frontBarcodeErrorCorrection ?? "L";
-    this.backBarcodeErrorCorrection = opt.backBarcodeErrorCorrection ??
+    this.barcodeDarkColor = opt?.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt?.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.frontBarcodeErrorCorrection = opt?.frontBarcodeErrorCorrection ?? "L";
+    this.backBarcodeErrorCorrection = opt?.backBarcodeErrorCorrection ??
         BARCODE_ERROR_CORRECTION;
-    this.headerColor = opt.headerColor ?? HEADER_COLOR;
-    this.textColor = opt.textColor ?? TEXT_COLOR;
-    this.mrzColor = opt.mrzColor ?? TEXT_COLOR;
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
-    this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.backBackgroundColor = opt.backBackgroundColor ?? BACKGROUND_COLOR;
-    this.backBackgroundImage = opt.backBackgroundImage ?? null;
-    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
-    this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
-    this.numberUnderlayColor = opt.numberUnderlayColor ?? MRZ_BACKGROUND_COLOR;
-    this.numberUnderlayAlpha = opt.numberUnderlayAlpha ?? UNDERLAY_OPACITY;
-    this.logoUnderlayColor = opt.logoUnderlayColor ?? MRZ_BACKGROUND_COLOR;
-    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
-    this.logo = opt.logo ?? null;
-    this.smallLogo = opt.smallLogo ?? null;
-    this.showGuides = opt.showGuides ?? false;
-    this.showPunchSlot = opt.showPunchSlot ?? false;
-    this.useDigitalSeal = opt.useDigitalSeal ?? false;
-    this.additionalElements = opt.additionalElements ?? "XXXXXXXXXXXXXXXXXXXX" +
+    this.headerColor = opt?.headerColor ?? HEADER_COLOR;
+    this.textColor = opt?.textColor ?? TEXT_COLOR;
+    this.mrzColor = opt?.mrzColor ?? TEXT_COLOR;
+    this.frontBackgroundColor = opt?.frontBackgroundColor ?? BACKGROUND_COLOR;
+    this.frontBackgroundImage = opt?.frontBackgroundImage ?? null;
+    this.backBackgroundColor = opt?.backBackgroundColor ?? BACKGROUND_COLOR;
+    this.backBackgroundImage = opt?.backBackgroundImage ?? null;
+    this.mrzBackgroundColor = opt?.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
+    this.mrzBackgroundImage = opt?.mrzBackgroundImage ?? null;
+    this.numberUnderlayColor = opt?.numberUnderlayColor ?? MRZ_BACKGROUND_COLOR;
+    this.numberUnderlayAlpha = opt?.numberUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logoUnderlayColor = opt?.logoUnderlayColor ?? MRZ_BACKGROUND_COLOR;
+    this.logoUnderlayAlpha = opt?.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logo = opt?.logo ?? null;
+    this.smallLogo = opt?.smallLogo ?? null;
+    this.showGuides = opt?.showGuides ?? false;
+    this.showPunchSlot = opt?.showPunchSlot ?? false;
+    this.useDigitalSeal = opt?.useDigitalSeal ?? false;
+    this.additionalElements = opt?.additionalElements ?? "XXXXXXXXXXXXXXXXXXXX" +
         "XXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXX" +
         "XXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXX" +
         "XXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXX" +
         "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
         "XX";
-    this.badgeType = opt.badgeType ?? "CREW";
-    this.badgeSubtype = opt.badgeSubtype ?? "FURRY";
-    this.nameHeader = opt.nameHeader ?? nameHeader;
-    this.employerHeader = opt.employerHeader ?? employerHeader;
-    this.numberHeader = opt.numberHeader ?? [
+    this.badgeType = opt?.badgeType ?? "CREW";
+    this.badgeSubtype = opt?.badgeSubtype ?? "FURRY";
+    this.nameHeader = opt?.nameHeader ?? nameHeader;
+    this.employerHeader = opt?.employerHeader ?? employerHeader;
+    this.numberHeader = opt?.numberHeader ?? [
       "ID NO",
       "NO DU ID",
       "NO DEL ID"
     ];
-    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ??
+    this.dateOfExpirationHeader = opt?.dateOfExpirationHeader ??
         expirationDateHeader;
-    this.additionalElementsHeader = opt.additionalElementsHeader ?? [
+    this.additionalElementsHeader = opt?.additionalElementsHeader ?? [
       "OPTIONAL ADDITIONAL ELEMENTS",
       "ÉLÉMENTS SUPPLÉMENTAIRES FACULTATIFS",
       "ELEMENTOS ADICIONALES OPCIONALES"
     ];
-    this.fonts = opt.fonts ?? null;
+    this.fonts = opt?.fonts ?? null;
   }
 
   /**
@@ -488,7 +488,7 @@ class IDBadgeRenderer {
           light: this.barcodeLightColor
         }
       }),
-      loadImageFromURL(model.picture),
+      loadImageFromURL(model.photo),
       this.logo ? loadImageFromURL(this.logo) : null
     ]);
 

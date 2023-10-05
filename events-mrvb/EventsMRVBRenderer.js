@@ -84,38 +84,38 @@ class EventsMRVBRenderer {
    *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
-    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
-    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ??
+    this.barcodeDarkColor = opt?.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt?.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.barcodeErrorCorrection = opt?.barcodeErrorCorrection ??
         BARCODE_ERROR_CORRECTION;
-    this.headerColor = opt.headerColor ?? HEADER_COLOR;
-    this.textColor = opt.textColor ?? TEXT_COLOR;
-    this.mrzColor = opt.mrzColor ?? TEXT_COLOR;
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
-    this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
-    this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
-    this.logoUnderlayColor = opt.logoUnderlayColor ?? HEADER_COLOR;
-    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
-    this.logo = opt.logo ?? null;
-    this.showGuides = opt.showGuides ?? false;
-    this.useDigitalSeal = opt.useDigitalSeal ?? false;
-    this.fullAuthority = opt.fullAuthority ?? FULL_AUTHORITY;
-    this.fullDocumentName = opt.fullDocumentName ?? VISA_NAME;
-    this.placeOfIssueHeader = opt.placeOfIssueHeader ?? placeOfIssueHeader;
-    this.validFromHeader = opt.validFromHeader ?? validFromHeader;
-    this.validThruHeader = opt.validThruHeader ?? validThruHeader;
-    this.numberOfEntriesHeader = opt.numberOfEntriesHeader ??
+    this.headerColor = opt?.headerColor ?? HEADER_COLOR;
+    this.textColor = opt?.textColor ?? TEXT_COLOR;
+    this.mrzColor = opt?.mrzColor ?? TEXT_COLOR;
+    this.frontBackgroundColor = opt?.frontBackgroundColor ?? BACKGROUND_COLOR;
+    this.frontBackgroundImage = opt?.frontBackgroundImage ?? null;
+    this.mrzBackgroundColor = opt?.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
+    this.mrzBackgroundImage = opt?.mrzBackgroundImage ?? null;
+    this.logoUnderlayColor = opt?.logoUnderlayColor ?? HEADER_COLOR;
+    this.logoUnderlayAlpha = opt?.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logo = opt?.logo ?? null;
+    this.showGuides = opt?.showGuides ?? false;
+    this.useDigitalSeal = opt?.useDigitalSeal ?? false;
+    this.fullAuthority = opt?.fullAuthority ?? FULL_AUTHORITY;
+    this.fullDocumentName = opt?.fullDocumentName ?? VISA_NAME;
+    this.placeOfIssueHeader = opt?.placeOfIssueHeader ?? placeOfIssueHeader;
+    this.validFromHeader = opt?.validFromHeader ?? validFromHeader;
+    this.validThruHeader = opt?.validThruHeader ?? validThruHeader;
+    this.numberOfEntriesHeader = opt?.numberOfEntriesHeader ??
         numberOfEntriesHeader;
-    this.numberHeader = opt.numberHeader ?? documentNoHeader;
-    this.typeHeader = opt.typeHeader ?? visaTypeHeader;
-    this.nameHeader = opt.nameHeader ?? nameHeader;
-    this.passportNumberHeader = opt.passportNumberHeader ??
+    this.numberHeader = opt?.numberHeader ?? documentNoHeader;
+    this.typeHeader = opt?.typeHeader ?? visaTypeHeader;
+    this.nameHeader = opt?.nameHeader ?? nameHeader;
+    this.passportNumberHeader = opt?.passportNumberHeader ??
         passportNoHeader;
-    this.nationalityHeader = opt.nationalityHeader ?? nationalityHeader;
-    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? birthDateHeader;
-    this.genderHeader = opt.genderHeader ?? genderHeader;
-    this.fonts = opt.fonts ?? null;
+    this.nationalityHeader = opt?.nationalityHeader ?? nationalityHeader;
+    this.dateOfBirthHeader = opt?.dateOfBirthHeader ?? birthDateHeader;
+    this.genderHeader = opt?.genderHeader ?? genderHeader;
+    this.fonts = opt?.fonts ?? null;
   }
 
   /**
@@ -463,7 +463,7 @@ class EventsMRVBRenderer {
           loadImageFromURL(this.frontBackgroundImage) : null,
       this.mrzBackgroundImage ?
           loadImageFromURL(this.mrzBackgroundImage) : null,
-      loadImageFromURL(model.picture),
+      loadImageFromURL(model.photo),
       this.logo ? loadImageFromURL(this.logo) : null,
       toQRCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
@@ -474,8 +474,8 @@ class EventsMRVBRenderer {
           light: this.barcodeLightColor
         }
       }),
-      typeof model.signature !== typeof canvas ?
-          loadImageFromURL(model.signature) : null
+      typeof model.signatureImage !== typeof canvas ?
+          loadImageFromURL(model.signatureImage) : null
     ]);
 
     ctx.fillStyle = this.frontBackgroundColor;
@@ -549,7 +549,7 @@ class EventsMRVBRenderer {
       );
     } else {
       ctx.drawImage(
-        model.signature,
+        model.signatureImage,
         EventsMRVBRenderer.#cardArea[0] - 48 - images[4].width -
           24 - EventsMRVBRenderer.signatureArea,
         EventsMRVBRenderer.#mrzUnderlayXY[1] - 32 -

@@ -30,12 +30,12 @@ class CrewCertificateViewModel {
         "is certificate\nwithin the period of validity",
     issueDate: "2023-08-23",
     placeOfIssue: "Utopiopolis, Utopia",
-    picture: "/photos/fox.jpg",
-    signature: "/signatures/alfalfa.png",
+    photo: "/photos/fox.jpg",
+    signatureImage: "/signatures/alfalfa.png",
     url: "https://airlinefurries.com/",
     identifierCode: "XFSS",
     certReference: "00000",
-    sealSignatureDate: "2023-09-01",
+    signatureDate: "2023-09-01",
     employerCode: "1",
     occupationCode: "1"
   });
@@ -357,12 +357,12 @@ class CrewCertificateViewModel {
    */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
-    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.value = this.#model.signatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
     this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
-    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#model.signatureDate = this.#sealSignatureDateInput.value;
     this.#generateCard();
   }
 
@@ -535,7 +535,7 @@ class CrewCertificateViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture =
+      this.#model.photo =
           await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
@@ -583,7 +583,7 @@ class CrewCertificateViewModel {
   }
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
-      this.#model.signature =
+      this.#model.signatureImage =
           await loadFileFromUpload(this.#signatureFileInput.files[0]);
       this.#generateCardFront();
     }
@@ -616,7 +616,7 @@ class CrewCertificateViewModel {
       this.#signatureTextInput.value
     );
     if (signature.value.newSignature) {
-      this.#model.signature = signature.value.signature;
+      this.#model.signatureImage = signature.value.signature;
       this.#generateCardFront();
     }
   }

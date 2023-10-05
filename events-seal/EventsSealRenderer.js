@@ -51,19 +51,19 @@ class EventsSealRenderer {
    *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
-    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
-    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ??
+    this.barcodeDarkColor = opt?.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt?.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.barcodeErrorCorrection = opt?.barcodeErrorCorrection ??
         BARCODE_ERROR_CORRECTION;
-    this.headerColor = opt.headerColor ?? TEXT_COLOR;
-    this.textColor = opt.textColor ?? TEXT_COLOR;
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
-    this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.logo = opt.logo ?? null;
-    this.showGuides = opt.showGuides ?? false;
-    this.fullAuthority = opt.fullAuthority ?? "ALFACON 2023";
-    this.fullDocumentName = opt.fullDocumentName ?? "PARTICIPANT";
-    this.fonts = opt.fonts ?? null;
+    this.headerColor = opt?.headerColor ?? TEXT_COLOR;
+    this.textColor = opt?.textColor ?? TEXT_COLOR;
+    this.frontBackgroundColor = opt?.frontBackgroundColor ?? BACKGROUND_COLOR;
+    this.frontBackgroundImage = opt?.frontBackgroundImage ?? null;
+    this.logo = opt?.logo ?? null;
+    this.showGuides = opt?.showGuides ?? false;
+    this.fullAuthority = opt?.fullAuthority ?? "ALFACON 2023";
+    this.fullDocumentName = opt?.fullDocumentName ?? "PARTICIPANT";
+    this.fonts = opt?.fonts ?? null;
   }
 
   /**

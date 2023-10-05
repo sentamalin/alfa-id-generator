@@ -92,53 +92,53 @@ class CrewLicenseRenderer {
    *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
-    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
-    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ??
+    this.barcodeDarkColor = opt?.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt?.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.barcodeErrorCorrection = opt?.barcodeErrorCorrection ??
         BARCODE_ERROR_CORRECTION;
-    this.headerColor = opt.headerColor ?? HEADER_COLOR;
-    this.textColor = opt.textColor ?? TEXT_COLOR;
-    this.mrzColor = opt.mrzColor ?? TEXT_COLOR;
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
-    this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.backBackgroundColor = opt.backBackgroundColor ?? BACKGROUND_COLOR;
-    this.backBackgroundImage = opt.backBackgroundImage ?? null;
-    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
-    this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
-    this.numberUnderlayColor = opt.numberUnderlayColor ?? MRZ_BACKGROUND_COLOR;
-    this.numberUnderlayAlpha = opt.numberUnderlayAlpha ?? UNDERLAY_OPACITY;
-    this.logoUnderlayColor = opt.logoUnderlayColor ?? HEADER_COLOR;
-    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
-    this.logo = opt.logo ?? null;
-    this.smallLogo = opt.smallLogo ?? null;
-    this.showGuides = opt.showGuides ?? false;
-    this.useDigitalSeal = opt.useDigitalSeal ?? false;
-    this.fullAuthority = opt.fullAuthority ?? FULL_AUTHORITY;
-    this.fullDocumentName = opt.fullDocumentName ?? "CREWMEMBER LICENSE";
-    this.nameHeader = opt.nameHeader ?? nameHeader;
-    this.genderHeader = opt.genderHeader ?? genderHeader;
-    this.nationalityHeader = opt.nationalityHeader ?? nationalityHeader;
-    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? birthDateHeader;
-    this.authorityHeader = opt.authorityHeader ?? authorityHeader;
-    this.privilegeHeader = opt.privilegeHeader ?? [
+    this.headerColor = opt?.headerColor ?? HEADER_COLOR;
+    this.textColor = opt?.textColor ?? TEXT_COLOR;
+    this.mrzColor = opt?.mrzColor ?? TEXT_COLOR;
+    this.frontBackgroundColor = opt?.frontBackgroundColor ?? BACKGROUND_COLOR;
+    this.frontBackgroundImage = opt?.frontBackgroundImage ?? null;
+    this.backBackgroundColor = opt?.backBackgroundColor ?? BACKGROUND_COLOR;
+    this.backBackgroundImage = opt?.backBackgroundImage ?? null;
+    this.mrzBackgroundColor = opt?.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
+    this.mrzBackgroundImage = opt?.mrzBackgroundImage ?? null;
+    this.numberUnderlayColor = opt?.numberUnderlayColor ?? MRZ_BACKGROUND_COLOR;
+    this.numberUnderlayAlpha = opt?.numberUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logoUnderlayColor = opt?.logoUnderlayColor ?? HEADER_COLOR;
+    this.logoUnderlayAlpha = opt?.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logo = opt?.logo ?? null;
+    this.smallLogo = opt?.smallLogo ?? null;
+    this.showGuides = opt?.showGuides ?? false;
+    this.useDigitalSeal = opt?.useDigitalSeal ?? false;
+    this.fullAuthority = opt?.fullAuthority ?? FULL_AUTHORITY;
+    this.fullDocumentName = opt?.fullDocumentName ?? "CREWMEMBER LICENSE";
+    this.nameHeader = opt?.nameHeader ?? nameHeader;
+    this.genderHeader = opt?.genderHeader ?? genderHeader;
+    this.nationalityHeader = opt?.nationalityHeader ?? nationalityHeader;
+    this.dateOfBirthHeader = opt?.dateOfBirthHeader ?? birthDateHeader;
+    this.authorityHeader = opt?.authorityHeader ?? authorityHeader;
+    this.privilegeHeader = opt?.privilegeHeader ?? [
       "PRIVILEGE",
       "PRIVILÈGE",
       "PRIVILEGIO"
     ];
-    this.numberHeader = opt.numberHeader ?? certificateNoHeader;
-    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ??
+    this.numberHeader = opt?.numberHeader ?? certificateNoHeader;
+    this.dateOfExpirationHeader = opt?.dateOfExpirationHeader ??
         expirationDateHeader;
-    this.ratingsHeader = opt.ratingsHeader ?? [
+    this.ratingsHeader = opt?.ratingsHeader ?? [
       "RATINGS",
       "QUALIFICATIONS",
       "CLASIFICACIONES"
     ];
-    this.limitationsHeader = opt.limitationsHeader ?? [
+    this.limitationsHeader = opt?.limitationsHeader ?? [
       "LIMITATIONS",
       "LIMITATIONS",
       "LIMITACIONES"
     ];
-    this.fonts = opt.fonts ?? null;
+    this.fonts = opt?.fonts ?? null;
   }
 
   /**
@@ -520,10 +520,10 @@ class CrewLicenseRenderer {
     const images = await Promise.all([
       this.frontBackgroundImage ?
           loadImageFromURL(this.frontBackgroundImage) : null,
-      loadImageFromURL(model.picture),
+      loadImageFromURL(model.photo),
       this.logo ? loadImageFromURL(this.logo) : null,
-      typeof model.signature !== typeof canvas ?
-          loadImageFromURL(model.signature) : null
+      typeof model.signatureImage !== typeof canvas ?
+          loadImageFromURL(model.signatureImage) : null
     ]);
 
     ctx.fillStyle = this.frontBackgroundColor;
@@ -575,7 +575,7 @@ class CrewLicenseRenderer {
     }
     else {
       ctx.drawImage(
-        model.signature,
+        model.signatureImage,
         CrewLicenseRenderer.#signatureXY[0],
         CrewLicenseRenderer.#signatureXY[1],
         CrewLicenseRenderer.signatureArea[0],

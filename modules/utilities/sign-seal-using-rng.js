@@ -3,9 +3,9 @@
 
 /** "Signs" a visible digital seal (VDS) using random numbers. */
 async function signSealUsingRNG(model) {
-  model.sealSignature = [];
+  model.signatureData = [];
   for (let i = 0; i < 64; i += 1) {
-    model.sealSignature.push(Math.floor(Math.random() * 256));
+    model.signatureData.push(Math.floor(Math.random() * 256));
   }
 }
 

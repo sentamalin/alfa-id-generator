@@ -28,12 +28,12 @@ class EventsPassportViewModel {
     expirationDate: "2033-08-23",
     endorsements: "See Page 51",
     optionalData: "",
-    picture: "/photos/fox.jpg",
-    signature: "/signatures/alfalfa.png",
+    photo: "/photos/fox.jpg",
+    signatureImage: "/signatures/alfalfa.png",
     url: "https://airlinefurries.com/",
     identifierCode: "XFSS",
     certReference: "00000",
-    sealSignatureDate: "2023-09-01",
+    signatureDate: "2023-09-01",
     subauthorityCode: "1"
   });
 
@@ -313,12 +313,12 @@ class EventsPassportViewModel {
   /** @param { HTMLInputElement } input */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
-    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.value = this.#model.signatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
     this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
-    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#model.signatureDate = this.#sealSignatureDateInput.value;
     this.#generateCard();
   }
 
@@ -351,7 +351,7 @@ class EventsPassportViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture = await loadFileFromUpload(this.#pictureInput.files[0]);
+      this.#model.photo = await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -388,7 +388,7 @@ class EventsPassportViewModel {
   }
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
-      this.#model.signature = await loadFileFromUpload(this.#signatureFileInput.files[0]);
+      this.#model.signatureImage = await loadFileFromUpload(this.#signatureFileInput.files[0]);
       this.#generateCardBack();
     }
   }
@@ -415,7 +415,7 @@ class EventsPassportViewModel {
       this.#signatureTextInput.value
     );
     if (signature.value.newSignature) {
-      this.#model.signature = signature.value.signature;
+      this.#model.signatureImage = signature.value.signature;
       this.#generateCardBack();
     }
   }

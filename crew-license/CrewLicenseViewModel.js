@@ -28,13 +28,13 @@ class CrewLicenseViewModel {
     privilege: "Airline Transport Pilot",
     ratings: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     limitations: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-    picture: "/photos/fox.jpg",
-    signature: "/signatures/alfalfa.png",
+    photo: "/photos/fox.jpg",
+    signatureImage: "/signatures/alfalfa.png",
     url: "https://airlinefurries.com/",
     identifierCode: "XFSS",
     certReference: "00000",
     issueDate: "2023-09-01",
-    sealSignatureDate: "2023-09-01",
+    signatureDate: "2023-09-01",
     subauthorityCode: "1",
     privilegeCode: "1"
   });
@@ -269,12 +269,12 @@ class CrewLicenseViewModel {
   /** @param { HTMLInputElement } input */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
-    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.value = this.#model.signatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
     this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
-    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#model.signatureDate = this.#sealSignatureDateInput.value;
     this.#generateCard();
   }
 
@@ -397,7 +397,7 @@ class CrewLicenseViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture = await loadFileFromUpload(this.#pictureInput.files[0]);
+      this.#model.photo = await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -434,7 +434,7 @@ class CrewLicenseViewModel {
   }
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
-      this.#model.signature = await loadFileFromUpload(this.#signatureFileInput.files[0]);
+      this.#model.signatureImage = await loadFileFromUpload(this.#signatureFileInput.files[0]);
       this.#generateCardFront();
     }
   }
@@ -461,7 +461,7 @@ class CrewLicenseViewModel {
       this.#signatureTextInput.value
     );
     if (signature.value.newSignature) {
-      this.#model.signature = signature.value.signature;
+      this.#model.signatureImage = signature.value.signature;
       this.#generateCardFront();
     }
   }

@@ -21,12 +21,12 @@ class IDBadgeViewModel {
     fullName: "Millefeuille, Alfalfa",
     optionalData: "",
     employer: "Peets Aviation Limited",
-    picture: "/photos/fox.jpg",
+    photo: "/photos/fox.jpg",
     url: "https://airlinefurries.com/",
     identifierCode: "XFSS",
     certReference: "00000",
     issueDate: "2023-09-01",
-    sealSignatureDate: "2023-09-01",
+    signatureDate: "2023-09-01",
     employerCode: "1"
   });
 
@@ -217,12 +217,12 @@ class IDBadgeViewModel {
   /** @param { HTMLInputElement } input */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
-    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.value = this.#model.signatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
     this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }
   onSealSignatureDateInputChange() {
-    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#model.signatureDate = this.#sealSignatureDateInput.value;
     this.#generateCard();
   }
 
@@ -271,7 +271,7 @@ class IDBadgeViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      this.#model.picture = await loadFileFromUpload(this.#pictureInput.files[0]);
+      this.#model.photo = await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }

@@ -32,7 +32,7 @@ class EventsSealViewModel {
     identifierCode: "XFSS",
     certReference: "00000",
     issueDate: "2023-09-01",
-    sealSignatureDate: "2023-09-01",
+    signatureDate: "2023-09-01",
     durationOfStay: [4, 0, 0],
     visaTypeCode: "1"
   });
@@ -289,11 +289,11 @@ class EventsSealViewModel {
   /** @param { HTMLInputElement } input */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
-    this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
+    this.#sealSignatureDateInput.value = this.#model.signatureDate;
     this.#sealSignatureDateInput.addEventListener("change", this, false);
   }
   onSealSignatureDateInputChange() {
-    this.#model.sealSignatureDate = this.#sealSignatureDateInput.value;
+    this.#model.signatureDate = this.#sealSignatureDateInput.value;
     this.#generateCard();
   }
 

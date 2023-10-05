@@ -97,73 +97,73 @@ class EventsPassportRenderer {
    *     available from `window.document`.
    */
   constructor(opt) {
-    this.barcodeDarkColor = opt.barcodeDarkColor ?? BARCODE_DARK_COLOR;
-    this.barcodeLightColor = opt.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
-    this.barcodeErrorCorrection = opt.barcodeErrorCorrection ??
+    this.barcodeDarkColor = opt?.barcodeDarkColor ?? BARCODE_DARK_COLOR;
+    this.barcodeLightColor = opt?.barcodeLightColor ?? BARCODE_LIGHT_COLOR;
+    this.barcodeErrorCorrection = opt?.barcodeErrorCorrection ??
         BARCODE_ERROR_CORRECTION;
-    this.headerColor = opt.headerColor ?? HEADER_COLOR;
-    this.textColor = opt.textColor ?? TEXT_COLOR;
-    this.mrzColor = opt.mrzColor ?? TEXT_COLOR;
-    this.passportHeaderColor = opt.passportHeaderColor ?? "#ffffff";
-    this.frontBackgroundColor = opt.frontBackgroundColor ?? BACKGROUND_COLOR;
-    this.frontBackgroundImage = opt.frontBackgroundImage ?? null;
-    this.backBackgroundColor = opt.backBackgroundColor ?? BACKGROUND_COLOR;
-    this.backBackgroundImage = opt.backBackgroundImage ?? null;
-    this.mrzBackgroundColor = opt.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
-    this.mrzBackgroundImage = opt.mrzBackgroundImage ?? null;
-    this.logoUnderlayColor = opt.logoUnderlayColor ?? HEADER_COLOR;
-    this.logoUnderlayAlpha = opt.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
-    this.logo = opt.logo ?? null;
-    this.showGuides = opt.showGuides ?? false;
-    this.useDigitalSeal = opt.useDigitalSeal ?? false;
-    this.fullAuthority = opt.fullAuthority ?? FULL_AUTHORITY;
-    this.fullDocumentName = opt.fullDocumentName ?? "FURRY EVENTS PASSPORT";
-    this.passportHeader = opt.passportHeader ?? [
+    this.headerColor = opt?.headerColor ?? HEADER_COLOR;
+    this.textColor = opt?.textColor ?? TEXT_COLOR;
+    this.mrzColor = opt?.mrzColor ?? TEXT_COLOR;
+    this.passportHeaderColor = opt?.passportHeaderColor ?? "#ffffff";
+    this.frontBackgroundColor = opt?.frontBackgroundColor ?? BACKGROUND_COLOR;
+    this.frontBackgroundImage = opt?.frontBackgroundImage ?? null;
+    this.backBackgroundColor = opt?.backBackgroundColor ?? BACKGROUND_COLOR;
+    this.backBackgroundImage = opt?.backBackgroundImage ?? null;
+    this.mrzBackgroundColor = opt?.mrzBackgroundColor ?? MRZ_BACKGROUND_COLOR;
+    this.mrzBackgroundImage = opt?.mrzBackgroundImage ?? null;
+    this.logoUnderlayColor = opt?.logoUnderlayColor ?? HEADER_COLOR;
+    this.logoUnderlayAlpha = opt?.logoUnderlayAlpha ?? UNDERLAY_OPACITY;
+    this.logo = opt?.logo ?? null;
+    this.showGuides = opt?.showGuides ?? false;
+    this.useDigitalSeal = opt?.useDigitalSeal ?? false;
+    this.fullAuthority = opt?.fullAuthority ?? FULL_AUTHORITY;
+    this.fullDocumentName = opt?.fullDocumentName ?? "FURRY EVENTS PASSPORT";
+    this.passportHeader = opt?.passportHeader ?? [
       "PASSPORT",
       "PASSEPORT",
       "PASAPORTE"
     ];
-    this.documentHeader = opt.documentHeader ?? [
+    this.documentHeader = opt?.documentHeader ?? [
       "DOCUMENT CODE",
       "CODE DU DOCUMENT",
       "CÓDIGO DEL DOCUMENTO"
     ];
-    this.authorityHeader = opt.authorityHeader ?? authorityHeader;
-    this.numberHeader = opt.numberHeader ?? [
+    this.authorityHeader = opt?.authorityHeader ?? authorityHeader;
+    this.numberHeader = opt?.numberHeader ?? [
       "PASSPORT NUMBER",
       "NUMÉRO DE PASSEPORT",
       "NÚMERO DE PASAPORTE"
     ];
-    this.nameHeader = opt.nameHeader ?? nameHeader;
-    this.nationalityHeader = opt.nationalityHeader ?? nationalityHeader;
-    this.dateOfBirthHeader = opt.dateOfBirthHeader ?? birthDateHeader;
-    this.genderHeader = opt.genderHeader ?? genderHeader;
-    this.placeOfBirthHeader = opt.placeOfBirthHeader ?? [
+    this.nameHeader = opt?.nameHeader ?? nameHeader;
+    this.nationalityHeader = opt?.nationalityHeader ?? nationalityHeader;
+    this.dateOfBirthHeader = opt?.dateOfBirthHeader ?? birthDateHeader;
+    this.genderHeader = opt?.genderHeader ?? genderHeader;
+    this.placeOfBirthHeader = opt?.placeOfBirthHeader ?? [
       "PLACE OF BIRTH",
       "LIEU DE NAISSANCE",
       "LUGAR DE NACIMIENTO"
     ];
-    this.issueHeader = opt.issueHeader ?? [
+    this.issueHeader = opt?.issueHeader ?? [
       "DATE OF ISSUE",
       "DATE DE DÉLIVERANCE",
       "FECHA DE EXPEDICIÓN"
     ];
-    this.dateOfExpirationHeader = opt.dateOfExpirationHeader ?? [
+    this.dateOfExpirationHeader = opt?.dateOfExpirationHeader ?? [
       "DATE OF EXPIRATION",
       "DATE D'EXPIRATION",
       "FECHA DE CADUCIDAD"
     ];
-    this.endorsementsHeader = opt.endorsementsHeader ?? [
+    this.endorsementsHeader = opt?.endorsementsHeader ?? [
       "ENDORSEMENTS",
       "MENTIONS SPÉCIALES",
       "ANOTACIONES"
     ];
-    this.signatureHeader = opt.signatureHeader ?? [
+    this.signatureHeader = opt?.signatureHeader ?? [
       "HOLDER'S SIGNATURE OR USUAL MARK",
       "SIGNATURE DU TITULAIRE OU MARQUE HABITUELLE",
       "FIRMA DEL TITULAR O MARCA HABITUAL"
     ];
-    this.fonts = opt.fonts ?? null;
+    this.fonts = opt?.fonts ?? null;
   }
 
   /**
@@ -558,7 +558,7 @@ class EventsPassportRenderer {
           loadImageFromURL(this.frontBackgroundImage) : null,
       this.mrzBackgroundImage ?
           loadImageFromURL(this.mrzBackgroundImage) : null,
-      loadImageFromURL(model.picture),
+      loadImageFromURL(model.photo),
       this.logo ? loadImageFromURL(this.logo) : null,
       toQRCanvas(barcode, {
         errorCorrectionLevel: this.barcodeErrorCorrection,
@@ -1007,8 +1007,8 @@ class EventsPassportRenderer {
     const images = await Promise.all([
       this.backBackgroundImage ?
           loadImageFromURL(this.backBackgroundImage) : null,
-      typeof model.signature !== typeof canvas ?
-          loadImageFromURL(model.signature) : null
+      typeof model.signatureImage !== typeof canvas ?
+          loadImageFromURL(model.signatureImage) : null
     ]);
 
     ctx.fillStyle = this.backBackgroundColor;
@@ -1079,7 +1079,7 @@ class EventsPassportRenderer {
       );
     } else {
       ctx.drawImage(
-        model.signature,
+        model.signatureImage,
         EventsPassportRenderer.#signatureX[1],
         EventsPassportRenderer.#signatureY[0],
         EventsPassportRenderer.signatureArea[0],
