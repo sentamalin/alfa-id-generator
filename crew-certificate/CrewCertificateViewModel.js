@@ -1,13 +1,18 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { CrewCertificate } from "../modules/CrewCertificate.js";
 import { CrewCertificateRenderer } from "./CrewCertificateRenderer.js";
 import { ifNewGenerateSignatureFromText } from "../modules/utilities/if-new-generate-signature-from-text.js";
 import { loadFileFromUpload } from "../modules/utilities/load-file-from-upload.js";
+import { signSealUsingRNG } from "../modules/utilities/sign-seal-using-rng.js";
 
+/**
+ * While not a proper "ViewModel", this loads the initial state of the model,
+ *     sets the initial data as the values and placeholders of the web page,
+ *     and whenever values are updated on the HTML form the generated images
+ *     of the document are updated.
+ */
 class CrewCertificateViewModel {
   #model = new CrewCertificate({
     typeCode: "AC",
@@ -21,7 +26,8 @@ class CrewCertificateViewModel {
     optionalData: "",
     employer: "Lambda Air Ways, Inc",
     occupation: "Airline Transport Pilot",
-    declaration: "The holder may at all times re-enter\nupon production of this certificate\nwithin the period of validity",
+    declaration: "The holder may at all times re-enter\nupon production of th" +
+        "is certificate\nwithin the period of validity",
     issueDate: "2023-08-23",
     placeOfIssue: "Utopiopolis, Utopia",
     picture: "/photos/fox.jpg",
@@ -36,98 +42,71 @@ class CrewCertificateViewModel {
 
   #renderer = new CrewCertificateRenderer({
     headerColor: "#000033",
-    textColor: "#000000",
-    mrzColor: "#000000",
-    frontBackgroundColor: "#efefef",
     frontBackgroundImage: "/cardBackgrounds/lofiGrey.png",
-    backBackgroundColor: "#efefef",
     backBackgroundImage: "/cardBackgrounds/lofiGrey.png",
-    mrzBackgroundColor: "#ffffff",
-    mrzBackgroundImage: null,
-    numberUnderlayColor: "#ffffff",
-    numberUnderlayAlpha: 255,
     logoUnderlayColor: "#000033",
-    logoUnderlayAlpha: 255,
     logo: "/logos/lambda.svg",
     smallLogo: "/smallLogos/alfa-bw.svg",
-    showGuides: false,
-    useDigitalSeal: false,
-    fullAuthority: "AIR LINE FURRIES ASSOCIATION, INTERNATIONAL",
-    fullDocumentName: "CREWMEMBER CERTIFICATE",
-    nameHeader: [
-      "NAME",
-      "NOM",
-      "APELLIDOS"
-    ],
-    genderHeader: [
-      "GENDER",
-      "GENRE",
-      "GENÉRO"
-    ],
-    nationalityHeader: [
-      "NATIONALITY",
-      "NATIONALITÉ",
-      "NACIONALIDAD"
-    ],
-    dateOfBirthHeader: [
-      "DATE OF BIRTH",
-      "DATE DE NAISSANCE",
-      "FECHA DE NACIMIENTO"
-    ],
-    employerHeader: [
-      "EMPLOYER",
-      "EMPLOYEUR",
-      "EMPLEADOR"
-    ],
-    occupationHeader: [
-      "OCCUPATION",
-      "OCCUPATION",
-      "OCUPACIÓN"
-    ],
-    numberHeader: [
-      "CERTIFICATE NO",
-      "NO DU CERTIFICAT",
-      "NO DEL CERTIFICADO"
-    ],
-    dateOfExpirationHeader: [
-      "EXPIRY",
-      "EXPIRATION",
-      "EXPIRACIÓN"
-    ],
-    declarationHeader: [
-      "RE-ENTRY DECLARATION",
-      "DÉCLARATION DE RENTRÉE",
-      "DECLARACIÓN DE REINGRESO"
-    ],
-    issueHeader: [
-      "DATE OF ISSUE—PLACE OF ISSUE",
-      "DATE DE DÉLIVERANCE—LIEU DE DÉLIVERANCE",
-      "FECHA DE EXPEDICIÓN—LUGAR DE EXPEDICIÓN"
-    ]
   });
 
+  /**
+   * @type { number }
+   */
   #inputTimeout = null;
-  #frontFallback;
-  #backFallback;
-  #signatureFallback;
+
+  /**
+   * @type { HTMLCanvasElement | OffscreenCanvas }
+   */
+  #frontFallback = null;
+
+  /**
+   * @type { HTMLCanvasElement | OffscreenCanvas }
+   */
+  #backFallback = null;
+
+  /**
+   * @type { HTMLCanvasElement | OffscreenCanvas }
+   */
+  #signatureFallback = null;
+
+  /**
+   * @type { Generator<{ newSignature: boolean; signature: HTMLCanvasElement |
+   *     OffscreenCanvas; } | undefined, void, string> | null }
+   */
   #signatureGenerator = null;
+
+  /**
+   * @type { string | null }
+   */
   #frontBlobURL = null;
+
+  /**
+   * @type { string | null }
+   */
   #backBlobURL = null;
 
-  /** @type { Document } */ #document;
-  /** @param { Document } document */
-  set document(document) { this.#document = document; }
+  /** 
+   * @type { Document }
+   */
+  #document;
 
-  /** @type { HTMLCanvasElement } */ #cardFrontElement;
-  /** @param { HTMLCanvasElement } canvas */
-  set cardFrontElement(canvas) { this.#cardFrontElement = canvas; }
+  /**
+   * @type { HTMLCanvasElement }
+   */
+  #cardFrontElement;
 
-  /** @type { HTMLCanvasElement } */ #cardBackElement;
-  /** @param { HTMLCanvasElement } canvas */
-  set cardBackElement(canvas) { this.#cardBackElement = canvas; }
+  /**
+   * @type { HTMLCanvasElement }
+   */
+  #cardBackElement;
 
-  /** @type { HTMLInputElement } */ #typeCodeInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #typeCodeInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set typeCodeInput(input) {
     this.#typeCodeInput = input;
     this.#typeCodeInput.setAttribute("minlength", 1);
@@ -145,14 +124,21 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #authorityCodeInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #authorityCodeInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set authorityCodeInput(input) {
     this.#authorityCodeInput = input;
     this.#authorityCodeInput.setAttribute("minlength", 3);
     this.#authorityCodeInput.setAttribute("maxlength", 3);
     this.#authorityCodeInput.value = this.#model.authorityCode;
-    this.#authorityCodeInput.setAttribute("placeholder", this.#model.authorityCode);
+    this.#authorityCodeInput.setAttribute(
+      "placeholder", this.#model.authorityCode
+    );
     this.#authorityCodeInput.addEventListener("input", this, false);
     this.#authorityCodeInput.addEventListener("change", this, false);
   }
@@ -164,8 +150,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #numberInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #numberInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set numberInput(input) {
     this.#numberInput = input;
     this.#numberInput.setAttribute("minlength", 1);
@@ -183,11 +174,17 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #dateOfBirthInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfBirthInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfBirthInput(input) {
     this.#dateOfBirthInput = input;
-    this.#dateOfBirthInput.value = this.#model.birthDate.toISOString().slice(0,10);
+    this.#dateOfBirthInput.value =
+        this.#model.birthDate.toISOString().slice(0,10);
     this.#dateOfBirthInput.addEventListener("change", this, false);
   }
   onDateOfBirthInputChange() {
@@ -195,8 +192,13 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #genderMarkerInput;
-  /** @param { HTMLInputElement } input */
+  /** 
+   * @type { HTMLInputElement }
+   */
+  #genderMarkerInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set genderMarkerInput(input) {
     this.#genderMarkerInput = input;
     this.#genderMarkerInput.value = this.#model.genderMarker;
@@ -207,8 +209,13 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #dateOfExpirationInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfExpirationInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfExpirationInput(input) {
     this.#dateOfExpirationInput = input;
     this.#dateOfExpirationInput.value = this.#model.expirationDate.toISOString().slice(0,10);
@@ -219,14 +226,20 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #nationalityCodeInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #nationalityCodeInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set nationalityCodeInput(input) {
     this.#nationalityCodeInput = input;
     this.#nationalityCodeInput.setAttribute("minlength", 3);
     this.#nationalityCodeInput.setAttribute("maxlength", 3);
     this.#nationalityCodeInput.value = this.#model.nationalityCode;
-    this.#nationalityCodeInput.setAttribute("placeholder", this.#model.nationalityCode);
+    this.#nationalityCodeInput.setAttribute(
+        "placeholder", this.#model.nationalityCode);
     this.#nationalityCodeInput.addEventListener("input", this, false);
     this.#nationalityCodeInput.addEventListener("change", this, false);
   }
@@ -238,8 +251,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #fullNameInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #fullNameInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set fullNameInput(input) {
     this.#fullNameInput = input;
     this.#fullNameInput.setAttribute("minlength", 1);
@@ -257,8 +275,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #optionalDataInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #optionalDataInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set optionalDataInput(input) {
     this.#optionalDataInput = input;
     this.#optionalDataInput.setAttribute("minlength", 0);
@@ -274,14 +297,20 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #identifierInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #identifierInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set identifierInput(input) {
     this.#identifierInput = input;
     this.#identifierInput.setAttribute("minlength", 4);
     this.#identifierInput.setAttribute("maxlength", 4);
     this.#identifierInput.value = this.#model.identifierCode;
-    this.#identifierInput.setAttribute("placeholder", this.#model.identifierCode);
+    this.#identifierInput.setAttribute(
+        "placeholder", this.#model.identifierCode);
     this.#identifierInput.addEventListener("input", this, false);
     this.#identifierInput.addEventListener("change", this, false);
     this.#identifierInput.setAttribute("disabled", "disabled");
@@ -293,13 +322,20 @@ class CrewCertificateViewModel {
       this.#generateCard();
     }
   }
-  /** @type { HTMLInputElement } */ #certReferenceInput;
-  /** @param { HTMLInputElement } input */
+
+  /**
+   * @type { HTMLInputElement }
+   */
+  #certReferenceInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set certReferenceInput(input) {
     this.#certReferenceInput = input;
     this.#certReferenceInput.setAttribute("minlength", 1);
     this.#certReferenceInput.value = this.#model.certReference;
-    this.#certReferenceInput.setAttribute("placeholder", this.#model.certReference);
+    this.#certReferenceInput.setAttribute(
+        "placeholder", this.#model.certReference);
     this.#certReferenceInput.addEventListener("input", this, false);
     this.#certReferenceInput.addEventListener("change", this, false);
     this.#certReferenceInput.setAttribute("disabled", "disabled");
@@ -312,8 +348,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #sealSignatureDateInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #sealSignatureDateInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
     this.#sealSignatureDateInput.value = this.#model.sealSignatureDate;
@@ -325,8 +366,12 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #employerCodeInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */ #employerCodeInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set employerCodeInput(input) {
     this.#employerCodeInput = input;
     this.#employerCodeInput.setAttribute("minlength", 1);
@@ -345,8 +390,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #occupationCodeInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #occupationCodeInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set occupationCodeInput(input) {
     this.#occupationCodeInput = input;
     this.#occupationCodeInput.setAttribute("minlength", 1);
@@ -365,8 +415,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #employerInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */ 
+  #employerInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set employerInput(input) {
     this.#employerInput = input;
     this.#employerInput.value = this.#model.employer;
@@ -381,8 +436,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #occupationInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #occupationInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set occupationInput(input) {
     this.#occupationInput = input;
     this.#occupationInput.value = this.#model.occupation;
@@ -397,8 +457,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #declarationInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #declarationInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set declarationInput(input) {
     this.#declarationInput = input;
     this.#declarationInput.setAttribute("cols", 36);
@@ -416,11 +481,17 @@ class CrewCertificateViewModel {
     }
   }
   
-  /** @type { HTMLInputElement } */ #dateOfIssueInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfIssueInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfIssueInput(input) {
     this.#dateOfIssueInput = input;
-    this.#dateOfIssueInput.value = this.#model.issueDate.toISOString().slice(0,10);
+    this.#dateOfIssueInput.value =
+        this.#model.issueDate.toISOString().slice(0,10);
     this.#dateOfIssueInput.addEventListener("change", this, false);
   }
   onDateOfIssueInputChange() {
@@ -428,12 +499,18 @@ class CrewCertificateViewModel {
     this.#generateCardBack();
   }
 
-  /** @type { HTMLInputElement } */ #placeOfIssueInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #placeOfIssueInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set placeOfIssueInput(input) {
     this.#placeOfIssueInput = input;
     this.#placeOfIssueInput.value = this.#model.placeOfIssue;
-    this.#placeOfIssueInput.setAttribute("placeholder", this.#model.placeOfIssue);
+    this.#placeOfIssueInput.setAttribute(
+        "placeholder", this.#model.placeOfIssue);
     this.#placeOfIssueInput.addEventListener("input", this, false);
     this.#placeOfIssueInput.addEventListener("change", this, false);
   }
@@ -444,8 +521,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #pictureInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #pictureInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set pictureInput(input) {
     this.#pictureInput = input;
     this.#pictureInput.setAttribute("accept", "image/*");
@@ -453,14 +535,19 @@ class CrewCertificateViewModel {
   }
   async onPictureInputChange() {
     if (this.#pictureInput.files[0]) {
-      const aFile = this.#pictureInput.files[0];
-      this.#model.picture = await loadFileFromUpload(this.#pictureInput.files[0]);
+      this.#model.picture =
+          await loadFileFromUpload(this.#pictureInput.files[0]);
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #signatureInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #signatureInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set signatureInput(input) {
     this.#signatureInput = input;
     this.#signatureInput.addEventListener("change", this, false);
@@ -482,8 +569,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #signatureFileInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #signatureFileInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set signatureFileInput(input) {
     this.#signatureFileInput = input;
     this.#signatureFileInput.setAttribute("accept", "image/*");
@@ -491,13 +583,19 @@ class CrewCertificateViewModel {
   }
   async onSignatureFileInputChange() {
     if (this.#signatureFileInput.files[0]) {
-      this.#model.signature = await loadFileFromUpload(this.#signatureFileInput.files[0]);
+      this.#model.signature =
+          await loadFileFromUpload(this.#signatureFileInput.files[0]);
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #signatureTextInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #signatureTextInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set signatureTextInput(input) {
     this.#signatureTextInput = input;
     this.#signatureTextInput.setAttribute("disabled", "disabled");
@@ -523,8 +621,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #urlInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #urlInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set urlInput(input) {
     this.#urlInput = input;
     this.#urlInput.value = this.#model.url;
@@ -540,8 +643,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #headerColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #headerColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set headerColorInput(input) {
     this.#headerColorInput = input;
     this.#headerColorInput.value = this.#renderer.headerColor;
@@ -552,8 +660,13 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #textColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #textColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set textColorInput(input) {
     this.#textColorInput = input;
     this.#textColorInput.value = this.#renderer.textColor;
@@ -564,8 +677,13 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #mrzColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #mrzColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set mrzColorInput(input) {
     this.#mrzColorInput = input;
     this.#mrzColorInput.value = this.#renderer.mrzColor;
@@ -576,8 +694,13 @@ class CrewCertificateViewModel {
     this.#generateCardBack();
   }
 
-  /** @type { HTMLInputElement } */ #frontBackgroundColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #frontBackgroundColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set frontBackgroundColorInput(input) {
     this.#frontBackgroundColorInput = input;
     this.#frontBackgroundColorInput.value = this.#renderer.frontBackgroundColor;
@@ -588,8 +711,13 @@ class CrewCertificateViewModel {
     this.#generateCardFront();
   }
 
-  /** @type { HTMLInputElement } */ #frontBackgroundImageInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #frontBackgroundImageInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set frontBackgroundImageInput(input) {
     this.#frontBackgroundImageInput = input;
     if (!this.#renderer.frontBackgroundImage) { this.#frontBackgroundImageInput.value = "none"; }
@@ -614,8 +742,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #frontBackgroundImageFileInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #frontBackgroundImageFileInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set frontBackgroundImageFileInput(input) {
     this.#frontBackgroundImageFileInput = input;
     this.#frontBackgroundImageFileInput.setAttribute("accept", "image/*");
@@ -624,13 +757,20 @@ class CrewCertificateViewModel {
   }
   async onFrontBackgroundImageFileInputChange() {
     if (this.#frontBackgroundImageFileInput.files[0]) {
-      this.#renderer.frontBackgroundImage = await loadFileFromUpload(this.#frontBackgroundImageFileInput.files[0]);
+      this.#renderer.frontBackgroundImage = await loadFileFromUpload(
+        this.#frontBackgroundImageFileInput.files[0]
+      );
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #backBackgroundColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #backBackgroundColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set backBackgroundColorInput(input) {
     this.#backBackgroundColorInput = input;
     this.#backBackgroundColorInput.value = this.#renderer.backBackgroundColor;
@@ -641,12 +781,20 @@ class CrewCertificateViewModel {
     this.#generateCardBack();
   }
 
-  /** @type { HTMLInputElement } */ #backBackgroundImageInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #backBackgroundImageInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set backBackgroundImageInput(input) {
     this.#backBackgroundImageInput = input;
-    if (!this.#renderer.backBackgroundImage) { this.#backBackgroundImageInput.value = "none"; }
-    else { this.#backBackgroundImageInput.value = this.#renderer.backBackgroundImage; }
+    if (!this.#renderer.backBackgroundImage) {
+      this.#backBackgroundImageInput.value = "none";
+    } else {
+      this.#backBackgroundImageInput.value = this.#renderer.backBackgroundImage;
+    }
     this.#backBackgroundImageInput.addEventListener("change", this, false);
   }
   onBackBackgroundImageInputChange() {
@@ -661,14 +809,20 @@ class CrewCertificateViewModel {
         break;
       default:
         this.#backBackgroundImageFileInput.setAttribute("disabled", "disabled");
-        this.#renderer.backBackgroundImage = this.#backBackgroundImageInput.value;
+        this.#renderer.backBackgroundImage =
+            this.#backBackgroundImageInput.value;
         this.#generateCardBack();
         break;
     }
   }
 
-  /** @type { HTMLInputElement } */ #backBackgroundImageFileInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #backBackgroundImageFileInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set backBackgroundImageFileInput(input) {
     this.#backBackgroundImageFileInput = input;
     this.#backBackgroundImageFileInput.setAttribute("accept", "image/*");
@@ -677,13 +831,19 @@ class CrewCertificateViewModel {
   }
   async onBackBackgroundImageFileInputChange() {
     if (this.#backBackgroundImageFileInput.files[0]) {
-      this.#renderer.backBackgroundImage = await loadFileFromUpload(this.#backBackgroundImageFileInput.files[0]);
+      this.#renderer.backBackgroundImage =
+          await loadFileFromUpload(this.#backBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #mrzBackgroundColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #mrzBackgroundColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set mrzBackgroundColorInput(input) {
     this.#mrzBackgroundColorInput = input;
     this.#mrzBackgroundColorInput.value = this.#renderer.mrzBackgroundColor;
@@ -694,12 +854,20 @@ class CrewCertificateViewModel {
     this.#generateCardBack();
   }
 
-  /** @type { HTMLInputElement } */ #mrzBackgroundImageInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #mrzBackgroundImageInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set mrzBackgroundImageInput(input) {
     this.#mrzBackgroundImageInput = input;
-    if (!this.#renderer.mrzBackgroundImage) { this.#mrzBackgroundImageInput.value = "none"; }
-    else { this.#mrzBackgroundImageInput.value = this.#renderer.mrzBackgroundImage; }
+    if (!this.#renderer.mrzBackgroundImage) {
+      this.#mrzBackgroundImageInput.value = "none";
+    } else {
+      this.#mrzBackgroundImageInput.value = this.#renderer.mrzBackgroundImage;
+    }
     this.#mrzBackgroundImageInput.addEventListener("change", this, false);
   }
   onMrzBackgroundImageInputChange() {
@@ -720,8 +888,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #mrzBackgroundImageFileInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #mrzBackgroundImageFileInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set mrzBackgroundImageFileInput(input) {
     this.#mrzBackgroundImageFileInput = input;
     this.#mrzBackgroundImageFileInput.setAttribute("accept", "image/*");
@@ -730,13 +903,19 @@ class CrewCertificateViewModel {
   }
   async onMrzBackgroundImageFileInputChange() {
     if (this.#mrzBackgroundImageFileInput.files[0]) {
-      this.#renderer.mrzBackgroundImage = await loadFileFromUpload(this.#mrzBackgroundImageFileInput.files[0]);
+      this.#renderer.mrzBackgroundImage =
+          await loadFileFromUpload(this.#mrzBackgroundImageFileInput.files[0]);
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #numberUnderlayColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #numberUnderlayColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set numberUnderlayColorInput(input) {
     this.#numberUnderlayColorInput = input;
     this.#numberUnderlayColorInput.value = this.#renderer.numberUnderlayColor;
@@ -747,8 +926,13 @@ class CrewCertificateViewModel {
     this.#generateCardBack();
   }
 
-  /** @type { HTMLInputElement } */ #numberUnderlayAlphaInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #numberUnderlayAlphaInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set numberUnderlayAlphaInput(input) {
     this.#numberUnderlayAlphaInput = input;
     this.#numberUnderlayAlphaInput.setAttribute("min", 0);
@@ -757,12 +941,18 @@ class CrewCertificateViewModel {
     this.#numberUnderlayAlphaInput.addEventListener("change", this, false);
   }
   onNumberUnderlayAlphaInputChange() {
-    this.#renderer.numberUnderlayAlpha = Number(this.#numberUnderlayAlphaInput.value);
+    this.#renderer.numberUnderlayAlpha =
+        Number(this.#numberUnderlayAlphaInput.value);
     this.#generateCardBack();
   }
 
-  /** @type { HTMLInputElement } */ #logoUnderlayColorInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #logoUnderlayColorInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set logoUnderlayColorInput(input) {
     this.#logoUnderlayColorInput = input;
     this.#logoUnderlayColorInput.value = this.#renderer.logoUnderlayColor;
@@ -773,8 +963,13 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #logoUnderlayAlphaInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #logoUnderlayAlphaInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set logoUnderlayAlphaInput(input) {
     this.#logoUnderlayAlphaInput = input;
     this.#logoUnderlayAlphaInput.setAttribute("min", 0);
@@ -783,12 +978,18 @@ class CrewCertificateViewModel {
     this.#logoUnderlayAlphaInput.addEventListener("change", this, false);
   }
   onLogoUnderlayAlphaInputChange() {
-    this.#renderer.logoUnderlayAlpha = Number(this.#logoUnderlayAlphaInput.value);
+    this.#renderer.logoUnderlayAlpha =
+        Number(this.#logoUnderlayAlphaInput.value);
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #logoInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #logoInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set logoInput(input) {
     this.#logoInput = input;
     this.#logoInput.value = this.#renderer.logo;
@@ -807,8 +1008,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #logoFileInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #logoFileInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set logoFileInput(input) {
     this.#logoFileInput = input;
     this.#logoFileInput.setAttribute("accept", "image/*");
@@ -817,13 +1023,18 @@ class CrewCertificateViewModel {
   }
   async onLogoFileInputChange() {
     if (this.#logoFileInput.files[0]) {
-      this.#renderer.logo = await loadFileFromUpload(this.#logoFileInput.files[0]);
+      this.#renderer.logo =
+          await loadFileFromUpload(this.#logoFileInput.files[0]);
       this.#generateCard();
     }
   }
 
-  /** @type { HTMLInputElement } */ #smallLogoInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */ #smallLogoInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set smallLogoInput(input) {
     this.#smallLogoInput = input;
     this.#smallLogoInput.value = this.#renderer.smallLogo;
@@ -842,8 +1053,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #smallLogoFileInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #smallLogoFileInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set smallLogoFileInput(input) {
     this.#smallLogoFileInput = input;
     this.#smallLogoFileInput.setAttribute("accept", "image/*");
@@ -852,13 +1068,19 @@ class CrewCertificateViewModel {
   }
   async onSmallLogoFileInputChange() {
     if (this.#smallLogoFileInput.files[0]) {
-      this.#renderer.smallLogo = await loadFileFromUpload(this.#smallLogoFileInput.files[0]);
+      this.#renderer.smallLogo =
+          await loadFileFromUpload(this.#smallLogoFileInput.files[0]);
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #fullAuthorityInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #fullAuthorityInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set fullAuthorityInput(input) {
     this.#fullAuthorityInput = input;
     this.#fullAuthorityInput.value = this.#renderer.fullAuthority;
@@ -873,12 +1095,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #fullDocumentNameInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #fullDocumentNameInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set fullDocumentNameInput(input) {
     this.#fullDocumentNameInput = input;
     this.#fullDocumentNameInput.value = this.#renderer.fullDocumentName;
-    this.#fullDocumentNameInput.setAttribute("placeholder", this.#renderer.fullDocumentName);
+    this.#fullDocumentNameInput.setAttribute(
+      "placeholder", this.#renderer.fullDocumentName
+    );
     this.#fullDocumentNameInput.addEventListener("input", this, false);
     this.#fullDocumentNameInput.addEventListener("change", this, false);
   }
@@ -889,12 +1118,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #nameHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #nameHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set nameHeaderInput(input) {
     this.#nameHeaderInput = input;
     this.#nameHeaderInput.value = this.#renderer.nameHeader[0];
-    this.#nameHeaderInput.setAttribute("placeholder", this.#renderer.nameHeader[0]);
+    this.#nameHeaderInput.setAttribute(
+      "placeholder", this.#renderer.nameHeader[0]
+    );
     this.#nameHeaderInput.addEventListener("input", this, false);
     this.#nameHeaderInput.addEventListener("change", this, false);
   }
@@ -905,12 +1141,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #nameHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #nameHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set nameHeaderI18n1Input(input) {
     this.#nameHeaderI18n1Input = input;
     this.#nameHeaderI18n1Input.value = this.#renderer.nameHeader[1];
-    this.#nameHeaderI18n1Input.setAttribute("placeholder", this.#renderer.nameHeader[1]);
+    this.#nameHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.nameHeader[1]
+    );
     this.#nameHeaderI18n1Input.addEventListener("input", this, false);
     this.#nameHeaderI18n1Input.addEventListener("change", this, false);
   }
@@ -921,12 +1164,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #nameHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #nameHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set nameHeaderI18n2Input(input) {
     this.#nameHeaderI18n2Input = input;
     this.#nameHeaderI18n2Input.value = this.#renderer.nameHeader[2];
-    this.#nameHeaderI18n2Input.setAttribute("placeholder", this.#renderer.nameHeader[2]);
+    this.#nameHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.nameHeader[2]
+    );
     this.#nameHeaderI18n2Input.addEventListener("input", this, false);
     this.#nameHeaderI18n2Input.addEventListener("change", this, false);
   }
@@ -937,12 +1187,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #genderHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #genderHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set genderHeaderInput(input) {
     this.#genderHeaderInput = input;
     this.#genderHeaderInput.value = this.#renderer.genderHeader[0];
-    this.#genderHeaderInput.setAttribute("placeholder", this.#renderer.genderHeader[0]);
+    this.#genderHeaderInput.setAttribute(
+      "placeholder", this.#renderer.genderHeader[0]
+    );
     this.#genderHeaderInput.addEventListener("input", this, false);
     this.#genderHeaderInput.addEventListener("change", this, false);
   }
@@ -953,12 +1210,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #genderHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #genderHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set genderHeaderI18n1Input(input) {
     this.#genderHeaderI18n1Input = input;
     this.#genderHeaderI18n1Input.value = this.#renderer.genderHeader[1];
-    this.#genderHeaderI18n1Input.setAttribute("placeholder", this.#renderer.genderHeader[1]);
+    this.#genderHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.genderHeader[1]
+    );
     this.#genderHeaderI18n1Input.addEventListener("input", this, false);
     this.#genderHeaderI18n1Input.addEventListener("change", this, false);
   }
@@ -969,12 +1233,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #genderHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #genderHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set genderHeaderI18n2Input(input) {
     this.#genderHeaderI18n2Input = input;
     this.#genderHeaderI18n2Input.value = this.#renderer.genderHeader[2];
-    this.#genderHeaderI18n2Input.setAttribute("placeholder", this.#renderer.genderHeader[2]);
+    this.#genderHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.genderHeader[2]
+    );
     this.#genderHeaderI18n2Input.addEventListener("input", this, false);
     this.#genderHeaderI18n2Input.addEventListener("change", this, false);
   }
@@ -985,108 +1256,171 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #nationalityHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #nationalityHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set nationalityHeaderInput(input) {
     this.#nationalityHeaderInput = input;
     this.#nationalityHeaderInput.value = this.#renderer.nationalityHeader[0];
-    this.#nationalityHeaderInput.setAttribute("placeholder", this.#renderer.nationalityHeader[0]);
+    this.#nationalityHeaderInput.setAttribute(
+      "placeholder", this.#renderer.nationalityHeader[0]
+    );
     this.#nationalityHeaderInput.addEventListener("input", this, false);
     this.#nationalityHeaderInput.addEventListener("change", this, false);
   }
   onNationalityHeaderInputChange() {
-    if (this.#renderer.nationalityHeader[0] !== this.#nationalityHeaderInput.value) {
+    if (this.#renderer.nationalityHeader[0] !==
+          this.#nationalityHeaderInput.value) {
       this.#renderer.nationalityHeader[0] = this.#nationalityHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #nationalityHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #nationalityHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set nationalityHeaderI18n1Input(input) {
     this.#nationalityHeaderI18n1Input = input;
-    this.#nationalityHeaderI18n1Input.value = this.#renderer.nationalityHeader[1];
-    this.#nationalityHeaderI18n1Input.setAttribute("placeholder", this.#renderer.nationalityHeader[1]);
+    this.#nationalityHeaderI18n1Input.value =
+        this.#renderer.nationalityHeader[1];
+    this.#nationalityHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.nationalityHeader[1]
+    );
     this.#nationalityHeaderI18n1Input.addEventListener("input", this, false);
     this.#nationalityHeaderI18n1Input.addEventListener("change", this, false);
   }
   onNationalityHeaderI18n1InputChange() {
-    if (this.#renderer.nationalityHeader[1] !== this.#nationalityHeaderI18n1Input.value) {
-      this.#renderer.nationalityHeader[1] = this.#nationalityHeaderI18n1Input.value;
+    if (this.#renderer.nationalityHeader[1] !==
+          this.#nationalityHeaderI18n1Input.value) {
+      this.#renderer.nationalityHeader[1] =
+          this.#nationalityHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #nationalityHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #nationalityHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set nationalityHeaderI18n2Input(input) {
     this.#nationalityHeaderI18n2Input = input;
-    this.#nationalityHeaderI18n2Input.value = this.#renderer.nationalityHeader[2];
-    this.#nationalityHeaderI18n2Input.setAttribute("placeholder", this.#renderer.nationalityHeader[2]);
+    this.#nationalityHeaderI18n2Input.value =
+        this.#renderer.nationalityHeader[2];
+    this.#nationalityHeaderI18n2Input.setAttribute(
+      "placeholder",
+    this.#renderer.nationalityHeader[2]);
     this.#nationalityHeaderI18n2Input.addEventListener("input", this, false);
     this.#nationalityHeaderI18n2Input.addEventListener("change", this, false);
   }
   onNationalityHeaderI18n2InputChange() {
-    if (this.#renderer.nationalityHeader[2] !== this.#nationalityHeaderI18n2Input.value) {
-      this.#renderer.nationalityHeader[2] = this.#nationalityHeaderI18n2Input.value;
+    if (this.#renderer.nationalityHeader[2] !==
+        this.#nationalityHeaderI18n2Input.value) {
+      this.#renderer.nationalityHeader[2] =
+          this.#nationalityHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #dateOfBirthHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfBirthHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfBirthHeaderInput(input) {
     this.#dateOfBirthHeaderInput = input;
     this.#dateOfBirthHeaderInput.value = this.#renderer.dateOfBirthHeader[0];
-    this.#dateOfBirthHeaderInput.setAttribute("placeholder", this.#renderer.dateOfBirthHeader[0]);
+    this.#dateOfBirthHeaderInput.setAttribute(
+      "placeholder", this.#renderer.dateOfBirthHeader[0]
+    );
     this.#dateOfBirthHeaderInput.addEventListener("input", this, false);
     this.#dateOfBirthHeaderInput.addEventListener("change", this, false);
   }
   onDateOfBirthHeaderInputChange() {
-    if (this.#renderer.dateOfBirthHeader[0] !== this.#dateOfBirthHeaderInput.value) {
+    if (this.#renderer.dateOfBirthHeader[0] !==
+        this.#dateOfBirthHeaderInput.value) {
       this.#renderer.dateOfBirthHeader[0] = this.#dateOfBirthHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #dateOfBirthHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfBirthHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfBirthHeaderI18n1Input(input) {
     this.#dateOfBirthHeaderI18n1Input = input;
-    this.#dateOfBirthHeaderI18n1Input.value = this.#renderer.dateOfBirthHeader[1];
-    this.#dateOfBirthHeaderI18n1Input.setAttribute("placeholder", this.#renderer.dateOfBirthHeader[1]);
+    this.#dateOfBirthHeaderI18n1Input.value =
+        this.#renderer.dateOfBirthHeader[1];
+    this.#dateOfBirthHeaderI18n1Input.setAttribute(
+        "placeholder", this.#renderer.dateOfBirthHeader[1]
+    );
     this.#dateOfBirthHeaderI18n1Input.addEventListener("input", this, false);
     this.#dateOfBirthHeaderI18n1Input.addEventListener("change", this, false);
   }
   onDateOfBirthHeaderI18n1InputChange() {
-    if (this.#renderer.dateOfBirthHeader[1] !== this.#dateOfBirthHeaderI18n1Input.value) {
-      this.#renderer.dateOfBirthHeader[1] = this.#dateOfBirthHeaderI18n1Input.value;
+    if (this.#renderer.dateOfBirthHeader[1] !==
+        this.#dateOfBirthHeaderI18n1Input.value) {
+      this.#renderer.dateOfBirthHeader[1] =
+          this.#dateOfBirthHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #dateOfBirthHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfBirthHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfBirthHeaderI18n2Input(input) {
     this.#dateOfBirthHeaderI18n2Input = input;
-    this.#dateOfBirthHeaderI18n2Input.value = this.#renderer.dateOfBirthHeader[2];
-    this.#dateOfBirthHeaderI18n2Input.setAttribute("placeholder", this.#renderer.dateOfBirthHeader[2]);
+    this.#dateOfBirthHeaderI18n2Input.value =
+        this.#renderer.dateOfBirthHeader[2];
+    this.#dateOfBirthHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.dateOfBirthHeader[2]
+    );
     this.#dateOfBirthHeaderI18n2Input.addEventListener("input", this, false);
     this.#dateOfBirthHeaderI18n2Input.addEventListener("change", this, false);
   }
   onDateOfBirthHeaderI18n2InputChange() {
-    if (this.#renderer.dateOfBirthHeader[2] !== this.#dateOfBirthHeaderI18n2Input.value) {
-      this.#renderer.dateOfBirthHeader[2] = this.#dateOfBirthHeaderI18n2Input.value;
+    if (this.#renderer.dateOfBirthHeader[2] !==
+        this.#dateOfBirthHeaderI18n2Input.value) {
+      this.#renderer.dateOfBirthHeader[2] =
+          this.#dateOfBirthHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #employerHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #employerHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set employerHeaderInput(input) {
     this.#employerHeaderInput = input;
     this.#employerHeaderInput.value = this.#renderer.employerHeader[0];
-    this.#employerHeaderInput.setAttribute("placeholder", this.#renderer.employerHeader[0]);
+    this.#employerHeaderInput.setAttribute(
+      "placeholder", this.#renderer.employerHeader[0]
+    );
     this.#employerHeaderInput.addEventListener("input", this, false);
     this.#employerHeaderInput.addEventListener("change", this, false);
   }
@@ -1097,92 +1431,141 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #employerHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #employerHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set employerHeaderI18n1Input(input) {
     this.#employerHeaderI18n1Input = input;
     this.#employerHeaderI18n1Input.value = this.#renderer.employerHeader[1];
-    this.#employerHeaderI18n1Input.setAttribute("placeholder", this.#renderer.employerHeader[1]);
+    this.#employerHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.employerHeader[1]
+    );
     this.#employerHeaderI18n1Input.addEventListener("input", this, false);
     this.#employerHeaderI18n1Input.addEventListener("change", this, false);
   }
   onEmployerHeaderI18n1InputChange() {
-    if (this.#renderer.employerHeader[1] !== this.#employerHeaderI18n1Input.value) {
+    if (this.#renderer.employerHeader[1] !==
+        this.#employerHeaderI18n1Input.value) {
       this.#renderer.employerHeader[1] = this.#employerHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #employerHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #employerHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set employerHeaderI18n2Input(input) {
     this.#employerHeaderI18n2Input = input;
     this.#employerHeaderI18n2Input.value = this.#renderer.employerHeader[2];
-    this.#employerHeaderI18n2Input.setAttribute("placeholder", this.#renderer.employerHeader[2]);
+    this.#employerHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.employerHeader[2]
+    );
     this.#employerHeaderI18n2Input.addEventListener("input", this, false);
     this.#employerHeaderI18n2Input.addEventListener("change", this, false);
   }
   onEmployerHeaderI18n2InputChange() {
-    if (this.#renderer.employerHeader[2] !== this.#employerHeaderI18n2Input.value) {
+    if (this.#renderer.employerHeader[2] !==
+          this.#employerHeaderI18n2Input.value) {
       this.#renderer.employerHeader[2] = this.#employerHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #occupationHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #occupationHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set occupationHeaderInput(input) {
     this.#occupationHeaderInput = input;
     this.#occupationHeaderInput.value = this.#renderer.occupationHeader[0];
-    this.#occupationHeaderInput.setAttribute("placeholder", this.#renderer.occupationHeader[0]);
+    this.#occupationHeaderInput.setAttribute(
+      "placeholder", this.#renderer.occupationHeader[0]
+    );
     this.#occupationHeaderInput.addEventListener("input", this, false);
     this.#occupationHeaderInput.addEventListener("change", this, false);
   }
   onOccupationHeaderInputChange() {
-    if (this.#renderer.occupationHeader[0] !== this.#occupationHeaderInput.value) {
+    if (this.#renderer.occupationHeader[0] !==
+        this.#occupationHeaderInput.value) {
       this.#renderer.occupationHeader[0] = this.#occupationHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #occupationHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #occupationHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set occupationHeaderI18n1Input(input) {
     this.#occupationHeaderI18n1Input = input;
     this.#occupationHeaderI18n1Input.value = this.#renderer.occupationHeader[1];
-    this.#occupationHeaderI18n1Input.setAttribute("placeholder", this.#renderer.occupationHeader[1]);
+    this.#occupationHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.occupationHeader[1]
+    );
     this.#occupationHeaderI18n1Input.addEventListener("input", this, false);
     this.#occupationHeaderI18n1Input.addEventListener("change", this, false);
   }
   onOccupationHeaderI18n1InputChange() {
-    if (this.#renderer.occupationHeader[1] !== this.#occupationHeaderI18n1Input.value) {
-      this.#renderer.occupationHeader[1] = this.#occupationHeaderI18n1Input.value;
+    if (this.#renderer.occupationHeader[1] !==
+        this.#occupationHeaderI18n1Input.value) {
+      this.#renderer.occupationHeader[1] =
+          this.#occupationHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #occupationHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #occupationHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set occupationHeaderI18n2Input(input) {
     this.#occupationHeaderI18n2Input = input;
     this.#occupationHeaderI18n2Input.value = this.#renderer.occupationHeader[2];
-    this.#occupationHeaderI18n2Input.setAttribute("placeholder", this.#renderer.occupationHeader[2]);
+    this.#occupationHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.occupationHeader[2]
+    );
     this.#occupationHeaderI18n2Input.addEventListener("input", this, false);
     this.#occupationHeaderI18n2Input.addEventListener("change", this, false);
   }
   onOccupationHeaderI18n2InputChange() {
-    if (this.#renderer.occupationHeader[2] !== this.#occupationHeaderI18n2Input.value) {
-      this.#renderer.occupationHeader[2] = this.#occupationHeaderI18n2Input.value;
+    if (this.#renderer.occupationHeader[2] !==
+        this.#occupationHeaderI18n2Input.value) {
+      this.#renderer.occupationHeader[2] =
+          this.#occupationHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #numberHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #numberHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set numberHeaderInput(input) {
     this.#numberHeaderInput = input;
     this.#numberHeaderInput.value = this.#renderer.numberHeader[0];
-    this.#numberHeaderInput.setAttribute("placeholder", this.#renderer.numberHeader[0]);
+    this.#numberHeaderInput.setAttribute(
+      "placeholder", this.#renderer.numberHeader[0]
+    );
     this.#numberHeaderInput.addEventListener("input", this, false);
     this.#numberHeaderInput.addEventListener("change", this, false);
   }
@@ -1193,12 +1576,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #numberHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #numberHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set numberHeaderI18n1Input(input) {
     this.#numberHeaderI18n1Input = input;
     this.#numberHeaderI18n1Input.value = this.#renderer.numberHeader[1];
-    this.#numberHeaderI18n1Input.setAttribute("placeholder", this.#renderer.numberHeader[1]);
+    this.#numberHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.numberHeader[1]
+    );
     this.#numberHeaderI18n1Input.addEventListener("input", this, false);
     this.#numberHeaderI18n1Input.addEventListener("change", this, false);
   }
@@ -1209,12 +1599,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #numberHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #numberHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set numberHeaderI18n2Input(input) {
     this.#numberHeaderI18n2Input = input;
     this.#numberHeaderI18n2Input.value = this.#renderer.numberHeader[2];
-    this.#numberHeaderI18n2Input.setAttribute("placeholder", this.#renderer.numberHeader[2]);
+    this.#numberHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.numberHeader[2]
+    );
     this.#numberHeaderI18n2Input.addEventListener("input", this, false);
     this.#numberHeaderI18n2Input.addEventListener("change", this, false);
   }
@@ -1225,108 +1622,180 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #dateOfExpirationHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfExpirationHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfExpirationHeaderInput(input) {
     this.#dateOfExpirationHeaderInput = input;
     this.#dateOfExpirationHeaderInput.value = this.#renderer.dateOfExpirationHeader[0];
-    this.#dateOfExpirationHeaderInput.setAttribute("placeholder", this.#renderer.dateOfExpirationHeader[0]);
+    this.#dateOfExpirationHeaderInput.setAttribute(
+      "placeholder", this.#renderer.dateOfExpirationHeader[0]
+    );
     this.#dateOfExpirationHeaderInput.addEventListener("input", this, false);
     this.#dateOfExpirationHeaderInput.addEventListener("change", this, false);
   }
   onDateOfExpirationHeaderInputChange() {
-    if (this.#renderer.dateOfExpirationHeader[0] !== this.#dateOfExpirationHeaderInput.value) {
-      this.#renderer.dateOfExpirationHeader[0] = this.#dateOfExpirationHeaderInput.value;
+    if (this.#renderer.dateOfExpirationHeader[0] !==
+        this.#dateOfExpirationHeaderInput.value) {
+      this.#renderer.dateOfExpirationHeader[0] =
+          this.#dateOfExpirationHeaderInput.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #dateOfExpirationHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfExpirationHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfExpirationHeaderI18n1Input(input) {
     this.#dateOfExpirationHeaderI18n1Input = input;
-    this.#dateOfExpirationHeaderI18n1Input.value = this.#renderer.dateOfExpirationHeader[1];
-    this.#dateOfExpirationHeaderI18n1Input.setAttribute("placeholder", this.#renderer.dateOfExpirationHeader[1]);
-    this.#dateOfExpirationHeaderI18n1Input.addEventListener("input", this, false);
-    this.#dateOfExpirationHeaderI18n1Input.addEventListener("change", this, false);
+    this.#dateOfExpirationHeaderI18n1Input.value =
+        this.#renderer.dateOfExpirationHeader[1];
+    this.#dateOfExpirationHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.dateOfExpirationHeader[1]
+    );
+    this.#dateOfExpirationHeaderI18n1Input.addEventListener(
+      "input", this, false
+    );
+    this.#dateOfExpirationHeaderI18n1Input.addEventListener(
+      "change", this, false
+    );
   }
   onDateOfExpirationHeaderI18n1InputChange() {
-    if (this.#renderer.dateOfExpirationHeader[1] !== this.#dateOfExpirationHeaderI18n1Input.value) {
-      this.#renderer.dateOfExpirationHeader[1] = this.#dateOfExpirationHeaderI18n1Input.value;
+    if (this.#renderer.dateOfExpirationHeader[1] !==
+        this.#dateOfExpirationHeaderI18n1Input.value) {
+      this.#renderer.dateOfExpirationHeader[1] =
+          this.#dateOfExpirationHeaderI18n1Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #dateOfExpirationHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #dateOfExpirationHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set dateOfExpirationHeaderI18n2Input(input) {
     this.#dateOfExpirationHeaderI18n2Input = input;
-    this.#dateOfExpirationHeaderI18n2Input.value = this.#renderer.dateOfExpirationHeader[2];
-    this.#dateOfExpirationHeaderI18n2Input.setAttribute("placeholder", this.#renderer.dateOfExpirationHeader[2]);
-    this.#dateOfExpirationHeaderI18n2Input.addEventListener("input", this, false);
-    this.#dateOfExpirationHeaderI18n2Input.addEventListener("change", this, false);
+    this.#dateOfExpirationHeaderI18n2Input.value =
+        this.#renderer.dateOfExpirationHeader[2];
+    this.#dateOfExpirationHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.dateOfExpirationHeader[2]
+    );
+    this.#dateOfExpirationHeaderI18n2Input.addEventListener(
+      "input", this, false
+    );
+    this.#dateOfExpirationHeaderI18n2Input.addEventListener(
+      "change", this, false
+    );
   }
   onDateOfExpirationHeaderI18n2InputChange() {
-    if (this.#renderer.dateOfExpirationHeader[2] !== this.#dateOfExpirationHeaderI18n2Input.value) {
-      this.#renderer.dateOfExpirationHeader[2] = this.#dateOfExpirationHeaderI18n2Input.value;
+    if (this.#renderer.dateOfExpirationHeader[2] !==
+        this.#dateOfExpirationHeaderI18n2Input.value) {
+      this.#renderer.dateOfExpirationHeader[2] =
+          this.#dateOfExpirationHeaderI18n2Input.value;
       this.#generateCardFront();
     }
   }
 
-  /** @type { HTMLInputElement } */ #declarationHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #declarationHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set declarationHeaderInput(input) {
     this.#declarationHeaderInput = input;
     this.#declarationHeaderInput.value = this.#renderer.declarationHeader[0];
-    this.#declarationHeaderInput.setAttribute("placeholder", this.#renderer.declarationHeader[0]);
+    this.#declarationHeaderInput.setAttribute(
+      "placeholder", this.#renderer.declarationHeader[0]
+    );
     this.#declarationHeaderInput.addEventListener("input", this, false);
     this.#declarationHeaderInput.addEventListener("change", this, false);
   }
   onDeclarationHeaderInputChange() {
-    if (this.#renderer.declarationHeader[0] !== this.#declarationHeaderInput.value) {
+    if (this.#renderer.declarationHeader[0] !==
+        this.#declarationHeaderInput.value) {
       this.#renderer.declarationHeader[0] = this.#declarationHeaderInput.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #declarationHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #declarationHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set declarationHeaderI18n1Input(input) {
     this.#declarationHeaderI18n1Input = input;
-    this.#declarationHeaderI18n1Input.value = this.#renderer.declarationHeader[1];
-    this.#declarationHeaderI18n1Input.setAttribute("placeholder", this.#renderer.declarationHeader[1]);
+    this.#declarationHeaderI18n1Input.value =
+        this.#renderer.declarationHeader[1];
+    this.#declarationHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.declarationHeader[1]
+    );
     this.#declarationHeaderI18n1Input.addEventListener("input", this, false);
     this.#declarationHeaderI18n1Input.addEventListener("change", this, false);
   }
   onDeclarationHeaderI18n1InputChange() {
-    if (this.#renderer.declarationHeader[1] !== this.#declarationHeaderI18n1Input.value) {
-      this.#renderer.declarationHeader[1] = this.#declarationHeaderI18n1Input.value;
+    if (this.#renderer.declarationHeader[1] !==
+        this.#declarationHeaderI18n1Input.value) {
+      this.#renderer.declarationHeader[1] =
+          this.#declarationHeaderI18n1Input.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #declarationHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #declarationHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set declarationHeaderI18n2Input(input) {
     this.#declarationHeaderI18n2Input = input;
-    this.#declarationHeaderI18n2Input.value = this.#renderer.declarationHeader[2];
-    this.#declarationHeaderI18n2Input.setAttribute("placeholder", this.#renderer.declarationHeader[2]);
+    this.#declarationHeaderI18n2Input.value =
+        this.#renderer.declarationHeader[2];
+    this.#declarationHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.declarationHeader[2]
+    );
     this.#declarationHeaderI18n2Input.addEventListener("input", this, false);
     this.#declarationHeaderI18n2Input.addEventListener("change", this, false);
   }
   onDeclarationHeaderI18n2InputChange() {
-    if (this.#renderer.declarationHeader[2] !== this.#declarationHeaderI18n2Input.value) {
-      this.#renderer.declarationHeader[2] = this.#declarationHeaderI18n2Input.value;
+    if (this.#renderer.declarationHeader[2] !==
+        this.#declarationHeaderI18n2Input.value) {
+      this.#renderer.declarationHeader[2] =
+          this.#declarationHeaderI18n2Input.value;
       this.#generateCardBack();
     }
   }
 
-  /** @type { HTMLInputElement } */ #issueHeaderInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #issueHeaderInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set issueHeaderInput(input) {
     this.#issueHeaderInput = input;
     this.#issueHeaderInput.value = this.#renderer.issueHeader[0];
-    this.#issueHeaderInput.setAttribute("placeholder", this.#renderer.issueHeader[0]);
+    this.#issueHeaderInput.setAttribute(
+      "placeholder", this.#renderer.issueHeader[0]
+    );
     this.#issueHeaderInput.addEventListener("input", this, false);
     this.#issueHeaderInput.addEventListener("change", this, false);
   }
@@ -1337,12 +1806,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #issueHeaderI18n1Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #issueHeaderI18n1Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set issueHeaderI18n1Input(input) {
     this.#issueHeaderI18n1Input = input;
     this.#issueHeaderI18n1Input.value = this.#renderer.issueHeader[1];
-    this.#issueHeaderI18n1Input.setAttribute("placeholder", this.#renderer.issueHeader[1]);
+    this.#issueHeaderI18n1Input.setAttribute(
+      "placeholder", this.#renderer.issueHeader[1]
+    );
     this.#issueHeaderI18n1Input.addEventListener("input", this, false);
     this.#issueHeaderI18n1Input.addEventListener("change", this, false);
   }
@@ -1353,12 +1829,19 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #issueHeaderI18n2Input;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #issueHeaderI18n2Input;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set issueHeaderI18n2Input(input) {
     this.#issueHeaderI18n2Input = input;
     this.#issueHeaderI18n2Input.value = this.#renderer.issueHeader[2];
-    this.#issueHeaderI18n2Input.setAttribute("placeholder", this.#renderer.issueHeader[2]);
+    this.#issueHeaderI18n2Input.setAttribute(
+      "placeholder", this.#renderer.issueHeader[2]
+    );
     this.#issueHeaderI18n2Input.addEventListener("input", this, false);
     this.#issueHeaderI18n2Input.addEventListener("change", this, false);
   }
@@ -1369,8 +1852,13 @@ class CrewCertificateViewModel {
     }
   }
 
-  /** @type { HTMLInputElement } */ #showGuidesInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #showGuidesInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set showGuidesInput(input) {
     this.#showGuidesInput = input;
     this.#showGuidesInput.addEventListener("change", this, false);
@@ -1381,8 +1869,13 @@ class CrewCertificateViewModel {
     this.#generateCard();
   }
 
-  /** @type { HTMLInputElement } */ #useDigitalSealInput;
-  /** @param { HTMLInputElement } input */
+  /**
+   * @type { HTMLInputElement }
+   */
+  #useDigitalSealInput;
+  /**
+   * @param { HTMLInputElement } input
+   */
   set useDigitalSealInput(input) {
     this.#useDigitalSealInput = input;
     this.#useDigitalSealInput.addEventListener("change", this, false);
@@ -1424,14 +1917,15 @@ class CrewCertificateViewModel {
 
   /** @param { Document } document */
   async initialize(document) {
-    this.document = document;
+    this.#document = document;
     this.#renderer.fonts = this.#document.fonts;
     await this.#renderer.loadCanvasFonts();
-    this.cardFrontElement = this.#document.getElementById("cardFront");
-    this.cardBackElement = this.#document.getElementById("cardBack");
+    this.#cardFrontElement = this.#document.getElementById("cardFront");
+    this.#cardBackElement = this.#document.getElementById("cardBack");
     this.#frontFallback = this.#document.getElementById("offscreen-front");
     this.#backFallback = this.#document.getElementById("offscreen-back");
-    this.#signatureFallback = this.#document.getElementById("offscreen-signature");
+    this.#signatureFallback =
+        this.#document.getElementById("offscreen-signature");
     await this.#generateCard();
     const inputFields = [
       "typeCode",
@@ -1519,29 +2013,28 @@ class CrewCertificateViewModel {
   }
 
   // Private methods
-  async #signSeal() {
-    this.#model.sealSignature = [];
-    for (let i = 0; i < 64; i += 1) {
-      this.#model.sealSignature.push(Math.floor(Math.random() * 256));
-    }
-  }
-
   async #generateCardFront() {
-    const canvas = await this.#renderer.generateCardFront(this.#model, this.#frontFallback);
+    const canvas = await this.#renderer.generateCardFront(
+      this.#model, this.#frontFallback
+    );
     this.#cardFrontElement.width = CrewCertificateRenderer.cutCardArea[0];
     this.#cardFrontElement.height = CrewCertificateRenderer.cutCardArea[1];
     const ctx = this.#cardFrontElement.getContext("2d");
     ctx.drawImage(
-      canvas, 16, 16, this.#cardFrontElement.width, this.#cardFrontElement.height,
+      canvas, 16, 16,
+      this.#cardFrontElement.width, this.#cardFrontElement.height,
       0, 0, this.#cardFrontElement.width, this.#cardFrontElement.height
     );
     const downloadFront = this.#document.getElementById("downloadFront");
     let blob;
     if (typeof OffscreenCanvas === "undefined") {
       blob = await new Promise(resolve => canvas.toBlob(resolve));
+    } else {
+      blob = await canvas.convertToBlob();
     }
-    else { blob = await canvas.convertToBlob(); }
-    if (this.#frontBlobURL !== null) { URL.revokeObjectURL(this.#frontBlobURL); }
+    if (this.#frontBlobURL !== null) {
+      URL.revokeObjectURL(this.#frontBlobURL);
+    }
     this.#frontBlobURL = URL.createObjectURL(blob);
     downloadFront.setAttribute(
       "download",
@@ -1552,8 +2045,10 @@ class CrewCertificateViewModel {
   }
 
   async #generateCardBack() {
-    await this.#signSeal();
-    const canvas = await this.#renderer.generateCardBack(this.#model, this.#backFallback);
+    await signSealUsingRNG(this.#model);
+    const canvas = await this.#renderer.generateCardBack(
+      this.#model, this.#backFallback
+    );
     this.#cardBackElement.width = CrewCertificateRenderer.cutCardArea[0];
     this.#cardBackElement.height = CrewCertificateRenderer.cutCardArea[1];
     const ctx = this.#cardBackElement.getContext("2d");
@@ -1565,9 +2060,12 @@ class CrewCertificateViewModel {
     let blob;
     if (typeof OffscreenCanvas === "undefined") {
       blob = await new Promise(resolve => canvas.toBlob(resolve));
+    } else {
+      blob = await canvas.convertToBlob();
     }
-    else { blob = await canvas.convertToBlob(); }
-    if (this.#backBlobURL !== null) { URL.revokeObjectURL(this.#backBlobURL); }
+    if (this.#backBlobURL !== null) {
+      URL.revokeObjectURL(this.#backBlobURL);
+    }
     this.#backBlobURL = URL.createObjectURL(blob);
     downloadBack.setAttribute(
       "download",
