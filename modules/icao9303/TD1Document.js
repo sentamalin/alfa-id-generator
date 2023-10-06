@@ -31,8 +31,8 @@ class TD1Document {
    * @param { string } [opt.mrzLine2] - A MRZ line string of a 30-character length.
    * @param { string } [opt.mrzLine3] - A MRZ line string of a 30-character length.
    * @param { string } [opt.machineReadableZone] - A MRZ string of a 90-character length.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the document holder.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.photo] - A path/URL to an image, or an image object, representing a photo of the document holder.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signatureImage] - A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
    */
   constructor(opt) {
     this.fullName = "Mann, Mister";
@@ -52,8 +52,8 @@ class TD1Document {
       if (opt.mrzLine2) { this.mrzLine2 = opt.mrzLine2; }
       if (opt.mrzLine3) { this.mrzLine3 = opt.mrzLine3; }
       if (opt.machineReadableZone) { this.machineReadableZone = opt.machineReadableZone; }
-      if (opt.picture) { this.picture = opt.picture; }
-      if (opt.signature) { this.signature = opt.signature; }
+      if (opt.photo) { this.photo = opt.photo; }
+      if (opt.signatureImage) { this.signatureImage = opt.signatureImage; }
     }
   }
 
@@ -132,16 +132,16 @@ class TD1Document {
   /** A path/URL to an image, or an image object, representing a photo of the document holder.
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  get picture() { return this.#document.picture; }
+  get photo() { return this.#document.photo; }
   /** @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } value */
-  set picture(value) { this.#document.picture = value; }
+  set photo(value) { this.#document.photo = value; }
 
   /** A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  get signature() { return this.#document.signature; }
+  get signatureImage() { return this.#document.signatureImage; }
   /** @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } value */
-  set signature(value) { this.#document.signature = value; }
+  set signatureImage(value) { this.#document.signatureImage = value; }
 
   /** The first line of the Machine-Readable Zone (MRZ).
    * @type { string }

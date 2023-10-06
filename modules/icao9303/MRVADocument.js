@@ -33,8 +33,8 @@ class MRVADocument {
    * @param { string } [opt.mrzLine1] - A MRZ line string of a 44-character length.
    * @param { string } [opt.mrzLine2] - A MRZ line string of a 44-character length.
    * @param { string } [opt.machineReadableZone] - A MRZ string of a 88-character length.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the visa issuer.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.photo] - A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signatureImage] - A path/URL to an image, or an image object, representing the signature or usual mark of the visa issuer.
    * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
    * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD format.
    * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes an unlimited number of entries.
@@ -60,8 +60,8 @@ class MRVADocument {
       if (opt.mrzLine1) { this.mrzLine1 = opt.mrzLine1; }
       if (opt.mrzLine2) { this.mrzLine2 = opt.mrzLine2; }
       if (opt.machineReadableZone) { this.machineReadableZone = opt.machineReadableZone; }
-      if (opt.picture) { this.picture = opt.picture; }
-      if (opt.signature) { this.signature = opt.signature; }
+      if (opt.photo) { this.photo = opt.photo; }
+      if (opt.signatureImage) { this.signatureImage = opt.signatureImage; }
       if (opt.placeOfIssue) { this.placeOfIssue = opt.placeOfIssue; }
       if (opt.validFrom) { this.validFrom = opt.validFrom; }
       if (opt.numberOfEntries) { this.numberOfEntries = opt.numberOfEntries; }
@@ -148,16 +148,16 @@ class MRVADocument {
   /** A path/URL to an image, or an image object, representing a photo of the visa holder or an image from the issuing authority.
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  get picture() { return this.#document.picture; }
+  get photo() { return this.#document.photo; }
   /** @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } value */
-  set picture(value) { this.#document.picture = value; }
+  set photo(value) { this.#document.photo = value; }
 
   /** A path/URL to an image, or an image object, representing the signature or usual mark of the visa issuer.
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  get signature() { return this.#document.signature; }
+  get signatureImage() { return this.#document.signatureImage; }
   /** @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } value */
-  set signature(value) { this.#document.signature = value; }
+  set signatureImage(value) { this.#document.signatureImage = value; }
   
   /** Location where the visa was issued.
    * @type { String }

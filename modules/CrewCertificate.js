@@ -278,12 +278,12 @@ class CrewCertificate {
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
    *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  get photo() { return this.#document.picture; }
+  get photo() { return this.#document.photo; }
   /**
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
    *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } value
    */
-  set photo(value) { this.#document.picture = value; }
+  set photo(value) { this.#document.photo = value; }
 
   /**
    * A path/URL to an image, or an image object, representing the signature or
@@ -291,12 +291,12 @@ class CrewCertificate {
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
    *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  get signatureImage() { return this.#document.signature; }
+  get signatureImage() { return this.#document.signatureImage; }
   /**
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
    *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } value
    */
-  set signatureImage(value) { this.#document.signature = value; }
+  set signatureImage(value) { this.#document.signatureImage = value; }
 
   /**
    * A URL chosen by the document holder to store in the barcode area in place
@@ -475,11 +475,11 @@ class CrewCertificate {
    *     key.
    * @type { number[] }
    */
-  get signatureData() { return this.#seal.signature; }
+  get signatureData() { return this.#seal.signatureData; }
   /**
    * @param { number[] } value
    */
-  set signatureData(value) { this.#seal.signature = value; }
+  set signatureData(value) { this.#seal.signatureData = value; }
 
   /**
    * The header zone of the VDS as defined by ICAO 9303 part 13.

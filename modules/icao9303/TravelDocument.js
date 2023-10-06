@@ -1,31 +1,48 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-/** Stores common properties and methods for all ICAO 9303 machine-readable
- *  travel documents (MRTDs) with machine-readable zones.
+/**
+ * Stores common properties and methods for all ICAO 9303 machine-readable
+ *     travel documents (MRTDs) with machine-readable zones.
  * 
- *  While `TravelDocument` provides useful utility methods, the actual class
- *  is intended to be used to compose different kinds of MRTDs. It is not
- *  intended to be instantiated directly.
- * 
- * @mixin
+ * While `TravelDocument` provides useful utility methods, the actual class is
+ *     intended to be used to compose different kinds of MRTDs. It is not
+ *     intended to be instantiated directly.
  */
 class TravelDocument {
-  /** Create a new `TravelDocument`.
+  /**
+   * Create a`TravelDocument`.
    * @param { Object } [opt] - An options object.
-   * @param { string } [opt.typeCode] - A 1-2 character string consisting of the letters A-Z.
-   * @param { string } [opt.authorityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
-   * @param { string } [opt.number] - A string no longer than 9 characters consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD format.
+   * @param { string } [opt.typeCode] - A 1-2 character string consisting of the
+   *     letters A-Z.
+   * @param { string } [opt.authorityCode] - A 3-character string consisting of
+   *     the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
+   *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
+   * @param { string } [opt.number] - A string no longer than 9 characters
+   *     consisting of the characters 0-9 and A-Z.
+   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD
+   *     format.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
-   * @param { string } [opt.expirationDate] - A calendar date string in YYYY-MM-DD format.
-   * @param { string } [opt.nationalityCode] - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
-   * @param { string } [opt.fullName] - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z.
-   * @param { string } [opt.optionalData] - Valid characters are from the ranges 0-9 and A-Z.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.picture] - A path/URL to an image, or an image object, representing a photo of the document holder.
-   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } [opt.signature] - A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
+   * @param { string } [opt.expirationDate] - A calendar date string in
+   *     YYYY-MM-DD format.
+   * @param { string } [opt.nationalityCode] - A 3-character string consisting
+   *     of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
+   *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
+   * @param { string } [opt.fullName] - A ', ' separates the document holder's
+   *     primary identifier from their secondary identifiers. A '/' separates
+   *     the full name in a non-Latin national language from a
+   *     transcription/transliteration into the Latin characters A-Z.
+   * @param { string } [opt.optionalData] - Valid characters are from the ranges
+   *     0-9 and A-Z.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
+   *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas |
+   *     VideoFrame } [opt.photo] - A path/URL to an image, or an image object,
+   *     representing a photo of the document holder.
+   * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
+   *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas |
+   *     VideoFrame } [opt.signatureImage] - A path/URL to an image, or an image
+   *     object, representing the signature or usual mark of the document
+   *     holder.
    */
   constructor(opt) {
     this.typeCode = "UN";
@@ -46,8 +63,8 @@ class TravelDocument {
       if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
       if (opt.fullName) { this.fullName = opt.fullName; }
       if (opt.optionalData) { this.optionalData = opt.optionalData; }
-      if (opt.picture) { this.picture = opt.picture; }
-      if (opt.signature) { this.signature = opt.signature; }
+      if (opt.photo) { this.photo = opt.photo; }
+      if (opt.signatureImage) { this.signatureImage = opt.signatureImage; }
     }
   }
   
@@ -252,12 +269,12 @@ class TravelDocument {
   /** A path/URL to an image, or an image object, representing a photo of the document holder.
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  picture;
+  photo;
 
   /** A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
    * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
-  signature;
+  signatureImage;
 
   /* Functions to be assigned to properties `toMRZ` and `toVIZ` when set. */
   static #doNothingWithThis = function() {
