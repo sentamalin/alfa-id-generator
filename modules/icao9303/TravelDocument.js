@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
+
 /**
  * Stores common properties and methods for all ICAO 9303 machine-readable
  *     travel documents (MRTDs) with machine-readable zones.
@@ -45,35 +47,29 @@ class TravelDocument {
    *     holder.
    */
   constructor(opt) {
-    this.typeCode = "UN";
-    this.authorityCode = "UNK";
-    this.number = "111222333";
-    this.birthDate = "2023-09-29";
-    this.genderMarker = "X";
-    this.expirationDate = "2023-09-29";
-    this.nationalityCode = "UNK";
-    
-    if (opt) {
-      if (opt.typeCode) { this.typeCode = opt.typeCode; }
-      if (opt.authorityCode) { this.authorityCode = opt.authorityCode; }
-      if (opt.number) { this.number = opt.number; }
-      if (opt.birthDate) { this.birthDate = opt.birthDate; }
-      if (opt.genderMarker) { this.genderMarker = opt.genderMarker; }
-      if (opt.expirationDate) { this.expirationDate = opt.expirationDate; }
-      if (opt.nationalityCode) { this.nationalityCode = opt.nationalityCode; }
-      if (opt.fullName) { this.fullName = opt.fullName; }
-      if (opt.optionalData) { this.optionalData = opt.optionalData; }
-      if (opt.photo) { this.photo = opt.photo; }
-      if (opt.signatureImage) { this.signatureImage = opt.signatureImage; }
-    }
+    this.typecode = opt?.typeCode ?? "I";
+    this.authorityCode = opt?.authorityCode ?? "UTO";
+    this.number = opt?.number ?? "D23145890";
+    this.birthDate = opt?.birthDate ?? "1974-08-12";
+    this.genderMarker = opt?.genderMarker ?? "F";
+    this.expirationDate = opt?.expirationDate ?? "2012-04-15";
+    this.nationalityCode = opt?.nationalityCode ?? "UTO";
+    this.fullName = opt?.fullName ?? "Eriksson, Anna-Maria";
+    this.optionalData = opt?.optionalData ?? "";
+    this.photo = opt?.photo ?? DEFAULT_PHOTO;
+    this.signatureImage = opt?.signatureImage ?? DEFAULT_SIGNATURE_IMAGE;
   }
   
   #typeCode;
-  /** A code identifying the document type.
+  /**
+   * A code identifying the document type.
    * @type { String }
    */
   get typeCode() { return this.#typeCode; }
-  /** @param { string } value - A 1-2 character string consisting of the letters A-Z. */
+  /**
+   * @param { string } value - A 1-2 character string consisting of the letters
+   *     A-Z.
+   */
   set typeCode(value) {
     if (value.toString().length > 2) {
       throw new RangeError(
@@ -87,38 +83,49 @@ class TravelDocument {
   }
 
   #authorityCode;
-  /** A code identifying the authority who issued this document.
+  /**
+   * A code identifying the authority who issued this document.
    * @type { String }
    */
   get authorityCode() { return this.#authorityCode; }
-  /** @param { string } value - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ. */
+  /**
+   * @param { string } value - A 3-character string consisting of the letters
+   *     A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges:
+   *     AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
+   */
   set authorityCode(value) {
     if (value.toString().toUpperCase().length !== 3) {
       throw new RangeError(
-        "Issuing state or organization code (authorityCode) must be 3 characters."
+        "Issuing state or organization code (authorityCode) must be 3 charact" +
+            "ers."
       );
-    } else {
-      if (TravelDocument.NationalityCodes[value.toString().toUpperCase()] === undefined) {
-        console.warn(
-          "Issuing state or organization code (authorityCode) " +
-          `'${value.toString().toUpperCase()}' is not defined in ISO-3166-1 ` +
-          `or ICAO 9303. '${value.toString().toUpperCase()}' may be an ` +
-          "acceptable user-assigned code if it is in these letter ranges: " +
-          "AAA-AAZ, QMA-QZZ, XAA-XZZ, and ZZA-ZZZ."
-        );
-      }
-      this.#authorityCode = new String(value.toString().toUpperCase());
-      this.#authorityCode.toMRZ = TravelDocument.#doNothingWithThis;
-      this.#authorityCode.toVIZ = TravelDocument.#doNothingWithThis;
     }
+    if (TravelDocument.NationalityCodes[
+      value.toString().toUpperCase()
+    ] === undefined) {
+      console.warn(
+        `Issuing state or organization code (authorityCode) ` +
+            `'${value.toString().toUpperCase()}' is not defined in ISO-3166-1` +
+            ` or ICAO 9303. '${value.toString().toUpperCase()}' may be an ` +
+            `acceptable user-assigned code if it is in these letter ranges: ` +
+            `AAA-AAZ, QMA-QZZ, XAA-XZZ, and ZZA-ZZZ.`
+      );
+    }
+    this.#authorityCode = new String(value.toString().toUpperCase());
+    this.#authorityCode.toMRZ = TravelDocument.#doNothingWithThis;
+    this.#authorityCode.toVIZ = TravelDocument.#doNothingWithThis;
   }
 
   #number;
-  /** An identity document number unique for this document.
+  /**
+   * An identity document number unique for this document.
    * @type { String }
    */
   get number() { return this.#number; }
-  /** @param { string } value - A string no longer than 9 characters consisting of the characters 0-9 and A-Z. */
+  /**
+   * @param { string } value - A string no longer than 9 characters consisting
+   *     of the characters 0-9 and A-Z.
+   */
   set number(value) {
     if (value.toString().length > 9) {
       throw new RangeError(
@@ -132,13 +139,16 @@ class TravelDocument {
   }
 
   #birthDate;
-  /** The document holder's date of birth.
+  /**
+   * The document holder's date of birth.
    * @type { Date }
    */
   get birthDate() { return this.#birthDate; }
-  /** @param { string } value - A calendar date string in YYYY-MM-DD format. */
+  /**
+   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   */
   set birthDate(value) {
-    let test = new Date(`${value}T00:00:00`);
+    const test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Date of birth (dateOfBirth) must be a valid date string."
@@ -151,31 +161,37 @@ class TravelDocument {
   }
 
   #genderMarker;
-  /** A marker representing the document holder's gender.
+  /**
+   * A marker representing the document holder's gender.
    * @type { String }
    */
   get genderMarker() { return this.#genderMarker; }
-  /** @param { string } value - The character 'F', 'M', or 'X'. */
+  /**
+   * @param { string } value - The character 'F', 'M', or 'X'.
+   */
   set genderMarker(value) {
     if (!["F", "M", "X"].includes(value.toUpperCase())) {
       throw new RangeError(
-        "Gender marker (genderMarker) must be [F]emale, [M]ale, or Other/Unspecified [X]."
+        "Gender marker (genderMarker) must be [F]emale, [M]ale, " +
+            "or Other/Unspecified [X]."
       );
-    } else {
-      this.#genderMarker = new String(value.toUpperCase());
-      this.#genderMarker.toMRZ = TravelDocument.#genderMarkerToMRZ;
-      this.#genderMarker.toVIZ = TravelDocument.#doNothingWithThis;
     }
+    this.#genderMarker = new String(value.toUpperCase());
+    this.#genderMarker.toMRZ = TravelDocument.#genderMarkerToMRZ;
+    this.#genderMarker.toVIZ = TravelDocument.#doNothingWithThis;
   }
 
   #expirationDate;
-  /** The last date on which this document is valid.
+  /**
+   * The last date on which this document is valid.
    * @type { Date }
    */
   get expirationDate() { return this.#expirationDate; }
-  /** @param { string } value - A calendar date string in YYYY-MM-DD format. */
+  /**
+   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   */
   set expirationDate(value) {
-    let test = new Date(`${value}T00:00:00`);
+    const test = new Date(`${value}T00:00:00`);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Date of expiration (dateOfExpiration) must be a valid date string."
@@ -188,95 +204,131 @@ class TravelDocument {
   }
 
   #nationalityCode;
-  /** A code identifying the document holder's nationality (or lack thereof).
+  /**
+   * A code identifying the document holder's nationality (or lack thereof).
    * @type { String }
    */
   get nationalityCode() { return this.#nationalityCode; }
-  /** @param { string } value - A 3-character string consisting of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ. */
+  /**
+   * @param { string } value - A 3-character string consisting of the letters
+   *     A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned ranges:
+   *     AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
+   */
   set nationalityCode(value) {
     if (value.toString().length !== 3) {
       throw new RangeError(
         "Nationality code (nationalityCode) must be 3 characters."
       );
     }
-    else {
-      if (TravelDocument.NationalityCodes[value.toString().toUpperCase()] === undefined) {
-        console.warn(
-          `Nationality code (nationalityCode) '${value.toString().toUpperCase()}' ` +
-          "is not defined in ISO-3166-1 or ICAO9303. " +
-          `'${value.toString().toUpperCase()}' may be an acceptable user-assigned ` +
-          "code if it is in these letter ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, and " +
-          "ZZA-ZZZ."
-        );
-      }
-      this.#nationalityCode = new String(value.toString().toUpperCase());
-      this.#nationalityCode.toMRZ = TravelDocument.#setThisToUppercase;
-      this.#nationalityCode.toVIZ = TravelDocument.#setThisToUppercase;
+    if (TravelDocument.NationalityCodes[
+      value.toString().toUpperCase()
+    ] === undefined) {
+      console.warn(
+        `Nationality code (nationalityCode) ` +
+            `'${value.toString().toUpperCase()}' is not defined in ISO-3166-1` +
+            ` or ICAO9303. '${value.toString().toUpperCase()}' may be an ` +
+            `acceptable user-assigned code if it is in these letter ranges: ` +
+            `AAA-AAZ, QMA-QZZ, XAA-XZZ, and ZZA-ZZZ.`
+      );
     }
+    this.#nationalityCode = new String(value.toString().toUpperCase());
+    this.#nationalityCode.toMRZ = TravelDocument.#setThisToUppercase;
+    this.#nationalityCode.toVIZ = TravelDocument.#setThisToUppercase;
   }
 
   #fullName;
-  /** The document holder's full name.
+  /**
+   * The document holder's full name.
    * @type { String }
    */
   get fullName() { return this.#fullName; }
-  /** @param { string } value - A ', ' separates the document holder's primary identifier from their secondary identifiers. A '/' separates the full name in a non-Latin national language from a transcription/transliteration into the Latin characters A-Z. */
+  /**
+   * @param { string } value - A ', ' separates the document holder's primary
+   *     identifier from their secondary identifiers. A '/' separates the full
+   *     name in a non-Latin national language from a
+   *     transcription/transliteration into the Latin characters A-Z.
+   */
   set fullName(value) {
     this.#fullName = new String(value.toString());
     this.#fullName.toVIZ = TravelDocument.#setThisToUppercase;
   }
-  /** Normalize and pad a document holder's name for the name area of a Machine-Readable Zone (MRZ) of a given character length.
-   * @param { string } name - The document holder's full name in the Latin characters A-Z, or a transcription/transliteration of their full name in Latin characters. A ', ' separates the document holder's primary identifier from their secondary identifiers.
-   * @param { number } length - The number of characters available for the document holder's name in a Machine-Readable Zone (MRZ).
+  /**
+   * Normalize and pad a document holder's name for the name area of a
+   *     Machine-Readable Zone (MRZ) of a given character length.
+   * @param { string } name - The document holder's full name in the Latin
+   *     characters A-Z, or a transcription/transliteration of their full name
+   *     in Latin characters. A ', ' separates the document holder's primary
+   *     identifier from their secondary identifiers.
+   * @param { number } length - The number of characters available for the
+   *     document holder's name in a Machine-Readable Zone (MRZ).
    * @example
    * // Returns "MILLEFEUILLE<<ALFALFA<<<<<<<<<"
    * TravelDocument.fullNameMRZ("Millefeuille, Alfalfa", 30);
    */
   static fullNameMRZ(name, length) {
-    const normalized = TravelDocument.normalizeMRZString(name.replace(", ","<<"));
-    if (normalized.length > length) {
+    const NORMALIZED_NAME =
+        TravelDocument.normalizeMRZString(name.replace(", ","<<"));
+    if (NORMALIZED_NAME.length > length) {
       console.warn(
         `Name (fullName) is longer than ${length} and will be truncated.`
       );
     }
-    return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    return TravelDocument.padMRZString(
+      NORMALIZED_NAME.substring(0,length), length
+    );
   }
 
   #optionalData;
-  /** Optional data to include in the Machine-Readable Zone (MRZ).
+  /**
+   * Optional data to include in the Machine-Readable Zone (MRZ).
    * @type { String }
    */
   get optionalData() { return this.#optionalData; }
-  /** @param { string } value - Valid characters are from the ranges 0-9 and A-Z. */
+  /**
+   * @param { string } value - Valid characters are from the ranges 0-9 and A-Z.
+   */
   set optionalData(value) { this.#optionalData = new String(value.toString()); }
-  /** Normalize and pad optional data for the optional data area of a Machine-Readable Zone (MRZ) of a given character length.
-   * @param { string } data - Optional data to include in the Machine-Readable Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
-   * @param { number } length - The number of characters available for the optional data in a Machine-Readable Zone (MRZ).
+  /**
+   * Normalize and pad optional data for the optional data area of a
+   *     Machine-Readable Zone (MRZ) of a given character length.
+   * @param { string } data - Optional data to include in the Machine-Readable
+   *     Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
+   * @param { number } length - The number of characters available for the
+   *     optional data in a Machine-Readable Zone (MRZ).
    * @example
    * // Returns "EXAMPLE<<<<<<<"
    * TravelDocument.optionalDataMRZ("EXAMPLE", 14);
    */
   static optionalDataMRZ(data, length) {
-    const normalized = TravelDocument.normalizeMRZString(data);
-    if (normalized.length > length) {
+    const NORMALIZED_DATA = TravelDocument.normalizeMRZString(data);
+    if (NORMALIZED_DATA.length > length) {
       console.warn(
-        `Optional data (optionalData) is longer than ${length} and will be truncated.`
+        `Optional data (optionalData) is longer than ${length} and will be ` +
+            `truncated.`
       );
     }
-    return TravelDocument.padMRZString(normalized.substring(0,length), length);
+    return TravelDocument.padMRZString(
+      NORMALIZED_DATA.substring(0,length), length
+    );
   }
 
-  /** A path/URL to an image, or an image object, representing a photo of the document holder.
-   * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
+  /**
+   * A path/URL to an image, or an image object, representing a photo of the
+   *     document holder or image chosen by the issuer.
+   * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
+   *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
   photo;
 
-  /** A path/URL to an image, or an image object, representing the signature or usual mark of the document holder.
-   * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
+  /**
+   * A path/URL to an image, or an image object, representing the signature or
+   *     usual mark of the document holder or issuer.
+   * @type { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
+   *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame }
    */
   signatureImage;
 
-  /* Functions to be assigned to properties `toMRZ` and `toVIZ` when set. */
+  // Functions to be assigned to properties `toMRZ` and `toVIZ` when set.
   static #doNothingWithThis = function() {
     return this;
   }
@@ -299,17 +351,23 @@ class TravelDocument {
     return `${this}` === "X" ? "<" : this;
   }
 
-  /** A cutoff year in a two-digit year after which the year being parsed is interpreted as referring to the current century. */
+  /**
+   * A cutoff year in a two-digit year after which the year being parsed is
+   *     interpreted as referring to the current century.
+   */
   static cutoffYear = 60;
 
-  /** Given a two-digit year string, get a four-digit year string.
+  /**
+   * Given a two-digit year string, get a four-digit year string.
    * @param { string } year - A two-digit year string.
    */
   static getFullYear(year) {
     return parseInt(year, 10) > this.cutoffYear ? `19${year}` : `20${year}`;
   }
 
-  /** A list of 3-digit nationality codes available in ISO 3166-1 and ICAO 9303-3.
+  /**
+   * A list of 3-digit nationality codes available in ISO 3166-1 and
+   *     ICAO 9303-3.
    * @readonly
    * @enum { Symbol }
    */
@@ -610,7 +668,8 @@ class TravelDocument {
     XAF: Symbol.for("Air Line Furries Association, International")
   });
 
-  /** Convert a Date object to a Machine-Readable Zone (MRZ) YYMMDD date string.
+  /**
+   * Convert a Date object to a Machine-Readable Zone (MRZ) YYMMDD date string.
    * @param { Date } date
    * @example
    * // Returns "230930"
@@ -620,21 +679,23 @@ class TravelDocument {
     return date.toISOString().slice(2,10).replace(/-/gi,"");
   }
 
-  /** Convert a Date object to a Visual Inspection Zone (VIZ) DD MMM YYY date string.
+  /**
+   * Convert a Date object to a Visual Inspection Zone (VIZ) DD MMM YYY
+   *     date string.
    * @param { Date } date
    * @example
    * // Returns "30 SEP 2023"
    * TravelDocument.dateToVIZ(new Date("2023-09-30T00:00:00"));
    */
   static dateToVIZ(date) {
-    let day;
-    if (date.getDate().toString().length < 2) { day = `0${date.getDate().toString()}`; }
-    else { day = date.getDate().toString(); }
-    return (day + " " + date.toLocaleString("en-us",{ month : "short" }) +
-      " " + date.getFullYear()).toUpperCase();
+    const DAY = date.getDate().toString().padStart(2, "0");
+    return (DAY + " " + date.toLocaleString("en-us", { month : "short" }) +
+        " " + date.getFullYear()).toUpperCase();
   }
 
-  /** Pad the end of a Machine-Readable Zone (MRZ) string to the desired length with a filler character.
+  /**
+   * Pad the end of a Machine-Readable Zone (MRZ) string to the desired length
+   *     with a filler character.
    * @param { string } string
    * @param { number } length
    * @example
@@ -645,18 +706,25 @@ class TravelDocument {
     return string.padEnd(length, "<").toUpperCase();
   }
 
-  /** Remove diacritics and punctuation from a Machine-Readable Zone (MRZ) string.
+  /**
+   * Remove diacritics and punctuation from a Machine-Readable Zone (MRZ)
+   *     string.
    * @param { string } string
    * @example
    * // Returns "ADRIAN<CLAUDE<DEVELEAU"
    * TravelDocument.normalizeMRZString("ADRIAN-CLAUDE D'EVELEAU");
    */
   static normalizeMRZString(string) {
-    let normalized = string.normalize("NFD").replace(/\p{Diacritic}/gu,"");
-    return normalized.replace(/'/gi,"").replace(/-/gi,"<").replace(/ /gi,"<").replace(/,/gi,"").toUpperCase();
+    const NORMALIZE = string.normalize("NFD").replace(/\p{Diacritic}/gu,"");
+    const REPLACE_COMMA_AND_DASH =
+        NORMALIZE.replace(/'/gi,"").replace(/-/gi,"<");
+    const REPLACE_SPACE_AND_COMMA =
+        REPLACE_COMMA_AND_DASH.replace(/ /gi,"<").replace(/,/gi,"");
+    return REPLACE_SPACE_AND_COMMA.toUpperCase();
   }
 
-  /** Generate a check digit for a Machine-Readable Zone (MRZ) string.
+  /**
+   * Generate a check digit for a Machine-Readable Zone (MRZ) string.
    * @param { string } string
    * @example
    * // Returns "9"
@@ -665,10 +733,10 @@ class TravelDocument {
   static generateMRZCheckDigit(string) {
     const weight = [7, 3, 1];
     let value = 0;
-    for (let i = 0; i < string.length; i += 1) {
+    [...string].forEach((character, i) => {
       let currentValue;
-      let currentWeight = weight[i % 3];
-      switch (string[i]) {
+      const CURRENT_WEIGHT = weight[i % 3];
+      switch (character) {
         case "1": currentValue = 1; break;
         case "2": currentValue = 2; break;
         case "3": currentValue = 3; break;
@@ -706,8 +774,8 @@ class TravelDocument {
         case "Z": currentValue = 35; break;
         default: currentValue = 0; break;
       }
-      value += currentValue * currentWeight;
-    }
+      value += currentValue * CURRENT_WEIGHT;
+    });
     return (value % 10).toString();
   }
 }
