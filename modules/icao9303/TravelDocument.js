@@ -13,7 +13,7 @@ import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-imag
  */
 class TravelDocument {
   /**
-   * Create a`TravelDocument`.
+   * Create a `TravelDocument`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.typeCode] - A 1-2 character string consisting of the
    *     letters A-Z.
@@ -35,7 +35,7 @@ class TravelDocument {
    *     the full name in a non-Latin national language from a
    *     transcription/transliteration into the Latin characters A-Z.
    * @param { string } [opt.optionalData] - Valid characters are from the ranges
-   *     0-9 and A-Z.
+   *     0-9, A-Z, and ' '.
    * @param { string | HTMLImageElement | SVGImageElement | HTMLVideoElement |
    *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas |
    *     VideoFrame } [opt.photo] - A path/URL to an image, or an image object,
@@ -285,7 +285,8 @@ class TravelDocument {
    */
   get optionalData() { return this.#optionalData; }
   /**
-   * @param { string } value - Valid characters are from the ranges 0-9 and A-Z.
+   * @param { string } value - Valid characters are from the ranges 0-9, A-Z,
+   *     and ' '.
    */
   set optionalData(value) { this.#optionalData = new String(value.toString()); }
   /**

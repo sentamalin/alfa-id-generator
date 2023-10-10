@@ -49,7 +49,7 @@ class EventsMRVA {
    *     format.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
    * @param { string } [opt.optionalData] - Up to 16 characters. Valid
-   *     characters are from the ranges 0-9 and A-Z.
+   *     characters are from the ranges 0-9, A-Z, and ' '.
    * @param { string } [opt.mrzLine1] - A MRZ line string of a 44-character
    *     length.
    * @param { string } [opt.mrzLine2] - A MRZ line string of a 44-character
@@ -270,7 +270,7 @@ class EventsMRVA {
   get optionalData() { return this.#document.optionalData; }
   /**
    * @param { string } value - Up to 16 characters. Valid characters are from
-   *     the ranges 0-9 and A-Z.
+   *     the ranges 0-9, A-Z, and ' '.
    */
   set optionalData(value) { this.#document.optionalData = value; }
 
@@ -599,16 +599,16 @@ class EventsMRVA {
       );
     }
     const input = [];
-    const paddedType = code.padStart(8, "0");
+    const PADDED_CODE = code.padStart(8, "0");
     let previousIsZero = true;
-    for (let i = 0; i < paddedType.length; i += 2) {
+    for (let i = 0; i < PADDED_CODE.length; i += 2) {
       if (
-        (parseInt(paddedType.slice(i, i + 2), 16) === 0) &&
+        (parseInt(PADDED_CODE.slice(i, i + 2), 16) === 0) &&
             previousIsZero === true 
       ) {
         continue;
       }
-      input.push(parseInt(paddedType.slice(i, i + 2), 16));
+      input.push(parseInt(PADDED_CODE.slice(i, i + 2), 16));
       previousIsZero = false;
     }
     this.#seal.features.set(0x06, input);
@@ -643,54 +643,54 @@ class EventsMRVA {
    *     setting the VDS header, message, or signature zones.
    */
   #setAllValuesFromDigitalSeal() {
-    const twoDigitYearStart = 32;
-    const sealMRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
-    if (sealMRZ[53] !== TravelDocument.generateMRZCheckDigit(
-      sealMRZ.slice(44, 53).replace(/ /gi, "<")
+    const TWO_DIGIT_YEAR_START = 32;
+    const SEAL_MRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
+    if (SEAL_MRZ[53] !== TravelDocument.generateMRZCheckDigit(
+      SEAL_MRZ.slice(44, 53).replace(/ /gi, "<")
     )) {
       throw new EvalError(
-        `Document number check digit '${sealMRZ[53]}' does not match for ` +
-            `document number '${sealMRZ.slice(44, 53).replace(/ /gi, "<")}.`
+        `Document number check digit '${SEAL_MRZ[53]}' does not match for ` +
+            `document number '${SEAL_MRZ.slice(44, 53).replace(/ /gi, "<")}.`
       );
     }
-    if (sealMRZ[63] !== TravelDocument.generateMRZCheckDigit(
-      sealMRZ.slice(57, 63).replace(/ /gi, "<")
+    if (SEAL_MRZ[63] !== TravelDocument.generateMRZCheckDigit(
+      SEAL_MRZ.slice(57, 63).replace(/ /gi, "<")
     )) {
       throw new EvalError(
-        `Date of birth check digit '${sealMRZ[63]}' does not match for date ` +
-            `of birth '${sealMRZ.slice(57, 63).replace(/ /gi, "<")}'.`
+        `Date of birth check digit '${SEAL_MRZ[63]}' does not match for date ` +
+            `of birth '${SEAL_MRZ.slice(57, 63).replace(/ /gi, "<")}'.`
       );
     }
-    if (sealMRZ[71] !== TravelDocument.generateMRZCheckDigit(
-      sealMRZ.slice(65, 71).replace(/ /gi, "<")
+    if (SEAL_MRZ[71] !== TravelDocument.generateMRZCheckDigit(
+      SEAL_MRZ.slice(65, 71).replace(/ /gi, "<")
     )) {
       throw new EvalError(
-        `Valid thru check digit '${sealMRZ[71]}' does not match for valid ` +
-            `thru '${sealMRZ.slice(65, 71).replace(/ /gi, "<")}'.`
+        `Valid thru check digit '${SEAL_MRZ[71]}' does not match for valid ` +
+            `thru '${SEAL_MRZ.slice(65, 71).replace(/ /gi, "<")}'.`
       );
     }
-    this.#document.typeCode = sealMRZ.slice(0, 2).trimEnd();
-    this.#document.authorityCode = sealMRZ.slice(2, 5).trimEnd();
+    this.#document.typeCode = SEAL_MRZ.slice(0, 2).trimEnd();
+    this.#document.authorityCode = SEAL_MRZ.slice(2, 5).trimEnd();
     this.#document.fullName =
-        sealMRZ.slice(5, 44).replace("  ", ", ").trimEnd();
-    this.#document.number = sealMRZ.slice(44, 53).trimEnd();
-    this.#document.nationalityCode = sealMRZ.slice(54, 57).trimEnd();
-    const yearOfBirth = sealMRZ.slice(57, 59);
-    const monthOfBirth = sealMRZ.slice(59, 61);
-    const dayOfBirth = sealMRZ.slice(61, 63);
-    if (parseInt(yearOfBirth, 10) >= twoDigitYearStart) {
+        SEAL_MRZ.slice(5, 44).replace("  ", ", ").trimEnd();
+    this.#document.number = SEAL_MRZ.slice(44, 53).trimEnd();
+    this.#document.nationalityCode = SEAL_MRZ.slice(54, 57).trimEnd();
+    const BIRTH_YEAR = SEAL_MRZ.slice(57, 59);
+    const BIRTH_MONTH = SEAL_MRZ.slice(59, 61);
+    const BIRTH_DAY = SEAL_MRZ.slice(61, 63);
+    if (parseInt(BIRTH_YEAR, 10) >= TWO_DIGIT_YEAR_START) {
       this.#document.birthDate =
-          `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+          `19${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
     } else {
       this.#document.birthDate =
-          `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+          `20${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
     }
-    this.#document.genderMarker = sealMRZ[64];
-    const yearValidThru = sealMRZ.slice(65, 67);
-    const monthValidThru = sealMRZ.slice(67, 69);
-    const dayValidThru = sealMRZ.slice(69, 71);
+    this.#document.genderMarker = SEAL_MRZ[64];
+    const VALID_THRU_YEAR = SEAL_MRZ.slice(65, 67);
+    const VALID_THRU_MONTH = SEAL_MRZ.slice(67, 69);
+    const VALID_THRU_DAY = SEAL_MRZ.slice(69, 71);
     this.#document.validThru =
-        `20${yearValidThru}-${monthValidThru}-${dayValidThru}`;
+        `20${VALID_THRU_YEAR}-${VALID_THRU_MONTH}-${VALID_THRU_DAY}`;
     if (this.#seal.features.get(0x03)[0] === 0) {
       this.#document.numberOfEntries = "MULTIPLE";
     } else {

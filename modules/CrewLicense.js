@@ -40,7 +40,7 @@ class CrewLicense {
    *     the full name in a non-Latin national language from a
    *     transcription/transliteration into the Latin characters A-Z.
    * @param { string } [opt.optionalData] - Up to 26 characters. Valid
-   *     characters are from the ranges 0-9 and A-Z.
+   *     characters are from the ranges 0-9, A-Z, and ' '.
    * @param { string } [opt.mrzLine1] - A MRZ line string of a 30-character
    *     length.
    * @param { string } [opt.mrzLine2] - A MRZ line string of a 30-character
@@ -268,7 +268,7 @@ class CrewLicense {
   get optionalData() { return this.#document.optionalData; }
   /**
    * @param { string } value - Up to 26 characters. Valid characters are from
-   *     the ranges 0-9 and A-Z.
+   *     the ranges 0-9, A-Z, and ' '.
    */
   set optionalData(value) { this.#document.optionalData = value; }
 
@@ -557,14 +557,14 @@ class CrewLicense {
       );
     }
     const input = [];
-    const paddedType = code.padStart(8, "0");
+    const PADDED_CODE = code.padStart(8, "0");
     let previousIsZero = true;
-    for (let i = 0; i < paddedType.length; i += 2) {
-      if ((parseInt(paddedType.slice(i, i + 2), 16) === 0) &&
+    for (let i = 0; i < PADDED_CODE.length; i += 2) {
+      if ((parseInt(PADDED_CODE.slice(i, i + 2), 16) === 0) &&
           previousIsZero === true) {
         continue;
       }
-      input.push(parseInt(paddedType.slice(i, i + 2), 16));
+      input.push(parseInt(PADDED_CODE.slice(i, i + 2), 16));
       previousIsZero = false;
     }
     this.#seal.features.set(0x02, input);
@@ -593,14 +593,14 @@ class CrewLicense {
       );
     }
     const input = [];
-    const paddedType = code.padStart(8, "0");
+    const PADDED_CODE = code.padStart(8, "0");
     let previousIsZero = true;
-    for (let i = 0; i < paddedType.length; i += 2) {
-      if ((parseInt(paddedType.slice(i, i + 2), 16) === 0) &&
+    for (let i = 0; i < PADDED_CODE.length; i += 2) {
+      if ((parseInt(PADDED_CODE.slice(i, i + 2), 16) === 0) &&
           previousIsZero === true) {
         continue;
       }
-      input.push(parseInt(paddedType.slice(i, i + 2), 16));
+      input.push(parseInt(PADDED_CODE.slice(i, i + 2), 16));
       previousIsZero = false;
     }
     this.#seal.features.set(0x03, input);
@@ -627,41 +627,42 @@ class CrewLicense {
    *     setting the VDS header, message, or signature zones.
    */
   #setAllValuesFromDigitalSeal() {
-    const twoDigitYearStart = 32;
-    const sealMRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
-    if (sealMRZ[14] !== TravelDocument.generateMRZCheckDigit(sealMRZ.slice(5, 14).replace(/ /gi, "<"))) {
+    const TWO_DIGIT_YEAR_START = 32;
+    const SEAL_MRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
+    if (SEAL_MRZ[14] !== TravelDocument.generateMRZCheckDigit(SEAL_MRZ.slice(5, 14).replace(/ /gi, "<"))) {
       throw new EvalError(
-        `Document number check digit '${sealMRZ[45]}' does not match for document number '${sealMRZ.slice(5, 14).replace(/ /gi, "<")}'.`
+        `Document number check digit '${SEAL_MRZ[45]}' does not match for document number '${SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")}'.`
       );
     }
-    if (sealMRZ[21] !== TravelDocument.generateMRZCheckDigit(sealMRZ.slice(15, 21).replace(/ /gi, "<"))) {
+    if (SEAL_MRZ[21] !== TravelDocument.generateMRZCheckDigit(SEAL_MRZ.slice(15, 21).replace(/ /gi, "<"))) {
       throw new EvalError(
-        `Date of birth check digit '${sealMRZ[21]}' does not match for date of birth '${sealMRZ.slice(15, 21).replace(/ /gi, "<")}'.`
+        `Date of birth check digit '${SEAL_MRZ[21]}' does not match for date of birth '${SEAL_MRZ.slice(15, 21).replace(/ /gi, "<")}'.`
       );
     }
-    if (sealMRZ[29] !== TravelDocument.generateMRZCheckDigit(sealMRZ.slice(23, 29).replace(/ /gi, "<"))) {
+    if (SEAL_MRZ[29] !== TravelDocument.generateMRZCheckDigit(SEAL_MRZ.slice(23, 29).replace(/ /gi, "<"))) {
       throw new EvalError(
-        `Date of expiration check digit '${sealMRZ[29]}' does not match for date of expiration '${sealMRZ.slice(23, 29).replace(/ /gi, "<")}'.`
+        `Date of expiration check digit '${SEAL_MRZ[29]}' does not match for date of expiration '${SEAL_MRZ.slice(23, 29).replace(/ /gi, "<")}'.`
       );
     }
-    this.#document.typeCode = sealMRZ.slice(0, 2).trimEnd();
-    this.#document.authorityCode = sealMRZ.slice(2, 5).trimEnd();
-    this.#document.number = sealMRZ.slice(5, 14).trimEnd();
-    const yearOfBirth = sealMRZ.slice(15, 17);
-    const monthOfBirth = sealMRZ.slice(17, 19);
-    const dayOfBirth = sealMRZ.slice(19, 21);
-    if (parseInt(yearOfBirth, 10) >= twoDigitYearStart) {
-      this.#document.birthDate = `19${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+    this.#document.typeCode = SEAL_MRZ.slice(0, 2).trimEnd();
+    this.#document.authorityCode = SEAL_MRZ.slice(2, 5).trimEnd();
+    this.#document.number = SEAL_MRZ.slice(5, 14).trimEnd();
+    const BIRTH_YEAR = SEAL_MRZ.slice(15, 17);
+    const BIRTH_MONTH = SEAL_MRZ.slice(17, 19);
+    const BIRTH_DAY = SEAL_MRZ.slice(19, 21);
+    if (parseInt(BIRTH_YEAR, 10) >= TWO_DIGIT_YEAR_START) {
+      this.#document.birthDate = `19${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
     } else {
-      this.#document.birthDate = `20${yearOfBirth}-${monthOfBirth}-${dayOfBirth}`;
+      this.#document.birthDate = `20${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
     }
-    this.#document.genderMarker = sealMRZ[22];
-    const yearExpiration = sealMRZ.slice(23, 25);
-    const monthExpiration = sealMRZ.slice(25, 27);
-    const dayExpiration = sealMRZ.slice(27, 29);
-    this.#document.expirationDate = `20${yearExpiration}-${monthExpiration}-${dayExpiration}`;  
-    this.#document.nationalityCode = sealMRZ.slice(30, 33).trimEnd();
-    this.#document.fullName = sealMRZ.slice(33).replace("  ", ", ").trimEnd();
+    this.#document.genderMarker = SEAL_MRZ[22];
+    const EXPIRATION_YEAR = SEAL_MRZ.slice(23, 25);
+    const EXPIRATION_MONTH = SEAL_MRZ.slice(25, 27);
+    const EXPIRATION_DAY = SEAL_MRZ.slice(27, 29);
+    this.#document.expirationDate =
+        `20${EXPIRATION_YEAR}-${EXPIRATION_MONTH}-${EXPIRATION_DAY}`;
+    this.#document.nationalityCode = SEAL_MRZ.slice(30, 33).trimEnd();
+    this.#document.fullName = SEAL_MRZ.slice(33).replace("  ", ", ").trimEnd();
   }
 }
 
