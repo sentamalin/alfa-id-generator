@@ -1,11 +1,11 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-/** Draw bleed and safe lines on a 2D canvas
+/**
+ * Draw bleed and safe lines on a 2D canvas
  * @param { CanvasRenderingContext2D } ctx
- * @param { number[] } area - The width and height of the canvas in an array: [width, height].
+ * @param { number[] } area - The width and height of the canvas in an array:
+ *     [width, height].
  * @param { number } bleed - The number of pixels that define the bleed area.
  * @param { number } safe - The number of pixels that define the safe area.
  */

@@ -1,15 +1,18 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-/** Fill a specified area of a 2D canvas with a scaled (preserving aspect ratio) image.
- * @param { HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } img
+/**
+ * Fill a specified area of a 2D canvas with a scaled (preserving aspect ratio)
+ *     image.
+ * @param { HTMLImageElement | SVGImageElement | HTMLVideoElement |
+ *     HTMLCanvasElement | ImageBitmap | OffscreenCanvas | VideoFrame } img
  * @param { CanvasRenderingContext2D } ctx
  * @param { number } x - The x-coordinate on which to draw the image.
  * @param { number } y - The y-coordinate on which to draw the image.
- * @param { number } width - The width of the area in which the image should fill.
- * @param { number } height - The height of the area in which the image should fill.
+ * @param { number } width - The width of the area in which the image should
+ *     fill.
+ * @param { number } height - The height of the area in which the image should
+ *     fill.
  */
 function fillAreaWithImage(img, ctx, x, y, width, height) {
   const hRatio = width / img.width;

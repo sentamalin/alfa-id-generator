@@ -1,11 +1,11 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { generateSignatureFromText } from "./generate-signature-from-text.js";
 
-/** If the new text is different from the old text, generate a new signature canvas.
+/**
+ * If the new text is different from the old text, generate a new signature
+ *     canvas.
  * @param { HTMLCanvasElement | OffscreenCanvas } fallback
  * @param { number[] } area
  * @param { string } color
