@@ -5,7 +5,7 @@
 
 # Furry identification generators
 
-> A collection of models as classes to represent [ICAO 9303 Machine-Readable Travel Documents][icao9303] and example renderers to display them.
+> A collection of models as classes to represent [ICAO 9303 Machine-Readable Travel Documents][icao9303] and example renderers to create furry-themed travel documents.
 
 * [Demos](#demos)
 * [Provided Classes](#provided-classes)
