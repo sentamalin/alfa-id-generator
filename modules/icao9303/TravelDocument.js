@@ -4,6 +4,7 @@
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { dateToVIZ } from "./utilities/date-to-viz.js";
 import { padMRZString } from "./utilities/pad-mrz-string.js";
+import { normalizeMRZString } from "./utilities/normalize-mrz-string.js";
 
 /**
  * Stores common properties and methods for all ICAO 9303 machine-readable
@@ -247,7 +248,7 @@ class TravelDocument {
    */
   static fullNameMRZ(name, length) {
     const NORMALIZED_NAME =
-        TravelDocument.normalizeMRZString(name.replace(", ","<<"));
+        normalizeMRZString(name.replace(", ","<<"));
     if (NORMALIZED_NAME.length > length) {
       console.warn(
         `Name (fullName) is longer than ${length} and will be truncated.`
@@ -281,7 +282,7 @@ class TravelDocument {
    * TravelDocument.optionalDataMRZ("EXAMPLE", 14);
    */
   static optionalDataMRZ(data, length) {
-    const NORMALIZED_DATA = TravelDocument.normalizeMRZString(data);
+    const NORMALIZED_DATA = normalizeMRZString(data);
     if (NORMALIZED_DATA.length > length) {
       console.warn(
         `Optional data (optionalData) is longer than ${length} and will be ` +
@@ -341,23 +342,6 @@ class TravelDocument {
    */
   static #dateToMRZ(date) {
     return date.toISOString().slice(2,10).replace(/-/gi,"");
-  }
-
-  /**
-   * Remove diacritics and punctuation from a Machine-Readable Zone (MRZ)
-   *     string.
-   * @param { string } string
-   * @example
-   * // Returns "ADRIAN<CLAUDE<DEVELEAU"
-   * TravelDocument.normalizeMRZString("ADRIAN-CLAUDE D'EVELEAU");
-   */
-  static normalizeMRZString(string) {
-    const NORMALIZE = string.normalize("NFD").replace(/\p{Diacritic}/gu,"");
-    const REPLACE_COMMA_AND_DASH =
-        NORMALIZE.replace(/'/gi,"").replace(/-/gi,"<");
-    const REPLACE_SPACE_AND_COMMA =
-        REPLACE_COMMA_AND_DASH.replace(/ /gi,"<").replace(/,/gi,"");
-    return REPLACE_SPACE_AND_COMMA.toUpperCase();
   }
 
   /**
