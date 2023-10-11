@@ -4,6 +4,7 @@
 import { TravelDocument } from "./TravelDocument.js";
 import { VisaDocument } from "./VisaDocument.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
+import { getFullYearFromString } from "./utilities/get-full-year-from-string.js";
 
 /**
  * Stores properties and methods for smaller machine-redable visas (MRV-B) with
@@ -383,10 +384,10 @@ class MRVBDocument {
     }
     this.number = value.slice(0, 9).replace(/</gi, "");
     this.nationalityCode = value.slice(10, 13).replace(/</gi, "");
-    this.birthDate = `${TravelDocument.getFullYear(value.slice(13, 15))}-` +
+    this.birthDate = `${getFullYearFromString(value.slice(13, 15))}-` +
         `${value.slice(15, 17)}-${value.slice(17, 19)}`;
     this.genderMarker = value[20] === "<" ? "X" : value[20];
-    this.validThru = `${TravelDocument.getFullYear(value.slice(21, 23))}-` +
+    this.validThru = `${getFullYearFromString(value.slice(21, 23))}-` +
         `${value.slice(23, 25)}-${value.slice(25, 27)}`;
     this.optionalData = value.slice(28).replace(/</gi, " ").trimEnd();
   }

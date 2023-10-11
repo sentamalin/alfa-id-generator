@@ -6,6 +6,7 @@ import { TD1Document } from "./icao9303/TD1Document.js";
 import { DigitalSeal } from "./icao9303/DigitalSeal.js";
 import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 import { DEFAULT_PHOTO } from "./icao9303/utilities/default-images.js";
+import { getFullYearFromString } from "./icao9303/utilities/get-full-year-from-string.js";
 
 /**
  * `CrewID` describes an ALFA Crewmember Identification Badge, a TD1-sized
@@ -281,7 +282,7 @@ class CrewID {
             `date of expiration.`
       );
     }
-    this.expirationDate = `${TravelDocument.getFullYear(value.slice(8, 10))}-` +
+    this.expirationDate = `${getFullYearFromString(value.slice(8, 10))}-` +
         `${value.slice(10, 12)}-${value.slice(12, 14)}`;
   }
 

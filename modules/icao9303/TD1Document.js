@@ -3,6 +3,7 @@
 
 import { TravelDocument } from "./TravelDocument.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
+import { getFullYearFromString } from "./utilities/get-full-year-from-string.js";
 
 /**
  * Stores properties and methods for TD1-sized machine-readable travel documents
@@ -293,10 +294,10 @@ class TD1Document {
             ` date of expiration.`
       );
     }
-    this.birthDate = `${TravelDocument.getFullYear(value.slice(0, 2))}-` +
+    this.birthDate = `${getFullYearFromString(value.slice(0, 2))}-` +
         `${value.slice(2, 4)}-${value.slice(4, 6)}`;
     this.genderMarker = value[7] === "<" ? "X" : value[7];
-    this.expirationDate = `${TravelDocument.getFullYear(value.slice(8, 10))}-` +
+    this.expirationDate = `${getFullYearFromString(value.slice(8, 10))}-` +
         `${value.slice(10, 12)}-${value.slice(12, 14)}`;
     this.nationalityCode = value.slice(15, 18).replace(/</gi, "");
   }
