@@ -10,6 +10,7 @@ import { dateToBytes } from "./utilities/date-to-bytes.js";
 import { bytesToDate } from "./utilities/bytes-to-date.js";
 import { lengthToDERLength } from "./utilities/length-to-der-length.js";
 import { derLengthToLength } from "./utilities/der-length-to-length.js";
+import { setSignatureZone } from "./utilities/set-signature-zone.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -365,7 +366,7 @@ class DigitalSealV4 {
     let start = 0;
     start = this.#setHeader(start, value);
     start = this.#setMessage(start, value);
-    this.signatureData = DigitalSeal.setSignature(start, value);
+    this.signatureData = setSignatureZone(start, value);
   }
 }
 

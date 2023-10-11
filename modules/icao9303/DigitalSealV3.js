@@ -8,6 +8,7 @@ import { VDS_MAGIC } from "./utilities/vds-magic.js";
 import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
 import { dateToBytes } from "./utilities/date-to-bytes.js";
 import { bytesToDate } from "./utilities/bytes-to-date.js";
+import { setSignatureZone } from "./utilities/set-signature-zone.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -355,7 +356,7 @@ class DigitalSealV3 {
     let start = 0;
     start = this.#setHeader(start, value);
     start = this.#setMessage(start, value);
-    this.signatureData = DigitalSeal.setSignature(start, value);
+    this.signatureData = setSignatureZone(start, value);
   }
 }
 

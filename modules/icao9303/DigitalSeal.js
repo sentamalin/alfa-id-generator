@@ -3,7 +3,7 @@
 
 import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
 import { lengthToDERLength } from "./utilities/length-to-der-length.js";
-import { derLengthToLength } from "./utilities/der-length-to-length.js";
+import { setSignatureZone } from "./utilities/set-signature-zone.js";
 
 /**
  * Stores common properties and methods for all ICAO 9303 visible digital seals
@@ -222,33 +222,7 @@ class DigitalSeal {
    * @param { number[] } value
    */
   set signatureZone(value) {
-    this.signature = DigitalSeal.setSignature(0, value);
-  }
-  /**
-   * Given a point 'start' in an array 'value', extract the raw signature data.
-   * @param { number } start 
-   * @param { number[] } value
-   */
-  static setSignature(start, value) {
-    if (value[start] !== VDS_SIGNATURE_MARKER) {
-      throw new TypeError(
-        `Value '${value[start].toString(16).padStart(2, "0").toUpperCase()}' ` +
-            `does not match signature marker (` +
-            `${VDS_SIGNATURE_MARKER.toString(16).padStart(
-              2, "0"
-            ).toUpperCase()}).`
-      );
-    }
-    start += 1;
-    const LENGTH = derLengthToLength(value.slice(start));
-    start += lengthToDERLength(LENGTH).length;
-    if (value.slice(start).length !== LENGTH) {
-      throw new RangeError(
-        `Length '${LENGTH}' of signature does not match the actual length ` +
-            `(${value.slice(start).length}).`
-      );
-    }
-    return value.slice(start);
+    this.signature = setSignatureZone(0, value);
   }
 }
 
