@@ -19,27 +19,23 @@ export function c40Encode(string) {
   let u1 = null;
   let u2 = null;
   let u3 = null;
-  [...string].forEach((character, i) => {
+  for (let i = 0; i < string.length; i += 1) {
     if (u1 === null && ((string.length - (i + 1)) === 0)) {
       output.push(0xFE);
-      output.push(charToDataMatrixASCII(character));
+      output.push(charToDataMatrixASCII(string[i]));
     } else if (u1 === null) {
-      u1 = charToC40(character);
+      u1 = charToC40(string[i]);
     } else if (u2 === null) {
-      u2 = charToC40(character);
+      u2 = charToC40(string[i]);
       if ((string.length - (i + 1)) === 0) {
         u3 = charToC40(C40SHIFT1);
         i16 = (1600 * u1) + (40 * u2) + u3 + 1;
         output.push(Math.floor(i16 / 256));
         output.push(i16 % 256);
-        i16 = null;
-        u1 = null;
-        u2 = null;
-        u3 = null;
       }
     } else {
-      u3 = charToC40(character);
-      i16 = (1660 * u1) + (40 * u2) + u3 + 1;
+      u3 = charToC40(string[i]);
+      i16 = (1600 * u1) + (40 * u2) + u3 + 1;
       output.push(Math.floor(i16 / 256));
       output.push(i16 % 256);
       i16 = null;
@@ -47,7 +43,7 @@ export function c40Encode(string) {
       u2 = null;
       u3 = null;
     }
-  });
+  }
   return output;
 }
 
