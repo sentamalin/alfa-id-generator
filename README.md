@@ -9,7 +9,7 @@
 
 * [Demos](#demos)
 * [Provided Classes](#provided-classes)
-* [License](#licenses)
+* [Licenses](#licenses)
 
 ## Demos
 
@@ -29,7 +29,7 @@ Four kinds of classes are available for your use, modification, and study: class
 
 ### Classes used for composition
 
-These classes are found in `/modules/icao9303/`:
+These classes are found in `/modules/icao9303/` and are mainly used to compose other kinds of documents:
 
 * `DigitalSeal` - Properties common to all visible digital seals (VDS).
 * `DigitalSealV3` - A digital seal conforming to VDS version 3 according to [ICAO Document 9303][icao9303].
@@ -104,7 +104,9 @@ The Astigmatic Typographic Institute's [Yellowtail][yellowtail] was downloaded f
 
 ### Documentation and image assets
 
-Documentation, like this README, is released under the [Creative Commons Attribution 4.0 International][cc4] license. [Fox][fox] was taken by Kent Miller and is released under the [Creative Commons Zero 1.0 Universal][cc0] license. The remaining image files used by this program are by [Air Line Furries Association, International][alfa], and are released under the [Creative Commons Attribution 4.0 International][cc4] license.
+Documentation, like this README, is released under the [Creative Commons Attribution 4.0 International][cc4] license.
+
+[Fox][fox] was taken by Kent Miller and is released under the [Creative Commons Zero 1.0 Universal][cc0] license. The remaining image files used by this program are by [Air Line Furries Association, International][alfa], and are released under the [Creative Commons Attribution 4.0 International][cc4] license.
 
 ### `index.html` and `index.js` files
 
