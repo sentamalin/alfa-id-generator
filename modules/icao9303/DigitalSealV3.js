@@ -7,6 +7,7 @@ import { c40Decode } from "./utilities/c40-decode.js";
 import { VDS_MAGIC } from "./utilities/vds-magic.js";
 import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
 import { dateToBytes } from "./utilities/dateToBytes.js";
+import { bytesToDate } from "./utilities/bytesToDate.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -251,9 +252,9 @@ class DigitalSealV3 {
     this.identifierCode = ID_CERT_REF.substring(0, 4);
     this.certReference = ID_CERT_REF.substring(4);
     start += 6;
-    this.issueDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
+    this.issueDate = bytesToDate(value.slice(start, start + 3));
     start += 3;
-    this.signatureDate = DigitalSeal.bytesToDate(value.slice(start, start + 3));
+    this.signatureDate = bytesToDate(value.slice(start, start + 3));
     start += 3;
     this.featureDefinition = value[start];
     start += 1;
