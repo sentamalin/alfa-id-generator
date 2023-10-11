@@ -6,8 +6,8 @@ import { c40Encode } from "./utilities/c40-encode.js";
 import { c40Decode } from "./utilities/c40-decode.js";
 import { VDS_MAGIC } from "./utilities/vds-magic.js";
 import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
-import { dateToBytes } from "./utilities/dateToBytes.js";
-import { bytesToDate } from "./utilities/bytesToDate.js";
+import { dateToBytes } from "./utilities/date-to-bytes.js";
+import { bytesToDate } from "./utilities/bytes-to-date.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
