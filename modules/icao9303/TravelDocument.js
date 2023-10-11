@@ -4,7 +4,6 @@
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { dateToVIZ } from "./utilities/date-to-viz.js";
 import { padMRZString } from "./utilities/pad-mrz-string.js";
-import { normalizeMRZString } from "./utilities/normalize-mrz-string.js";
 
 /**
  * Stores common properties and methods for all ICAO 9303 machine-readable
@@ -245,29 +244,6 @@ class TravelDocument {
    *     and ' '.
    */
   set optionalData(value) { this.#optionalData = new String(value.toString()); }
-  /**
-   * Normalize and pad optional data for the optional data area of a
-   *     Machine-Readable Zone (MRZ) of a given character length.
-   * @param { string } data - Optional data to include in the Machine-Readable
-   *     Zone (MRZ). Valid characters are from the ranges 0-9 and A-Z.
-   * @param { number } length - The number of characters available for the
-   *     optional data in a Machine-Readable Zone (MRZ).
-   * @example
-   * // Returns "EXAMPLE<<<<<<<"
-   * TravelDocument.optionalDataMRZ("EXAMPLE", 14);
-   */
-  static optionalDataMRZ(data, length) {
-    const NORMALIZED_DATA = normalizeMRZString(data);
-    if (NORMALIZED_DATA.length > length) {
-      console.warn(
-        `Optional data (optionalData) is longer than ${length} and will be ` +
-            `truncated.`
-      );
-    }
-    return padMRZString(
-      NORMALIZED_DATA.substring(0,length), length
-    );
-  }
 
   /**
    * A path/URL to an image, or an image object, representing a photo of the
