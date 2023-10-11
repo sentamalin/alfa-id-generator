@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { TravelDocument } from "./icao9303/TravelDocument.js";
 import { TD1Document } from "./icao9303/TD1Document.js";
 import { DigitalSeal } from "./icao9303/DigitalSeal.js";
 import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 import { DEFAULT_PHOTO } from "./icao9303/utilities/default-images.js";
 import { getFullYearFromString } from "./icao9303/utilities/get-full-year-from-string.js";
+import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
 
 /**
  * `CrewID` describes an ALFA Crewmember Identification Badge, a TD1-sized
@@ -253,11 +253,11 @@ class CrewID {
   get mrzLine2() {
     const UNCHECKED_LINE = "<<<<<<0<" +
         this.expirationDate.toMRZ() +
-        TravelDocument.generateMRZCheckDigit(this.expirationDate.toMRZ()) +
+        generateMRZCheckDigit(this.expirationDate.toMRZ()) +
         "XXX" +
         this.optionalData.toMRZ().slice(15);
     return UNCHECKED_LINE +
-        TravelDocument.generateMRZCheckDigit(
+        generateMRZCheckDigit(
           this.mrzLine1.slice(5) +
           UNCHECKED_LINE.slice(0,7) +
           UNCHECKED_LINE.slice(8,15) +
@@ -274,7 +274,7 @@ class CrewID {
             `Machine Readable-Zone (MRZ) line.`
       );
     }
-    if (value[14] !== TravelDocument.generateMRZCheckDigit(
+    if (value[14] !== generateMRZCheckDigit(
       value.slice(8, 14)
     )) {
       throw new EvalError(
@@ -315,7 +315,7 @@ class CrewID {
             `Machine-Readable Zone (MRZ).`
       );
     }
-    const LINE_CHECK_DIGIT = TravelDocument.generateMRZCheckDigit(
+    const LINE_CHECK_DIGIT = generateMRZCheckDigit(
       value.slice(5, 30) +
           value.slice(30, 37) +
           value.slice(38, 45) +
@@ -514,7 +514,7 @@ class CrewID {
     const SEAL_MRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
     this.#document.typeCode = SEAL_MRZ.slice(0, 2).trimEnd();
     this.#document.authorityCode = SEAL_MRZ.slice(2, 5).trimEnd();
-    if (SEAL_MRZ[14] !== TravelDocument.generateMRZCheckDigit(
+    if (SEAL_MRZ[14] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")
     )) {
       throw new EvalError(
@@ -522,7 +522,7 @@ class CrewID {
             `document number '${SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")}'.`
       );
     }
-    if (SEAL_MRZ[29] !== TravelDocument.generateMRZCheckDigit(
+    if (SEAL_MRZ[29] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(23, 29).replace(/ /gi, "<")
     )) {
       throw new EvalError(

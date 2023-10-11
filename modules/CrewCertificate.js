@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { TravelDocument } from "./icao9303/TravelDocument.js";
 import { TD1Document } from "./icao9303/TD1Document.js";
 import { DigitalSeal } from "./icao9303/DigitalSeal.js";
 import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./icao9303/utilities/default-images.js";
 import { dateToVIZ } from "./icao9303/utilities/date-to-viz.js";
+import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
 
 /**
  * `CrewCertificate` describes an ALFA Crewmember Certificate, a TD1-sized
@@ -644,7 +644,7 @@ class CrewCertificate {
   #setAllValuesFromDigitalSeal() {
     const TWO_DIGIT_YEAR_START = 32;
     const SEAL_MRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
-    if (SEAL_MRZ[14] !== TravelDocument.generateMRZCheckDigit(
+    if (SEAL_MRZ[14] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")
     )) {
       throw new EvalError(
@@ -652,7 +652,7 @@ class CrewCertificate {
             `document number '${SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")}'.`
       );
     }
-    if (SEAL_MRZ[21] !== TravelDocument.generateMRZCheckDigit(
+    if (SEAL_MRZ[21] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(15, 21).replace(/ /gi, "<")
     )) {
       throw new EvalError(
@@ -660,7 +660,7 @@ class CrewCertificate {
             `of birth '${SEAL_MRZ.slice(15, 21).replace(/ /gi, "<")}'.`
       );
     }
-    if (SEAL_MRZ[29] !== TravelDocument.generateMRZCheckDigit(
+    if (SEAL_MRZ[29] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(23, 29).replace(/ /gi, "<")
     )) {
       throw new EvalError(

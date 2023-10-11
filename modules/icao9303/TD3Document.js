@@ -4,6 +4,7 @@
 import { TravelDocument } from "./TravelDocument.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { getFullYearFromString } from "./utilities/get-full-year-from-string.js";
+import { generateMRZCheckDigit } from "./utilities/generate-mrz-check-digit.js";
 
 /**
  * Stores properties and methods for TD3-sized machine-readable travel documents
@@ -242,21 +243,21 @@ class TD3Document {
    */
   get mrzLine2() {
     const OPTIONAL_DATA_CHECK_DIGIT =
-        TravelDocument.generateMRZCheckDigit(this.optionalData.toMRZ());
+        generateMRZCheckDigit(this.optionalData.toMRZ());
     const UNCHECKED_LINE = this.number.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.number.toMRZ()) +
+      generateMRZCheckDigit(this.number.toMRZ()) +
       this.nationalityCode.toMRZ() +
       this.birthDate.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.birthDate.toMRZ()) +
+      generateMRZCheckDigit(this.birthDate.toMRZ()) +
       this.genderMarker.toMRZ() +
       this.expirationDate.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.expirationDate.toMRZ()) +
+      generateMRZCheckDigit(this.expirationDate.toMRZ()) +
       this.optionalData.toMRZ() +
       ((OPTIONAL_DATA_CHECK_DIGIT === "0") &&
           (`${this.optionalData.trimStart().trimEnd()}` === "") ? "<"
           : OPTIONAL_DATA_CHECK_DIGIT);
     return UNCHECKED_LINE +
-        TravelDocument.generateMRZCheckDigit(
+        generateMRZCheckDigit(
           UNCHECKED_LINE.slice(0,10) +
           UNCHECKED_LINE.slice(13,20) +
           UNCHECKED_LINE.slice(21)
@@ -272,7 +273,7 @@ class TD3Document {
             `Machine-Readable Zone (MRZ) line.`
       );
     }
-    const LINE_CHECK_DIGIT = TravelDocument.generateMRZCheckDigit(
+    const LINE_CHECK_DIGIT = generateMRZCheckDigit(
       value.slice(0, 10) +
       value.slice(13, 20) +
       value.slice(21, 43)
@@ -283,7 +284,7 @@ class TD3Document {
             ` entire Machine-Readable Zone (MRZ) line 2.`
       );
     }
-    if (value[9] !== TravelDocument.generateMRZCheckDigit(
+    if (value[9] !== generateMRZCheckDigit(
       value.slice(0, 9)
     )) {
       throw new EvalError(
@@ -291,7 +292,7 @@ class TD3Document {
             `document number.`
       );
     }
-    if (value[19] !== TravelDocument.generateMRZCheckDigit(
+    if (value[19] !== generateMRZCheckDigit(
       value.slice(13, 19)
     )) {
       throw new EvalError(
@@ -299,7 +300,7 @@ class TD3Document {
             ` date of birth.`
       );
     }
-    if (value[27] !== TravelDocument.generateMRZCheckDigit(
+    if (value[27] !== generateMRZCheckDigit(
       value.slice(21, 27)
     )) {
       throw new EvalError(
@@ -308,7 +309,7 @@ class TD3Document {
       );
     }
     if ((value[42] === "<" ? "0" : value[42]) !==
-        TravelDocument.generateMRZCheckDigit(value.slice(28, 42))) {
+        generateMRZCheckDigit(value.slice(28, 42))) {
       throw new EvalError(
         `Check digit '${value[42]}' does not match for the check digit on the` +
             ` optional data.`

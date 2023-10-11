@@ -4,6 +4,7 @@
 import { TravelDocument } from "./TravelDocument.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { getFullYearFromString } from "./utilities/get-full-year-from-string.js";
+import { generateMRZCheckDigit } from "./utilities/generate-mrz-check-digit.js";
 
 /**
  * Stores properties and methods for TD1-sized machine-readable travel documents
@@ -222,7 +223,7 @@ class TD1Document {
     return this.typeCode.toMRZ() +
       this.authorityCode.toMRZ() +
       this.number.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.number.toMRZ()) +
+      generateMRZCheckDigit(this.number.toMRZ()) +
       this.optionalData.toMRZ().slice(0,15);
   }
   /**
@@ -235,7 +236,7 @@ class TD1Document {
             `Machine-Readable Zone (MRZ) line.`
       );
     }
-    if (value[14] !== TravelDocument.generateMRZCheckDigit(
+    if (value[14] !== generateMRZCheckDigit(
       value.slice(5, 14)
     )) {
       throw new EvalError(
@@ -254,14 +255,14 @@ class TD1Document {
    */
   get mrzLine2() {
     const UNCHECKED_LINE = this.birthDate.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.birthDate.toMRZ()) +
+      generateMRZCheckDigit(this.birthDate.toMRZ()) +
       this.genderMarker.toMRZ() +
       this.expirationDate.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.expirationDate.toMRZ()) +
+      generateMRZCheckDigit(this.expirationDate.toMRZ()) +
       this.nationalityCode.toMRZ() +
       this.optionalData.toMRZ().slice(15);
     return UNCHECKED_LINE +
-      TravelDocument.generateMRZCheckDigit(
+      generateMRZCheckDigit(
         this.mrzLine1.slice(5) +
         UNCHECKED_LINE.slice(0,7) +
         UNCHECKED_LINE.slice(8,15) +
@@ -278,7 +279,7 @@ class TD1Document {
             `Machine Readable-Zone (MRZ) line.`
       );
     }
-    if (value[6] !== TravelDocument.generateMRZCheckDigit(
+    if (value[6] !== generateMRZCheckDigit(
       value.slice(0, 6)
     )) {
       throw new EvalError(
@@ -286,7 +287,7 @@ class TD1Document {
             `date of birth.`
       );
     }
-    if (value[14] !== TravelDocument.generateMRZCheckDigit(
+    if (value[14] !== generateMRZCheckDigit(
       value.slice(8, 14)
     )) {
       throw new EvalError(
@@ -337,7 +338,7 @@ class TD1Document {
             `Machine-Readable Zone (MRZ).`
       );
     }
-    const LINE_CHECK_DIGIT = TravelDocument.generateMRZCheckDigit(
+    const LINE_CHECK_DIGIT = generateMRZCheckDigit(
       value.slice(5, 30) +
       value.slice(30, 37) +
       value.slice(38, 45) +

@@ -5,6 +5,7 @@ import { TravelDocument } from "./TravelDocument.js";
 import { VisaDocument } from "./VisaDocument.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { getFullYearFromString } from "./utilities/get-full-year-from-string.js";
+import { generateMRZCheckDigit } from "./utilities/generate-mrz-check-digit.js";
 
 /**
  * Stores properties and methods for machine-readable visas (MRV-A) with
@@ -339,13 +340,13 @@ class MRVADocument {
     const MRZ_NUMBER = this.usePassportInMRZ ? this.passportNumber.toMRZ()
         : this.number.toMRZ();
     return MRZ_NUMBER +
-      TravelDocument.generateMRZCheckDigit(MRZ_NUMBER) +
+      generateMRZCheckDigit(MRZ_NUMBER) +
       this.nationalityCode.toMRZ() +
       this.birthDate.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.birthDate.toMRZ()) +
+      generateMRZCheckDigit(this.birthDate.toMRZ()) +
       this.genderMarker.toMRZ() +
       this.validThru.toMRZ() +
-      TravelDocument.generateMRZCheckDigit(this.validThru.toMRZ()) +
+      generateMRZCheckDigit(this.validThru.toMRZ()) +
       this.optionalData.toMRZ();
   }
   /**
@@ -358,7 +359,7 @@ class MRVADocument {
             `Machine-Readable Zone (MRZ) line.`
       );
     }
-    if (value[9] !== TravelDocument.generateMRZCheckDigit(
+    if (value[9] !== generateMRZCheckDigit(
       value.slice(0, 9)
     )) {
       throw new EvalError(
@@ -366,7 +367,7 @@ class MRVADocument {
             `document number.`
       );
     }
-    if (value[19] !== TravelDocument.generateMRZCheckDigit(
+    if (value[19] !== generateMRZCheckDigit(
       value.slice(13, 19)
     )) {
       throw new EvalError(
@@ -374,7 +375,7 @@ class MRVADocument {
             ` date of birth.`
       );
     }
-    if (value[27] !== TravelDocument.generateMRZCheckDigit(
+    if (value[27] !== generateMRZCheckDigit(
       value.slice(21, 27)
     )) {
       throw new EvalError(
