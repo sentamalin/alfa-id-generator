@@ -6,6 +6,8 @@ import { DigitalSeal } from "./icao9303/DigitalSeal.js";
 import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./icao9303/utilities/default-images.js";
 import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
+import { c40Encode } from "./icao9303/utilities/c40-encode.js";
+import { c40Decode } from "./icao9303/utilities/c40-decode.js";
 
 /**
  * `CrewLicense` describes an ALFA Crewmember License, a TD1-sized
@@ -615,7 +617,7 @@ class CrewLicense {
    * Set the visible digital seal's (VDS) Machine-Readable Zone (MRZ) when
    *     setting any properties shown on the MRZ. */
   #setDigitalSealMRZ() {
-    this.#seal.features.set(0x01, DigitalSeal.c40Encode(
+    this.#seal.features.set(0x01, c40Encode(
       this.mrzLine1.slice(0, 15) +
       this.mrzLine2.slice(0, 18) +
       this.mrzLine3
@@ -628,7 +630,7 @@ class CrewLicense {
    */
   #setAllValuesFromDigitalSeal() {
     const TWO_DIGIT_YEAR_START = 32;
-    const SEAL_MRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
+    const SEAL_MRZ = c40Decode(this.#seal.features.get(0x01));
     if (SEAL_MRZ[14] !== generateMRZCheckDigit(SEAL_MRZ.slice(5, 14).replace(/ /gi, "<"))) {
       throw new EvalError(
         `Document number check digit '${SEAL_MRZ[45]}' does not match for document number '${SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")}'.`

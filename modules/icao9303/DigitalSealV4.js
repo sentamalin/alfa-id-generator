@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { DigitalSeal } from "./DigitalSeal.js";
+import { c40Encode } from "./utilities/c40-encode.js";
+import { c40Decode } from "./utilities/c40-decode.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -188,8 +190,8 @@ class DigitalSealV4 {
     output.push(DigitalSeal.magic);
     output.push(DigitalSealV4.version);
     output =
-        output.concat(DigitalSeal.c40Encode(this.authorityCode.padEnd(3, "<")));
-    output = output.concat(DigitalSeal.c40Encode(
+        output.concat(c40Encode(this.authorityCode.padEnd(3, "<")));
+    output = output.concat(c40Encode(
         this.identifierCode +
         this.certReference.length.toString(16).padStart(2, "0") +
         this.certReference
@@ -232,9 +234,9 @@ class DigitalSealV4 {
     }
     start += 2;
     this.authorityCode =
-        DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
+        c40Decode(value.slice(start, start + 2)).trim();
     start += 2;
-    const ID_LENGTH = DigitalSeal.c40Decode(value.slice(start, start + 4));
+    const ID_LENGTH = c40Decode(value.slice(start, start + 4));
     this.identifierCode = ID_LENGTH.substring(0, 4);
     const CERT_REF_LENGTH = parseInt(ID_LENGTH.substring(4, 6), 16);
     let certRefC40Length = Math.floor(CERT_REF_LENGTH / 3) * 2;
@@ -244,7 +246,7 @@ class DigitalSealV4 {
     }
     start += 4;
     const CERT_REF_DECODE =
-        DigitalSeal.c40Decode(value.slice(start, start + certRefC40Length));
+        c40Decode(value.slice(start, start + certRefC40Length));
     if (CERT_REF_LENGTH !== CERT_REF_DECODE.length) {
       throw new RangeError(
         `Length '${CERT_REF_LENGTH}' of certificate reference does not match ` +

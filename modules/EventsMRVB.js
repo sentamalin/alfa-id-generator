@@ -6,6 +6,8 @@ import { DigitalSeal } from "./icao9303/DigitalSeal.js";
 import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./icao9303/utilities/default-images.js";
 import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
+import { c40Encode } from "./icao9303/utilities/c40-encode.js";
+import { c40Decode } from "./icao9303/utilities/c40-decode.js";
 
 /**
  * `EventsMRVB` describes an ALFA Furry Events Visa in the MRV-B document size
@@ -372,7 +374,7 @@ class EventsMRVB {
    */
   set passportNumber(value) { 
     this.#document.passportNumber = value;
-    this.#seal.features.set(0x05, DigitalSeal.c40Encode(value));
+    this.#seal.features.set(0x05, c40Encode(value));
     this.#setDigitalSealMRZ();
   }
 
@@ -636,7 +638,7 @@ class EventsMRVB {
    *     setting any properties shown on the MRZ.
    */
   #setDigitalSealMRZ() {
-    this.#seal.features.set(0x02, DigitalSeal.c40Encode(
+    this.#seal.features.set(0x02, c40Encode(
       this.mrzLine1 + this.mrzLine2.slice(0, 28)
     ));
   }
@@ -647,7 +649,7 @@ class EventsMRVB {
    */
   #setAllValuesFromDigitalSeal() {
     const TWO_DIGIT_YEAR_START = 32;
-    const SEAL_MRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x02));
+    const SEAL_MRZ = c40Decode(this.#seal.features.get(0x02));
     if (SEAL_MRZ[45] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(36, 45).replace(/ /gi, "<")
     )) {
@@ -700,7 +702,7 @@ class EventsMRVB {
       this.#document.numberOfEntries = this.#seal.features.get(0x03)[0];
     }
     this.#document.passportNumber =
-        DigitalSeal.c40Decode(this.#seal.features.get(0x05));
+        c40Decode(this.#seal.features.get(0x05));
   }
 }
 

@@ -7,6 +7,8 @@ import { DigitalSealV4 } from "./icao9303/DigitalSealV4.js";
 import { DEFAULT_PHOTO } from "./icao9303/utilities/default-images.js";
 import { getFullYearFromString } from "./icao9303/utilities/get-full-year-from-string.js";
 import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
+import { c40Encode } from "./icao9303/utilities/c40-encode.js";
+import { c40Decode } from "./icao9303/utilities/c40-decode.js";
 
 /**
  * `CrewID` describes an ALFA Crewmember Identification Badge, a TD1-sized
@@ -499,7 +501,7 @@ class CrewID {
    *     setting any properties shown on the MRZ.
    */
   #setDigitalSealMRZ() {
-    this.#seal.features.set(0x01, DigitalSeal.c40Encode(
+    this.#seal.features.set(0x01, c40Encode(
       this.mrzLine1.slice(0, 15) +
       this.mrzLine2.slice(0, 18) +
       this.mrzLine3
@@ -511,7 +513,7 @@ class CrewID {
    *     setting the VDS header, message, or signature zones.
    */
   #setAllValuesFromDigitalSeal() {
-    const SEAL_MRZ = DigitalSeal.c40Decode(this.#seal.features.get(0x01));
+    const SEAL_MRZ = c40Decode(this.#seal.features.get(0x01));
     this.#document.typeCode = SEAL_MRZ.slice(0, 2).trimEnd();
     this.#document.authorityCode = SEAL_MRZ.slice(2, 5).trimEnd();
     if (SEAL_MRZ[14] !== generateMRZCheckDigit(

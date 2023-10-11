@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { DigitalSeal } from "./DigitalSeal.js";
+import { c40Encode } from "./utilities/c40-encode.js";
+import { c40Decode } from "./utilities/c40-decode.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -197,8 +199,8 @@ class DigitalSealV3 {
     output.push(DigitalSeal.magic);
     output.push(this.constructor.version);
     output =
-        output.concat(DigitalSeal.c40Encode(this.authorityCode.padEnd(3, "<")));
-    output = output.concat(DigitalSeal.c40Encode(
+        output.concat(c40Encode(this.authorityCode.padEnd(3, "<")));
+    output = output.concat(c40Encode(
       this.identifierCode +
       this.certReference
     ));
@@ -240,9 +242,9 @@ class DigitalSealV3 {
     }
     start += 2;
     this.authority =
-        DigitalSeal.c40Decode(value.slice(start, start + 2)).trim();
+        c40Decode(value.slice(start, start + 2)).trim();
     start += 2;
-    const ID_CERT_REF = DigitalSeal.c40Decode(value.slice(start, start + 6));
+    const ID_CERT_REF = c40Decode(value.slice(start, start + 6));
     this.identifierCode = ID_CERT_REF.substring(0, 4);
     this.certReference = ID_CERT_REF.substring(4);
     start += 6;
