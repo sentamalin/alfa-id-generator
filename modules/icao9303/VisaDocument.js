@@ -3,6 +3,7 @@
 
 import { TravelDocument } from "./TravelDocument.js";
 import { dateToVIZ } from "./utilities/date-to-viz.js";
+import { padMRZString } from "./utilities/pad-mrz-string.js";
 
 /**
  * Stores properties specific to machine-readable visa documents.
@@ -149,7 +150,7 @@ class VisaDocument {
     return this.toUpperCase();
   }
   static #passportNumberToMRZ = function() {
-    return TravelDocument.padMRZString(this, 9);
+    return padMRZString(this, 9);
   }
   static #validFromToVIZ = function() {
     return dateToVIZ(this);

@@ -3,6 +3,7 @@
 
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { dateToVIZ } from "./utilities/date-to-viz.js";
+import { padMRZString } from "./utilities/pad-mrz-string.js";
 
 /**
  * Stores common properties and methods for all ICAO 9303 machine-readable
@@ -252,7 +253,7 @@ class TravelDocument {
         `Name (fullName) is longer than ${length} and will be truncated.`
       );
     }
-    return TravelDocument.padMRZString(
+    return padMRZString(
       NORMALIZED_NAME.substring(0,length), length
     );
   }
@@ -287,7 +288,7 @@ class TravelDocument {
             `truncated.`
       );
     }
-    return TravelDocument.padMRZString(
+    return padMRZString(
       NORMALIZED_DATA.substring(0,length), length
     );
   }
@@ -322,10 +323,10 @@ class TravelDocument {
     return dateToVIZ(this);
   }
   static #typeCodeToMRZ = function() {
-    return TravelDocument.padMRZString(this, 2);
+    return padMRZString(this, 2);
   }
   static #numberToMRZ = function() {
-    return TravelDocument.padMRZString(this, 9);
+    return padMRZString(this, 9);
   }
   static #genderMarkerToMRZ = function() {
     return `${this}` === "X" ? "<" : this;
@@ -340,19 +341,6 @@ class TravelDocument {
    */
   static #dateToMRZ(date) {
     return date.toISOString().slice(2,10).replace(/-/gi,"");
-  }
-
-  /**
-   * Pad the end of a Machine-Readable Zone (MRZ) string to the desired length
-   *     with a filler character.
-   * @param { string } string
-   * @param { number } length
-   * @example
-   * // Returns "ALFALFA<<"
-   * TravelDocument.padMRZString("ALFALFA", 9);
-   */
-  static padMRZString(string, length) {
-    return string.padEnd(length, "<").toUpperCase();
   }
 
   /**
