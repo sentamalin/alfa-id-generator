@@ -13,7 +13,7 @@
 
 ## Demos
 
-[Air Line Furries Association, International][alfa] provides [generators](https://generator.airlinefurries.com) of the classes at work:
+[Air Line Furries Association, International][alfa] provides [generators](https://generator.airlinefurries.com) to create furry-themed travel documents to save as an image or print:
 
 * [Crewmember Certificate](https://generator.airlinefurries.com/crew-certificate/)
 * [Crewmember License](https://generator.airlinefurries.com/crew-license/)
