@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { C40SHIFT1 } from "./c40shift1.js";
+import { C40SHIFT1 } from "./c40-shift1.js";
 
 /**
  * Encode a string using the C40 encoding scheme defined in ICAO 9303 part 13,

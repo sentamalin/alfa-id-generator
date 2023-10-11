@@ -4,6 +4,8 @@
 import { DigitalSeal } from "./DigitalSeal.js";
 import { c40Encode } from "./utilities/c40-encode.js";
 import { c40Decode } from "./utilities/c40-decode.js";
+import { VDS_MAGIC } from "./utilities/vds-magic.js";
+import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -196,7 +198,7 @@ class DigitalSealV3 {
    */
   get headerZone() {
     let output = [];
-    output.push(DigitalSeal.magic);
+    output.push(VDS_MAGIC);
     output.push(this.constructor.version);
     output =
         output.concat(c40Encode(this.authorityCode.padEnd(3, "<")));
@@ -224,11 +226,11 @@ class DigitalSealV3 {
    *     reading.
    */
   #setHeader(start, value) {
-    if (value[0] !== DigitalSeal.magic) {
+    if (value[0] !== VDS_MAGIC) {
       throw new TypeError(
         `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is ` +
             `not an ICAO Digital Seal (` +
-            `${DigitalSeal.magic.toString(16).padStart(2, "0").toUpperCase()}).`
+            `${VDS_MAGIC.toString(16).padStart(2, "0").toUpperCase()}).`
       );
     }
     if (value[1] !== this.constructor.version) {
@@ -289,7 +291,7 @@ class DigitalSealV3 {
   #setMessage(start, value) {
     this.features.clear();
     while (start < value.length) {
-      if (value[start] === DigitalSeal.signatureMarker) {
+      if (value[start] === VDS_SIGNATURE_MARKER) {
         break;
       }
       const TAG = value[start];

@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
+
 /**
  * Stores common properties and methods for all ICAO 9303 visible digital seals
  *     (VDSs).
@@ -207,7 +209,7 @@ class DigitalSeal {
    */
   get signatureZone() {
     let output = [];
-    output.push(DigitalSeal.signatureMarker);
+    output.push(VDS_SIGNATURE_MARKER);
     output = output.concat(
       DigitalSeal.lengthToDERLength(this.signatureData.length)
     );
@@ -226,11 +228,11 @@ class DigitalSeal {
    * @param { number[] } value
    */
   static setSignature(start, value) {
-    if (value[start] !== DigitalSeal.signatureMarker) {
+    if (value[start] !== VDS_SIGNATURE_MARKER) {
       throw new TypeError(
         `Value '${value[start].toString(16).padStart(2, "0").toUpperCase()}' ` +
             `does not match signature marker (` +
-            `${DigitalSeal.signatureMarker.toString(16).padStart(
+            `${VDS_SIGNATURE_MARKER.toString(16).padStart(
               2, "0"
             ).toUpperCase()}).`
       );
@@ -246,18 +248,6 @@ class DigitalSeal {
     }
     return value.slice(start);
   }
-
-  /**
-   * A magic constant used to identify a byte array as a VDS.
-   * @readonly
-   */
-  static get magic() { return 0xDC; }
-
-  /**
-   * A magic constant used to identify the start of the signature zone.
-   * @readonly
-   */
-  static get signatureMarker() { return 0xFF; }
 
   /**
    * Get a corresponding byte array for a calendar date.
