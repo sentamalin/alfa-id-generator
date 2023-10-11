@@ -9,6 +9,7 @@ import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
 import { dateToBytes } from "./utilities/date-to-bytes.js";
 import { bytesToDate } from "./utilities/bytes-to-date.js";
 import { setSignatureZone } from "./utilities/set-signature-zone.js";
+import { VDS_VERSION_3 } from "./utilities/vds-version-3.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -80,12 +81,6 @@ class DigitalSealV3 {
 
   // The object `DigitalSealV3` uses to compose itself.
   #digitalseal;
-
-  /**
-   * A magic constant used to identify VDS version 3.
-   * @readonly
-   */
-  static get version() { return 0x02; }
 
   /**
    * A code identifying the authority who issued this seal.
@@ -202,7 +197,7 @@ class DigitalSealV3 {
   get headerZone() {
     let output = [];
     output.push(VDS_MAGIC);
-    output.push(this.constructor.version);
+    output.push(VDS_VERSION_3);
     output =
         output.concat(c40Encode(this.authorityCode.padEnd(3, "<")));
     output = output.concat(c40Encode(
@@ -236,11 +231,11 @@ class DigitalSealV3 {
             `${VDS_MAGIC.toString(16).padStart(2, "0").toUpperCase()}).`
       );
     }
-    if (value[1] !== this.constructor.version) {
+    if (value[1] !== VDS_VERSION_3) {
       throw new TypeError(
         `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is ` +
             `not version 3 of an ICAO Digital Seal (` +
-            `${this.constructor.version.toString(16).padStart(
+            `${VDS_VERSION_3.toString(16).padStart(
               2, "0"
             ).toUpperCase()}).`
       );

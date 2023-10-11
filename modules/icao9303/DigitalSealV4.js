@@ -6,6 +6,7 @@ import { c40Encode } from "./utilities/c40-encode.js";
 import { c40Decode } from "./utilities/c40-decode.js";
 import { VDS_MAGIC } from "./utilities/vds-magic.js";
 import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
+import { VDS_VERSION_4 } from "./utilities/vds-version-4.js";
 import { dateToBytes } from "./utilities/date-to-bytes.js";
 import { bytesToDate } from "./utilities/bytes-to-date.js";
 import { lengthToDERLength } from "./utilities/length-to-der-length.js";
@@ -81,12 +82,6 @@ class DigitalSealV4 {
 
   // The object `DigitalSealV4` uses to compose itself.
   #digitalseal;
-
-  /**
-   * A magic constant used to identify VDS version 4.
-   * @readonly
-   */
-  static get version() { return 0x03; }
 
   /**
    * A code identifying the authority who issued this seal.
@@ -195,7 +190,7 @@ class DigitalSealV4 {
   get headerZone() {
     let output = [];
     output.push(VDS_MAGIC);
-    output.push(DigitalSealV4.version);
+    output.push(VDS_VERSION_4);
     output =
         output.concat(c40Encode(this.authorityCode.padEnd(3, "<")));
     output = output.concat(c40Encode(
@@ -230,11 +225,11 @@ class DigitalSealV4 {
             `${VDS_MAGIC.toString(16).padStart(2, "0").toUpperCase()}).`
       );
     }
-    if (value[1] !== DigitalSealV4.version) {
+    if (value[1] !== VDS_VERSION_4) {
       throw new TypeError(
         `Value '${value[0].toString(16).padStart(2, "0").toUpperCase()}' is ` +
             `not version 4 of an ICAO Digital Seal (` +
-            `${DigitalSealV4.version.toString(16).padStart(
+            `${VDS_VERSION_4.toString(16).padStart(
               2, "0"
             ).toUpperCase()}).`
       );
