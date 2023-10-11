@@ -8,6 +8,7 @@ import { dateToVIZ } from "./icao9303/utilities/date-to-viz.js";
 import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
 import { c40Encode } from "./icao9303/utilities/c40-encode.js";
 import { c40Decode } from "./icao9303/utilities/c40-decode.js";
+import { getFullYearFromString } from "./icao9303/utilities/get-full-year-from-string.js";
 
 /**
  * `EventsPassport` describes an ALFA Furry Events Passport, a TD3-sized
@@ -562,7 +563,6 @@ class EventsPassport {
    *     setting the VDS header, message, or signature zones.
    */
   #setAllValuesFromDigitalSeal() {
-    const TWO_DIGIT_YEAR_START = 32;
     const SEAL_MRZ = c40Decode(this.#seal.features.get(0x01));
     if (SEAL_MRZ[53] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(44, 53).replace(/ /gi, "<")
@@ -598,19 +598,15 @@ class EventsPassport {
     const BIRTH_YEAR = SEAL_MRZ.slice(57, 59);
     const BIRTH_MONTH = SEAL_MRZ.slice(59, 61);
     const BIRTH_DAY = SEAL_MRZ.slice(61, 63);
-    if (parseInt(BIRTH_YEAR, 10) >= TWO_DIGIT_YEAR_START) {
-      this.#document.birthDate =
-          `19${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
-    } else {
-      this.#document.birthDate =
-          `20${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
-    }
+    this.#document.birthDate =
+        `${getFullYearFromString(BIRTH_YEAR)}-${BIRTH_MONTH}-${BIRTH_DAY}`;
     this.#document.genderMarker = SEAL_MRZ[64];
     const EXPIRATION_YEAR = SEAL_MRZ.slice(65, 67);
     const EXPIRATION_MONTH = SEAL_MRZ.slice(67, 69);
     const EXPIRATION_DAY = SEAL_MRZ.slice(69, 71);
     this.#document.expirationDate =
-        `20${EXPIRATION_YEAR}-${EXPIRATION_MONTH}-${EXPIRATION_DAY}`;
+        `${getFullYearFromString(EXPIRATION_YEAR)}-${EXPIRATION_MONTH}-` +
+        `${EXPIRATION_DAY}`;
     this.issueDate = this.#seal.issueDate;
   }
 }

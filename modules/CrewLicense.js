@@ -7,6 +7,7 @@ import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./icao9303/utilities/def
 import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
 import { c40Encode } from "./icao9303/utilities/c40-encode.js";
 import { c40Decode } from "./icao9303/utilities/c40-decode.js";
+import { getFullYearFromString } from "./icao9303/utilities/get-full-year-from-string.js";
 
 /**
  * `CrewLicense` describes an ALFA Crewmember License, a TD1-sized
@@ -117,12 +118,12 @@ class CrewLicense {
     this.url = opt?.url ?? "https://example.org/";
     this.subauthority = opt?.subauthority ?? "Unknown";
     this.privilege = opt?.privilege ?? "Unknown";
-    this.ratings = opt?.ratings ?? "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n" +
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-        "XXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-    this.limitations = opt?.limitations ?? "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
-        "XXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXX" +
-        "XXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    this.ratings = opt?.ratings ?? "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
+        "\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXX" +
+        "XXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    this.limitations = opt?.limitations ?? "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" +
+        "XXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXX" +
+        "XXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
     this.identifierCode = opt?.identifierCode ?? "UTSS";
     this.certReference = opt?.certReference ?? "00000";
     this.issueDate = opt?.issueDate ?? "2007-04-15";
@@ -554,7 +555,8 @@ class CrewLicense {
   set subauthorityCode(code) {
     if (code.length > 8) {
       throw new RangeError(
-        `Length '${code.length}' of (sub)authority code must be 8 characters or less.`
+        `Length '${code.length}' of (sub)authority code must be 8 characters ` +
+            `or less.`
       );
     }
     const input = [];
@@ -590,7 +592,8 @@ class CrewLicense {
   set privilegeCode(code) {
     if (code.length > 8) {
       throw new RangeError(
-        `Length '${code.length}' of privilege code must be 8 characters or less.`
+        `Length '${code.length}' of privilege code must be 8 characters or ` +
+            `less.`
       );
     }
     const input = [];
@@ -628,21 +631,30 @@ class CrewLicense {
    *     setting the VDS header, message, or signature zones.
    */
   #setAllValuesFromDigitalSeal() {
-    const TWO_DIGIT_YEAR_START = 32;
     const SEAL_MRZ = c40Decode(this.#seal.features.get(0x01));
-    if (SEAL_MRZ[14] !== generateMRZCheckDigit(SEAL_MRZ.slice(5, 14).replace(/ /gi, "<"))) {
+    if (SEAL_MRZ[14] !== generateMRZCheckDigit(
+      SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")
+    )) {
       throw new EvalError(
-        `Document number check digit '${SEAL_MRZ[45]}' does not match for document number '${SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")}'.`
+        `Document number check digit '${SEAL_MRZ[45]}' does not match for ` +
+            `document number '${SEAL_MRZ.slice(5, 14).replace(/ /gi, "<")}'.`
       );
     }
-    if (SEAL_MRZ[21] !== generateMRZCheckDigit(SEAL_MRZ.slice(15, 21).replace(/ /gi, "<"))) {
+    if (SEAL_MRZ[21] !== generateMRZCheckDigit(
+      SEAL_MRZ.slice(15, 21).replace(/ /gi, "<")
+    )) {
       throw new EvalError(
-        `Date of birth check digit '${SEAL_MRZ[21]}' does not match for date of birth '${SEAL_MRZ.slice(15, 21).replace(/ /gi, "<")}'.`
+        `Date of birth check digit '${SEAL_MRZ[21]}' does not match for date ` +
+            `of birth '${SEAL_MRZ.slice(15, 21).replace(/ /gi, "<")}'.`
       );
     }
-    if (SEAL_MRZ[29] !== generateMRZCheckDigit(SEAL_MRZ.slice(23, 29).replace(/ /gi, "<"))) {
+    if (SEAL_MRZ[29] !== generateMRZCheckDigit(
+      SEAL_MRZ.slice(23, 29).replace(/ /gi, "<")
+    )) {
       throw new EvalError(
-        `Date of expiration check digit '${SEAL_MRZ[29]}' does not match for date of expiration '${SEAL_MRZ.slice(23, 29).replace(/ /gi, "<")}'.`
+        `Date of expiration check digit '${SEAL_MRZ[29]}' does not match for ` +
+            `date of expiration '` +
+            `${SEAL_MRZ.slice(23, 29).replace(/ /gi, "<")}'.`
       );
     }
     this.#document.typeCode = SEAL_MRZ.slice(0, 2).trimEnd();
@@ -651,17 +663,15 @@ class CrewLicense {
     const BIRTH_YEAR = SEAL_MRZ.slice(15, 17);
     const BIRTH_MONTH = SEAL_MRZ.slice(17, 19);
     const BIRTH_DAY = SEAL_MRZ.slice(19, 21);
-    if (parseInt(BIRTH_YEAR, 10) >= TWO_DIGIT_YEAR_START) {
-      this.#document.birthDate = `19${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
-    } else {
-      this.#document.birthDate = `20${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
-    }
+    this.#document.birthDate =
+        `${getFullYearFromString(BIRTH_YEAR)}-${BIRTH_MONTH}-${BIRTH_DAY}`
     this.#document.genderMarker = SEAL_MRZ[22];
     const EXPIRATION_YEAR = SEAL_MRZ.slice(23, 25);
     const EXPIRATION_MONTH = SEAL_MRZ.slice(25, 27);
     const EXPIRATION_DAY = SEAL_MRZ.slice(27, 29);
     this.#document.expirationDate =
-        `20${EXPIRATION_YEAR}-${EXPIRATION_MONTH}-${EXPIRATION_DAY}`;
+        `${getFullYearFromString(EXPIRATION_YEAR)}-${EXPIRATION_MONTH}-` +
+        `${EXPIRATION_DAY}`;
     this.#document.nationalityCode = SEAL_MRZ.slice(30, 33).trimEnd();
     this.#document.fullName = SEAL_MRZ.slice(33).replace("  ", ", ").trimEnd();
   }

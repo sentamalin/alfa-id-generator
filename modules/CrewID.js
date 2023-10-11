@@ -536,7 +536,8 @@ class CrewID {
     const EXPIRATION_MONTH = SEAL_MRZ.slice(25, 27);
     const EXPIRATION_DAY = SEAL_MRZ.slice(27, 29);
     this.#document.expirationDate =
-        `20${EXPIRATION_YEAR}-${EXPIRATION_MONTH}-${EXPIRATION_DAY}`;
+        `${getFullYearFromString(EXPIRATION_YEAR)}-${EXPIRATION_MONTH}-` +
+        `${EXPIRATION_DAY}`;
     this.#document.fullName = SEAL_MRZ.slice(33).replace("  ", ", ").trimEnd();
   }
 }

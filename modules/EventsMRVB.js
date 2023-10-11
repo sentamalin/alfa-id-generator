@@ -7,6 +7,7 @@ import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./icao9303/utilities/def
 import { generateMRZCheckDigit } from "./icao9303/utilities/generate-mrz-check-digit.js";
 import { c40Encode } from "./icao9303/utilities/c40-encode.js";
 import { c40Decode } from "./icao9303/utilities/c40-decode.js";
+import { getFullYearFromString } from "./icao9303/utilities/get-full-year-from-string.js";
 
 /**
  * `EventsMRVB` describes an ALFA Furry Events Visa in the MRV-B document size
@@ -647,7 +648,6 @@ class EventsMRVB {
    *     setting the VDS header, message, or signature zones.
    */
   #setAllValuesFromDigitalSeal() {
-    const TWO_DIGIT_YEAR_START = 32;
     const SEAL_MRZ = c40Decode(this.#seal.features.get(0x02));
     if (SEAL_MRZ[45] !== generateMRZCheckDigit(
       SEAL_MRZ.slice(36, 45).replace(/ /gi, "<")
@@ -682,19 +682,15 @@ class EventsMRVB {
     const BIRTH_YEAR = SEAL_MRZ.slice(49, 51);
     const BIRTH_MONTH = SEAL_MRZ.slice(51, 53);
     const BIRTH_DAY = SEAL_MRZ.slice(53, 55);
-    if (parseInt(BIRTH_YEAR, 10) >= TWO_DIGIT_YEAR_START) {
-      this.#document.birthDate =
-          `19${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
-    } else {
-      this.#document.birthDate =
-          `20${BIRTH_YEAR}-${BIRTH_MONTH}-${BIRTH_DAY}`;
-    }
+    this.#document.birthDate =
+        `${getFullYearFromString(BIRTH_YEAR)}-${BIRTH_MONTH}-${BIRTH_DAY}`;
     this.#document.genderMarker = SEAL_MRZ[56];
     const VALID_THRU_YEAR = SEAL_MRZ.slice(57, 59);
     const VALID_THRU_MONTH = SEAL_MRZ.slice(59, 61);
     const VALID_THRU_DAY = SEAL_MRZ.slice(61, 63);
     this.#document.validThru =
-        `20${VALID_THRU_YEAR}-${VALID_THRU_MONTH}-${VALID_THRU_DAY}`;
+        `${getFullYearFromString(VALID_THRU_YEAR)}-${VALID_THRU_MONTH}-` +
+        `${VALID_THRU_DAY}`;
     if (this.#seal.features.get(0x03)[0] === 0) {
       this.#document.numberOfEntries = "MULTIPLE";
     } else {
