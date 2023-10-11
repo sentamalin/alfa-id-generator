@@ -357,7 +357,7 @@ class CrewCertificateViewModel {
    */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
-    this.#sealSignatureDateInput.value = this.#model.signatureDate;
+    this.#sealSignatureDateInput.value = this.#model.signatureDate.toISOString().slice(0,10);
     this.#sealSignatureDateInput.addEventListener("change", this, false);
     this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }

@@ -27,11 +27,11 @@ class TD1Document {
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.number] - A string no longer than 9 characters
    *     consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.birthDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
-   * @param { string } [opt.expirationDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.expirationDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.nationalityCode] - A 3-character string consisting
    *     of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
@@ -125,7 +125,8 @@ class TD1Document {
    */
   get birthDate() { return this.#document.birthDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set birthDate(value) { this.#document.birthDate = value; }
 
@@ -145,7 +146,8 @@ class TD1Document {
    */
   get expirationDate() { return this.#document.expirationDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` string.
    */
   set expirationDate(value) { this.#document.expirationDate = value; }
 

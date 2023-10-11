@@ -24,10 +24,10 @@ class DigitalSeal {
    *     the characters 0-9 and A-Z.
    * @param { string } [opt.certReference] - A hex-string that uniquely
    *     identifies a certificate for a given signer.
-   * @param { string } [opt.issueDate] - A calendar date string in YYYY-MM-DD
-   *     format.
-   * @param { string } [opt.signatureDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.issueDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
+   * @param { string | Date } [opt.signatureDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { number } [opt.featureDefinition] - A number in the range of
    *     0x01-0xFE.
    * @param { number } [opt.typeCategory] - A number in the range of 0x01-0xFE.
@@ -110,14 +110,16 @@ class DigitalSeal {
   #issueDate;
   /**
    * A date string on which the document was issued.
-   * @type { string }
+   * @type { Date }
    */
-  get issueDate() { return this.#issueDate.toISOString().slice(0,10); }
+  get issueDate() { return this.#issueDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set issueDate(value) {
-    const date = new Date(`${value}T00:00:00`);
+    const date = typeof value === "string" ? new Date(`${value}T00:00:00`)
+        : new Date(value);
     if (date.toString() === "Invalid Date") {
       throw new TypeError(
         `Value '${value}' is not a valid date string.`
@@ -130,14 +132,16 @@ class DigitalSeal {
   #signatureDate;
   /**
    * A date string on which the seal was signed.
-   * @type { string }
+   * @type { Date }
    */
-  get signatureDate() { return this.#signatureDate.toISOString().slice(0,10); }
+  get signatureDate() { return this.#signatureDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set signatureDate(value) {
-    const date = new Date(`${value}T00:00:00`);
+    const date = typeof value === "string" ? new Date(`${value}T00:00:00`)
+        : new Date(value);
     if (date.toString() === "Invalid Date") {
       throw new TypeError(
         `Value '${value}' is not a valid date string.`

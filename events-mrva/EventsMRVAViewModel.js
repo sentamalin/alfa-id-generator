@@ -320,7 +320,7 @@ class EventsMRVAViewModel {
   /** @param { HTMLInputElement } input */
   set issueDateInput(input) {
     this.#issueDateInput = input;
-    this.#issueDateInput.value = this.#model.issueDate;
+    this.#issueDateInput.value = this.#model.issueDate.toISOString().slice(0,10);
     this.#issueDateInput.addEventListener("change", this, false);
     this.#issueDateInput.setAttribute("disabled", "disabled");
   }
@@ -371,7 +371,7 @@ class EventsMRVAViewModel {
   /** @param { HTMLInputElement } input */
   set sealSignatureDateInput(input) {
     this.#sealSignatureDateInput = input;
-    this.#sealSignatureDateInput.value = this.#model.signatureDate;
+    this.#sealSignatureDateInput.value = this.#model.signatureDate.toISOString().slice(0,10);
     this.#sealSignatureDateInput.addEventListener("change", this, false);
     this.#sealSignatureDateInput.setAttribute("disabled", "disabled");
   }

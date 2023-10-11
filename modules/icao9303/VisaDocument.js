@@ -16,8 +16,8 @@ class VisaDocument {
    * Create a `VisaDocument`.
    * @param { Object } [opt] - An options object.
    * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
-   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.validFrom] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes
    *     an unlimited number of entries.
    * @param { string } [opt.visaType] - A type/name/description for this visa.
@@ -58,18 +58,19 @@ class VisaDocument {
    */
   get validFrom() { return this.#validFrom; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set validFrom(value) {
-    let test = new Date(`${value}T00:00:00`);
+    let test = typeof value === "string" ? new Date(`${value}T00:00:00`)
+        : new Date(value);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Valid From (validFrom) must be a valid date string."
       );
-    } else {
-      this.#validFrom = test;
-      this.#validFrom.toVIZ = VisaDocument.#validFromToVIZ;
     }
+    this.#validFrom = test;
+    this.#validFrom.toVIZ = VisaDocument.#validFromToVIZ;
   }
 
   #numberOfEntries;

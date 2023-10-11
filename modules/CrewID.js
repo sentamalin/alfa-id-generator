@@ -29,8 +29,8 @@ class CrewID {
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.number] - A string no longer than 9 characters
    *     consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.expirationDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.expirationDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.fullName] - A ', ' separates the document holder's
    *     primary identifier from their secondary identifiers. A '/' separates
    *     the full name in a non-Latin national language from a
@@ -58,10 +58,10 @@ class CrewID {
    *     the characters 0-9 and A-Z.
    * @param { string } [opt.certReference] - A hex-string that uniquely
    *     identifies a certificate for a given signer.
-   * @param { string } [opt.issueDate] - A calendar date string in YYYY-MM-DD
-   *     format.
-   * @param { string } [opt.signatureDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.issueDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
+   * @param { string | Date } [opt.signatureDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { number[] } [opt.signatureData] - The raw signature data generated
    *     by concatenating the header and message zone, hashing the result, and
    *     signing the hash with a cryptographic key.
@@ -169,7 +169,8 @@ class CrewID {
    */
   get expirationDate() { return this.#document.expirationDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set expirationDate(value) {
     this.#document.expirationDate = value;
@@ -359,22 +360,24 @@ class CrewID {
   set certReference(value) { this.#seal.certReference = value; }
 
   /**
-   * A date string on which the document was issued.
-   * @type { string }
+   * The date on which the document was issued.
+   * @type { Date }
    */
   get issueDate() { return this.#seal.issueDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set issueDate(value) { this.#seal.issueDate = value; }
 
   /**
-   * A date string on which the seal was signed.
-   * @type { string }
+   * The date on which the seal was signed.
+   * @type { Date }
    */
   get signatureDate() { return this.#seal.signatureDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set signatureDate(value) { this.#seal.signatureDate = value; }
 

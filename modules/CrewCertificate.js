@@ -31,11 +31,11 @@ class CrewCertificate {
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.number] - A string no longer than 9 characters
    *     consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.birthDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` string.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
-   * @param { string } [opt.expirationDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.expirationDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` string.
    * @param { string } [opt.nationalityCode] - A 3-character string consisting
    *     of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
@@ -71,16 +71,16 @@ class CrewCertificate {
    * @param { string } [opt.declaration] - A statement describing the terms and
    *     conditions the document holder may enter or re-enter an area under an
    *     authority's jurisdiction.
-   * @param { string } [opt.issueDate] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.issueDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` string.
    * @param { string } [opt.placeOfIssue] - Location where the document was
    *     issued.
    * @param { string } [opt.identifierCode] - A 4-character string consisting of
    *     the characters 0-9 and A-Z.
    * @param { string } [opt.certReference] - A hex-string that uniquely
    *     identifies a certificate for a given signer.
-   * @param { string } [opt.signatureDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.signatureDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` string.
    * @param { number[] } [opt.signatureData] - The raw signature data generated
    *     by concatenating the header and message zone, hashing the result, and
    *     signing the hash with a cryptographic key.
@@ -200,7 +200,8 @@ class CrewCertificate {
    */
   get birthDate() { return this.#document.birthDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set birthDate(value) {
     this.#document.birthDate = value;
@@ -226,7 +227,8 @@ class CrewCertificate {
    */
   get expirationDate() { return this.#document.expirationDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set expirationDate(value) {
     this.#document.expirationDate = value;
@@ -358,7 +360,8 @@ class CrewCertificate {
    */
   get issueDate() { return this.#issueDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set issueDate(value) {
     let test = new Date(`${value}T00:00:00`);
@@ -463,12 +466,13 @@ class CrewCertificate {
   set certReference(value) { this.#seal.certReference = value; }
 
   /**
-   * A date string on which the seal was signed.
-   * @type { string }
+   * The date on which the seal was signed.
+   * @type { Date }
    */
   get signatureDate() { return this.#seal.signatureDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set signatureDate(value) { this.#seal.signatureDate = value; }
 

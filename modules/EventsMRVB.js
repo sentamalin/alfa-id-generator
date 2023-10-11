@@ -29,10 +29,10 @@ class EventsMRVB {
    *     the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
-   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD
-   *     format.
-   * @param { string } [opt.validThru] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.validFrom] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
+   * @param { string | Date } [opt.validThru] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes
    *     an unlimited number of entries.
    * @param { string } [opt.number] - A string no longer than 9 characters
@@ -50,8 +50,8 @@ class EventsMRVB {
    * @param { string } [opt.nationalityCode] - A 3-character string consisting
    *     of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
-   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.birthDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
    * @param { string } [opt.optionalData] - Up to 16 characters. Valid
    *     characters are from the ranges 0-9, A-Z, and ' '.
@@ -76,10 +76,10 @@ class EventsMRVB {
    *     the characters 0-9 and A-Z.
    * @param { string } [opt.certReference] - A hex-string that uniquely
    *     identifies a certificate for a given signer.
-   * @param { string } [opt.issueDate] - A calendar date string in YYYY-MM-DD
-   *     format.
-   * @param { string } [opt.signatureDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.issueDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
+   * @param { string | Date } [opt.signatureDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { number[] } [opt.signatureData] - The raw signature data generated
    *     by concatenating the header and message zone, hashing the result, and
    *     signing the hash with a cryptographic key.
@@ -235,7 +235,8 @@ class EventsMRVB {
    */
   get birthDate() { return this.#document.birthDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set birthDate(value) {
     this.#document.birthDate = value;
@@ -261,7 +262,8 @@ class EventsMRVB {
    */
   get validThru() { return this.#document.validThru; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set validThru(value) {
     this.#document.validThru = value;
@@ -321,7 +323,8 @@ class EventsMRVB {
    */
   get validFrom() { return this.#document.validFrom; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set validFrom(value) { this.#document.validFrom = value; }
 
@@ -459,22 +462,24 @@ class EventsMRVB {
   set certReference(value) { this.#seal.certReference = value; }
 
   /**
-   * A date string on which the document was issued.
-   * @type { string }
+   * The date on which the document was issued.
+   * @type { Date }
    */
   get issueDate() { return this.#seal.issueDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set issueDate(value) { this.#seal.issueDate = value; }
 
   /**
-   * A date string on which the seal was signed.
-   * @type { string }
+   * The date on which the seal was signed.
+   * @type { Date }
    */
   get signatureDate() { return this.#seal.signatureDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set signatureDate(value) { this.#seal.signatureDate = value; }
 

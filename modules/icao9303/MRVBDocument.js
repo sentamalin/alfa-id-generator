@@ -37,11 +37,11 @@ class MRVBDocument {
    * @param { string } [opt.nationalityCode] - A 3-character string consisting
    *     of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
-   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.birthDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
-   * @param { string } [opt.validThru] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.validThru] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.optionalData] - Up to 8 characters. Valid characters
    *     are from the ranges 0-9, A-Z, and ' '.
    * @param { string } [opt.mrzLine1] - A MRZ line string of a 36-character
@@ -60,8 +60,8 @@ class MRVBDocument {
    *     VideoFrame } [opt.signatureImage] - A path/URL to an image, or an image
    *     object, representing the signature or usual mark of the visa issuer.
    * @param { string } [opt.placeOfIssue] - Location where the visa was issued.
-   * @param { string } [opt.validFrom] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.validFrom] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string | number } [opt.numberOfEntries] - 0 or any string denotes
    *     an unlimited number of entries.
    * @param { string } [opt.visaType] - A type/name/description for this visa.
@@ -172,7 +172,8 @@ class MRVBDocument {
    */
   get birthDate() { return this.#document.birthDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set birthDate(value) { this.#document.birthDate = value; }
 
@@ -192,7 +193,8 @@ class MRVBDocument {
    */
   get validThru() { return this.#document.expirationDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set validThru(value) { this.#document.expirationDate = value; }
 
@@ -252,7 +254,8 @@ class MRVBDocument {
    */
   get validFrom() { return this.#visa.validFrom; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` object.
    */
   set validFrom(value) { this.#visa.validFrom = value; }
 

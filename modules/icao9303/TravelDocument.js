@@ -24,11 +24,11 @@ class TravelDocument {
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
    * @param { string } [opt.number] - A string no longer than 9 characters
    *     consisting of the characters 0-9 and A-Z.
-   * @param { string } [opt.birthDate] - A calendar date string in YYYY-MM-DD
-   *     format.
+   * @param { string | Date } [opt.birthDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.genderMarker] - The character 'F', 'M', or 'X'.
-   * @param { string } [opt.expirationDate] - A calendar date string in
-   *     YYYY-MM-DD format.
+   * @param { string | Date } [opt.expirationDate] - A calendar date string in
+   *     YYYY-MM-DD format or a `Date` object.
    * @param { string } [opt.nationalityCode] - A 3-character string consisting
    *     of the letters A-Z from ISO-3166-1, ICAO 9303-3, or these user-assigned
    *     ranges: AAA-AAZ, QMA-QZZ, XAA-XZZ, or ZZA-ZZZ.
@@ -136,19 +136,20 @@ class TravelDocument {
    */
   get birthDate() { return this.#birthDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` string.
    */
   set birthDate(value) {
-    const test = new Date(`${value}T00:00:00`);
+    const test = typeof value === "string" ? new Date(`${value}T00:00:00`)
+        : new Date(value);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Date of birth (dateOfBirth) must be a valid date string."
       );
-    } else {
-      this.#birthDate = test;
-      this.#birthDate.toMRZ = TravelDocument.#thisDateToMRZ;
-      this.#birthDate.toVIZ = TravelDocument.#thisDateToVIZ;
     }
+    this.#birthDate = test;
+    this.#birthDate.toMRZ = TravelDocument.#thisDateToMRZ;
+    this.#birthDate.toVIZ = TravelDocument.#thisDateToVIZ;
   }
 
   #genderMarker;
@@ -179,19 +180,20 @@ class TravelDocument {
    */
   get expirationDate() { return this.#expirationDate; }
   /**
-   * @param { string } value - A calendar date string in YYYY-MM-DD format.
+   * @param { string | Date } value - A calendar date string in YYYY-MM-DD
+   *     format or a `Date` string.
    */
   set expirationDate(value) {
-    const test = new Date(`${value}T00:00:00`);
+    const test = typeof value === "string" ? new Date(`${value}T00:00:00`)
+        : new Date(value);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
         "Date of expiration (dateOfExpiration) must be a valid date string."
       );
-    } else {
-      this.#expirationDate = test;
-      this.#expirationDate.toMRZ = TravelDocument.#thisDateToMRZ;
-      this.#expirationDate.toVIZ = TravelDocument.#thisDateToVIZ;
     }
+    this.#expirationDate = test;
+    this.#expirationDate.toMRZ = TravelDocument.#thisDateToMRZ;
+    this.#expirationDate.toVIZ = TravelDocument.#thisDateToVIZ;
   }
 
   #nationalityCode;

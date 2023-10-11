@@ -9,10 +9,17 @@
  * dateToBytes("1957-03-25");
  */
 export function dateToBytes(date) {
-  const dateFromString = new Date(`${date}T00:00:00`);
-  const MONTH = dateFromString.getMonth() + 1;
-  const DAY = dateFromString.getDate();
-  const YEAR = dateFromString.getFullYear();
+  const dateFromInput =
+      typeof date === "string" ? new Date(`${date}T00:00:00`)
+      : new Date(date);
+  if (dateFromInput.toString() === "Invalid Date") {
+    throw new TypeError(
+      `Value '${date}' is not a valid date string.`
+    );
+  }
+  const MONTH = dateFromInput.getMonth() + 1;
+  const DAY = dateFromInput.getDate();
+  const YEAR = dateFromInput.getFullYear();
   const DATE_INTEGER = `${MONTH.toString().padStart(2, "0")}` +
       `${DAY.toString().padStart(2, "0")}${YEAR}`;
   const BASE_2 = parseInt(DATE_INTEGER, 10).toString(2).padStart(24, "0");

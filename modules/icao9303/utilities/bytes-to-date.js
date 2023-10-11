@@ -18,6 +18,5 @@ export function bytesToDate(date) {
   const MONTH = DATE_INTEGER_STRING.slice(0, 2);
   const DAY = DATE_INTEGER_STRING.slice(2, 4);
   const YEAR = DATE_INTEGER_STRING.slice(4);
-  const outputAsDate = new Date(`${YEAR}-${MONTH}-${DAY}T00:00:00`);
-  return outputAsDate.toISOString().slice(0,10);
+  return outputAsDate = new Date(`${YEAR}-${MONTH}-${DAY}T00:00:00`);
 }
