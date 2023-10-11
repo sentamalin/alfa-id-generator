@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import { TravelDocument } from "./TravelDocument.js";
 import { dateToVIZ } from "./utilities/date-to-viz.js";
 import { padMRZString } from "./utilities/pad-mrz-string.js";
 
