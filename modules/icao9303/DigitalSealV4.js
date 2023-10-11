@@ -9,6 +9,7 @@ import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
 import { dateToBytes } from "./utilities/date-to-bytes.js";
 import { bytesToDate } from "./utilities/bytes-to-date.js";
 import { lengthToDERLength } from "./utilities/length-to-der-length.js";
+import { derLengthToLength } from "./utilities/der-length-to-length.js";
 
 /**
  * Stores properties and methods for ICAO 9303 visible digital seals (VDSs)
@@ -307,7 +308,7 @@ class DigitalSealV4 {
       }
       const TAG = value[start];
       start += 1;
-      const LENGTH = DigitalSeal.derLengthToLength(value.slice(start));
+      const LENGTH = derLengthToLength(value.slice(start));
       start += lengthToDERLength(LENGTH).length;
       const slicedValue = value.slice(start, start + LENGTH);
       if (slicedValue.length !== LENGTH) {

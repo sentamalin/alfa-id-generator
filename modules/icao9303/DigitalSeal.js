@@ -3,6 +3,7 @@
 
 import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
 import { lengthToDERLength } from "./utilities/length-to-der-length.js";
+import { derLengthToLength } from "./utilities/der-length-to-length.js";
 
 /**
  * Stores common properties and methods for all ICAO 9303 visible digital seals
@@ -239,7 +240,7 @@ class DigitalSeal {
       );
     }
     start += 1;
-    const LENGTH = DigitalSeal.derLengthToLength(value.slice(start));
+    const LENGTH = derLengthToLength(value.slice(start));
     start += lengthToDERLength(LENGTH).length;
     if (value.slice(start).length !== LENGTH) {
       throw new RangeError(
@@ -248,34 +249,6 @@ class DigitalSeal {
       );
     }
     return value.slice(start);
-  }
-
-  /**
-   * Get a number for a length in the shortest BER/DER definite form.
-   * @param { number[] } length
-   * @example
-   * // Returns 435
-   * DigitalSeal.derLengthToLength([130, 1, 179]);
-   */
-  static derLengthToLength(length) {
-    if (length[0] < 128) {
-      return length[0];
-    } else {
-      if (length.length > 5) {
-        throw new RangeError(
-          "The definite long-form length value for this TLV is too big for " +
-              "the context of ICAO 9303 Digital Seals."
-        );
-      }
-      const NUM_OCTETS_STRING = length[0].toString(2);
-      const NUM_OCTETS = parseInt(`0${NUM_OCTETS_STRING.slice(1)}`, 2);
-      const lengthArray = length.slice(1, NUM_OCTETS + 1);
-      let outputString = "";
-      lengthArray.forEach((byte) => {
-        outputString += byte.toString(2).padStart(8, "0");
-      });
-      return parseInt(outputString, 2);
-    }
   }
 }
 
