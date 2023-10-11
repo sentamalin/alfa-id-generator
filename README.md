@@ -32,8 +32,8 @@ Four kinds of classes are available for your use, modification, and study: class
 These classes are found in `/modules/icao9303/` and are mainly used to compose other kinds of documents:
 
 * `DigitalSeal` - Properties common to all visible digital seals (VDS).
-* `DigitalSealV3` - A digital seal conforming to VDS version 3 according to [ICAO Document 9303][icao9303].
-* `DigitalSealV4` - A digital seal conforming to VDS version 4 according to [ICAO Document 9303][icao9303].
+* `DigitalSealV3` - A digital seal conforming to VDS version 3.
+* `DigitalSealV4` - A digital seal conforming to VDS version 4.
 * `TravelDocument` - Properties common to all travel documents.
 * `VisaDocument` - Properties common to all visa documents.
 
