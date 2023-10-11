@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { TravelDocument } from "./TravelDocument.js";
+import { dateToVIZ } from "./utilities/date-to-viz.js";
 
 /**
  * Stores properties specific to machine-readable visa documents.
@@ -151,7 +152,7 @@ class VisaDocument {
     return TravelDocument.padMRZString(this, 9);
   }
   static #validFromToVIZ = function() {
-    return TravelDocument.dateToVIZ(this);
+    return dateToVIZ(this);
   }
 }
 

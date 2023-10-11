@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
+import { dateToVIZ } from "./utilities/date-to-viz.js";
 
 /**
  * Stores common properties and methods for all ICAO 9303 machine-readable
@@ -315,10 +316,10 @@ class TravelDocument {
     return this.toUpperCase();
   }
   static #thisDateToMRZ = function() {
-    return TravelDocument.dateToMRZ(this);
+    return TravelDocument.#dateToMRZ(this);
   }
   static #thisDateToVIZ = function() {
-    return TravelDocument.dateToVIZ(this);
+    return dateToVIZ(this);
   }
   static #typeCodeToMRZ = function() {
     return TravelDocument.padMRZString(this, 2);
@@ -335,24 +336,10 @@ class TravelDocument {
    * @param { Date } date
    * @example
    * // Returns "230930"
-   * TravelDocument.dateToMRZ(new Date("2023-09-30T00:00:00"));
+   * TravelDocument.#dateToMRZ(new Date("2023-09-30T00:00:00"));
    */
-  static dateToMRZ(date) {
+  static #dateToMRZ(date) {
     return date.toISOString().slice(2,10).replace(/-/gi,"");
-  }
-
-  /**
-   * Convert a Date object to a Visual Inspection Zone (VIZ) DD MMM YYY
-   *     date string.
-   * @param { Date } date
-   * @example
-   * // Returns "30 SEP 2023"
-   * TravelDocument.dateToVIZ(new Date("2023-09-30T00:00:00"));
-   */
-  static dateToVIZ(date) {
-    const DAY = date.getDate().toString().padStart(2, "0");
-    return (DAY + " " + date.toLocaleString("en-us", { month : "short" }) +
-        " " + date.getFullYear()).toUpperCase();
   }
 
   /**
