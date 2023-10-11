@@ -320,7 +320,7 @@ class EventsPassport {
    *     format or a `Date` object.
    */
   set issueDate(value) {
-    let test = typeof value === "string" ? new Date(`${value}T00:00:00`)
+    const test = typeof value === "string" ? new Date(`${value}T00:00:00`)
         : new Date(value);
     if (test.toString() === "Invalid Date") {
       throw new TypeError(
