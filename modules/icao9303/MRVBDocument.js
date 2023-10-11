@@ -6,6 +6,7 @@ import { VisaDocument } from "./VisaDocument.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { getFullYearFromString } from "./utilities/get-full-year-from-string.js";
 import { generateMRZCheckDigit } from "./utilities/generate-mrz-check-digit.js";
+import { fullNameMRZ } from "./utilities/full-name-mrz.js";
 
 /**
  * Stores properties and methods for smaller machine-redable visas (MRV-B) with
@@ -416,7 +417,7 @@ class MRVBDocument {
 
   // Functions to be assigned to properties `toMRZ` and `toVIZ` when set.
   static #fullNameToMRV = function() {
-    return TravelDocument.fullNameMRZ(this, 31);
+    return fullNameMRZ(this, 31);
   }
   static #optionalDataToMRZ = function() {
     return TravelDocument.optionalDataMRZ(this, 8);

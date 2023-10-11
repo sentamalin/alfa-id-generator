@@ -233,31 +233,6 @@ class TravelDocument {
     this.#fullName = new String(value.toString());
     this.#fullName.toVIZ = TravelDocument.#setThisToUppercase;
   }
-  /**
-   * Normalize and pad a document holder's name for the name area of a
-   *     Machine-Readable Zone (MRZ) of a given character length.
-   * @param { string } name - The document holder's full name in the Latin
-   *     characters A-Z, or a transcription/transliteration of their full name
-   *     in Latin characters. A ', ' separates the document holder's primary
-   *     identifier from their secondary identifiers.
-   * @param { number } length - The number of characters available for the
-   *     document holder's name in a Machine-Readable Zone (MRZ).
-   * @example
-   * // Returns "MILLEFEUILLE<<ALFALFA<<<<<<<<<"
-   * TravelDocument.fullNameMRZ("Millefeuille, Alfalfa", 30);
-   */
-  static fullNameMRZ(name, length) {
-    const NORMALIZED_NAME =
-        normalizeMRZString(name.replace(", ","<<"));
-    if (NORMALIZED_NAME.length > length) {
-      console.warn(
-        `Name (fullName) is longer than ${length} and will be truncated.`
-      );
-    }
-    return padMRZString(
-      NORMALIZED_NAME.substring(0,length), length
-    );
-  }
 
   #optionalData;
   /**

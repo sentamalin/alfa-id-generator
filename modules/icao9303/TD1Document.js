@@ -5,6 +5,7 @@ import { TravelDocument } from "./TravelDocument.js";
 import { DEFAULT_PHOTO, DEFAULT_SIGNATURE_IMAGE } from "./utilities/default-images.js";
 import { getFullYearFromString } from "./utilities/get-full-year-from-string.js";
 import { generateMRZCheckDigit } from "./utilities/generate-mrz-check-digit.js";
+import { fullNameMRZ } from "./utilities/full-name-mrz.js";
 
 /**
  * Stores properties and methods for TD1-sized machine-readable travel documents
@@ -360,7 +361,7 @@ class TD1Document {
 
   // Functions to be assigned to properties `toMRZ` and `toVIZ` when set.
   static #fullNameToMRZ = function() {
-    return TravelDocument.fullNameMRZ(this, 30);
+    return fullNameMRZ(this, 30);
   }
   static #optionalDataToMRZ = function() {
     return TravelDocument.optionalDataMRZ(this, 26);
