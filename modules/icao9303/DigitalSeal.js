@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import { VDS_SIGNATURE_MARKER } from "./utilities/vds-signature-marker.js";
+import { lengthToDERLength } from "./utilities/length-to-der-length.js";
 
 /**
  * Stores common properties and methods for all ICAO 9303 visible digital seals
@@ -211,7 +212,7 @@ class DigitalSeal {
     let output = [];
     output.push(VDS_SIGNATURE_MARKER);
     output = output.concat(
-      DigitalSeal.lengthToDERLength(this.signatureData.length)
+      lengthToDERLength(this.signatureData.length)
     );
     output = output.concat(this.signatureData);
     return output;
@@ -239,7 +240,7 @@ class DigitalSeal {
     }
     start += 1;
     const LENGTH = DigitalSeal.derLengthToLength(value.slice(start));
-    start += DigitalSeal.lengthToDERLength(LENGTH).length;
+    start += lengthToDERLength(LENGTH).length;
     if (value.slice(start).length !== LENGTH) {
       throw new RangeError(
         `Length '${LENGTH}' of signature does not match the actual length ` +
@@ -247,44 +248,6 @@ class DigitalSeal {
       );
     }
     return value.slice(start);
-  }
-
-  /**
-   * Get a length in the shortest BER/DER definite form for a number.
-   * @param { number } length
-   * @example
-   * // Returns [130, 1, 179]
-   * DigitalSeal.lengthToDERLength(435);
-   */
-  static lengthToDERLength(length) {
-    if (length < 128) {
-      return [length];
-    } else {
-      const output = [];
-      let base2 = length.toString(2);
-      if (base2.length % 8 !== 0) {
-        base2 = base2.padStart((Math.floor(base2.length / 8) + 1) * 8, "0");
-      }
-      if (base2.length / 8 > 4) {
-        throw new RangeError(
-          "The definite long-form length value for this TLV is too big for " +
-              "the context of ICAO 9303 Digital Seals."
-        );
-      }
-      output.push(
-        parseInt(`1${(base2.length / 8).toString(2).padStart(7, "0")}`, 2)
-      );
-      const b = [0, 0, 0, 0, 0, 0, 0, 0];
-      [...base2].forEach((bit, i) => {
-        b[i % 8] = bit;
-        if ((i + 1) % 8 === 0) {
-          output.push(parseInt(
-            `${b[0]}${b[1]}${b[2]}${b[3]}${b[4]}${b[5]}${b[6]}${b[7]}`, 2
-          ));
-        }
-      });
-      return output;
-    }
   }
 
   /**
