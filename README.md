@@ -76,7 +76,7 @@ Note that renderers are scenario-specific and these renderers were designed for 
 
 For each renderer a controller is provided in respective directories to allow setting document and renderer properties when used in a web page: `CrewCertificateViewModel`, `CrewLicenseViewModel`, `EventsMRVAViewModel`, `EventsMRVBViewModel`, `EventsPassportViewModel`, `EventsSealViewModel`, and `IDBadgeViewModel`.
 
-Like the renderers, these were designed for a web demonstration in mind. As they are, they are not actual view models in the Model-View-ViewModel definition. While functional, they are a bit of a mess to read over. They're provided to show how the demos work, but one would certainly want to write something better.
+Like the renderers, these were designed for a web demonstration in mind. They are not actual view models in the Model-View-ViewModel definition. While functional, they are a bit of a mess to read over. They're provided to show how the demos work, but one would certainly want to write something better.
 
 ## Licenses
 
