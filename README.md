@@ -7,6 +7,8 @@
 
 > A collection of models as classes to represent [ICAO 9303 Machine-Readable Travel Documents][icao9303] and example renderers to create furry-themed travel documents.
 
+[![REUSE status](https://api.reuse.software/badge/github.com/sentamalin/alfa-id-generator)](https://api.reuse.software/info/github.com/sentamalin/alfa-id-generator)
+
 * [Demos](#demos)
 * [Provided Classes](#provided-classes)
 * [Licenses](#licenses)
