@@ -1,9 +1,7 @@
-/*
- * SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
- * SPDX-License-Identifier: CC0-1.0
- */
+// SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
+// SPDX-License-Identifier: CC0-1.0
 
-import { CrewLicenseViewModel } from "./CrewLicenseViewModel.js";
+import { CrewLicenseViewModel } from "../lib/crewlicense-viewmodel.js";
 
 window.addEventListener("load", initViewModel, false);
 
