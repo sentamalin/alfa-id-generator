@@ -5,17 +5,17 @@
 
 # Furry identification generators
 
-> A collection of models as classes to represent [ICAO 9303 Machine-Readable Travel Documents][icao9303] and example renderers to create furry-themed travel documents.
+> A collection of models as classes to represent [ICAO 9303 Machine-Readable Travel Documents (MRTDs)][icao9303] and example renderers to create furry-themed MRTDs.
 
 [![REUSE status](https://api.reuse.software/badge/github.com/sentamalin/alfa-id-generator)](https://api.reuse.software/info/github.com/sentamalin/alfa-id-generator)
 
 * [Demos](#demos)
-* [Provided Classes](#provided-classes)
+* [Provided classes](#provided-classes)
 * [Licenses](#licenses)
 
 ## Demos
 
-[Air Line Furries Association, International][alfa] provides [generators](https://generator.airlinefurries.com) to create furry-themed travel documents to save as an image or print:
+[Air Line Furries Association, International][alfa], provides [generators](https://generator.airlinefurries.com) to create furry-themed travel documents to save as an image or print:
 
 * [Crewmember Certificate](https://generator.airlinefurries.com/crew-certificate/)
 * [Crewmember License](https://generator.airlinefurries.com/crew-license/)
@@ -31,7 +31,7 @@ Four kinds of classes are available for your use, modification, and study: class
 
 ### Classes used for composition
 
-These classes are found in `/modules/icao9303/` and are mainly used to compose other kinds of documents:
+These classes are found in `/lib/icao9303/` and are mainly used to compose other kinds of documents:
 
 * `DigitalSeal` - Properties common to all visible digital seals (VDS).
 * `DigitalSealV3` - A digital seal conforming to VDS version 3.
@@ -41,7 +41,7 @@ These classes are found in `/modules/icao9303/` and are mainly used to compose o
 
 ### Composed classes
 
-These classes are found in `/modules/icao9303/` and may be used as-is or used to compose other kinds of documents:
+These classes are found in `/lib/icao9303/` and may be used as-is or used to compose other kinds of documents:
 
 * `MRVADocument` - A class that represents a nearly full-page machine-readable visa sticker (MRV-A).
 * `MRVBDocument` - A class that represents a smaller machine-readable visa sticker (MRV-B) for when a clear area aside the visa is needed on a passport page.
@@ -49,7 +49,7 @@ These classes are found in `/modules/icao9303/` and may be used as-is or used to
 * `TD2Document` - A class that represents a MROTD in the ISO/IEC 7810 TD2 size (like the Icelandic identity card before December 2023).
 * `TD3Document` - A class that represents a MROTD in the ISO/IEC 7810 TD3 size (like a passport booklet).
 
-These classes are found in `/modules/`:
+These classes are found in `/lib/`:
 
 * `CrewCertificate` - A class composed from `TD1Document` and `DigitalSealV4` that represents a furry crewmember certificate in the TD1 size with a VDS.
 * `CrewID` - A class composed from `TD1Document` and `DigitalSealV4` that represents a furry crewmember identification badge in the TD1 size with a VDS.
@@ -60,15 +60,15 @@ These classes are found in `/modules/`:
 
 ### Canvas renderers
 
-Seven renderers are provided in respective directories for the six composed classes found in `/modules/`:
+Seven renderers are provided in respective directories for the six composed classes found in `/lib/`:
 
 * `CrewCertificateRenderer` - Given a `CrewCertificate`, renders both sides of a furry crewmember certificate with full bleed.
+* `CrewIDRenderer` - Given a `CrewID`, renders both sides of a furry crewmember identification badge with full bleed.
 * `CrewLicenseRenderer` - Given a `CrewLicense`, renders both sides of a furry crewmember license with full bleed.
 * `EventsMRVARenderer` - Given an `EventsMRVA`, renders the sticker of a MRV-A furry events visa with full bleed.
 * `EventsMRVBRenderer` - Given an `EventsMRVB`, renders the sticker of a MRV-B furry events visa with full bleed.
 * `EventsPassportRenderer` - Given an `EventsPassport`, renders the machine-readable passport page and signature page of a furry events passport with full bleed.
 * `EventsSealRenderer` - Given an `EventsMRVB`, renders an MRV-B furry events visa into a small sticker containing a VDS with full bleed.
-* `IDBadgeRenderer` - Given a `CrewID`, renders both sides of a furry crewmember identification badge with full bleed.
 
 Each of these renderers take an instance of their respective class and use a canvas rendering context to render the instance as images. The images are suitable for web use or for printing at 300-dpi.
 
@@ -76,9 +76,9 @@ Note that renderers are scenario-specific and these renderers were designed for 
 
 ### Web page controllers
 
-For each renderer a controller is provided in respective directories to allow setting document and renderer properties when used in a web page: `CrewCertificateViewModel`, `CrewLicenseViewModel`, `EventsMRVAViewModel`, `EventsMRVBViewModel`, `EventsPassportViewModel`, `EventsSealViewModel`, and `IDBadgeViewModel`.
+For each renderer a controller is provided in respective directories to allow setting document and renderer properties when used in a web page: `CrewCertificateViewModel`, `CrewIDViewModel`, `CrewLicenseViewModel`, `EventsMRVAViewModel`, `EventsMRVBViewModel`, `EventsPassportViewModel`, and `EventsSealViewModel`.
 
-Like the renderers, these were designed for a web demonstration in mind. They are not actual view models in the Model-View-ViewModel definition. While functional, they are a bit of a mess to read over. They're provided to show how the demos work, but one would certainly want to write something better.
+Like the renderers, these were designed for a web demonstration in mind. They are not actual view models in the Model-View-ViewModel definition and while functional, they are a bit of a mess to read over. One would certainly want to write something better.
 
 ## Licenses
 
@@ -110,9 +110,9 @@ Documentation, like this README, is released under the [Creative Commons Attribu
 
 [Fox][fox] was taken by Kent Miller and is released under the [Creative Commons Zero 1.0 Universal][cc0] license. The remaining image files used by this program are by [Air Line Furries Association, International][alfa], and are released under the [Creative Commons Attribution 4.0 International][cc4] license.
 
-### `index.html` and `index.js` files
+### `index.html`, `index.css` and `index.js` files
 
-`index.html` and `index.js` files are in respective folders and used to provide a demo web page where one can change composed class and renderer properties. As they are fairly simple, they are released under the [Creative Commons Zero 1.0 Universal][cc0] license.
+`index.html`, `index.css` and `index.js` files are in respective folders and used to provide a demo web page where one can change composed class and renderer properties. As they are fairly simple, they are released under the [Creative Commons Zero 1.0 Universal][cc0] license.
 
 [alfa]: https://airlinefurries.com/
 [apache]: ./LICENSES/Apache-2.0.txt
