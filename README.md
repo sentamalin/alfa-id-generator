@@ -18,8 +18,8 @@
 [Air Line Furries Association, International][alfa], provides [generators](https://generator.airlinefurries.com) to create furry-themed travel documents to save as an image or print:
 
 * [Crewmember Certificate](https://generator.airlinefurries.com/crew-certificate/)
+* [Crewmember Identification Badge](https://generator.airlinefurries.com/crew-id/)
 * [Crewmember License](https://generator.airlinefurries.com/crew-license/)
-* [Identification Badge](https://generator.airlinefurries.com/id-badge/)
 * [Events Passport](https://generator.airlinefurries.com/events-passport/)
 * [Events Visa (MRV-A)](https://generator.airlinefurries.com/events-mrva/)
 * [Events Visa (MRV-B)](https://generator.airlinefurries.com/events-mrvb/)
