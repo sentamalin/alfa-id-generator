@@ -100,7 +100,7 @@ Additionally, the program is [REUSE-compliant][reuse] and all files contain its 
 
 [Matthew Hinders-Anderson][matthew]'s [OCR-B][ocrb] is the font used for the Machine-Readable Zones (MRZ) and is released under the [Creative Commons Attribution 4.0 International][cc4] license.
 
-Ascender Fonts's [Open Sans][opensans] was downloaded from FontSquirrel and is the font used for the Visual Inspection Zones (VIZ). It is released under the [Apache License 2.0][apache].
+The [Open Sans Project Authors][opensansgit]' [Open Sans][opensans] was downloaded from Google Fonts and is the font used for the Visual Inspection Zones (VIZ). It is released under the [SIL Open Font License 1.1][ofl].
 
 The Astigmatic Typographic Institute's [Yellowtail][yellowtail] was downloaded from FontSquirrel and is the font used to generate signatures from text entered in a textbox. It is released under the [Apache License 2.0][apache].
 
@@ -130,7 +130,9 @@ Documentation, like this README, is released under the [Creative Commons Attribu
 [mit]: ./LICENSES/MIT.txt
 [nodeQrcode]: https://github.com/soldair/node-qrcode
 [ocrb]: https://web.archive.org/web/20190328165040/https://wehtt.am/ocr-b/
-[opensans]: https://www.fontsquirrel.com/fonts/open-sans
+[ofl]: ./LICENSES/OFL-1.1.txt
+[opensans]: https://fonts.google.com/specimen/Open+Sans
+[opensansgit]: https://github.com/googlefonts/opensans
 [qrcodeLite]: https://github.com/zeekay/qrcode-lite
 [reuse]: https://reuse.software/
 [soldair]: https://github.com/soldair
