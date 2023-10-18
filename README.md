@@ -1,6 +1,6 @@
 <!--
   SPDX-FileCopyrightText: 2023 Don Geronimo <https://sentamal.in/>
-  SPDX-License-Identifier: CC-BY-4.0
+  SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
 # Furry identification generators
@@ -106,7 +106,7 @@ The Astigmatic Typographic Institute's [Yellowtail][yellowtail] was downloaded f
 
 ### Documentation and image assets
 
-Documentation, like this README, is released under the [Creative Commons Attribution 4.0 International][cc4] license.
+Documentation, like this README, is released under the [Creative Commons Attribution Share Alike 4.0 International][cc4sa] license.
 
 [Fox][fox] was taken by Kent Miller and is released under the [Creative Commons Zero 1.0 Universal][cc0] license. The remaining image files used by this program are by [Air Line Furries Association, International][alfa], and are released under the [Creative Commons Attribution 4.0 International][cc4] license.
 
@@ -119,6 +119,7 @@ Documentation, like this README, is released under the [Creative Commons Attribu
 [base45]: https://github.com/lovasoa/base45-ts
 [cc0]: ./LICENSES/CC0-1.0.txt
 [cc4]: ./LICENSES/CC-BY-4.0.txt
+[cc4sa]: ./LICENSES/CC-BY-SA-4.0.txt
 [fox]: https://www.flickr.com/photos/57557144@N06/5302090111
 [gpl]: ./LICENSES/GPL-3.0-or-later.txt
 [gplweb]: https://www.gnu.org/licenses/
